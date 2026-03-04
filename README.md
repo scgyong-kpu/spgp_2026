@@ -20,6 +20,7 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
     * 같은 함수가 호출되면 ID 로 분기하는 방법도 있지만, 동작이 다르다면 다른 함수가 호출되게 하자.
   * `findViewById()` 함수 호출은 최초 한번만 하자.
     - ViewBinding 을 사용하게 되면 프로그래머가 직접 할 필요가 없긴 하다.
+  * <img src="sshots/Screenshot_FirstApp_20260304_080939.png" width="25%"> <img src="sshots/Screenshot_FirstApp_20260304_081213.png" width="25%">
 * ImageSwitcher
   * TextView, Button, ImageButton, LinearLayout
   * Selector
@@ -56,6 +57,7 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
   * `Toast`
     * `AlertDialog` 는 사용자가 반드시 버튼을 눌러야 하므로 방해가 될 수 있다. `Toast` 는 그럴 필요가 없는 메시지를 보여준다.
     * Factory pattern 사용.
+  * <img src="sshots/Screenshot_20260304_074844.png" width="25%"> <img src="sshots/Screenshot_20260304_075018.png" width="25%">
 * MoreControls
   * ViewBinding 의 본격적인 사용
     * `build.gradle.kts` 파일에 지정
@@ -88,10 +90,12 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
   * Activity 가 다른 Activity 를 호출할 때는 `Intent` 를 사용한다.
     * 다른 process 의 Activity 일 수도 있다.
   * ActionBar, StatusBar, NavigationBar 를 없앤다
+  * <img src="sshots/Screenshot_MoreControls_20260304_075940.png" width="25%">
 * CustomView based Game App
   * postDelayed(), Choreographer
   * Frame Time, FPS
   * Move based time
+  * <img src="sshots/Screenshot_SampleGame_20260304_080511.png" width="25%"> <img src="sshots/Screenshot_SampleGame_20260304_080639.png" width="25%"> <img src="sshots/Screenshot_SampleGame_20260304_082911.png" width="50%">
 * FighterPlane (First 2D Game)
   * GameObject class/interface, Sprite
   * MainGame class
@@ -104,12 +108,14 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
   * GameObject Layering
   * Score / Font Drawing
   * Background Layering (Parallex Scroll)
+  * <img src="sshots/Screenshot_DragonFlight_20260304_082740.png" width="25%"> <img src="sshots/Screenshot_DragonFlight_20260304_082823.png" width="50%"> 
 * CookieRun
   * HorzScroll BG / VertScroll BG
   * Image Resource Sheet
   * Stage data file
   * Collision Check / Collision Handling
   * Multiple Scene / Transparent Scene
+  * <img src="sshots/Screenshot_CookieRun_20260304_083135.png" width="50%"> <img src="sshots/Screenshot_CookieRun_20260304_083255.png" width="50%">  <img src="sshots/Screenshot_CookieRun_20260304_083316.png" width="50%"> 
 * Path Draw / Path Animation
   * `SmoothingPath` App
   * `PathView` 생성.
@@ -118,12 +124,15 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
   * Path close 여부를 `Checkbox` 로 지정
   * Start `Button` 을 누르면 비행기가 Path 를 따라 진행. 위치 및 각도 적용
   * Bezier Curve (Cubic) 적용
+  * <img src="sshots/Screenshot_SmoothingPath_20260304_084936.png" width="25%">
 * Tiled MapEditor
   * DragonFlight rework
 * TuDefence
   * Tile based Tower Defence Game
+  * <img src="sshots/Screenshot_TuDefence_20260304_083512.png" width="50%"> <img src="sshots/Screenshot_TuDefence_20260304_084107.png" width="50%"> 
 * TapTU
   * Rhythem Action Game
+  * <img src="sshots/Screenshot_TapTu_20260304_084231.png" width="25%"> <img src="sshots/Screenshot_TapTu_20260304_084435.png" width="25%"> 
 
 ## Schedule
 * 1차 발표 : 5주차
