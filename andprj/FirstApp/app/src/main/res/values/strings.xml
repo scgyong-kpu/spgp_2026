@@ -5,4 +5,5 @@
     <string name="first_button_text">첫 번째 버튼</string>
     <string name="second_button_text">두 번째 버튼</string>
     <string name="first_button_clicked">첫번째 버튼이 눌렸다</string>
+    <string name="second_button_clicked">두번째 버튼이 눌렸다</string>
 </resources>

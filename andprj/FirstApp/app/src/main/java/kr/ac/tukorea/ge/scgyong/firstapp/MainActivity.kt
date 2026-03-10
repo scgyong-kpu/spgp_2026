@@ -29,4 +29,10 @@ class MainActivity : AppCompatActivity() {
         val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
         lowerTextView.text = getString(R.string.first_button_clicked)
     }
+
+    // XML의 android:onClick 속성을 통해 호출되는 두 번째 버튼 클릭 처리 메서드이다.
+    fun onBtnSecondButton(view: View) {
+        val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
+        lowerTextView.text = getString(R.string.second_button_clicked)
+    }
 }
