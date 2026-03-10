@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var upperTextView: TextView
     private lateinit var lowerTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +19,8 @@ class MainActivity : AppCompatActivity() {
         // 액티비티가 사용할 화면 레이아웃을 연결한다.
         setContentView(R.layout.activity_main)
 
-        // 두 번째 TextView는 여러 곳에서 사용하므로 한 번만 찾아서 멤버에 저장한다.
+        // TextView 들은 여러 곳에서 사용하므로 한 번만 찾아서 멤버에 저장한다.
+        upperTextView = findViewById(R.id.upper_text_view)
         lowerTextView = findViewById(R.id.lower_text_view)
 
         // 시스템 바 영역만큼 패딩을 적용해서 상태바, 내비게이션 바와 겹치지 않게 한다.
