@@ -2,4 +2,6 @@
     <string name="app_name">FirstApp</string>
     <string name="first_text">김아무개</string>
     <string name="second_text">2026000101</string>
+    <string name="first_button_text">첫 번째 버튼</string>
+    <string name="second_button_text">두 번째 버튼</string>
 </resources>
