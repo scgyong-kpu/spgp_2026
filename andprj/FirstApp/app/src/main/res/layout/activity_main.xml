@@ -9,6 +9,15 @@
     android:padding="24dp"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/cat_image_view"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="@string/cat_image_description"
+        android:scaleType="centerCrop"
+        android:src="@drawable/round_rect_placeholder" />
+
     <TextView
         android:id="@+id/upper_text_view"
         android:layout_width="wrap_content"

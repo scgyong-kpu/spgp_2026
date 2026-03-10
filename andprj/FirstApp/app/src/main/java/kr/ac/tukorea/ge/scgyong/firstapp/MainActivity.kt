@@ -30,12 +30,16 @@ class MainActivity : AppCompatActivity() {
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 첫 번째 버튼 클릭 메서드를 직접 연결한다.
     fun onBtnFirstButton(view: View) {
+        binding.upperTextView.text = getString(R.string.cat_name_format, 1)
         binding.lowerTextView.text = getString(R.string.first_button_clicked)
+        binding.catImageView.setImageResource(R.mipmap.cat1)
     }
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 두 번째 버튼 클릭 메서드를 직접 연결한다.
     fun onBtnSecondButton(view: View) {
+        binding.upperTextView.text = getString(R.string.cat_name_format, 2)
         binding.lowerTextView.text = getString(R.string.second_button_clicked)
+        binding.catImageView.setImageResource(R.mipmap.cat2)
     }
 }
