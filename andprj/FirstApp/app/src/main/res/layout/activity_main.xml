@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:onClick="onBtnFirstButton"
         android:text="@string/first_button_text" />
 
     <Button
@@ -40,7 +39,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:onClick="onBtnSecondButton"
         android:text="@string/second_button_text" />
 
 </LinearLayout>
