@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.scgyong.firstapp
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -8,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -16,21 +17,16 @@ class MainActivity : AppCompatActivity() {
         // 액티비티가 사용할 화면 레이아웃을 연결한다.
         setContentView(R.layout.activity_main)
 
-        val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
         val firstButton = findViewById<Button>(R.id.first_button)
         val secondButton = findViewById<Button>(R.id.second_button)
 
-        // Event Listener 연결하는 방법 #3-2
-        // 람다를 즉석에서 전달해 줄테니 얘한테 알려줘.
-        firstButton.setOnClickListener {
-            lowerTextView.text = getString(R.string.first_button_clicked)
-        }
+        // Event Listener 연결하는 방법 #1
+        // 그 일이 생기면 나한테 알려줘.
+        firstButton.setOnClickListener(this)
 
-        // Event Listener 연결하는 방법 #3-2
-        // 람다를 즉석에서 전달해 줄테니 얘한테 알려줘.
-        secondButton.setOnClickListener {
-            lowerTextView.text = getString(R.string.second_button_clicked)
-        }
+        // Event Listener 연결하는 방법 #1
+        // 그 일이 생기면 나한테 알려줘.
+        secondButton.setOnClickListener(this)
 
         // 시스템 바 영역만큼 패딩을 적용해서 상태바, 내비게이션 바와 겹치지 않게 한다.
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -38,5 +34,24 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    override fun onClick(v: View?) {
+        val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
+
+        when (v?.id) {
+            R.id.first_button -> lowerTextView.text = getString(R.string.first_button_clicked)
+            R.id.second_button -> lowerTextView.text = getString(R.string.second_button_clicked)
+        }
+
+        // C++ 코더에게 익숙한 형태로 쓰면 아래 switch/case 느낌이라고 보면 된다.
+        // switch (v != null ? v.getId() : -1) {
+        //     case R.id.first_button:
+        //         lowerTextView.setText(getString(R.string.first_button_clicked));
+        //         break;
+        //     case R.id.second_button:
+        //         lowerTextView.setText(getString(R.string.second_button_clicked));
+        //         break;
+        // }
     }
 }
