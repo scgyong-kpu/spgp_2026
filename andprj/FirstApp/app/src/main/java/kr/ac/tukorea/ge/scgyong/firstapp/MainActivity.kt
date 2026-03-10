@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,13 +20,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val firstButton = findViewById<Button>(R.id.first_button)
         val secondButton = findViewById<Button>(R.id.second_button)
 
-        // Event Listener 연결하는 방법 #1
-        // 그 일이 생기면 나한테 알려줘.
-        firstButton.setOnClickListener(this)
+        // Event Listener 연결하는 방법 #2
+        // 첫 번째 버튼에서 일이 생기면 첫 번째 멤버한테 알려줘.
+        firstButton.setOnClickListener(firstButtonHandler)
 
-        // Event Listener 연결하는 방법 #1
-        // 그 일이 생기면 나한테 알려줘.
-        secondButton.setOnClickListener(this)
+        // Event Listener 연결하는 방법 #2
+        // 두 번째 버튼에서 일이 생기면 두 번째 멤버한테 알려줘.
+        secondButton.setOnClickListener(secondButtonHandler)
 
         // 시스템 바 영역만큼 패딩을 적용해서 상태바, 내비게이션 바와 겹치지 않게 한다.
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -35,23 +35,22 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             insets
         }
     }
-
-    override fun onClick(v: View?) {
-        val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
-
-        when (v?.id) {
-            R.id.first_button -> lowerTextView.text = getString(R.string.first_button_clicked)
-            R.id.second_button -> lowerTextView.text = getString(R.string.second_button_clicked)
+    // Event Listener 연결하는 방법 #2
+    // 첫 번째 버튼에서 일이 생기면 첫 번째 멤버한테 알려줘.
+    private val firstButtonHandler = object : View.OnClickListener {
+        override fun onClick(v: View?) {
+            val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
+            lowerTextView.text = getString(R.string.first_button_clicked)
         }
-
-        // C++ 코더에게 익숙한 형태로 쓰면 아래 switch/case 느낌이라고 보면 된다.
-        // switch (v != null ? v.getId() : -1) {
-        //     case R.id.first_button:
-        //         lowerTextView.setText(getString(R.string.first_button_clicked));
-        //         break;
-        //     case R.id.second_button:
-        //         lowerTextView.setText(getString(R.string.second_button_clicked));
-        //         break;
-        // }
     }
+
+    // Event Listener 연결하는 방법 #2
+    // 두 번째 버튼에서 일이 생기면 두 번째 멤버한테 알려줘.
+    private val secondButtonHandler = object : View.OnClickListener {
+        override fun onClick(v: View?) {
+            val lowerTextView = findViewById<TextView>(R.id.lower_text_view)
+            lowerTextView.text = getString(R.string.second_button_clicked)
+        }
+    }
+
 }
