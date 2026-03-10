@@ -29,6 +29,7 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
   * dimens, colors, strings 등 다른 "값" Resource 들을 참조하도록.
   * ViewBinding 을 사용할 때와의 차이.
   * `LinearLayout` 사용시 `layout_weight` 항목
+  * <img src="sshots/Image_switcher_portrait.png"> <img src="sshots/Image_switcher_landscape.png">
 * Cards (Memory Game)
   * `Style` 사용하기. Android Studio 의 Refactor 이용 가능.
   * 16장 카드 모두 같은 함수로 `onclick` 연결하고 ID 로 구분.
