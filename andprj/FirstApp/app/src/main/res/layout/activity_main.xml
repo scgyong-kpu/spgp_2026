@@ -8,23 +8,25 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/text_view_1"
+        android:id="@+id/upper_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/first_text"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/text_view_2"
+        app:layout_constraintBottom_toTopOf="@+id/lower_text_view"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/text_view_2"
+        android:id="@+id/lower_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/second_text"
-        app:layout_constraintTop_toBottomOf="@id/text_view_1"
+        android:textSize="25sp"
+        app:layout_constraintTop_toBottomOf="@id/upper_text_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
