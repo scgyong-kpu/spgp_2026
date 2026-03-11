@@ -2,9 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_pressed="true"
-        android:drawable="@mipmap/prev_pressed" />
+        android:drawable="@drawable/prev_pressed" />
     <item
         android:state_enabled="false"
-        android:drawable="@mipmap/prev_disabled" />
+        android:drawable="@drawable/prev_disabled" />
     <item android:drawable="@mipmap/prev" />
 </selector>
