@@ -2,15 +2,17 @@ package kr.ac.tukorea.ge.scgyong.firstapp
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.ac.tukorea.ge.scgyong.firstapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private const val KEY_CURRENT_PAGE = "current_page"
+    }
+
     // activity_main.xml에 대한 View Binding 객체이다.
     private lateinit var binding: ActivityMainBinding
 
@@ -32,8 +34,16 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // 앱이 시작되면 첫 번째 고양이 페이지를 먼저 보여준다.
-        showCatPage(1)
+        // 저장된 상태가 있으면 마지막으로 보던 페이지를, 없으면 첫 페이지를 보여준다.
+        val restoredPage = savedInstanceState?.getInt(KEY_CURRENT_PAGE) ?: 1
+        showCatPage(restoredPage)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // orientation change가 일어나도 현재 페이지 번호를 복원할 수 있게 저장한다.
+        outState.putInt(KEY_CURRENT_PAGE, currentPage)
     }
 
     // Event Listener 연결하는 방법 #4
@@ -59,10 +69,15 @@ class MainActivity : AppCompatActivity() {
         // 전체 페이지 수는 이미지 배열의 길이로부터 계산한다.
         val total = catImageIds.size
 
+        // 범위를 벗어난 페이지 번호는 무시한다.
+        if (page !in 1..total) {
+            return
+        }
+
         binding.prevButton.isEnabled = page > 1
         binding.nextButton.isEnabled = page < total
 
-        // 유효하지 않은 페이지 번호가 들어오는 일이 없다. 현재 페이지 번호를 갱신한다.
+        // 현재 페이지 번호를 갱신한다.
         currentPage = page
 
         // 상단의 페이지 표시 문자열을 "n / total" 형식으로 갱신한다.
