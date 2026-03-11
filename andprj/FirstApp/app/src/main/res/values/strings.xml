@@ -7,4 +7,5 @@
     <string name="next_symbol">&gt;</string>
     <string name="previous_cat">이전 고양이</string>
     <string name="next_cat">다음 고양이</string>
+    <string name="invalid_page">존재하지 않는 페이지입니다</string>
 </resources>
