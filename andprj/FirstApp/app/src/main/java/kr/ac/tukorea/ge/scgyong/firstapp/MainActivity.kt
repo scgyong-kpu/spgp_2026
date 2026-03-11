@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     // 페이지 번호와 연결되는 고양이 이미지 리소스 목록이다.
     private val catImageIds = intArrayOf(
-        R.mipmap.cat1, R.mipmap.cat2, R.mipmap.cat3, R.mipmap.cat4, R.mipmap.cat5
+        R.mipmap.cat1, R.mipmap.cat2, R.mipmap.cat3, R.mipmap.cat4, R.mipmap.cat5, R.mipmap.cat6
     )
 
     private fun showCatPage(page: Int) {
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         currentPage = page
 
         // 전체 페이지 수는 이미지 배열의 길이로부터 계산한다.
-        // 상단의 페이지 표시 문자열을 "n / 5" 형식으로 갱신한다.
+        // 상단의 페이지 표시 문자열을 "n / total" 형식으로 갱신한다.
         val total = catImageIds.size
         binding.pageTextView.text = getString(R.string.page_format, page, total)
 
