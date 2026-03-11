@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         binding.prevButton.isEnabled = page > 1
         binding.nextButton.isEnabled = page < total
 
-        // 페이지 번호가 유효하면 현재 페이지 번호를 갱신한다.
+        // 유효하지 않은 페이지 번호가 들어오는 일이 없다. 현재 페이지 번호를 갱신한다.
         currentPage = page
 
         // 상단의 페이지 표시 문자열을 "n / total" 형식으로 갱신한다.
