@@ -25,21 +25,28 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        showCatPage(1)
     }
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 첫 번째 버튼 클릭 메서드를 직접 연결한다.
     fun onBtnFirstButton(view: View) {
-        binding.upperTextView.text = getString(R.string.cat_name_format, 1)
-        binding.lowerTextView.text = getString(R.string.first_button_clicked)
-        binding.catImageView.setImageResource(R.mipmap.cat1)
+        showCatPage(1)
     }
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 두 번째 버튼 클릭 메서드를 직접 연결한다.
     fun onBtnSecondButton(view: View) {
-        binding.upperTextView.text = getString(R.string.cat_name_format, 2)
-        binding.lowerTextView.text = getString(R.string.second_button_clicked)
-        binding.catImageView.setImageResource(R.mipmap.cat2)
+        showCatPage(2)
+    }
+
+    private fun showCatPage(page: Int) {
+        binding.upperTextView.text = getString(R.string.page_format, page)
+
+        when (page) {
+            1 -> binding.catImageView.setImageResource(R.mipmap.cat1)
+            2 -> binding.catImageView.setImageResource(R.mipmap.cat2)
+        }
     }
 }

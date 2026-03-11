@@ -4,52 +4,71 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:gravity="top|center_horizontal"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:padding="16dp"
     tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/first_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/nav_circle_button"
+            android:contentDescription="@string/previous_cat"
+            android:onClick="onBtnFirstButton"
+            android:padding="0dp"
+            android:text="@string/previous_symbol"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/upper_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/page_initial"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/second_button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/nav_circle_button"
+            android:contentDescription="@string/next_cat"
+            android:onClick="onBtnSecondButton"
+            android:padding="0dp"
+            android:text="@string/next_symbol"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/cat_image_view"
-        android:layout_width="220dp"
-        android:layout_height="220dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="36dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/cat_image_description"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:src="@drawable/round_rect_placeholder" />
-
-    <TextView
-        android:id="@+id/upper_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/first_text"
-        android:textColor="@color/name_text"
-        android:textSize="@dimen/name_font_size"
-        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/lower_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/second_text"
-        android:textColor="@color/student_id"
-        android:textSize="@dimen/student_id_font_size" />
-
-    <Button
-        android:id="@+id/first_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:onClick="onBtnFirstButton"
-        android:text="@string/first_button_text" />
-
-    <Button
-        android:id="@+id/second_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:onClick="onBtnSecondButton"
-        android:text="@string/second_button_text" />
+        android:visibility="gone"
+        tools:text="hidden" />
 
 </LinearLayout>

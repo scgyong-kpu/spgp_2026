@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">FirstApp</string>
-    <string name="first_text">김아무개</string>
-    <string name="cat_name_format">%1$d 번째 고냥이</string>
-    <string name="second_text">2026000101</string>
-    <string name="first_button_text">첫 번째 버튼</string>
-    <string name="second_button_text">두 번째 버튼</string>
-    <string name="first_button_clicked">첫번째 버튼이 눌렸다</string>
-    <string name="second_button_clicked">두번째 버튼이 눌렸다</string>
     <string name="cat_image_description">고양이 이미지</string>
+    <string name="page_initial">1 / 5</string>
+    <string name="page_format">%1$d / 5</string>
+    <string name="previous_symbol">&lt;</string>
+    <string name="next_symbol">&gt;</string>
+    <string name="previous_cat">이전 고양이</string>
+    <string name="next_cat">다음 고양이</string>
 </resources>
