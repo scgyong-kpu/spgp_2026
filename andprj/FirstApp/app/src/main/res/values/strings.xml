@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">FirstApp</string>
     <string name="cat_image_description">고양이 이미지</string>
-    <string name="page_initial">1 / 5</string>
-    <string name="page_format">%1$d / 5</string>
+    <string name="page_initial"> </string>
+    <string name="page_format">%1$d / %2$d</string>
     <string name="previous_symbol">&lt;</string>
     <string name="next_symbol">&gt;</string>
     <string name="previous_cat">이전 고양이</string>

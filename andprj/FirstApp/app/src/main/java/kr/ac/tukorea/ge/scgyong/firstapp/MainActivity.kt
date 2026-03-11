@@ -54,15 +54,20 @@ class MainActivity : AppCompatActivity() {
     )
 
     private fun showCatPage(page: Int) {
+        // 페이지 번호가 1보다 작거나 마지막 페이지보다 크면 아무 것도 하지 않는다.
+        if (page !in 1..catImageIds.size) {
+            return
+        }
+
         // 전달받은 페이지 번호를 현재 페이지 상태로 저장한다.
         currentPage = page
 
+        // 전체 페이지 수는 이미지 배열의 길이로부터 계산한다.
         // 상단의 페이지 표시 문자열을 "n / 5" 형식으로 갱신한다.
-        binding.pageTextView.text = getString(R.string.page_format, page)
+        val total = catImageIds.size
+        binding.pageTextView.text = getString(R.string.page_format, page, total)
 
-        // 페이지 번호가 유효한 범위에 있을 때만 해당 고양이 이미지를 표시한다.
-        if (page in 1..catImageIds.size) {
-            binding.catImageView.setImageResource(catImageIds[page - 1])
-        }
+        // 현재 페이지 번호에 맞는 고양이 이미지를 화면에 보여준다.
+        binding.catImageView.setImageResource(catImageIds[page - 1])
     }
 }
