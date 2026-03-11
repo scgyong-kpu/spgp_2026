@@ -1,20 +1,25 @@
 package kr.ac.tukorea.ge.scgyong.firstapp
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import kr.ac.tukorea.ge.scgyong.firstapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private const val PREFS_NAME = "cat_viewer_prefs"
+        private const val KEY_CURRENT_PAGE = "current_page"
+    }
+
     // activity_main.xml에 대한 View Binding 객체이다.
     private lateinit var binding: ActivityMainBinding
 
-    // orientation change가 일어나도 유지할 화면 상태를 담는 ViewModel이다.
-    private lateinit var viewModel: MainViewModel
+    // 마지막으로 본 페이지를 저장하고 복원할 SharedPreferences 객체이다.
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +29,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Activity와 연결된 ViewModel을 가져와 현재 페이지 상태를 관리한다.
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        // 마지막으로 본 페이지를 저장하고 읽어올 SharedPreferences를 준비한다.
+        prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
 
         // 시스템 바 영역만큼 패딩을 적용해서 상태바, 내비게이션 바와 겹치지 않게 한다.
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
@@ -34,22 +39,25 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // ViewModel에 저장된 현재 페이지를 화면에 표시한다.
-        showCatPage(viewModel.currentPage)
+        // SharedPreferences에 저장된 현재 페이지를 읽어서 화면에 표시한다.
+        val savedPage = prefs.getInt(KEY_CURRENT_PAGE, 1)
+        showCatPage(savedPage)
     }
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 첫 번째 버튼 클릭 메서드를 직접 연결한다.
     fun onBtnPrevious(view: View) {
         // 이전 버튼을 누르면 페이지 번호를 1 감소시켜 다시 표시한다.
-        showCatPage(viewModel.currentPage - 1)
+        val currentPage = prefs.getInt(KEY_CURRENT_PAGE, 1)
+        showCatPage(currentPage - 1)
     }
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 두 번째 버튼 클릭 메서드를 직접 연결한다.
     fun onBtnNext(view: View) {
         // 다음 버튼을 누르면 페이지 번호를 1 증가시켜 다시 표시한다.
-        showCatPage(viewModel.currentPage + 1)
+        val currentPage = prefs.getInt(KEY_CURRENT_PAGE, 1)
+        showCatPage(currentPage + 1)
     }
 
     // 페이지 번호와 연결되는 고양이 이미지 리소스 목록이다.
@@ -69,13 +77,13 @@ class MainActivity : AppCompatActivity() {
         binding.prevButton.isEnabled = page > 1
         binding.nextButton.isEnabled = page < total
 
-        // 현재 페이지 번호를 ViewModel에 저장한다.
-        viewModel.currentPage = page
+        // 현재 페이지 번호를 SharedPreferences에 저장해서 회전이나 앱 재실행 후에도 유지한다.
+        prefs.edit().putInt(KEY_CURRENT_PAGE, page).apply()
 
         // 상단의 페이지 표시 문자열을 "n / total" 형식으로 갱신한다.
-        binding.pageTextView.text = getString(R.string.page_format, viewModel.currentPage, total)
+        binding.pageTextView.text = getString(R.string.page_format, page, total)
 
         // 현재 페이지 번호에 맞는 고양이 이미지를 화면에 보여준다.
-        binding.catImageView.setImageResource(catImageIds[viewModel.currentPage - 1])
+        binding.catImageView.setImageResource(catImageIds[page - 1])
     }
 }
