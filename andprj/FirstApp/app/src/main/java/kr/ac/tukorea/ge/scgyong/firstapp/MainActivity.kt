@@ -31,18 +31,18 @@ class MainActivity : AppCompatActivity() {
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 첫 번째 버튼 클릭 메서드를 직접 연결한다.
-    fun onBtnFirstButton(view: View) {
+    fun onBtnPrevious(view: View) { // rename 은 Shift + F6 키로 한다.
         showCatPage(1)
     }
 
     // Event Listener 연결하는 방법 #4
     // XML의 android:onClick 속성으로 두 번째 버튼 클릭 메서드를 직접 연결한다.
-    fun onBtnSecondButton(view: View) {
+    fun onBtnNext(view: View) {
         showCatPage(2)
     }
 
     private fun showCatPage(page: Int) {
-        binding.upperTextView.text = getString(R.string.page_format, page)
+        binding.pageTextView.text = getString(R.string.page_format, page)
 
         when (page) {
             1 -> binding.catImageView.setImageResource(R.mipmap.cat1)

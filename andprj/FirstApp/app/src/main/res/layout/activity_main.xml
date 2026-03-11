@@ -16,12 +16,12 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/first_button"
+            android:id="@+id/prev_button"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:background="@drawable/nav_circle_button"
             android:contentDescription="@string/previous_cat"
-            android:onClick="onBtnFirstButton"
+            android:onClick="onBtnPrevious"
             android:padding="0dp"
             android:text="@string/previous_symbol"
             android:textAllCaps="false"
@@ -29,7 +29,7 @@
             android:textSize="28sp" />
 
         <TextView
-            android:id="@+id/upper_text_view"
+            android:id="@+id/page_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -40,12 +40,12 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/second_button"
+            android:id="@+id/next_button"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:background="@drawable/nav_circle_button"
             android:contentDescription="@string/next_cat"
-            android:onClick="onBtnSecondButton"
+            android:onClick="onBtnNext"
             android:padding="0dp"
             android:text="@string/next_symbol"
             android:textAllCaps="false"
@@ -63,12 +63,5 @@
         android:contentDescription="@string/cat_image_description"
         android:scaleType="fitCenter"
         android:src="@drawable/round_rect_placeholder" />
-
-    <TextView
-        android:id="@+id/lower_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:text="hidden" />
 
 </LinearLayout>
