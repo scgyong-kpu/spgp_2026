@@ -24,7 +24,7 @@
             android:onClick="onBtnPrevious"
             android:padding="0dp"
             android:scaleType="centerInside"
-            android:src="@mipmap/prev" />
+            android:src="@drawable/prev_selector" />
 
         <TextView
             android:id="@+id/page_text_view"
@@ -46,7 +46,7 @@
             android:onClick="onBtnNext"
             android:padding="0dp"
             android:scaleType="centerInside"
-            android:src="@mipmap/next" />
+                android:src="@drawable/next_selector" />
     </LinearLayout>
 
     <ImageView
