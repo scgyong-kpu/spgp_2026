@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -60,7 +61,11 @@ class MainActivity : AppCompatActivity() {
 
         if (page !in 1..total) {
             // 페이지 번호가 범위를 벗어나면 토스트 메시지를 보여주고 아무 작업도 하지 않는다.
-            Toast.makeText(this, R.string.invalid_page, Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setMessage(R.string.invalid_page)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
             return
         }
 
