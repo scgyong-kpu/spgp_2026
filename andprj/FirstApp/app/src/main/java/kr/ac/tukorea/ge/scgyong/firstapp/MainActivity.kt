@@ -59,15 +59,8 @@ class MainActivity : AppCompatActivity() {
         // 전체 페이지 수는 이미지 배열의 길이로부터 계산한다.
         val total = catImageIds.size
 
-        if (page !in 1..total) {
-            // 페이지 번호가 범위를 벗어나면 토스트 메시지를 보여주고 아무 작업도 하지 않는다.
-            AlertDialog.Builder(this)
-                .setTitle(R.string.warning)
-                .setMessage(R.string.invalid_page)
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
-            return
-        }
+        binding.prevButton.isEnabled = page > 1
+        binding.nextButton.isEnabled = page < total
 
         // 페이지 번호가 유효하면 현재 페이지 번호를 갱신한다.
         currentPage = page
