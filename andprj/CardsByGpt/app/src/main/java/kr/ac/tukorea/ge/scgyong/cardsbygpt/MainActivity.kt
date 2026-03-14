@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -39,14 +40,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 게임 규칙과 진행 상태는 별도의 GameState 객체에 맡긴다.
-        gameState = GameState()
-
         // 화면에 있는 카드 버튼들을 배열로 묶고 클릭 이벤트를 연결한다.
         initCardButtons()
 
-        // 앱이 시작될 때 새 게임 상태로 화면을 초기화한다.
-        startGame()
+        // 1. orientation change 직후라면 Bundle에 저장된 상태를 먼저 복원한다.
+        // 2. Bundle이 없으면 마지막으로 저장한 SharedPreferences 상태를 읽어 본다.
+        val restoredGameState = savedInstanceState?.loadGameState() ?: loadGameStateFromPrefs()
+
+        // 복원할 상태가 있으면 그대로 화면에 반영하고,
+        // 없으면 새 GameState를 만들어 새 게임으로 시작한다.
+        if (restoredGameState != null) {
+            gameState = restoredGameState
+            showCurrentState()
+        } else {
+            gameState = GameState()
+            startNewGame()
+        }
     }
 
     private fun initCardButtons() {
@@ -66,25 +75,81 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startGame() {
+    private fun startNewGame() {
         // 카드 배치와 매칭 상태, 뒤집은 횟수를 처음 상태로 되돌린다.
         gameState.reset()
         isAnimating = false
 
         // 모든 카드를 다시 보이게 하고 뒷면 이미지와 기본 변환 상태로 초기화한다.
         for (button in cardButtons) {
-            button.visibility = View.VISIBLE
-            button.isEnabled = true
-            button.setImageResource(R.mipmap.card_blue_back)
-            button.rotation = 0f
-            button.rotationY = 0f
-            button.scaleX = 1f
-            button.scaleY = 1f
-            button.alpha = 1f
+            resetCardButtonImageResource(button, R.mipmap.card_blue_back)
         }
 
         // 현재 뒤집은 횟수를 상단 텍스트에 반영한다.
         updateFlipCount()
+    }
+
+    private fun showCurrentState() {
+
+        // 복원된 GameState를 기준으로 각 카드 버튼의 현재 화면 상태를 다시 그린다.
+
+        for (i in cardButtons.indices) {
+
+            val card = gameState.cards[i]
+            val button = cardButtons[i]
+
+            // 이미 매칭된 카드는 앞면 이미지를 잠깐 맞춘 뒤 화면에서 숨긴다.
+            if (card.isMatched) {
+                resetCardButtonImageResource(button, cardImageIds[card.cardIndex])
+                button.visibility = View.INVISIBLE
+                continue
+            }
+
+            // 현재 열린 카드라면 앞면을, 아니면 뒷면을 보여 준다.
+            val imgRes = if (gameState.openedIndex == i) {
+                cardImageIds[card.cardIndex]
+            } else R.mipmap.card_blue_back
+            resetCardButtonImageResource(button, imgRes)
+        }
+
+        updateFlipCount()
+    }
+
+    private fun resetCardButtonImageResource(button: ImageButton, @DrawableRes imgRes: Int) {
+        // 카드 버튼을 기본 상태로 되돌리면서 지정한 이미지 리소스를 적용한다.
+        button.setImageResource(imgRes)
+        button.visibility = View.VISIBLE
+        button.isEnabled = true
+        button.rotation = 0f
+        button.rotationY = 0f
+        button.scaleX = 1f
+        button.scaleY = 1f
+        button.alpha = 1f
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Activity가 재생성될 때를 대비해 현재 게임 상태를 Bundle에 문자열로 저장한다.
+        outState.putString("gameState", gameState.toJson())
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // 앱이 잠시 백그라운드로 가도 이어서 할 수 있게 마지막 상태를 SharedPreferences에 저장한다.
+        val prefs = getSharedPreferences("cards", MODE_PRIVATE)
+
+        prefs.edit()
+            .putString("gameState", gameState.toJson())
+            .apply()
+    }
+
+    fun loadGameStateFromPrefs(): GameState? {
+        // 이전에 저장한 게임 상태 JSON이 있으면 GameState로 복원한다.
+        val prefs = getSharedPreferences("cards", MODE_PRIVATE)
+        val json = prefs.getString("gameState", null) ?: return null
+        return GameState.fromJson(json)
     }
 
     private fun handleCardClick(index: Int) {
@@ -256,9 +321,15 @@ class MainActivity : AppCompatActivity() {
             .setTitle(titleResId)
             .setMessage(messageResId)
             .setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                startGame()
+                startNewGame()
             }
             .setNegativeButton(R.string.no, null)
             .show()
     }
+}
+
+// Bundle에 저장된 JSON 문자열을 GameState로 변환하는 보조 함수이다.
+fun Bundle.loadGameState() : GameState? {
+    val json = getString("gameState") ?: return null
+    return GameState.fromJson(json)
 }
