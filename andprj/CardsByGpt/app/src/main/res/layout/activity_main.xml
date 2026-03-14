@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/flipCountText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="뒤집은 횟수: 0" />
+
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/restart" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/card0"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card1"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card2"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card3"
+                style="@style/CardButtonStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/card4"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card5"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card6"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card7"
+                style="@style/CardButtonStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/card8"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card9"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card10"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card11"
+                style="@style/CardButtonStyle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/card12"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card13"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card14"
+                style="@style/CardButtonStyle" />
+
+            <ImageButton
+                android:id="@+id/card15"
+                style="@style/CardButtonStyle" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
