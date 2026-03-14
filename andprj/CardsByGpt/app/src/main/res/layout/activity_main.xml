@@ -20,12 +20,13 @@
             android:layout_weight="1"
             android:textSize="22sp"
             android:textStyle="bold"
-            tools:text="뒤집은 횟수: 0" />
+            tools:text="@string/flip_count_format" />
 
         <Button
             android:id="@+id/restartButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onRestartClicked"
             android:text="@string/restart" />
     </LinearLayout>
 
