@@ -45,8 +45,8 @@
 
             binding.restartButton.setOnClickListener {
                 showRestartDialog(
-                    title = getString(R.string.restart_title),
-                    message = getString(R.string.restart_message)
+                    R.string.restart_title,
+                    R.string.restart_message
                 )
             }
 
@@ -71,8 +71,6 @@
             for (button in cardButtons) {
                 button.setImageResource(R.mipmap.card_blue_back)
                 button.visibility = ImageButton.VISIBLE
-                button.isEnabled = true
-                button.tag = false   // false = 닫힘, true = 열림
             }
         }
 
@@ -94,29 +92,28 @@
             // 이미 제거된 카드면 무시
             if (button.visibility != ImageButton.VISIBLE) return
 
-            val isOpen = button.tag as Boolean
-
             // 이미 열려 있는 카드 다시 누른 경우
-            if (isOpen) {
-                Toast.makeText(this, getString(R.string.already_open_card), Toast.LENGTH_SHORT).show()
+            if (isCardOpen(index)) {
+                Toast.makeText(this, R.string.already_open_card, Toast.LENGTH_SHORT).show()
                 return
             }
 
+            // 현재 카드 열기
             openCard(index)
             flipCount++
             updateFlipCount()
 
-            val oldIndex = prevIndex
-
             // 첫 번째 카드인 경우
-            if (oldIndex == null) {
+            if (prevIndex == null) {
                 prevIndex = index
                 return
             }
 
+            val oldIndex = prevIndex!!
+
             // 같은 위치를 또 눌렀는지 방어
-            if (oldIndex == index) {
-                Toast.makeText(this, getString(R.string.already_open_card), Toast.LENGTH_SHORT).show()
+            if (prevIndex == index) {
+                Toast.makeText(this, R.string.already_open_card, Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -128,8 +125,8 @@
 
                 if (isGameFinished()) {
                     showRestartDialog(
-                        title = getString(R.string.clear_title),
-                        message = getString(R.string.clear_message)
+                        R.string.clear_title,
+                        R.string.clear_message
                     )
                 }
             } else {
@@ -139,23 +136,22 @@
             }
         }
 
+        private fun isCardOpen(index: Int): Boolean {
+            return prevIndex == index
+        }
         private fun openCard(index: Int) {
             val button = cardButtons[index]
             button.setImageResource(cardFaces[index])
-            button.tag = true
         }
 
         private fun closeCard(index: Int) {
             val button = cardButtons[index]
             button.setImageResource(R.mipmap.card_blue_back)
-            button.tag = false
         }
 
         private fun removeCard(index: Int) {
             val button = cardButtons[index]
             button.visibility = ImageButton.INVISIBLE
-            button.isEnabled = false
-            button.tag = false
         }
 
         private fun isGameFinished(): Boolean {
@@ -166,10 +162,10 @@
             binding.flipCountText.text = getString(R.string.flip_count_format, flipCount)
         }
 
-        private fun showRestartDialog(title: String, message: String) {
+        private fun showRestartDialog(titleResId: Int, messageResId: Int) {
             AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
+                .setTitle(titleResId)
+                .setMessage(messageResId)
                 .setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
                     startGame()
                 }
