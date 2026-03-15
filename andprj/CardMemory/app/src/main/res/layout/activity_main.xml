@@ -14,21 +14,21 @@
         >
         <ImageButton
             android:id="@+id/card00"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"            android:layout_height="wrap_content"
             android:src="@mipmap/card_blue_back"
             android:onClick="onCardClicked"
             />
         <ImageButton
             android:id="@+id/card01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"            android:layout_height="wrap_content"
             android:src="@mipmap/card_blue_back"
             android:onClick="onCardClicked"
             />
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"            android:layout_height="wrap_content"
             android:src="@mipmap/card_blue_back"
             android:onClick="onCardClicked"
             />
