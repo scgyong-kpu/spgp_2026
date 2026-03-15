@@ -44,19 +44,19 @@ class MainActivity : AppCompatActivity() {
 
         // openedCardIndex는 이전에 열려 있던 카드의 위치(인덱스)를 기억하는 변수이다.
         // 처음에는 아무 카드도 열려 있지 않으므로 null일 수 있다.
-        if (openedCardIndex != null) {
+        openedCardIndex?.let {
+            // openedCardIndex가 null이 아니면 let 블록이 실행된다.
+            // it 변수에는 openedCardIndex의 값이 들어 있다.
 
             // 이전에 클릭된 카드가 있다면 그 카드를 다시 뒷면으로 돌린다.
             // cardButtons 배열에서 인덱스를 이용해 해당 버튼을 다시 얻을 수 있다.
-            // !! 는 "null이 아님을 확신한다"는 의미의 연산자이다.
-            // 위에서 null 체크를 했기 때문에 여기서는 안전하다고 가정한다.
-            cardButtons[openedCardIndex!!].setImageResource(R.mipmap.card_blue_back)
-
-        } else {
-            // 아직 열린 카드가 없는 첫 클릭 상황
-            // 특별히 할 일은 없지만 흐름 설명을 위해 남겨 둔 분기
-            null
+            cardButtons[it].setImageResource(R.mipmap.card_blue_back)
         }
+
+        // let 블록은 아래처럼 it 변수를 사용하지 않고 openedCardIndex를 직접 참조하는 방식으로도 작성할 수 있다.
+        // openedCardIndex?.let { index ->
+        //     cardButtons[index].setImageResource(R.mipmap.card_blue_back)
+        // }
 
         // 현재 클릭된 버튼의 이미지를 Ace of Spades로 변경한다.
         button.setImageResource(R.mipmap.card_as)
@@ -65,5 +65,6 @@ class MainActivity : AppCompatActivity() {
         // 이렇게 버튼 객체 자체를 저장하는 대신 "인덱스"를 저장하면
         // 게임 상태를 관리하거나 저장/복원(Bundle, JSON 등)할 때 더 유리하다.
         openedCardIndex = cardButtons.indexOf(button)
-    }}
+    }
+}
 
