@@ -3,7 +3,6 @@ package kr.ac.tukorea.ge.scgyong.cardmemory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.scgyong.cardmemory.databinding.ActivityMainBinding
 
@@ -35,6 +34,6 @@ class MainActivity : AppCompatActivity() {
         val msg = "Clicked: $name(${v.id})"
         Log.d("CardGame", msg)
 
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }
