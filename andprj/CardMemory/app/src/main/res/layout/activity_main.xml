@@ -14,29 +14,17 @@
         >
         <ImageButton
             android:id="@+id/card00"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             android:src="@mipmap/card_blue_back"
-            android:scaleType="fitCenter"
             android:onClick="onCardClicked"
-            />
+            style="@style/cardButtonStyle" />
         <ImageButton
             android:id="@+id/card01"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             android:src="@mipmap/card_blue_back"
-            android:scaleType="fitCenter"
             android:onClick="onCardClicked"
-            />
+            style="@style/cardButtonStyle" />
         <ImageButton
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
             android:src="@mipmap/card_blue_back"
-            android:scaleType="fitCenter"
             android:onClick="onCardClicked"
-            />
+            style="@style/cardButtonStyle" />
     </LinearLayout>
 </LinearLayout>
