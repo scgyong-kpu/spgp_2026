@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.scgyong.cardmemory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.scgyong.cardmemory.databinding.ActivityMainBinding
 
@@ -28,24 +29,12 @@ class MainActivity : AppCompatActivity() {
     // 여러 ImageButton이 동일한 함수로 들어온다는 것을 확인하기 위해 만든다.
     fun onCardClicked(v: View) {
 
-        // v는 클릭된 View 객체이다.
-        // OOP 에서
-        //  onCardClicked = message
-        //  v = sender
-        //  this = receiver
-        // 여러 버튼이 같은 함수로 들어오기 때문에 어떤 버튼이 눌렸는지는
-        // View의 id 값을 통해 구분할 수 있다.
+        // Kotlin의 삼항 연산자 대신 if-else 표현식을 사용하여 카드의 ID를 가져온다.
+        //val name = v.id > 0 ? resources.getResourceEntryName(v.id) : "No ID"
+        val name = if (v.id > 0) resources.getResourceEntryName(v.id) else "No ID"
+        val msg = "Clicked: $name(${v.id})"
+        Log.d("CardGame", msg)
 
-        // Kotlin에서는 문자열 안에 변수 값을 직접 넣을 수 있는데
-        // 이를 String Interpolation(문자열 보간)이라고 한다.
-        // $변수 또는 ${수식} 형태로 사용하며, 아래 코드에서는 v.id 값이 문자열 안에 들어간다.
-        Log.d("CardGame", "clicked id=${v.id}")
-
-        // 로그는 Android Studio 의 Menu->View->Tool Windows->Logcat 에서 볼 수 있다.
-
-        // 위 로그는 정수 형태의 id 값이 출력된다.
-        // 버튼의 실제 이름(card00, card01 등)을 보고 싶다면
-        // resources.getResourceEntryName()을 사용하여 id에 대응되는 이름을 얻을 수 있다.
-        //Log.d("CardGame", "clicked ${resources.getResourceEntryName(v.id)}")
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }
