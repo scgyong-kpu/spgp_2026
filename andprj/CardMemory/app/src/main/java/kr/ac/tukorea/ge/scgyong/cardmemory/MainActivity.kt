@@ -1,5 +1,9 @@
 package kr.ac.tukorea.ge.scgyong.cardmemory
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -14,6 +18,7 @@ import kr.ac.tukorea.ge.scgyong.cardmemory.model.GameState
 
 class MainActivity : AppCompatActivity() {
     companion object {
+        private const val CARD_ANIMATION_DURATION = 300L
         private const val GAME_STATE_JSON_KEY = "game_state_json"
         private const val GAME_STATE_PREFS_NAME = "game_state_prefs"
     }
@@ -132,7 +137,7 @@ class MainActivity : AppCompatActivity() {
 
         // 모든 카드를 다시 뒷면으로 돌리고, 이전 게임에서 사라진 카드도 다시 보이게 만든다.
         cardButtons.indices.forEach { index ->
-            closeCard(index)
+            showCardBackInstant(index)
         }
 
         updateFlipCountText()
@@ -146,16 +151,16 @@ class MainActivity : AppCompatActivity() {
 
             if (cardIndex == null) {
                 // null 은 이미 제거된 카드이므로 버튼도 화면에서 숨긴다.
-                removeCard(index)
+                hideCardInstant(index)
                 return@forEachIndexed
             }
 
             if (index == gameState.openedCardIndex) {
                 // 현재 열려 있는 카드 한 장은 앞면 이미지로 복원한다.
-                openCard(index)
+                showCardFrontInstant(index)
             } else {
                 // 나머지 살아 있는 카드는 아직 닫힌 상태이므로 뒷면으로 그린다.
-                closeCard(index)
+                showCardBackInstant(index)
             }
         }
 
@@ -163,22 +168,107 @@ class MainActivity : AppCompatActivity() {
         updateFlipCountText()
     }
 
-    // 지정한 카드 위치를 앞면으로 연다.
-    private fun openCard(index: Int) {
+    // startNewGame 이나 renderGameState 처럼 화면을 즉시 맞춰야 할 때는 애니메이션 없이 앞면을 그린다.
+    private fun showCardFrontInstant(index: Int) {
         val cardIndex = gameState.cardIndices[index] ?: return
-        cardButtons[index].visibility = View.VISIBLE
-        cardButtons[index].setImageResource(imageResIds[cardIndex])
+        val button = cardButtons[index]
+        button.animate().cancel()
+        button.clearAnimation()
+        button.visibility = View.VISIBLE
+        button.alpha = 1f
+        button.rotationY = 0f
+        button.setImageResource(imageResIds[cardIndex])
     }
 
-    // 지정한 카드 위치를 뒷면으로 닫는다.
+    // 복원이나 재시작 중에는 카드가 하나씩 뒤집히지 않도록 뒷면도 즉시 반영한다.
+    private fun showCardBackInstant(index: Int) {
+        val button = cardButtons[index]
+        button.animate().cancel()
+        button.clearAnimation()
+        button.visibility = View.VISIBLE
+        button.alpha = 1f
+        button.rotationY = 0f
+        button.setImageResource(R.mipmap.card_blue_back)
+    }
+
+    // 이미 제거된 카드를 다시 그릴 때는 페이드아웃 없이 바로 숨긴다.
+    private fun hideCardInstant(index: Int) {
+        val button = cardButtons[index]
+        button.animate().cancel()
+        button.clearAnimation()
+        button.alpha = 1f
+        button.rotationY = 0f
+        button.visibility = View.INVISIBLE
+    }
+
+    // flip 애니메이션은 반쯤 돌아간 시점에 이미지를 바꾸는 방식으로 앞뒤가 뒤집히는 느낌을 만든다.
+    // 첫 절반은 0 -> 90, 중간에서 midAction 실행, 그 다음 -90 -> 0 으로 돌아온다.
+    private fun animateFlip(index: Int, beforeAction: () -> Unit, midAction: () -> Unit) {
+        val button = cardButtons[index]
+        button.animate().cancel()
+        button.clearAnimation()
+        button.visibility = View.VISIBLE
+        button.alpha = 1f
+        button.rotationY = 0f
+
+        beforeAction()
+
+        val firstHalf = ObjectAnimator.ofFloat(button, View.ROTATION_Y, 0f, 90f).apply {
+            duration = CARD_ANIMATION_DURATION / 2
+        }
+        val secondHalf = ObjectAnimator.ofFloat(button, View.ROTATION_Y, -90f, 0f).apply {
+            duration = CARD_ANIMATION_DURATION / 2
+        }
+
+        firstHalf.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                midAction()
+                button.rotationY = -90f
+            }
+        })
+
+        AnimatorSet().apply {
+            playSequentially(firstHalf, secondHalf)
+            start()
+        }
+    }
+
+    // 카드를 열 때는 먼저 뒷면 상태에서 시작하고, 애니메이션 중간에 앞면으로 바꾼다.
+    private fun openCard(index: Int) {
+        animateFlip(
+            index = index,
+            beforeAction = { showCardBackInstant(index) },
+            midAction = { showCardFrontInstant(index) },
+        )
+    }
+
+    // 카드를 닫을 때는 현재 앞면에서 시작해, 애니메이션 중간에 뒷면으로 바꿔 다시 닫는다.
     private fun closeCard(index: Int) {
-        cardButtons[index].visibility = View.VISIBLE
-        cardButtons[index].setImageResource(R.mipmap.card_blue_back)
+        animateFlip(
+            index = index,
+            beforeAction = { showCardFrontInstant(index) },
+            midAction = { showCardBackInstant(index) },
+        )
     }
 
-    // 지정한 카드 위치를 화면에서만 제거된 것처럼 보이게 만든다.
+    // 제거 애니메이션은 flip 대신 alpha 1 -> 0 으로 사라지는 느낌만 준다.
+    // 모델의 null 처리는 여기서 하지 않고, 호출한 쪽에서 따로 관리한다.
     private fun removeCard(index: Int) {
-        cardButtons[index].visibility = View.INVISIBLE
+        showCardFrontInstant(index)
+        val button = cardButtons[index]
+        button.animate().cancel()
+        button.clearAnimation()
+        button.visibility = View.VISIBLE
+        button.rotationY = 0f
+        button.alpha = 1f
+        button.animate()
+            .alpha(0f)
+            .setDuration(CARD_ANIMATION_DURATION)
+            .withEndAction {
+                button.visibility = View.INVISIBLE
+                button.alpha = 1f
+            }
+            .start()
     }
 
     fun handleCardClick(buttonIndex: Int) {
