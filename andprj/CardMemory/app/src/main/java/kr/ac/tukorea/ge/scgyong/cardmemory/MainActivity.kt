@@ -50,28 +50,6 @@ class MainActivity : AppCompatActivity() {
         startNewGame()
     }
 
-    private fun shuffleCardImages() {
-        // imageResIds 는 카드 종류별 리소스 표이고, 실제 카드 배치 순서는 cardIndices 가 담당한다.
-        // 따라서 게임을 섞을 때는 리소스 표 자체가 아니라 카드 배치 인덱스 배열을 섞어야 한다.
-        gameState.cardIndices.shuffle()
-        Log.d("MainActivity", "Shuffled cardIndices: ${gameState.cardIndices.joinToString(",")}")
-    }
-
-    private fun resetCardIndices() {
-        // 새 게임이 시작될 때 기본 카드 배치를 다시 만든다.
-        // 이 초기화가 먼저 끝나야 그 다음에 shuffleCardImages()로 배치를 섞을 수 있다.
-
-        // 카드 종류 인덱스를 두 장씩 연속해서 만들기 위해 정수 나눗셈을 사용한다.
-        // index 가 0, 1일 때는 0 / 2, 1 / 2가 모두 0이므로 [0, 0]이 된다.
-        // index 가 2, 3일 때는 2 / 2, 3 / 2가 모두 1이므로 [1, 1]이 된다.
-        // 이런 방식으로 index 가 두 칸씩 진행될 때마다 같은 카드 종류 번호가 두 번 반복된다.
-        // 따라서 전체 결과는 [0, 0, 1, 1, 2, 2, ...] 형태가 된다.
-        // 카드 종류가 8개이므로 imageResIds.size * 2 길이의 배열을 만들면 16장의 카드 구성이 완성된다.
-        gameState.cardIndices = Array(gameState.cardTypeCount * 2) { index -> index / 2 }
-
-        // shuffleCardImages()
-    }
-
     fun onRestartButtonClick(view: View) {
         // Restart 버튼은 바로 재시작하지 않고 먼저 확인 대화상자를 띄운다.
         // Android Studio 에서는 Ctrl+NumPad-/+ 단축키로 소스를 접거나 펼 수 있는데,
@@ -106,17 +84,10 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun isGameOver(): Boolean {
-        // 이제 게임 종료 여부는 화면의 visibility 가 아니라 모델 역할을 하는 cardIndices 로 판정한다.
-        // 모든 위치가 null 이면 16장의 카드가 모두 제거된 상태이므로 게임이 끝난 것이다.
-        return gameState.cardIndices.all { cardIndex ->
-            cardIndex == null
-        }
-    }
-
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
     private fun startNewGame() {
-        resetCardIndices()
+        gameState.resetCardIndices()
+        Log.d("MainActivity", "Shuffled cardIndices: ${gameState.cardIndices.joinToString(",")}")
 
         // 모든 카드를 다시 뒷면으로 돌리고, 맞춰서 사라진 카드도 다시 보이게 만든다.
         for (button in cardButtons) {
@@ -157,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 gameState.cardIndices[buttonIndex] = null
                 gameState.openedCardIndex = null
 
-                if (isGameOver()) {
+                if (gameState.isGameOver()) {
                     askRestart(R.string.game_over_dialog_title, R.string.game_over_dialog_message)
                 }
                 return
