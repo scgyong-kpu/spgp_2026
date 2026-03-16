@@ -45,13 +45,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shuffleCardImages() {
-        // Fisher-Yates 방식으로 카드 배치를 섞는다.
-        imageResIds.forEachIndexed { index, _ ->
-            val randomIndex = (index..imageResIds.size - 1).random()
-            val temp = imageResIds[index]
-            imageResIds[index] = imageResIds[randomIndex]
-            imageResIds[randomIndex] = temp
-        }
+        // Kotlin의 Array.shuffle()은 내부적으로 무작위 위치를 골라 원소를 섞는 방식이라
+        // 직접 Fisher-Yates 셔플을 구현했을 때와 목적이 같다.
+        // 차이는 구현 위치에 있는데, 기존 방식은 인덱스를 순회하며 교환 로직을 직접 써야 했고
+        // 지금 방식은 표준 라이브러리에 이미 준비된 함수를 호출해서 같은 의도를 더 짧고 명확하게 표현한다.
+        // 이런 형태의 shuffle() 호출은 Kotlin 표준 라이브러리에서 바로 제공하는 편의 함수이고,
+        // Java 배열에서는 같은 이름의 함수를 바로 호출할 수 없어서 보통 직접 구현하거나 다른 유틸리티를 사용해야 한다.
+        // 즉, 셔플 알고리즘의 개념이 바뀐 것이 아니라 직접 구현을 표준 함수 호출로 치환한 것이다.
+        imageResIds.shuffle()
         Log.d("MainActivity", "Shuffled imageResIds: ${imageResIds.joinToString(",")}")
     }
 
