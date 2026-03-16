@@ -56,27 +56,33 @@ class MainActivity : AppCompatActivity() {
         // cardButtons 배열에서 해당 인덱스의 버튼을 찾아서 button 을 바로 알 수 있다.
         val button = cardButtons[buttonIndex]
 
+        // buttonIndex에 해당하는 카드 이미지 리소스 ID를 가져온다.
+        val imgResId = imageResIds[buttonIndex]
+
         // openedCardIndex는 이전에 열려 있던 카드의 위치(인덱스)를 기억하는 변수이다.
         // 처음에는 아무 카드도 열려 있지 않으므로 null일 수 있다.
-        openedCardIndex?.let {
-            // openedCardIndex가 null이 아니면 let 블록이 실행된다.
-            // it 변수에는 openedCardIndex의 값이 들어 있다.
+        openedCardIndex?.let { index ->
+            // 이전에 열려 있던 카드 버튼을 가져온다.
+            val openedButton = cardButtons[index]
+            // 이전에 열려 있던 카드에 보여주어야 하는 이미지 리소스 ID를 가져온다.
+            val openedImgResId = imageResIds[index]
 
-            // 이전에 클릭된 카드가 있다면 그 카드를 다시 뒷면으로 돌린다.
-            // cardButtons 배열에서 인덱스를 이용해 해당 버튼을 다시 얻을 수 있다.
-            cardButtons[it].setImageResource(R.mipmap.card_blue_back)
+            if (openedImgResId == imgResId) {
+                // 이전에 열려 있던 카드와 현재 클릭된 카드가 같은 이미지라면
+                // 두 카드를 맞춘 것으로 간주하고 삭제를 시도해 본다
+                openedButton.visibility = View.GONE
+                button.visibility = View.GONE
+            } else {
+                // 이전에 열려 있던 카드와 현재 클릭된 카드가 다른 이미지라면
+                // 이전에 열려 있던 카드를 다시 뒷면으로 돌린다.
+                openedButton.setImageResource(R.mipmap.card_blue_back)
+            }
         }
 
-        // let 블록은 아래처럼 it 변수를 사용하지 않고 openedCardIndex를 직접 참조하는 방식으로도 작성할 수 있다.
-        // openedCardIndex?.let { index ->
-        //     cardButtons[index].setImageResource(R.mipmap.card_blue_back)
-        // }
+        // 현재 클릭된 카드의 이미지를 보여준다.
+        button.setImageResource(imgResId)
 
-        // 현재 클릭된 버튼의 이미지를 해당 위치에 표시해야 할 카드 이미지로 바꾼다.
-        val resId = imageResIds[buttonIndex] // buttonIndex에 해당하는 카드 이미지 리소스 ID를 가져온다.
-        button.setImageResource(resId)
-
-        // 클릭된 버튼이 인자로 넘어왔으므로 바로 저장 가능하다.
+        // 마지막 연 카드를 저장하는 코드를 그대로 둔다
         openedCardIndex = buttonIndex
     }
 }
