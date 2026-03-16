@@ -58,6 +58,13 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "Shuffled imageResIds: ${imageResIds.joinToString(",")}")
     }
 
+    fun onRestartButtonClick(view: View) {
+        startNewGame()
+    }
+
+    private fun startNewGame() {
+    }
+
     fun handleCardClick(buttonIndex: Int) {
         if (buttonIndex == openedCardIndex) {
             return
