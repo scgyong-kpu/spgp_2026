@@ -82,9 +82,8 @@ class MainActivity : AppCompatActivity() {
         // @StringRes 는 이 인자가 일반 정수가 아니라 문자열 리소스 ID여야 함을 알려 주는 표시이다.
         // 덕분에 실수로 다른 종류의 리소스 ID나 임의의 숫자를 넘겼을 때 IDE나 Lint가 더 잘 잡아줄 수 있다.
 
-        // 교육용 예시라서 값을 채우는 부분은 Builder 메서드 체이닝으로 직접 연결하고,
-        // create() 결과만 dlg 변수로 받아 실제 다이얼로그 객체를 분리해서 보여 준다.
-        val dlg: AlertDialog = AlertDialog.Builder(this)
+        // 교육용 예시라서 Builder 생성부터 show()까지를 한 번에 이어지는 체이닝으로 보여 준다.
+        AlertDialog.Builder(this)
             .setTitle(titleId)
             .setMessage(msgId)
             .setPositiveButton(R.string.dialog_yes) { _, _ ->
@@ -92,9 +91,7 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton(R.string.dialog_no, null)
             .create()
-
-        // show() 단계에서 화면에 표시한다.
-        dlg.show()
+            .show()
     }
 
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
