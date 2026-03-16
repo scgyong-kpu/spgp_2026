@@ -31,28 +31,22 @@ class MainActivity : AppCompatActivity() {
             binding.card30, binding.card31, binding.card32, binding.card33,
         )
 
-
+        // 카드 버튼들에 클릭 리스너를 연결한다. 
+        // 버튼의 인덱스를 여기서 전달해서 나중에 어떤 버튼이 클릭됐는지 Int 로 알 수 있게 한다.
         cardButtons.forEachIndexed { index, button ->
-            // 각 카드 버튼에 고유한 태그를 설정한다. (예: "0", "1", ..., "15")
-            button.tag = index
+            button.setOnClickListener {
+                onCardClicked(index)
+            }
         }
-
-        // 위 코드는 다음 코드와 같다
-        // for (i in cardButtons.indices) {
-        //     cardButtons[i].tag = i
-        // }
     }
 
     // XML의 android:onClick 속성으로 연결된 카드 버튼 클릭 처리 함수이다.
     // layout XML에서 여러 ImageButton이 동일한 onClick 함수를 사용하므로
     // 어떤 버튼이 눌렸든 이 함수 하나로 전달된다.
-    fun onCardClicked(v: View) {
-
-        // 클릭된 View 객체를 ImageButton으로 형변환한다.
-        // onClick의 매개변수 타입은 View이기 때문에 ImageButton 전용 함수
-        // (예: setImageResource)를 사용하려면 캐스팅이 필요하다.
-        // as? 는 안전 캐스팅으로, 실패하면 null을 반환한다.
-        val button = v as? ImageButton ?: return
+    fun onCardClicked(buttonIndex: Int) {
+        // buttonIndex 가 넘어왔으므로, 
+        // cardButtons 배열에서 해당 인덱스의 버튼을 찾아서 button 을 바로 알 수 있다.
+        val button = cardButtons[buttonIndex]
 
         // openedCardIndex는 이전에 열려 있던 카드의 위치(인덱스)를 기억하는 변수이다.
         // 처음에는 아무 카드도 열려 있지 않으므로 null일 수 있다.
@@ -73,9 +67,8 @@ class MainActivity : AppCompatActivity() {
         // 현재 클릭된 버튼의 이미지를 Ace of Spades로 변경한다.
         button.setImageResource(R.mipmap.card_as)
 
-        // 클릭된 버튼이 cardButtons 배열의 몇 번째인지 찾아서 저장한다.
-        openedCardIndex = button.tag as? Int
-        Log.d("MainActivity", "Clicked card index: $openedCardIndex")
+        // 클릭된 버튼이 인자로 넘어왔으므로 바로 저장 가능하다.
+        openedCardIndex = buttonIndex
     }
 }
 
