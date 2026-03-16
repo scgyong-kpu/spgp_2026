@@ -3,6 +3,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -133,6 +134,7 @@ class MainActivity : AppCompatActivity() {
 
     fun handleCardClick(buttonIndex: Int) {
         if (buttonIndex == openedCardIndex) {
+            Toast.makeText(this, R.string.card_already_open_toast, Toast.LENGTH_SHORT).show()
             return
         }
 

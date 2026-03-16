@@ -6,6 +6,7 @@
     <string name="restart_dialog_message">Do you want to start a new game?</string>
     <string name="game_over_dialog_title">Game Over</string>
     <string name="game_over_dialog_message">All cards are open. Do you want to start a new game?</string>
+    <string name="card_already_open_toast">This card is already open.</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
 </resources>
