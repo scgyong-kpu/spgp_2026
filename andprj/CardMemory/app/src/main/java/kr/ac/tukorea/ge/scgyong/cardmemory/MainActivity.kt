@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.scgyong.cardmemory
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
@@ -45,8 +46,18 @@ class MainActivity : AppCompatActivity() {
         )
 
         cardButtons.forEachIndexed { index, button ->
-            button.setOnClickListener {
-                handleCardClick(index)
+            button.setOnTouchListener { _, event ->
+                // ACTION_DOWN 은 손가락이 버튼에 닿는 순간이다.
+                // Click 대신 이 시점에 처리하면 손을 떼기 전에 카드가 바로 뒤집힌다.
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    handleCardClick(index)
+                    // true 를 반환하면 이 버튼이 이번 터치 시퀀스를 처리하겠다고 알리고,
+                    // 기본 Click 동작으로 이어지지 않게 막는다.
+                    true
+                } else {
+                    // 여기서는 ACTION_DOWN 에서만 동작이 필요하므로 나머지 이벤트는 직접 처리하지 않는다.
+                    false
+                }
             }
         }
 
@@ -120,9 +131,8 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "Shuffled cardIndices: ${gameState.cardIndices.joinToString(",")}")
 
         // 모든 카드를 다시 뒷면으로 돌리고, 이전 게임에서 사라진 카드도 다시 보이게 만든다.
-        for (button in cardButtons) {
-            button.setImageResource(R.mipmap.card_blue_back)
-            button.visibility = View.VISIBLE
+        cardButtons.indices.forEach { index ->
+            closeCard(index)
         }
 
         updateFlipCountText()
@@ -136,22 +146,39 @@ class MainActivity : AppCompatActivity() {
 
             if (cardIndex == null) {
                 // null 은 이미 제거된 카드이므로 버튼도 화면에서 숨긴다.
-                button.visibility = View.INVISIBLE
+                removeCard(index)
                 return@forEachIndexed
             }
 
-            button.visibility = View.VISIBLE
             if (index == gameState.openedCardIndex) {
                 // 현재 열려 있는 카드 한 장은 앞면 이미지로 복원한다.
-                button.setImageResource(imageResIds[cardIndex])
+                openCard(index)
             } else {
                 // 나머지 살아 있는 카드는 아직 닫힌 상태이므로 뒷면으로 그린다.
-                button.setImageResource(R.mipmap.card_blue_back)
+                closeCard(index)
             }
         }
 
         // 모델에 저장된 뒤집은 횟수도 함께 화면에 다시 표시한다.
         updateFlipCountText()
+    }
+
+    // 지정한 카드 위치를 앞면으로 연다.
+    private fun openCard(index: Int) {
+        val cardIndex = gameState.cardIndices[index] ?: return
+        cardButtons[index].visibility = View.VISIBLE
+        cardButtons[index].setImageResource(imageResIds[cardIndex])
+    }
+
+    // 지정한 카드 위치를 뒷면으로 닫는다.
+    private fun closeCard(index: Int) {
+        cardButtons[index].visibility = View.VISIBLE
+        cardButtons[index].setImageResource(R.mipmap.card_blue_back)
+    }
+
+    // 지정한 카드 위치를 화면에서만 제거된 것처럼 보이게 만든다.
+    private fun removeCard(index: Int) {
+        cardButtons[index].visibility = View.INVISIBLE
     }
 
     fun handleCardClick(buttonIndex: Int) {
@@ -160,24 +187,18 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val button = cardButtons[buttonIndex]
-
         // null 이면 이미 제거된 카드 위치이므로 추가 동작 없이 무시한다.
-        val cardIndex = gameState.cardIndices[buttonIndex] ?: return
-        val imgResId = imageResIds[cardIndex]
+        val pressedCardType = gameState.cardIndices[buttonIndex] ?: return
 
         // 이미 열려 있는 카드가 있으면 현재 카드와 비교한다.
         gameState.openedCardIndex?.let { index ->
-            val openedButton = cardButtons[index]
-
             // 이전에 열려 있던 카드가 이미 제거되었다면 더 비교할 것이 없으므로 그대로 종료한다.
-            val openedCardIndexValue = gameState.cardIndices[index] ?: return
-            val openedImgResId = imageResIds[openedCardIndexValue]
+            val openedCardType = gameState.cardIndices[index] ?: return
 
-            if (openedImgResId == imgResId) {
+            if (openedCardType == pressedCardType) {
                 // 같은 그림이면 두 카드를 화면에서 숨기고 모델 상태도 null 로 바꾼다.
-                openedButton.visibility = View.INVISIBLE
-                button.visibility = View.INVISIBLE
+                removeCard(index)
+                removeCard(buttonIndex)
                 gameState.cardIndices[index] = null
                 gameState.cardIndices[buttonIndex] = null
                 gameState.openedCardIndex = null
@@ -188,12 +209,12 @@ class MainActivity : AppCompatActivity() {
                 return
             } else {
                 // 다르면 이전 카드는 다시 뒷면으로 돌리고 현재 카드만 열린 상태로 유지한다.
-                openedButton.setImageResource(R.mipmap.card_blue_back)
+                closeCard(index)
             }
         }
 
         // 현재 카드를 공개하고 마지막으로 열린 카드 위치를 기록한다.
-        button.setImageResource(imgResId)
+        openCard(buttonIndex)
         incrementFlipCount()
         gameState.openedCardIndex = buttonIndex
     }
