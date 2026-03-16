@@ -52,9 +52,7 @@ class MainActivity : AppCompatActivity() {
     // 1. (해결)
     // 2. 카드 배치가 고정이라 게임이 매번 같은 패턴으로 시작합니다.
     //   - 메모리 게임 의도라면 사실상 정답 위치가 항상 같아져서 게임성이 없습니다.
-    // 3. 매칭이 성립한 뒤에도 openedCardIndex를 null로 비우지 않아 상태가 맞지 않게 남습니다.
-    //   - 다음 클릭 때는 이미 사라진 카드를 “이전에 열린 카드”로 취급하게 되어,
-    //   - 눈에 띄는 오동작은 적더라도 상태 관리가 틀어진 채 진행됩니다.
+    // 3. (해결)
     
 
     // XML의 android:onClick 속성으로 연결된 카드 버튼 클릭 처리 함수이다.
@@ -85,6 +83,10 @@ class MainActivity : AppCompatActivity() {
                 // 두 카드를 맞춘 것으로 간주하고 화면에서 제거한다
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
+
+                // 한 쌍이 맞춰졌으므로 현재 열려 있는 카드 상태를 비운다.
+                openedCardIndex = null
+                return
             } else {
                 // 이전에 열려 있던 카드와 현재 클릭된 카드가 다른 이미지라면
                 // 이전에 열려 있던 카드를 다시 뒷면으로 돌린다.
@@ -95,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         // 현재 클릭된 카드의 이미지를 보여준다.
         button.setImageResource(imgResId)
 
-        // 마지막 연 카드를 저장하는 코드를 그대로 둔다
+        // 현재 카드를 마지막으로 연 카드로 기록한다.
         openedCardIndex = buttonIndex
     }
 }
