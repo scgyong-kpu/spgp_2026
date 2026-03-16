@@ -11,6 +11,14 @@ class MainActivity : AppCompatActivity() {
     // activity_main.xml의 View들을 안전하게 접근하기 위한 ViewBinding 객체
     private lateinit var binding: ActivityMainBinding
     private lateinit var cardButtons: List<ImageButton>
+
+    // 카드 이미지 리소스 ID 배열. 이 순서대로 카드 버튼에 이미지를 설정할 것이다.
+    private val imageResIds = arrayOf(
+        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
+        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
+        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
+        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
+    )
     private var openedCardIndex: Int? = null // 이전에 클릭된 카드 버튼의 인덱스를 저장하는 변수
     //private var openedCardIndex: Int = -1 // 정수와 -1 을 쓰는 것보다 null을 쓰는 것이 더 명확하다.
 
@@ -64,8 +72,9 @@ class MainActivity : AppCompatActivity() {
         //     cardButtons[index].setImageResource(R.mipmap.card_blue_back)
         // }
 
-        // 현재 클릭된 버튼의 이미지를 Ace of Spades로 변경한다.
-        button.setImageResource(R.mipmap.card_as)
+        // 현재 클릭된 버튼의 이미지를 해당 위치에 표시해야 할 카드 이미지로 바꾼다.
+        val resId = imageResIds[buttonIndex] // buttonIndex에 해당하는 카드 이미지 리소스 ID를 가져온다.
+        button.setImageResource(resId)
 
         // 클릭된 버튼이 인자로 넘어왔으므로 바로 저장 가능하다.
         openedCardIndex = buttonIndex
