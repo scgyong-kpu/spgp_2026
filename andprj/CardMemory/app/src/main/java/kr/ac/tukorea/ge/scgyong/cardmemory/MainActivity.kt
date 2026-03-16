@@ -1,9 +1,12 @@
 package kr.ac.tukorea.ge.scgyong.cardmemory
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.scgyong.cardmemory.databinding.ActivityMainBinding
 
@@ -60,8 +63,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onRestartButtonClick(view: View) {
-        // Restart 버튼이 눌려도 게임이 시작된다
-        startNewGame()
+        // Restart 버튼은 바로 재시작하지 않고 먼저 확인 대화상자를 띄운다.
+        // Android Studio 에서는 Ctrl+NumPad-/+ 단축키로 소스를 접거나 펼 수 있는데,
+        // 리소스 문자열도 접으면 로드해서 보여준다.
+        askRestart(R.string.restart_dialog_title, R.string.restart_dialog_message)
     }
 
     // 현재 flipCount 값을 상단 TextView에 반영한다.
@@ -73,6 +78,40 @@ class MainActivity : AppCompatActivity() {
     private fun incrementFlipCount() {
         flipCount += 1
         updateFlipCountText()
+    }
+
+    private fun askRestart(@StringRes titleId: Int, @StringRes msgId: Int) {
+        // @StringRes 는 이 인자가 일반 정수가 아니라 문자열 리소스 ID여야 함을 알려 주는 표시이다.
+        // 덕분에 실수로 다른 종류의 리소스 ID나 임의의 숫자를 넘겼을 때 IDE나 Lint가 더 잘 잡아줄 수 있다.
+
+        // 교육용 예시라서 Builder Pattern의 단계는 드러내되, 지역변수는 builder와 dlg만 사용한다.
+        // titleId, msgId 는 이미 문자열 리소스 ID이므로 getString()으로 미리 꺼내지 않고 Builder에 바로 전달한다.
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+
+        // Builder에 제목과 메시지를 차례대로 채워 넣는다.
+        builder.setTitle(titleId)
+        builder.setMessage(msgId)
+
+        // Yes 를 누르면 새 게임을 시작한다.
+        builder.setPositiveButton(
+            R.string.dialog_yes,
+            DialogInterface.OnClickListener { dialogInterface: DialogInterface, which: Int ->
+                startNewGame()
+            }
+        )
+
+        // No 를 누르면 대화상자만 닫고 현재 게임을 계속 진행한다.
+        builder.setNegativeButton(
+            R.string.dialog_no,
+            DialogInterface.OnClickListener { dialogInterface: DialogInterface, which: Int ->
+                dialogInterface.dismiss()
+            }
+        )
+
+        // create() 단계에서 실제 AlertDialog 객체를 만들고,
+        // show() 단계에서 화면에 표시한다는 점을 분리해서 보여주기 위해 dlg 변수로 한 번 받는다.
+        val dlg: AlertDialog = builder.create()
+        dlg.show()
     }
 
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
