@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.scgyong.cardmemory.databinding.ActivityMainBinding
 import kr.ac.tukorea.ge.scgyong.cardmemory.model.GameState
+import kr.ac.tukorea.ge.scgyong.cardmemory.model.SelectResult
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -278,40 +279,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun handleCardClick(buttonIndex: Int) {
-        if (buttonIndex == gameState.openedCardIndex) {
-            Toast.makeText(this, R.string.card_already_open_toast, Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // null 이면 이미 제거된 카드 위치이므로 추가 동작 없이 무시한다.
-        val pressedCardType = gameState.cardIndices[buttonIndex] ?: return
-
-        // 이미 열려 있는 카드가 있으면 현재 카드와 비교한다.
-        gameState.openedCardIndex?.let { index ->
-            // 이전에 열려 있던 카드가 이미 제거되었다면 더 비교할 것이 없으므로 그대로 종료한다.
-            val openedCardType = gameState.cardIndices[index] ?: return
-
-            if (openedCardType == pressedCardType) {
-                // 같은 그림이면 두 카드를 화면에서 숨기고 모델 상태도 null 로 바꾼다.
-                removeCard(index)
+        val prev = gameState.openedCardIndex
+        val result = gameState.selectCard(buttonIndex)
+        when (result) {
+            SelectResult.ALREADY_MATCHED -> {
+                // 이미 짝이 맞은 카드는 다시 선택할 수 없으므로 아무 동작도 하지 않는다.
+                return
+            }
+            SelectResult.ALREADY_OPEN -> {
+                // 이미 열려 있는 카드를 다시 누른 경우는 Toast 메시지로 알려주고 아무 동작도 하지 않는다.
+                Toast.makeText(this, R.string.card_already_open_toast, Toast.LENGTH_SHORT).show()
+                return
+            }
+            SelectResult.FIRST_OPENED -> {
+                // 아직 열려 있는 카드가 없어서 이번 카드가 첫 번째로 열린 경우는 애니메이션과 게임 종료 체크 없이 바로 열린 상태로 유지한다.
+                openCard(buttonIndex)
+                incrementFlipCount()
+                return
+            }
+            SelectResult.MISMATCHED -> {
+                // 카드 종류가 일치하지 않으면, 이번에 선택한 카드가 새로 열린 카드가 된다.
+                // 이전에 열려 있던 카드는 애니메이션으로 닫히고, 현재 카드는 애니메이션으로 열린 상태로 유지한다.
+                closeCard(prev!!)
+                openCard(buttonIndex)
+                incrementFlipCount()
+                return
+            }
+            SelectResult.MATCHED -> {
+                // 카드 종류가 일치하면, 두 카드를 모두 애니메이션으로 제거한다.
+                removeCard(prev!!)
                 removeCard(buttonIndex)
-                gameState.cardIndices[index] = null
-                gameState.cardIndices[buttonIndex] = null
-                gameState.openedCardIndex = null
+
+                // 애니메이션 완료 후에 하는 것이 더 자연스럽지만, 간단히 카드 제거와 게임 종료 체크를 바로 한다.
+                gameState.removeCard(prev)
+                gameState.removeCard(buttonIndex)
 
                 if (gameState.isGameOver()) {
                     askRestart(R.string.game_over_dialog_title, R.string.game_over_dialog_message)
                 }
                 return
-            } else {
-                // 다르면 이전 카드는 다시 뒷면으로 돌리고 현재 카드만 열린 상태로 유지한다.
-                closeCard(index)
             }
         }
-
-        // 현재 카드를 공개하고 마지막으로 열린 카드 위치를 기록한다.
-        openCard(buttonIndex)
-        incrementFlipCount()
-        gameState.openedCardIndex = buttonIndex
     }
 }
