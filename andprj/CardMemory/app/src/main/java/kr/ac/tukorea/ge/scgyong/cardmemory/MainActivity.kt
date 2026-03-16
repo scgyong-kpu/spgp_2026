@@ -171,45 +171,50 @@ class MainActivity : AppCompatActivity() {
     // startNewGame 이나 renderGameState 처럼 화면을 즉시 맞춰야 할 때는 애니메이션 없이 앞면을 그린다.
     private fun showCardFrontInstant(index: Int) {
         val cardIndex = gameState.cardIndices[index] ?: return
-        val button = cardButtons[index]
-        button.animate().cancel()
-        button.clearAnimation()
-        button.visibility = View.VISIBLE
-        button.alpha = 1f
-        button.rotationY = 0f
-        button.setImageResource(imageResIds[cardIndex])
+        with(cardButtons[index]) {
+            animate().cancel()
+            clearAnimation()
+            visibility = View.VISIBLE
+            alpha = 1f
+            rotationY = 0f
+            setImageResource(imageResIds[cardIndex])
+        }
     }
 
     // 복원이나 재시작 중에는 카드가 하나씩 뒤집히지 않도록 뒷면도 즉시 반영한다.
     private fun showCardBackInstant(index: Int) {
-        val button = cardButtons[index]
-        button.animate().cancel()
-        button.clearAnimation()
-        button.visibility = View.VISIBLE
-        button.alpha = 1f
-        button.rotationY = 0f
-        button.setImageResource(R.mipmap.card_blue_back)
+        with(cardButtons[index]) {
+            animate().cancel()
+            clearAnimation()
+            visibility = View.VISIBLE
+            alpha = 1f
+            rotationY = 0f
+            setImageResource(R.mipmap.card_blue_back)
+        }
     }
 
     // 이미 제거된 카드를 다시 그릴 때는 페이드아웃 없이 바로 숨긴다.
     private fun hideCardInstant(index: Int) {
-        val button = cardButtons[index]
-        button.animate().cancel()
-        button.clearAnimation()
-        button.alpha = 1f
-        button.rotationY = 0f
-        button.visibility = View.INVISIBLE
+        with(cardButtons[index]) {
+            animate().cancel()
+            clearAnimation()
+            alpha = 1f
+            rotationY = 0f
+            visibility = View.INVISIBLE
+        }
     }
 
     // flip 애니메이션은 반쯤 돌아간 시점에 이미지를 바꾸는 방식으로 앞뒤가 뒤집히는 느낌을 만든다.
     // 첫 절반은 0 -> 90, 중간에서 midAction 실행, 그 다음 -90 -> 0 으로 돌아온다.
     private fun animateFlip(index: Int, beforeAction: () -> Unit, midAction: () -> Unit) {
         val button = cardButtons[index]
-        button.animate().cancel()
-        button.clearAnimation()
-        button.visibility = View.VISIBLE
-        button.alpha = 1f
-        button.rotationY = 0f
+        with(button) {
+            animate().cancel()
+            clearAnimation()
+            visibility = View.VISIBLE
+            alpha = 1f
+            rotationY = 0f
+        }
 
         beforeAction()
 
@@ -255,20 +260,21 @@ class MainActivity : AppCompatActivity() {
     // 모델의 null 처리는 여기서 하지 않고, 호출한 쪽에서 따로 관리한다.
     private fun removeCard(index: Int) {
         showCardFrontInstant(index)
-        val button = cardButtons[index]
-        button.animate().cancel()
-        button.clearAnimation()
-        button.visibility = View.VISIBLE
-        button.rotationY = 0f
-        button.alpha = 1f
-        button.animate()
-            .alpha(0f)
-            .setDuration(CARD_ANIMATION_DURATION)
-            .withEndAction {
-                button.visibility = View.INVISIBLE
-                button.alpha = 1f
-            }
-            .start()
+        with(cardButtons[index]) {
+            animate().cancel()
+            clearAnimation()
+            visibility = View.VISIBLE
+            rotationY = 0f
+            alpha = 1f
+            animate()
+                .alpha(0f)
+                .setDuration(CARD_ANIMATION_DURATION)
+                .withEndAction {
+                    visibility = View.INVISIBLE
+                    alpha = 1f
+                }
+                .start()
+        }
     }
 
     fun handleCardClick(buttonIndex: Int) {
