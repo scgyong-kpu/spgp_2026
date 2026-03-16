@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         // 버튼의 인덱스를 여기서 전달해서 나중에 어떤 버튼이 클릭됐는지 Int 로 알 수 있게 한다.
         cardButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                onCardClicked(index)
+                handleCardClick(index)
             }
         }
     }
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     // XML의 android:onClick 속성으로 연결된 카드 버튼 클릭 처리 함수이다.
     // layout XML에서 여러 ImageButton이 동일한 onClick 함수를 사용하므로
     // 어떤 버튼이 눌렸든 이 함수 하나로 전달된다.
-    fun onCardClicked(buttonIndex: Int) {
+    fun handleCardClick(buttonIndex: Int) {
         // buttonIndex 가 넘어왔으므로, 
         // cardButtons 배열에서 해당 인덱스의 버튼을 찾아서 button 을 바로 알 수 있다.
         val button = cardButtons[buttonIndex]
