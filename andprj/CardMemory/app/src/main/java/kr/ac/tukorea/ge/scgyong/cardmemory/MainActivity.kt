@@ -41,7 +41,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        shuffleCardImages()
+        // 개발 중에는 굳이 셔플하지 않고 고정된 순서로 테스트할 수 있도록 주석 처리한다.
+        // 나중에 완성된 버전에서는 이 부분의 주석을 해제하여 게임이 시작될 때마다 카드가 무작위로 섞이도록 한다.
+        // shuffleCardImages()
     }
 
     private fun shuffleCardImages() {
