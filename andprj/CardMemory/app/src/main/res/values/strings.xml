@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">CardMemory</string>
-    <string name="flip_count_initial">Flip Count: 0</string>
+    <string name="flip_count_format">Flip Count: %1$d</string>
     <string name="restart_game">Restart</string>
 </resources>

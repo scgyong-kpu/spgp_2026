@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     )
     // 직전에 뒤집은 카드 위치를 기억한다.
     private var openedCardIndex: Int? = null
+    // 사용자가 카드를 뒤집은 횟수를 누적한다.
+    private var flipCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +64,17 @@ class MainActivity : AppCompatActivity() {
         startNewGame()
     }
 
+    // 현재 flipCount 값을 상단 TextView에 반영한다.
+    private fun updateFlipCountText() {
+        binding.flipCountTextView.text = getString(R.string.flip_count_format, flipCount)
+    }
+
+    // 숨은 부작용이 있는 setter 대신 명시적인 함수로 횟수 증가와 화면 갱신을 함께 처리한다.
+    private fun incrementFlipCount() {
+        flipCount += 1
+        updateFlipCountText()
+    }
+
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
     private fun startNewGame() {
         // 개발 중에는 굳이 셔플하지 않고 고정된 순서로 테스트할 수 있도록 주석 처리한다.
@@ -73,6 +86,10 @@ class MainActivity : AppCompatActivity() {
             button.setImageResource(R.mipmap.card_blue_back)
             button.visibility = View.VISIBLE
         }
+
+        // 새 게임이 시작되므로 뒤집은 횟수와 열린 카드 상태도 처음으로 되돌린다.
+        flipCount = 0
+        updateFlipCountText()
         openedCardIndex = null
     }
 
@@ -103,6 +120,8 @@ class MainActivity : AppCompatActivity() {
 
         // 현재 카드를 공개하고 마지막 선택으로 기록한다.
         button.setImageResource(imgResId)
+        // 실제로 새 카드가 열리는 순간에만 뒤집은 횟수를 증가시킨다.
+        incrementFlipCount()
         openedCardIndex = buttonIndex
     }
 }
