@@ -1,5 +1,8 @@
 package kr.ac.tukorea.ge.scgyong.cardmemory.model
 
+import org.json.JSONArray
+import org.json.JSONObject
+
 class GameState(val cardTypeCount: Int) {
     var cardIndices: Array<Int?> = Array(cardTypeCount * 2) { index -> index / 2 }
     var openedCardIndex: Int? = null
@@ -24,5 +27,46 @@ class GameState(val cardTypeCount: Int) {
         return cardIndices.all { cardIndex ->
             cardIndex == null
         }
+    }
+
+    // 현재 게임 상태를 저장용 JSON 문자열로 바꾼다.
+    fun toJson(): String {
+        val json = JSONObject()
+        val cardIndicesJson = JSONArray()
+
+        for (cardIndex in cardIndices) {
+            if (cardIndex == null) {
+                cardIndicesJson.put(JSONObject.NULL)
+            } else {
+                cardIndicesJson.put(cardIndex)
+            }
+        }
+
+        json.put("cardTypeCount", cardTypeCount)
+        json.put("cardIndices", cardIndicesJson)
+        json.put("openedCardIndex", openedCardIndex ?: JSONObject.NULL)
+        json.put("flipCount", flipCount)
+        return json.toString()
+    }
+
+    // 저장해 둔 JSON 문자열에서 모델 상태를 다시 읽어온다.
+    fun loadFromJson(str: String) {
+        val json = JSONObject(str)
+        val cardIndicesJson = json.getJSONArray("cardIndices")
+
+        cardIndices = Array(cardIndicesJson.length()) { index ->
+            if (cardIndicesJson.isNull(index)) {
+                null
+            } else {
+                cardIndicesJson.getInt(index)
+            }
+        }
+
+        openedCardIndex = if (json.isNull("openedCardIndex")) {
+            null
+        } else {
+            json.getInt("openedCardIndex")
+        }
+        flipCount = json.getInt("flipCount")
     }
 }
