@@ -18,9 +18,13 @@ class MainActivity : AppCompatActivity() {
     private val imageResIds = arrayOf(
         R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
         R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
-        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
-        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
     )
+
+    // 카드 종류 인덱스를 카드 버튼과 매핑한다.
+    // Resource ID 는 View 의 영역이고, cardIndex 는 Model 의 영역이다.
+    // 게임이 시작될 때마다 이 배열을 섞어서 카드 배치를 무작위로 만든다.
+    // 값이 null 이면 그 위치의 카드는 이미 맞춰져서 제거된 상태로 본다.
+    private lateinit var cardIndices: Array<Int?>
     // 직전에 뒤집은 카드 위치를 기억한다.
     private var openedCardIndex: Int? = null
     // 사용자가 카드를 뒤집은 횟수를 누적한다.
@@ -50,15 +54,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shuffleCardImages() {
-        // Kotlin의 Array.shuffle()은 내부적으로 무작위 위치를 골라 원소를 섞는 방식이라
-        // 직접 Fisher-Yates 셔플을 구현했을 때와 목적이 같다.
-        // 차이는 구현 위치에 있는데, 기존 방식은 인덱스를 순회하며 교환 로직을 직접 써야 했고
-        // 지금 방식은 표준 라이브러리에 이미 준비된 함수를 호출해서 같은 의도를 더 짧고 명확하게 표현한다.
-        // 이런 형태의 shuffle() 호출은 Kotlin 표준 라이브러리에서 바로 제공하는 편의 함수이고,
-        // Java 배열에서는 같은 이름의 함수를 바로 호출할 수 없어서 보통 직접 구현하거나 다른 유틸리티를 사용해야 한다.
-        // 즉, 셔플 알고리즘의 개념이 바뀐 것이 아니라 직접 구현을 표준 함수 호출로 치환한 것이다.
-        imageResIds.shuffle()
-        Log.d("MainActivity", "Shuffled imageResIds: ${imageResIds.joinToString(",")}")
+        // imageResIds 는 카드 종류별 리소스 표이고, 실제 카드 배치 순서는 cardIndices 가 담당한다.
+        // 따라서 게임을 섞을 때는 리소스 표 자체가 아니라 카드 배치 인덱스 배열을 섞어야 한다.
+        cardIndices.shuffle()
+        Log.d("MainActivity", "Shuffled cardIndices: ${cardIndices.joinToString(",")}")
+    }
+
+    private fun resetCardIndices() {
+        // 새 게임이 시작될 때 기본 카드 배치를 다시 만든다.
+        // 이 초기화가 먼저 끝나야 그 다음에 shuffleCardImages()로 배치를 섞을 수 있다.
+
+        // 카드 종류 인덱스를 두 장씩 연속해서 만들기 위해 정수 나눗셈을 사용한다.
+        // index 가 0, 1일 때는 0 / 2, 1 / 2가 모두 0이므로 [0, 0]이 된다.
+        // index 가 2, 3일 때는 2 / 2, 3 / 2가 모두 1이므로 [1, 1]이 된다.
+        // 이런 방식으로 index 가 두 칸씩 진행될 때마다 같은 카드 종류 번호가 두 번 반복된다.
+        // 따라서 전체 결과는 [0, 0, 1, 1, 2, 2, ...] 형태가 된다.
+        // 카드 종류가 8개이므로 imageResIds.size * 2 길이의 배열을 만들면 16장의 카드 구성이 완성된다.
+        cardIndices = Array(imageResIds.size * 2) { index -> index / 2 }
+
+        // shuffleCardImages()
     }
 
     fun onRestartButtonClick(view: View) {
@@ -96,29 +110,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isGameOver(): Boolean {
-        // 전통적인 방식으로 쓰면 다음처럼 반복문을 돌며 하나라도 남아 있는 카드가 있으면 false 를 반환할 수 있다.
-        // for (button in cardButtons) {
-        //     if (button.visibility != View.INVISIBLE) {
-        //         return false
-        //     }
-        // }
-        // return true
-
-        return cardButtons.all { button ->
-            button.visibility == View.INVISIBLE
+        // 이제 게임 종료 여부는 화면의 visibility 가 아니라 모델 역할을 하는 cardIndices 로 판정한다.
+        // 모든 위치가 null 이면 16장의 카드가 모두 제거된 상태이므로 게임이 끝난 것이다.
+        return cardIndices.all { cardIndex ->
+            cardIndex == null
         }
-        // isVisible 확장 프로퍼티를 사용하면 "보이는 카드가 하나라도 남아 있는가"를 더 직접적으로 표현할 수도 있다.
-        // 이걸 쓰려면 import androidx.core.view.isVisible 도 추가해야 한다.
-        // return cardButtons.none { button ->
-        //     button.isVisible
-        // }
     }
 
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
     private fun startNewGame() {
-        // 개발 중에는 굳이 셔플하지 않고 고정된 순서로 테스트할 수 있도록 주석 처리한다.
-        // 나중에 완성된 버전에서는 이 부분의 주석을 해제하여 게임이 시작될 때마다 카드가 무작위로 섞이도록 한다.
-        // shuffleCardImages()
+        resetCardIndices()
 
         // 모든 카드를 다시 뒷면으로 돌리고, 맞춰서 사라진 카드도 다시 보이게 만든다.
         for (button in cardButtons) {
@@ -139,17 +140,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         val button = cardButtons[buttonIndex]
-        val imgResId = imageResIds[buttonIndex]
+        // cardIndices 에서 null 이 나오면 이미 제거된 카드 위치라는 뜻이므로 더 진행하지 않는다.
+        val cardIndex = cardIndices[buttonIndex] ?: return
+        val imgResId = imageResIds[cardIndex]
 
         // 이미 열린 카드가 있으면 현재 카드와 비교한다.
         openedCardIndex?.let { index ->
             val openedButton = cardButtons[index]
-            val openedImgResId = imageResIds[index]
+            // 이전에 열려 있던 카드도 이미 제거되었다면 비교할 대상이 없으므로 그대로 종료한다.
+            val openedCardIndexValue = cardIndices[index] ?: return
+            val openedImgResId = imageResIds[openedCardIndexValue]
 
             if (openedImgResId == imgResId) {
                 // 같은 그림이면 두 카드를 화면에서 숨긴다.
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
+                // 같은 그림을 찾았으므로 두 위치는 더 이상 카드가 없는 상태를 null 로 기록한다.
+                cardIndices[index] = null
+                cardIndices[buttonIndex] = null
                 openedCardIndex = null
 
                 if (isGameOver()) {
