@@ -82,7 +82,8 @@ class MainActivity : AppCompatActivity() {
         // @StringRes 는 이 인자가 일반 정수가 아니라 문자열 리소스 ID여야 함을 알려 주는 표시이다.
         // 덕분에 실수로 다른 종류의 리소스 ID나 임의의 숫자를 넘겼을 때 IDE나 Lint가 더 잘 잡아줄 수 있다.
 
-        // 교육용 예시라서 Builder 생성부터 show()까지를 한 번에 이어지는 체이닝으로 보여 준다.
+        // AlertDialog 객체를 따로 보관하지 않고
+        // create()를 생략하고 Builder.show()를 바로 사용해도 된다.
         AlertDialog.Builder(this)
             .setTitle(titleId)
             .setMessage(msgId)
@@ -90,7 +91,6 @@ class MainActivity : AppCompatActivity() {
                 startNewGame()
             }
             .setNegativeButton(R.string.dialog_no, null)
-            .create()
             .show()
     }
 
