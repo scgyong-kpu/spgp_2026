@@ -49,10 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 다음 세 가지 문제를 해결할 예정임:
-    // 1. 같은 카드를 두 번 연속 누르면 자기 자신과 매칭된 것으로 처리되어 사라집니다.
-    //   - 이전 카드 인덱스와 현재 카드 인덱스가 같은지 검사하지 않고 
-    //   - openedImgResId == imgResId만 비교합니다. 
-    //   - 지금은 동일한 버튼을 다시 눌러도 같은 이미지 리소스이므로 한 장짜리 카드가 매칭된 것처럼 INVISIBLE 처리됩니다.
+    // 1. (해결)
     // 2. 카드 배치가 고정이라 게임이 매번 같은 패턴으로 시작합니다.
     //   - 메모리 게임 의도라면 사실상 정답 위치가 항상 같아져서 게임성이 없습니다.
     // 3. 매칭이 성립한 뒤에도 openedCardIndex를 null로 비우지 않아 상태가 맞지 않게 남습니다.
@@ -64,6 +61,10 @@ class MainActivity : AppCompatActivity() {
     // layout XML에서 여러 ImageButton이 동일한 onClick 함수를 사용하므로
     // 어떤 버튼이 눌렸든 이 함수 하나로 전달된다.
     fun handleCardClick(buttonIndex: Int) {
+        if (buttonIndex == openedCardIndex) {
+            // 같은 카드를 두 번 연속 누른 경우에는 아무 처리도 하지 않고 그냥 리턴한다.
+            return
+        }
         // buttonIndex 가 넘어왔으므로, 
         // cardButtons 배열에서 해당 인덱스의 버튼을 찾아서 button 을 바로 알 수 있다.
         val button = cardButtons[buttonIndex]
