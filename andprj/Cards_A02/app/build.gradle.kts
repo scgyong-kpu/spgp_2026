@@ -10,6 +10,9 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
     defaultConfig {
         applicationId = "kr.ac.tukorea.ge.spgp.scgyong.cardsa02"
         minSdk = 24
