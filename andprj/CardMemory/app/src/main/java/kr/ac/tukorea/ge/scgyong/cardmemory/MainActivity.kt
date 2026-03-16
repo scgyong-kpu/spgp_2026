@@ -90,14 +90,16 @@ class MainActivity : AppCompatActivity() {
         builder.setTitle(titleId)
         builder.setMessage(msgId)
 
-        // Yes 버튼 리스너는 내부적으로 두 인자(DialogInterface, which)를 받는 함수 형태다.
-        // 그래서 둘 다 사용하지 않더라도 { _, _ -> ... }처럼 인자 자리는 맞춰 주어야 한다.
+        // setPositiveButton 은 마지막 인자가 람다이므로 괄호 밖으로 빼는 trailing lambda 문법을 사용할 수 있다.
+        // 람다는 내부적으로 두 인자(DialogInterface, which)를 받는 함수 형태라서,
+        // 둘 다 사용하지 않더라도 { _, _ -> ... }처럼 인자 자리는 맞춰 주어야 한다.
         // 여기서는 두 값이 필요 없으므로 밑줄 두 개로 받고 startNewGame()만 호출한다.
-        builder.setPositiveButton(R.string.dialog_yes, { _, _ ->
+        builder.setPositiveButton(R.string.dialog_yes) { _, _ ->
             startNewGame()
-        })
+        }
 
         // No 는 별도 동작이 없으므로 null 을 넘기면 AlertDialog 가 기본적으로 대화상자만 닫아 준다.
+        // 이쪽은 람다를 넘기는 대신 null 을 전달하므로 trailing lambda 문법을 적용할 대상이 없다.
         // 즉, 이 경우에는 dismiss()를 직접 쓰지 않아도 현재 요구사항을 만족한다.
         builder.setNegativeButton(R.string.dialog_no, null)
 
