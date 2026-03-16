@@ -94,6 +94,25 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun isGameOver(): Boolean {
+        // 전통적인 방식으로 쓰면 다음처럼 반복문을 돌며 하나라도 남아 있는 카드가 있으면 false 를 반환할 수 있다.
+        // for (button in cardButtons) {
+        //     if (button.visibility != View.INVISIBLE) {
+        //         return false
+        //     }
+        // }
+        // return true
+
+        return cardButtons.all { button ->
+            button.visibility == View.INVISIBLE
+        }
+        // isVisible 확장 프로퍼티를 사용하면 "보이는 카드가 하나라도 남아 있는가"를 더 직접적으로 표현할 수도 있다.
+        // 이걸 쓰려면 import androidx.core.view.isVisible 도 추가해야 한다.
+        // return cardButtons.none { button ->
+        //     button.isVisible
+        // }
+    }
+
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
     private fun startNewGame() {
         // 개발 중에는 굳이 셔플하지 않고 고정된 순서로 테스트할 수 있도록 주석 처리한다.
@@ -130,6 +149,10 @@ class MainActivity : AppCompatActivity() {
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
                 openedCardIndex = null
+
+                if (isGameOver()) {
+                    askRestart(R.string.game_over_dialog_title, R.string.game_over_dialog_message)
+                }
                 return
             } else {
                 // 다르면 이전 카드를 다시 뒷면으로 돌린다.

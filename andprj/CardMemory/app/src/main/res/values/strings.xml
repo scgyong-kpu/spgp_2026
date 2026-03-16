@@ -4,6 +4,8 @@
     <string name="restart_game">Restart</string>
     <string name="restart_dialog_title">Restart Game</string>
     <string name="restart_dialog_message">Do you want to start a new game?</string>
+    <string name="game_over_dialog_title">Game Over</string>
+    <string name="game_over_dialog_message">All cards are open. Do you want to start a new game?</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
 </resources>
