@@ -8,27 +8,27 @@ import kr.ac.tukorea.ge.scgyong.cardmemory.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     // activity_main.xml의 View들을 안전하게 접근하기 위한 ViewBinding 객체
-    // 처음 접근할 때 lazy block 이 실행되어 초기화되는 것을 이용한다.
-    private val binding by lazy {
-         ActivityMainBinding.inflate(layoutInflater)
-    }
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var cardButtons: List<ImageButton>
+    private var openedCardIndex: Int? = null // 이전에 클릭된 카드 버튼의 인덱스를 저장하는 변수
+    //private var openedCardIndex: Int = -1 // 정수와 -1 을 쓰는 것보다 null을 쓰는 것이 더 명확하다.
 
-    // Kotlin 의 lazy 속성을 이용해 카드 버튼들을 리스트로 모은다. 실제로 처음 접근할 때 초기화된다.
-    // cardButtons 가 처음 접근될 때 binding 객체가 이미 초기화되어 있어야 하므로 lazy 없이는 쓸 수 없다.
-    // Java 로 했다면 getter 함수를 만들어서 그 안에서 초기화하는 방식으로 구현했을 것이다.
-    private val cardButtons by lazy {
-        listOf(
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // LayoutInflater를 사용해 activity_main.xml을 ViewBinding 객체로 생성
+        binding = ActivityMainBinding.inflate(layoutInflater)
+
+        // binding.root는 activity_main.xml의 최상위 View이다.
+        // setContentView에 전달하여 화면에 표시한다.
+        setContentView(binding.root)
+
+        cardButtons = listOf(
             binding.card00, binding.card01, binding.card02, binding.card03,
             binding.card10, binding.card11, binding.card12, binding.card13,
             binding.card20, binding.card21, binding.card22, binding.card23,
             binding.card30, binding.card31, binding.card32, binding.card33,
         )
-    }
-    private var openedCardIndex: Int? = null // 이전에 클릭된 카드 버튼의 인덱스를 저장하는 변수
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
     }
 
     // XML의 android:onClick 속성으로 연결된 카드 버튼 클릭 처리 함수이다.
