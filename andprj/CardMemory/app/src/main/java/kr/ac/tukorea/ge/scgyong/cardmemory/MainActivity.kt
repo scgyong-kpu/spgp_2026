@@ -41,9 +41,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 개발 중에는 굳이 셔플하지 않고 고정된 순서로 테스트할 수 있도록 주석 처리한다.
-        // 나중에 완성된 버전에서는 이 부분의 주석을 해제하여 게임이 시작될 때마다 카드가 무작위로 섞이도록 한다.
-        // shuffleCardImages()
+        // Activity 가 시작될 때에도 게임이 시작된다
+        startNewGame()
     }
 
     private fun shuffleCardImages() {
@@ -59,10 +58,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onRestartButtonClick(view: View) {
+        // Restart 버튼이 눌려도 게임이 시작된다
         startNewGame()
     }
 
+    // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
     private fun startNewGame() {
+        // 개발 중에는 굳이 셔플하지 않고 고정된 순서로 테스트할 수 있도록 주석 처리한다.
+        // 나중에 완성된 버전에서는 이 부분의 주석을 해제하여 게임이 시작될 때마다 카드가 무작위로 섞이도록 한다.
+        // shuffleCardImages()
+
+        // 모든 카드를 다시 뒷면으로 돌리고, 맞춰서 사라진 카드도 다시 보이게 만든다.
+        for (button in cardButtons) {
+            button.setImageResource(R.mipmap.card_blue_back)
+            button.visibility = View.VISIBLE
+        }
+        openedCardIndex = null
     }
 
     fun handleCardClick(buttonIndex: Int) {
