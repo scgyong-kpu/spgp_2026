@@ -46,12 +46,26 @@ class MainActivity : AppCompatActivity() {
                 handleCardClick(index)
             }
         }
+
+        // imageResIds 가 List<Int> 라면 내용을 변경하는 것은 안 된다
+        // 하지만 Array<Int> 는 내용 변경이 가능하다. 그래서 Array<Int> 로 선언했다.
+        imageResIds.forEachIndexed { index, imgResId ->
+            // Fisher-Yates 알고리즘으로 카드 이미지 순서를 섞는다.
+            // Fisher-Yates 알고리즘은 배열을 순회하면서
+            // 현재 위치에서부터 끝까지의 범위에서 무작위로 하나를 선택하여
+            // 현재 위치와 교환하는 방식으로 섞는 알고리즘이다.
+            val randomIndex = (index..imageResIds.size - 1).random()
+            // 이미지 리소스 ID를 섞는다.
+            val temp = imageResIds[index]
+            imageResIds[index] = imageResIds[randomIndex]
+            imageResIds[randomIndex] = temp
+        }   
+        Log.d("MainActivity", "Shuffled imageResIds: ${imageResIds.joinToString(",")}")
     }
 
     // 다음 세 가지 문제를 해결할 예정임:
     // 1. (해결)
-    // 2. 카드 배치가 고정이라 게임이 매번 같은 패턴으로 시작합니다.
-    //   - 메모리 게임 의도라면 사실상 정답 위치가 항상 같아져서 게임성이 없습니다.
+    // 2. (해결) 이기는 한데, 개발 중에는 문제를 풀면서 테스트를 해야 하니 테스트 시간이 오래 걸릴 수 있다
     // 3. (해결)
     
 
