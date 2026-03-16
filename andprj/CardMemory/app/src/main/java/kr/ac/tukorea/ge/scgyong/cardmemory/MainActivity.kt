@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
     // 게임이 시작되면 모두 Design Time 상태로 초기화해 주는 코드를 실행한다
     private fun startNewGame() {
-        gameState.resetCardIndices()
+        gameState.start()
         Log.d("MainActivity", "Shuffled cardIndices: ${gameState.cardIndices.joinToString(",")}")
 
         // 모든 카드를 다시 뒷면으로 돌리고, 맞춰서 사라진 카드도 다시 보이게 만든다.
@@ -96,9 +96,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 새 게임이 시작되므로 뒤집은 횟수와 열린 카드 상태도 처음으로 되돌린다.
-        gameState.flipCount = 0
         updateFlipCountText()
-        gameState.openedCardIndex = null
     }
 
     fun handleCardClick(buttonIndex: Int) {
