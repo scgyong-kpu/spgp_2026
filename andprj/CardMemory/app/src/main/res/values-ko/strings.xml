@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CardMemory</string>
+    <string name="flip_count_format">뒤집은 횟수: %1$d</string>
+    <string name="restart_game">다시 시작</string>
+    <string name="restart_dialog_title">게임 다시 시작</string>
+    <string name="restart_dialog_message">새 게임을 시작할까요?</string>
+    <string name="game_over_dialog_title">게임 종료</string>
+    <string name="game_over_dialog_message">모든 카드가 열렸습니다. 새 게임을 시작할까요?</string>
+    <string name="dialog_yes">예</string>
+    <string name="dialog_no">아니오</string>
+</resources>
