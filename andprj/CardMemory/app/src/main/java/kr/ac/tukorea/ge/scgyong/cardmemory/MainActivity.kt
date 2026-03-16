@@ -82,26 +82,15 @@ class MainActivity : AppCompatActivity() {
         // @StringRes 는 이 인자가 일반 정수가 아니라 문자열 리소스 ID여야 함을 알려 주는 표시이다.
         // 덕분에 실수로 다른 종류의 리소스 ID나 임의의 숫자를 넘겼을 때 IDE나 Lint가 더 잘 잡아줄 수 있다.
 
-        // 교육용 예시라서 Builder Pattern의 단계는 드러내되, 지역변수는 builder와 dlg만 사용한다.
-        // titleId, msgId 는 이미 문자열 리소스 ID이므로 getString()으로 미리 꺼내지 않고 Builder에 바로 전달한다.
+        // 교육용 예시라서 create()와 show()는 분리해 두되,
+        // 값을 채우는 부분은 Builder 메서드 체이닝으로 더 짧게 표현한 버전이다.
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-
-        // Builder에 제목과 메시지를 차례대로 채워 넣는다.
-        builder.setTitle(titleId)
-        builder.setMessage(msgId)
-
-        // setPositiveButton 은 마지막 인자가 람다이므로 괄호 밖으로 빼는 trailing lambda 문법을 사용할 수 있다.
-        // 람다는 내부적으로 두 인자(DialogInterface, which)를 받는 함수 형태라서,
-        // 둘 다 사용하지 않더라도 { _, _ -> ... }처럼 인자 자리는 맞춰 주어야 한다.
-        // 여기서는 두 값이 필요 없으므로 밑줄 두 개로 받고 startNewGame()만 호출한다.
-        builder.setPositiveButton(R.string.dialog_yes) { _, _ ->
-            startNewGame()
-        }
-
-        // No 는 별도 동작이 없으므로 null 을 넘기면 AlertDialog 가 기본적으로 대화상자만 닫아 준다.
-        // 이쪽은 람다를 넘기는 대신 null 을 전달하므로 trailing lambda 문법을 적용할 대상이 없다.
-        // 즉, 이 경우에는 dismiss()를 직접 쓰지 않아도 현재 요구사항을 만족한다.
-        builder.setNegativeButton(R.string.dialog_no, null)
+            .setTitle(titleId)
+            .setMessage(msgId)
+            .setPositiveButton(R.string.dialog_yes) { _, _ ->
+                startNewGame()
+            }
+            .setNegativeButton(R.string.dialog_no, null)
 
         // create() 단계에서 실제 AlertDialog 객체를 만들고,
         // show() 단계에서 화면에 표시한다는 점을 분리해서 보여주기 위해 dlg 변수로 한 번 받는다.
