@@ -8,6 +8,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.scgyong.cardmemory.databinding.ActivityMainBinding
+import kr.ac.tukorea.ge.scgyong.cardmemory.model.GameState
 
 class MainActivity : AppCompatActivity() {
     // activity_main.xml의 View를 안전하게 참조한다.
@@ -24,11 +25,7 @@ class MainActivity : AppCompatActivity() {
     // Resource ID 는 View 의 영역이고, cardIndex 는 Model 의 영역이다.
     // 게임이 시작될 때마다 이 배열을 섞어서 카드 배치를 무작위로 만든다.
     // 값이 null 이면 그 위치의 카드는 이미 맞춰져서 제거된 상태로 본다.
-    private lateinit var cardIndices: Array<Int?>
-    // 직전에 뒤집은 카드 위치를 기억한다.
-    private var openedCardIndex: Int? = null
-    // 사용자가 카드를 뒤집은 횟수를 누적한다.
-    private var flipCount: Int = 0
+    private val gameState = GameState(imageResIds.size)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +53,8 @@ class MainActivity : AppCompatActivity() {
     private fun shuffleCardImages() {
         // imageResIds 는 카드 종류별 리소스 표이고, 실제 카드 배치 순서는 cardIndices 가 담당한다.
         // 따라서 게임을 섞을 때는 리소스 표 자체가 아니라 카드 배치 인덱스 배열을 섞어야 한다.
-        cardIndices.shuffle()
-        Log.d("MainActivity", "Shuffled cardIndices: ${cardIndices.joinToString(",")}")
+        gameState.cardIndices.shuffle()
+        Log.d("MainActivity", "Shuffled cardIndices: ${gameState.cardIndices.joinToString(",")}")
     }
 
     private fun resetCardIndices() {
@@ -70,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         // 이런 방식으로 index 가 두 칸씩 진행될 때마다 같은 카드 종류 번호가 두 번 반복된다.
         // 따라서 전체 결과는 [0, 0, 1, 1, 2, 2, ...] 형태가 된다.
         // 카드 종류가 8개이므로 imageResIds.size * 2 길이의 배열을 만들면 16장의 카드 구성이 완성된다.
-        cardIndices = Array(imageResIds.size * 2) { index -> index / 2 }
+        gameState.cardIndices = Array(gameState.cardTypeCount * 2) { index -> index / 2 }
 
         // shuffleCardImages()
     }
@@ -84,12 +81,12 @@ class MainActivity : AppCompatActivity() {
 
     // 현재 flipCount 값을 상단 TextView에 반영한다.
     private fun updateFlipCountText() {
-        binding.flipCountTextView.text = getString(R.string.flip_count_format, flipCount)
+        binding.flipCountTextView.text = getString(R.string.flip_count_format, gameState.flipCount)
     }
 
     // 숨은 부작용이 있는 setter 대신 명시적인 함수로 횟수 증가와 화면 갱신을 함께 처리한다.
     private fun incrementFlipCount() {
-        flipCount += 1
+        gameState.flipCount += 1
         updateFlipCountText()
     }
 
@@ -112,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     private fun isGameOver(): Boolean {
         // 이제 게임 종료 여부는 화면의 visibility 가 아니라 모델 역할을 하는 cardIndices 로 판정한다.
         // 모든 위치가 null 이면 16장의 카드가 모두 제거된 상태이므로 게임이 끝난 것이다.
-        return cardIndices.all { cardIndex ->
+        return gameState.cardIndices.all { cardIndex ->
             cardIndex == null
         }
     }
@@ -128,27 +125,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 새 게임이 시작되므로 뒤집은 횟수와 열린 카드 상태도 처음으로 되돌린다.
-        flipCount = 0
+        gameState.flipCount = 0
         updateFlipCountText()
-        openedCardIndex = null
+        gameState.openedCardIndex = null
     }
 
     fun handleCardClick(buttonIndex: Int) {
-        if (buttonIndex == openedCardIndex) {
+        if (buttonIndex == gameState.openedCardIndex) {
             Toast.makeText(this, R.string.card_already_open_toast, Toast.LENGTH_SHORT).show()
             return
         }
 
         val button = cardButtons[buttonIndex]
         // cardIndices 에서 null 이 나오면 이미 제거된 카드 위치라는 뜻이므로 더 진행하지 않는다.
-        val cardIndex = cardIndices[buttonIndex] ?: return
+        val cardIndex = gameState.cardIndices[buttonIndex] ?: return
         val imgResId = imageResIds[cardIndex]
 
         // 이미 열린 카드가 있으면 현재 카드와 비교한다.
-        openedCardIndex?.let { index ->
+        gameState.openedCardIndex?.let { index ->
             val openedButton = cardButtons[index]
             // 이전에 열려 있던 카드도 이미 제거되었다면 비교할 대상이 없으므로 그대로 종료한다.
-            val openedCardIndexValue = cardIndices[index] ?: return
+            val openedCardIndexValue = gameState.cardIndices[index] ?: return
             val openedImgResId = imageResIds[openedCardIndexValue]
 
             if (openedImgResId == imgResId) {
@@ -156,9 +153,9 @@ class MainActivity : AppCompatActivity() {
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
                 // 같은 그림을 찾았으므로 두 위치는 더 이상 카드가 없는 상태를 null 로 기록한다.
-                cardIndices[index] = null
-                cardIndices[buttonIndex] = null
-                openedCardIndex = null
+                gameState.cardIndices[index] = null
+                gameState.cardIndices[buttonIndex] = null
+                gameState.openedCardIndex = null
 
                 if (isGameOver()) {
                     askRestart(R.string.game_over_dialog_title, R.string.game_over_dialog_message)
@@ -174,6 +171,6 @@ class MainActivity : AppCompatActivity() {
         button.setImageResource(imgResId)
         // 실제로 새 카드가 열리는 순간에만 뒤집은 횟수를 증가시킨다.
         incrementFlipCount()
-        openedCardIndex = buttonIndex
+        gameState.openedCardIndex = buttonIndex
     }
 }
