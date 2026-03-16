@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.scgyong.cardmemory
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,17 @@ class MainActivity : AppCompatActivity() {
             binding.card20, binding.card21, binding.card22, binding.card23,
             binding.card30, binding.card31, binding.card32, binding.card33,
         )
+
+
+        cardButtons.forEachIndexed { index, button ->
+            // 각 카드 버튼에 고유한 태그를 설정한다. (예: "0", "1", ..., "15")
+            button.tag = index
+        }
+
+        // 위 코드는 다음 코드와 같다
+        // for (i in cardButtons.indices) {
+        //     cardButtons[i].tag = i
+        // }
     }
 
     // XML의 android:onClick 속성으로 연결된 카드 버튼 클릭 처리 함수이다.
@@ -62,9 +74,8 @@ class MainActivity : AppCompatActivity() {
         button.setImageResource(R.mipmap.card_as)
 
         // 클릭된 버튼이 cardButtons 배열의 몇 번째인지 찾아서 저장한다.
-        // 이렇게 버튼 객체 자체를 저장하는 대신 "인덱스"를 저장하면
-        // 게임 상태를 관리하거나 저장/복원(Bundle, JSON 등)할 때 더 유리하다.
-        openedCardIndex = cardButtons.indexOf(button)
+        openedCardIndex = button.tag as? Int
+        Log.d("MainActivity", "Clicked card index: $openedCardIndex")
     }
 }
 
