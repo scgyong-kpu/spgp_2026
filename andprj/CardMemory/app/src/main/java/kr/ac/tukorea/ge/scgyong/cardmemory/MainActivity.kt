@@ -14,6 +14,7 @@ import kr.ac.tukorea.ge.scgyong.cardmemory.model.GameState
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val GAME_STATE_JSON_KEY = "game_state_json"
+        private const val GAME_STATE_PREFS_NAME = "game_state_prefs"
     }
 
     // activity_main.xml 의 View 를 안전하게 참조한다.
@@ -50,8 +51,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 저장된 Bundle 안에 게임 상태 JSON 이 있으면 회전이나 테마 변경 뒤에도 이전 상태를 이어서 복원한다.
+        // savedInstanceState 가 없을 때는 SharedPreferences 에 저장해 둔 JSON 을 읽어 마지막 게임 상태를 복원한다.
         // 에뮬레이터의 Device Settings 창을 열고 Dark Mode 를 체크하면 Activity 재시작과 상태 복원 흐름을 테스트해 볼 수 있다.
+        val prefs = getSharedPreferences(GAME_STATE_PREFS_NAME, MODE_PRIVATE)
         val gameStateJson = savedInstanceState?.getString(GAME_STATE_JSON_KEY)
+            ?: prefs.getString(GAME_STATE_JSON_KEY, null)
         if (gameStateJson == null) {
             startNewGame()
         } else {
@@ -68,6 +72,18 @@ class MainActivity : AppCompatActivity() {
         val json = gameState.toJson()
         Log.d("MainActivity", "Saving game state to JSON: $json")
         outState.putString(GAME_STATE_JSON_KEY, json)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        // 앱이 잠시 화면에서 사라질 때도 현재 게임 상태를 SharedPreferences 에 저장해 둔다.
+        val json = gameState.toJson()
+        Log.d("MainActivity", "Saving game state to SharedPreferences: $json")
+        getSharedPreferences(GAME_STATE_PREFS_NAME, MODE_PRIVATE)
+            .edit()
+            .putString(GAME_STATE_JSON_KEY, json)
+            .apply()
     }
 
     fun onRestartButtonClick(view: View) {
