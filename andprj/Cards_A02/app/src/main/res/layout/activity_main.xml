@@ -15,31 +15,19 @@
         >
         <ImageButton
             android:id="@+id/card_image_button_1"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
             android:src="@mipmap/card_blue_back"
             android:onClick="onCardClicked"
-            />
+            style="@style/cardButtonStyle" />
         <ImageButton
             android:id="@+id/card_image_button_2"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
             android:src="@mipmap/card_blue_back"
             android:onClick="onCardClicked"
-            />
+            style="@style/cardButtonStyle" />
         <ImageButton
             android:id="@+id/card_image_button_3"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
             android:src="@mipmap/card_blue_back"
             android:onClick="onCardClicked"
-            />
+            style="@style/cardButtonStyle" />
     </LinearLayout>
 
 </LinearLayout>
