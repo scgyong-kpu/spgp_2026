@@ -21,10 +21,10 @@
             android:id="@+id/card01"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card03"
+            android:id="@+id/card02"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card04"
+            android:id="@+id/card03"
             style="@style/cardButtonStyle" />
     </LinearLayout>
     <LinearLayout
@@ -40,10 +40,10 @@
             android:id="@+id/card11"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card13"
+            android:id="@+id/card12"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card14"
+            android:id="@+id/card13"
             style="@style/cardButtonStyle" />
     </LinearLayout>
     <LinearLayout
@@ -59,10 +59,10 @@
             android:id="@+id/card21"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card23"
+            android:id="@+id/card22"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card24"
+            android:id="@+id/card23"
             style="@style/cardButtonStyle" />
     </LinearLayout>
     <LinearLayout
@@ -78,10 +78,10 @@
             android:id="@+id/card31"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card33"
+            android:id="@+id/card32"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/card34"
+            android:id="@+id/card33"
             style="@style/cardButtonStyle" />
     </LinearLayout>
 
