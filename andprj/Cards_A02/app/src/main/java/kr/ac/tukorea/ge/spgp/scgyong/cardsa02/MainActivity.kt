@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.spgp.scgyong.cardsa02
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa02.databinding.ActivityMainBinding
 
@@ -16,7 +17,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onCardClicked(view: View) {
-        Log.d("MainActivity", "ImageButton Clicked! ID=${view.id}")
+        val msg = getString(R.string.card_clicked_fmt, view.id)
+        Log.d("MainActivity", msg)
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CardsA02</string>
+    <string name="card_clicked_fmt">Clicked: %1$d</string>
 </resources>
