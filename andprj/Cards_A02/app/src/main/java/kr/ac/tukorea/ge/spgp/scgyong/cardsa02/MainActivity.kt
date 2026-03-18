@@ -10,6 +10,12 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+    private val imageResIds = arrayOf(
+        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
+        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
+        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
+        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
+    )
     private val buttons by lazy {
         arrayOf(
             binding.card00, binding.card01, binding.card02, binding.card03,
@@ -35,12 +41,8 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", msg)
         val button = buttons[buttonIndex]
 
-        button.setImageResource(R.mipmap.card_as)
-        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-
-//        if (openedIndex != null) {
-//            buttons[openedIndex!!].setImageResource(R.mipmap.card_blue_back)
-//        }
+        val imageResId = imageResIds[buttonIndex]
+        button.setImageResource(imageResId)
 
         openedIndex?.let { index ->
             buttons[index].setImageResource(R.mipmap.card_blue_back)
