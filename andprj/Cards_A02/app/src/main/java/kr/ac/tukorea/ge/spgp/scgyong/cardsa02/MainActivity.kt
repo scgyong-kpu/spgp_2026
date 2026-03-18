@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.spgp.scgyong.cardsa02
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa02.databinding.ActivityMainBinding
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
     fun onCardClicked(view: View) {
         val msg = getString(R.string.card_clicked_fmt, view.id)
         Log.d("MainActivity", msg)
+        val button = view as ImageButton
+        button.setImageResource(R.mipmap.card_as)
         //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
