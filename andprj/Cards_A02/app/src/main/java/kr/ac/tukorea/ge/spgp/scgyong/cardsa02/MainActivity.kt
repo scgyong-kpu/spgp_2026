@@ -24,13 +24,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        buttons.forEachIndexed { index, button ->
+            button.setOnClickListener {
+                onCardClicked(index)
+            }
+        }
     }
 
-    fun onCardClicked(view: View) {
-        val msg = getString(R.string.card_clicked_fmt, view.id)
+    fun onCardClicked(buttonIndex: Int) {
+        val msg = getString(R.string.card_clicked_fmt, buttonIndex)
         Log.d("MainActivity", msg)
-        val button = view as ImageButton
-        val buttonIndex = buttons.indexOf(button)
+        val button = buttons[buttonIndex]
 
         button.setImageResource(R.mipmap.card_as)
         //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
