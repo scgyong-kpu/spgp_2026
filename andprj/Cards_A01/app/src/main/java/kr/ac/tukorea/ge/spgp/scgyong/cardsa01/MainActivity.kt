@@ -23,12 +23,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        buttons.forEachIndexed { index, button ->
+            button.setOnClickListener {
+                onCardButtonClick(index)
+            }
+        }
     }
 
-    fun onCardButtonClick(view: View) {
-        //val button = view as? ImageButton ?: return
-        val button = view as ImageButton
-        val buttonIndex = buttons.indexOf(button)
+    fun onCardButtonClick(buttonIndex: Int) {
+        val button = buttons[buttonIndex]
 
         button.setImageResource(R.mipmap.card_as)
 
