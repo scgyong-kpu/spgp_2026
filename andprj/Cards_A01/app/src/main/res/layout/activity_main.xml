@@ -10,22 +10,74 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         >
         <ImageButton
-            android:id="@+id/image_button_1"
-            android:src="@mipmap/card_blue_back"
-            android:onClick="onCardButtonClick"
+            android:id="@+id/card00"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/image_button_2"
-            android:src="@mipmap/card_blue_back"
-            android:onClick="onCardButtonClick"
+            android:id="@+id/card01"
             style="@style/cardButtonStyle" />
         <ImageButton
-            android:id="@+id/image_button_3"
-            android:src="@mipmap/card_blue_back"
-            android:onClick="onCardButtonClick"
+            android:id="@+id/card02"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card03"
+            style="@style/cardButtonStyle" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+        <ImageButton
+            android:id="@+id/card10"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card11"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card12"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card13"
+            style="@style/cardButtonStyle" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+        <ImageButton
+            android:id="@+id/card20"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card21"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card22"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card23"
+            style="@style/cardButtonStyle" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+        <ImageButton
+            android:id="@+id/card30"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card31"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card32"
+            style="@style/cardButtonStyle" />
+        <ImageButton
+            android:id="@+id/card33"
             style="@style/cardButtonStyle" />
     </LinearLayout>
 </LinearLayout>
