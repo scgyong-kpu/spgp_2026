@@ -31,10 +31,13 @@ class MainActivity : AppCompatActivity() {
 
         button.setImageResource(R.mipmap.card_as)
 
-        if (openedCardIndex != null) {
-            val openedButton = buttons[openedCardIndex!!]
-            openedButton.setImageResource(R.mipmap.card_blue_back)
+        openedCardIndex?.let { index ->
+            buttons[index].setImageResource(R.mipmap.card_blue_back)
         }
+//        if (openedCardIndex != null) {
+//            val openedButton = buttons[openedCardIndex!!]
+//            openedButton.setImageResource(R.mipmap.card_blue_back)
+//        }
         openedCardIndex = buttonIndex
     }
 }
