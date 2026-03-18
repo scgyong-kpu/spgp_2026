@@ -15,18 +15,12 @@
         >
         <ImageButton
             android:id="@+id/card_image_button_1"
-            android:src="@mipmap/card_blue_back"
-            android:onClick="onCardClicked"
             style="@style/cardButtonStyle" />
         <ImageButton
             android:id="@+id/card_image_button_2"
-            android:src="@mipmap/card_blue_back"
-            android:onClick="onCardClicked"
             style="@style/cardButtonStyle" />
         <ImageButton
             android:id="@+id/card_image_button_3"
-            android:src="@mipmap/card_blue_back"
-            android:onClick="onCardClicked"
             style="@style/cardButtonStyle" />
     </LinearLayout>
 

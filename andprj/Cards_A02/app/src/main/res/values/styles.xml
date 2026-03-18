@@ -6,5 +6,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:scaleType">fitCenter</item>
+        <item name="android:onClick">onCardClicked</item>
+        <item name="android:src">@mipmap/card_blue_back</item>
     </style>
 </resources>
