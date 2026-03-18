@@ -1,6 +1,8 @@
 package kr.ac.tukorea.ge.spgp.scgyong.cardsa01
 
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa01.databinding.ActivityMainBinding
 
@@ -11,5 +13,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
+
+    fun onCardButtonClick(view: View) {
+        val name = resources.getResourceName(view.id)
+        val msg = "Clicked: $name(${view.id})"
+        Log.d("MainActivity", msg)
     }
 }
