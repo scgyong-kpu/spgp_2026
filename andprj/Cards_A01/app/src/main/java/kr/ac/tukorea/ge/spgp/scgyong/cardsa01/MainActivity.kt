@@ -20,6 +20,13 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private val imageResIds = arrayOf(
+        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
+        R.mipmap.card_as, R.mipmap.card_2c, R.mipmap.card_3d, R.mipmap.card_4h,
+        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
+        R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -34,15 +41,12 @@ class MainActivity : AppCompatActivity() {
     fun onCardButtonClick(buttonIndex: Int) {
         val button = buttons[buttonIndex]
 
-        button.setImageResource(R.mipmap.card_as)
+        val imgResId = imageResIds[buttonIndex]
+        button.setImageResource(imgResId)
 
         openedCardIndex?.let { index ->
             buttons[index].setImageResource(R.mipmap.card_blue_back)
         }
-//        if (openedCardIndex != null) {
-//            val openedButton = buttons[openedCardIndex!!]
-//            openedButton.setImageResource(R.mipmap.card_blue_back)
-//        }
         openedCardIndex = buttonIndex
     }
 }
