@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa01.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private var previousImageButton: ImageButton? = null
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,5 +22,8 @@ class MainActivity : AppCompatActivity() {
         val button = view as ImageButton
 
         button.setImageResource(R.mipmap.card_as)
+
+        previousImageButton?.setImageResource(R.mipmap.card_blue_back)
+        previousImageButton = button
     }
 }
