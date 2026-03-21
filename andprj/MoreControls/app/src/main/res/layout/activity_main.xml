@@ -28,5 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginStart="8dp"
+        android:onClick="onDoItButtonClick"
         android:text="@string/do_it_button_text" />
 </LinearLayout>
