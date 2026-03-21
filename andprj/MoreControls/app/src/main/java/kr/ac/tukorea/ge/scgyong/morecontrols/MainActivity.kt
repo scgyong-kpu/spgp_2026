@@ -16,6 +16,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onDoItButtonClick(view: View) {
-        binding.mainTextView.text = "Something Happened!!"
+        binding.mainTextView.setText(R.string.something_happened_text)
     }
 }

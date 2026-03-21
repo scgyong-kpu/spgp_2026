@@ -3,4 +3,5 @@
     <string name="main_text">Hello World!</string>
     <string name="good_programmer_checkbox_text">Check if you are a good programmer</string>
     <string name="do_it_button_text">Do It !!</string>
+    <string name="something_happened_text">Something Happened!!</string>
 </resources>
