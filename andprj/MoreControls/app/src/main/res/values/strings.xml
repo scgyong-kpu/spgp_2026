@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MoreControls</string>
+    <string name="main_text">Hello World!</string>
+    <string name="good_programmer_checkbox_text">Check if you are a good programmer</string>
 </resources>

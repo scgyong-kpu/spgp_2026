@@ -13,13 +13,12 @@
         android:id="@+id/main_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="@string/main_text"
     />
+
     <CheckBox
         android:id="@+id/good_programmer_checkbox"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Check if you are a good programmer"
-        />
+        android:layout_height="wrap_content"
+        android:text="@string/good_programmer_checkbox_text" />
 </LinearLayout>
-
