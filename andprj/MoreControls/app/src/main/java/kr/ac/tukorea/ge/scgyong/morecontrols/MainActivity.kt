@@ -16,6 +16,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onDoItButtonClick(view: View) {
-        binding.mainTextView.setText(R.string.something_happened_text)
+        if (binding.goodProgrammerCheckbox.isChecked) {
+            binding.mainTextView.setText(R.string.you_get_one_grand)
+        } else {
+            binding.mainTextView.setText(R.string.you_have_nothing)
+        }
     }
 }

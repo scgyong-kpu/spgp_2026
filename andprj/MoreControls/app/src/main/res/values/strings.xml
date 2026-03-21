@@ -4,4 +4,6 @@
     <string name="good_programmer_checkbox_text">Check if you are a good programmer</string>
     <string name="do_it_button_text">Do It !!</string>
     <string name="something_happened_text">Something Happened!!</string>
+    <string name="you_get_one_grand">Congrats. You get $1000</string>
+    <string name="you_have_nothing">You have nothing</string>
 </resources>
