@@ -42,13 +42,7 @@ class MyView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        // 실제 View 크기를 0.0~1.0 정규화 좌표계로 바꿔 놓고 smiley 를 그린다.
-        canvas.save()
-        canvas.translate(baseTranslateX, baseTranslateY)
-        canvas.scale(baseScale, baseScale)
-        drawSmiley(canvas)
-        canvas.restore()
+        drawSmiley(canvas, baseTranslateX, baseTranslateY, baseScale, 3)
     }
 
     private fun calculateFaceGeometry() {
@@ -72,10 +66,9 @@ class MyView @JvmOverloads constructor(
         )
     }
 
+    // 원래 버전: Canvas 와 depth 만 받는 smiley 함수.
+    // 실제 좌표계 이동과 확대/축소는 바깥쪽 overload 에서 처리한 뒤 이 함수가 호출된다.
     private fun drawSmiley(canvas: Canvas, depth: Int = 3) {
-        Log.d(javaClass.simpleName, "drawSmiley: depth=$depth")
-        // 이 함수는 정규화 좌표계를 기준으로 그린다.
-        // 따라서 얼굴은 항상 중심 (0.5, 0.5), 반지름 0.5 인 원으로 표현된다.
         val cx = 0.5f
         val cy = 0.5f
         val radius = 0.5f
@@ -88,21 +81,9 @@ class MyView @JvmOverloads constructor(
         canvas.drawCircle(cx, cy, radius, fillPaint)
         canvas.drawCircle(cx, cy, radius, strokePaint)
 
-        // depth 가 1보다 크면 눈 자리에 좌표계를 옮기고 축소한 뒤
-        // 더 작은 smiley 를 다시 그린다.
-        // 1이면 재귀를 멈추고 눈을 단순한 원으로만 그린다.
         if (depth > 1) {
-            canvas.save()
-            canvas.translate(leftEyeCx - eyeRadius, eyeCy - eyeRadius)
-            canvas.scale(eyeRadius * 2f, eyeRadius * 2f)
-            drawSmiley(canvas, depth - 1)
-            canvas.restore()
-
-            canvas.save()
-            canvas.translate(rightEyeCx - eyeRadius, eyeCy - eyeRadius)
-            canvas.scale(eyeRadius * 2f, eyeRadius * 2f)
-            drawSmiley(canvas, depth - 1)
-            canvas.restore()
+            drawSmiley(canvas, leftEyeCx - eyeRadius, eyeCy - eyeRadius, eyeRadius * 2f, depth - 1)
+            drawSmiley(canvas, rightEyeCx - eyeRadius, eyeCy - eyeRadius, eyeRadius * 2f, depth - 1)
         } else {
             canvas.drawCircle(leftEyeCx, eyeCy, eyeRadius, strokePaint)
             canvas.drawCircle(rightEyeCx, eyeCy, eyeRadius, strokePaint)
@@ -119,5 +100,20 @@ class MyView @JvmOverloads constructor(
         // 수학 설명이나 SVG, 일부 게임 코드에서는 start~end 처럼 설명하는 경우도 있다.
         // useCenter=false 면 부채꼴이 아니라 호만 그려지고, 양의 sweepAngle 은 시계 방향으로 진행된다.
         canvas.drawArc(mouthLeft, eyeCy, mouthRight, mouthBottom, 15f, 150f, false, strokePaint)
+    }
+
+    // 추가 버전: translate 와 scale 까지 함께 받아, 같은 smiley 를 다른 위치와 크기에 그린다.
+    private fun drawSmiley(
+        canvas: Canvas,
+        translateX: Float,
+        translateY: Float,
+        scale: Float,
+        depth: Int,
+    ) {
+        canvas.save()
+        canvas.translate(translateX, translateY)
+        canvas.scale(scale, scale)
+        drawSmiley(canvas, depth)
+        canvas.restore()
     }
 }
