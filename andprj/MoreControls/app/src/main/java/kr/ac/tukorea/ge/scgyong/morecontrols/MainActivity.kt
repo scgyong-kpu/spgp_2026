@@ -45,12 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         // SeekBar 도 extension function 으로 감싸 두면
         // setOnSeekBarChangeListener(object : ...) 대신 더 짧은 형태로 읽을 수 있다.
-        binding.moneySeekBar.onProgressChanged {
-            updateMoneyLabel()
-            if (binding.applyImmediatelySwitch.isChecked) {
-                doIt()
-            }
-        }
+        binding.moneySeekBar.onProgressChanged { handleProgressChanged() }
     }
 
     private fun handleNameChanged() {
@@ -67,6 +62,13 @@ class MainActivity : AppCompatActivity() {
         // 사용자가 입력 중인 이름의 길이만 화면에 보여 준다.
         binding.mainTextView.text = getString(R.string.name_length_fmt, normalizedName.length)
     }
+
+    private fun handleProgressChanged() {
+        updateMoneyLabel()
+        if (binding.applyImmediatelySwitch.isChecked) {
+            doIt()
+        }
+ㅏ    }
 
     private fun updateMoneyLabel() {
         binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
