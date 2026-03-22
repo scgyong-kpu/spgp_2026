@@ -8,6 +8,19 @@ import kr.ac.tukorea.ge.scgyong.morecontrols.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val normalizedName: String
+        get() {
+            // EditText.text 는 Editable 이므로 보통 toString()으로 String 으로 바꿔 쓴다.
+            // trim()을 적용하면 앞뒤 공백만 입력한 경우도 빈 이름처럼 처리할 수 있다.
+            // 비슷한 기능은 다른 언어에도 자주 나오며,
+            // C 는 표준 trim 함수가 없어 직접 구현하는 경우가 많고, C++/C#/Swift/Java/JavaScript 는 trim(),
+            // Python 은 strip() 같은 이름을 쓴다.
+            val nameInput = binding.yourNameEditText.text.toString().trim()
+
+            // 이름 입력이 비어 있으면 미리 준비한 noname 문자열을 기본값으로 사용한다.
+            // 이렇게 하면 사용자가 아무것도 입력하지 않아도 포맷 문자열이 자연스럽게 완성된다.
+            return if (nameInput.isEmpty()) getString(R.string.noname) else nameInput
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +45,7 @@ class MainActivity : AppCompatActivity() {
             // Switch 가 꺼져 있으면 최종 적용은 아직 하지 않고,
             // 사용자가 입력 중인 이름의 길이만 화면에 보여 준다.
             // trim()을 써서 앞뒤 공백은 길이 계산에서 제외한다.
-            // 비슷한 기능은 다른 언어에도 자주 나오며,
-            // C 는 표준 trim 함수가 없어 직접 구현하는 경우가 많고, C++/C#/Swift/Java/JavaScript 는 trim(),
-            // Python 은 strip() 같은 이름을 쓴다.
-            val name = binding.yourNameEditText.text.trim()
-            binding.mainTextView.text = getString(R.string.name_length_fmt, name.length)
+            binding.mainTextView.text = getString(R.string.name_length_fmt, normalizedName.length)
         }
     }
 
@@ -55,20 +64,9 @@ class MainActivity : AppCompatActivity() {
         // 여기서는 strId 를 getString 으로 실제 문자열로 읽어 아래의 포맷 문자열 조합에 사용한다.
         val msg = getString(strId)
 
-        // EditText.text 는 Editable 이므로 보통 toString()으로 String 으로 바꿔 쓴다.
-        // trim()을 적용하면 앞뒤 공백만 입력한 경우도 빈 이름처럼 처리할 수 있다.
-        // 비슷한 기능은 다른 언어에도 자주 나오며,
-        // C 는 표준 trim 함수가 없어 직접 구현하는 경우가 많고, C++/C#/Swift/Java/JavaScript 는 trim(),
-        // Python 은 strip() 같은 이름을 쓴다.
-        val nameInput = binding.yourNameEditText.text.toString().trim()
-
-        // 이름 입력이 비어 있으면 미리 준비한 noname 문자열을 기본값으로 사용한다.
-        // 이렇게 하면 사용자가 아무것도 입력하지 않아도 포맷 문자열이 자연스럽게 완성된다.
-        val name = if (nameInput.isEmpty()) getString(R.string.noname) else nameInput
-
         // main_msg_fmt 는 %1$s, %2$s 자리표시자를 가진 포맷 문자열이다.
         // 첫 번째 자리에는 이름, 두 번째 자리에는 결과 메시지를 넣어 최종 문장을 만든다.
-        val text = getString(R.string.main_msg_fmt, name, msg)
+        val text = getString(R.string.main_msg_fmt, normalizedName, msg)
 
         // text 프로퍼티에 String 을 대입하면 TextView 의 setText(CharSequence) 버전이 호출된다.
         binding.mainTextView.text = text
