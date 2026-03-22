@@ -97,7 +97,7 @@
 
     <kr.ac.tukorea.ge.scgyong.morecontrols.MyView
         android:id="@+id/my_view"
-        android:layout_width="130dp"
+        android:layout_width="330dp"
         android:layout_height="200dp"
-        android:paddingStart="16dp" />
+        android:padding="16dp" />
 </LinearLayout>

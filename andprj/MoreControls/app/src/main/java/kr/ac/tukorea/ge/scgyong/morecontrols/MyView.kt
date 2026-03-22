@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.util.AttributeSet
 import android.view.View
 
@@ -28,6 +29,8 @@ class MyView @JvmOverloads constructor(
         strokeWidth = 6f
     }
 
+    private val path = Path()
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -44,5 +47,20 @@ class MyView @JvmOverloads constructor(
 
         canvas.drawCircle(centerX, centerY, radius, fillPaint)
         canvas.drawCircle(centerX, centerY, radius, strokePaint)
+
+        val w6 = contentWidth / 6
+        val h6 = contentHeight / 6
+        val x1 = paddingLeft + w6
+        val x2 = paddingLeft + contentWidth - w6
+        val y1 = paddingTop + h6
+        val y2 = paddingTop + contentHeight - h6
+
+        path.reset()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y1)
+        path.lineTo(x1, y2)
+        path.lineTo(x2, y2)
+
+        canvas.drawPath(path, strokePaint)
     }
 }
