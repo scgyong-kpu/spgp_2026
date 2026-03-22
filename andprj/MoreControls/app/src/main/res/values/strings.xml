@@ -9,4 +9,5 @@
     <string name="good_news">Really? Good to hear that</string>
     <string name="bad_news">Sorry for you...</string>
     <string name="apply_immediately">Apply Immediately</string>
+    <string name="your_name_label_text">Your Name:</string>
 </resources>
