@@ -8,6 +8,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.core.graphics.withTranslation
+import kotlin.math.ceil
+import kotlin.math.log
 
 class MyView @JvmOverloads constructor(
     context: Context,
@@ -44,16 +46,14 @@ class MyView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        var depth = 1
-        var scale = baseScale
-        while (scale > 100) {
-            depth++
-            Log.d(javaClass.simpleName, "scale=$scale depth=$depth")
-            scale /= 4
+        val depth = if (baseScale <= 100f) {
+            1
+        } else {
+            ceil(log(baseScale / 100f, 4f)).toInt() + 1
         }
         Log.d(javaClass.simpleName, "Depth=$depth for radius $baseScale")
 
-        canvas.drawSmiley(baseTranslateX, baseTranslateY, baseScale, depth)
+        canvas.drawSmiley(baseTranslateX, baseTranslateY, baseScale, depth  )
     }
 
     private fun calculateFaceGeometry() {
