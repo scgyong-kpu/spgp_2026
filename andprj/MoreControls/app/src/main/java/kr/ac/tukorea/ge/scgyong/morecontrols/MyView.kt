@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 
 class MyView @JvmOverloads constructor(
@@ -46,8 +47,7 @@ class MyView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        // View 의 실제 width/height 가 정해지거나 바뀌는 시점은 onSizeChanged 이다.
-        // rect 처럼 크기와 padding 에 의존하는 좌표는 이때 계산해 두는 것이 더 적절하다.
+        Log.d(javaClass.simpleName, "onSizeChanged: (w=$w, h=$h) <= (oldw=$oldw, oldh=$oldh)")
         calculateRect()
     }
 
@@ -79,5 +79,6 @@ class MyView @JvmOverloads constructor(
 
         // Rect 는 left, top, right, bottom 네 값으로 사각형 영역을 나타내는 Android 기본 클래스이다.
         rect.set(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
+        Log.d(javaClass.simpleName, "calculateRect: $rect")
     }
 }
