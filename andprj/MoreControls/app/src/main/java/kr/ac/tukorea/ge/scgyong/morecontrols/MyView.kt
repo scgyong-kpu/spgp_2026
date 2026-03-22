@@ -4,9 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
+
 
 class MyView @JvmOverloads constructor(
     context: Context,
@@ -28,8 +29,6 @@ class MyView @JvmOverloads constructor(
         style = Paint.Style.STROKE
         strokeWidth = 6f
     }
-
-    private val path = Path()
 
     fun setStrokeWidth(width: Float) {
         strokePaint.strokeWidth = width
@@ -56,12 +55,6 @@ class MyView @JvmOverloads constructor(
 
         val contentWidth = contentRight - contentLeft
         val contentHeight = contentBottom - contentTop
-        val radius = minOf(contentWidth, contentHeight) / 2f
-        val centerX = contentLeft + contentWidth / 2f
-        val centerY = contentTop + contentHeight / 2f
-
-        canvas.drawCircle(centerX, centerY, radius, fillPaint)
-        canvas.drawCircle(centerX, centerY, radius, strokePaint)
 
         val w6 = contentWidth / 6
         val h6 = contentHeight / 6
@@ -70,12 +63,16 @@ class MyView @JvmOverloads constructor(
         val y1 = contentTop + h6
         val y2 = contentBottom - h6
 
-        path.reset()
-        path.moveTo(x1, y1)
-        path.lineTo(x2, y1)
-        path.lineTo(x1, y2)
-        path.lineTo(x2, y2)
-
-        canvas.drawPath(path, strokePaint)
+        // Rect 는 left, top, right, bottom 네 값으로 사각형 영역을 나타내는 Android 기본 도형 클래스이다.
+        // 여기서는 padding 을 제외한 내부 영역 안쪽에 한 칸 여백을 둔 사각형 좌표를 만들어 사용한다.
+        //
+        // Android Studio 는 onDraw() 안에서 객체를 새로 만들면 경고를 띄운다.
+        // 그 이유는 onDraw() 가 매우 자주 호출되므로, 여기서 객체를 계속 만들면
+        // GC 부담이 늘어 화면이 끊길 수 있기 때문이다.
+        // 지금은 Rect 사용 예제를 보여주기 위해 단순하게 여기서 만들고 있지만,
+        // 성능까지 더 신경 쓴다면 멤버로 미리 만들어 두고 값을 바꿔 재사용하는 편이 좋다.
+        val rect = Rect(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
+        canvas.drawRect(rect, fillPaint)
+        canvas.drawRect(rect, strokePaint)
     }
 }
