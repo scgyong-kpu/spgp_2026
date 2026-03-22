@@ -8,6 +8,7 @@ import kr.ac.tukorea.ge.scgyong.morecontrols.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
     private val normalizedName: String
         get() {
             // EditText.text 는 Editable 이므로 보통 toString()으로 String 으로 바꿔 쓴다.
@@ -28,25 +29,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.yourNameEditText.addTextChangedListener { handleNameChanged() }
+    }
+
+    private fun handleNameChanged() {
         // addTextChangedListener 는 androidx.core.widget 가 제공하는 Kotlin 확장 함수이다.
         // Java 에서는 TextWatcher 객체를 만들고 before/on/after 메서드를 모두 구현해야 했지만,
         // Kotlin 에서는 필요한 동작만 람다로 바로 넘길 수 있어 코드가 훨씬 짧아진다.
-        binding.yourNameEditText.addTextChangedListener {
-            // Switch 가 켜져 있으면 이름이 바뀔 때마다 doIt()을 다시 호출해
-            // 최종 결과 문장을 즉시 다시 계산한다.
-            if (binding.applyImmediatelySwitch.isChecked) {
-                doIt()
-                // return@addTextChangedListener 는 이 람다만 끝낸다는 뜻이다.
-                // 여기서는 그냥 return 을 쓸 수 없고, 어떤 람다를 끝낼지 라벨로 밝혀야 한다.
-                // 그래서 아래의 길이 표시 코드는 실행하지 않는다.
-                return@addTextChangedListener
-            }
+        // 지금은 람다 안 코드를 따로 handleNameChanged() 함수로 빼 두어,
+        // 입력 이벤트 처리와 실제 동작을 분리한 구조를 보여 준다.
 
-            // Switch 가 꺼져 있으면 최종 적용은 아직 하지 않고,
-            // 사용자가 입력 중인 이름의 길이만 화면에 보여 준다.
-            // trim()을 써서 앞뒤 공백은 길이 계산에서 제외한다.
-            binding.mainTextView.text = getString(R.string.name_length_fmt, normalizedName.length)
+        // Switch 가 켜져 있으면 이름이 바뀔 때마다 doIt()을 다시 호출해
+        // 최종 결과 문장을 즉시 다시 계산한다.
+        if (binding.applyImmediatelySwitch.isChecked) {
+            doIt()
+            // 여기서는 람다가 아니라 일반 함수 안이므로 return 만 써도 이 함수가 바로 끝난다.
+            // 이전처럼 addTextChangedListener 람다 안에 직접 썼다면 return@addTextChangedListener 가 필요했다.
+            return
         }
+
+        // Switch 가 꺼져 있으면 최종 적용은 아직 하지 않고,
+        // 사용자가 입력 중인 이름의 길이만 화면에 보여 준다.
+        binding.mainTextView.text = getString(R.string.name_length_fmt, normalizedName.length)
     }
 
     fun onDoItButtonClick(view: View) {
