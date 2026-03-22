@@ -100,5 +100,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="16dp" />
+        android:padding="6dp" />
+    <kr.ac.tukorea.ge.scgyong.morecontrols.MyView
+        android:id="@+id/my_view_2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:padding="2dp" />
 </LinearLayout>
