@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.scgyong.morecontrols
 
 import android.os.Bundle
 import android.view.View
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import kr.ac.tukorea.ge.scgyong.morecontrols.databinding.ActivityMainBinding
@@ -29,6 +30,24 @@ class MainActivity : AppCompatActivity() {
         // 컨트롤 값과 실제 의미 있는 값이 다를 수 있다는 점을 예제로 보여 준다.
         get() = binding.moneySeekBar.progress + 10
 
+    // #2 방식: 리스너를 멤버 프로퍼티로 따로 분리해 두고 setListener(member) 형태로 연결한다.
+    // 이렇게 하면 onCreate 안에 익명 구현 코드를 길게 늘어놓지 않아도 되어,
+    // 화면 초기화 흐름을 더 짧고 읽기 쉽게 유지할 수 있다.
+    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            updateMoneyLabel()
+            if (binding.applyImmediatelySwitch.isChecked) {
+                doIt()
+            }
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,29 +61,9 @@ class MainActivity : AppCompatActivity() {
         // Kotlin 에서는 필요한 동작만 람다로 바로 넘길 수 있어 코드가 훨씬 짧아진다.
         binding.yourNameEditText.addTextChangedListener { handleNameChanged() }
 
-        // SeekBar 는 progress 값이 바뀔 때마다 현재 값을 다시 그려 준다.
-        // 여기서는 10..10000 범위를 쓰기 위해 min 속성을 직접 쓰기보다
-        // progress + 10 으로 실제 돈 값을 계산하는 방식을 사용한다.
-        binding.moneySeekBar.setOnSeekBarChangeListener(
-            object : android.widget.SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: android.widget.SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean,
-                ) {
-                    updateMoneyLabel()
-                    if (binding.applyImmediatelySwitch.isChecked) {
-                        doIt()
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
-                }
-            },
-        )
+        // SeekBar 리스너는 #2 방식으로 member 에 분리해 두었으므로,
+        // onCreate 에서는 어떤 리스너를 붙이는지만 짧게 읽히도록 정리한다.
+        binding.moneySeekBar.setOnSeekBarChangeListener(seekBarChangeListener)
     }
 
     private fun handleNameChanged() {
