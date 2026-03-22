@@ -41,6 +41,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:background="#ccf"
             android:text="@string/apply_immediately" />
     </LinearLayout>
 </LinearLayout>
