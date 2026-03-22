@@ -1,5 +1,31 @@
 # Homeworks
 
+## 2026-03-21 실습: 디자인 요구 사항 문서 제작
+다음 시간에 Android 의 View 를 상속하여 Custom View 를 만들 예정이다. 이를 위해 내가 만들 View 의 Spec 을 정해 과제 본문으로 작성, 제출한다.
+
+* View 의 이름: 예 - `MyView` `CircleView` `SmileyView` `PieProgress` 등
+* View 를 그리는 방법에 대한 구체적인 방법: 크기에 따라 달라지도록 고안할것
+    * 예1
+      * View 한가운데에 View 높이의 `1/10` 크기로 검정색 원을 색칠하여 그린다
+      * View 의 `1/4` 크기로 가운데에 `5px` 두께의 파란색 선으로 사각형을 그린다
+      * View `x` 좌표로는 가운데, `y` 좌표로는 위에서 높이 `1/3` 위치에 가운데 정렬로 `"Hello"` 라고 검정색 글자로 적는다
+    * 예2
+      * 가로와 세로 중 짧은 것의 절반을 `r` 이라 하고 반지름이 `r` 인 원을 그려 얼굴로 삼는다. View 의 중심은 `cx`, `cy` 이다.
+      * `cx - r/3`, `cy - r/4` 위치에 왼쪽 눈을, `cx + r/3`, `cy - r/4` 위치에 오른쪽 눈을 그린다. 눈의 반지름은 `r/4` 이다.
+      * cx - r/2, cy + r/2 부터 cx + r/2, cy + r/2 까지 시작각도 15도에서 165도까지의 호를 그려 입으로 한다
+      * 파란색 두께 `5` 의 선으로 그린다.
+    * 그림판에서 마우스로 대충 끄적여서 과제 본문에 붙여넣어라. 이때 2개 이상의 크기와 비율에 대해 예를 들어라
+* View 에게 XML attribute 로 줄 수 있는 항목들을 나열한다. 이름도 정해 준다
+  * 예1
+    * `centerCircleColor`: 가운데에 그릴 원의 색깔 (default: 검정색)
+    * `centerCircleSize`: 가운데에 그릴 원의 크기 (default: 1/10)
+    * `squareStrokeWidth`: `1/4` 크기의 사각형의 두께
+    * `squareStrokeColor`: `1/4` 크기의 사각형의 선 색깔
+    * `greetings`: `Hello` 대신 적을 문자열
+* (Optional) View 에서 발생할 수 있는 Event. 구현하는 방법은 몰라도 된다. 어렵다면 고려하지 않아도 된다.
+    * 사용자가 square 부분을 touch-down 했다
+    * square 부분을 touch-down 한 지 2초의 시간이 지났다
+
 ## 2026-03-16 조사: Kotlin, Design Pattern, 2D, ...
 
 * Kotlin 관련 다음 항목들을 조사하여 정리하라
