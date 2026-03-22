@@ -16,10 +16,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // addTextChangedListener 는 androidx.core.widget 가 제공하는 Kotlin 확장 함수이다.
-        // Java 에서는 TextWatcher 객체를 만들고 before/on/after 메서드를 모두 적어야 했지만,
-        // Kotlin 에서는 람다로 필요한 동작만 바로 넘길 수 있어 코드가 훨씬 짧아진다.
-        // 이름 입력이 바뀔 때마다 doIt()을 다시 호출해 화면의 결과 문장을 즉시 갱신한다.
-        binding.yourNameEditText.addTextChangedListener { doIt() }
+        // Java 에서는 TextWatcher 객체를 만들고 before/on/after 메서드를 모두 구현해야 했지만,
+        // Kotlin 에서는 필요한 동작만 람다로 바로 넘길 수 있어 코드가 훨씬 짧아진다.
+        binding.yourNameEditText.addTextChangedListener {
+            // Switch 가 켜져 있으면 이름이 바뀔 때마다 doIt()을 다시 호출해
+            // 최종 결과 문장을 즉시 다시 계산한다.
+            if (binding.applyImmediatelySwitch.isChecked) {
+                doIt()
+                // return@addTextChangedListener 는 이 람다만 끝낸다는 뜻이다.
+                // 여기서는 그냥 return 을 쓸 수 없고, 어떤 람다를 끝낼지 라벨로 밝혀야 한다.
+                // 그래서 아래의 길이 표시 코드는 실행하지 않는다.
+                return@addTextChangedListener
+            }
+
+            // Switch 가 꺼져 있으면 최종 적용은 아직 하지 않고,
+            // 사용자가 입력 중인 이름의 길이만 화면에 보여 준다.
+            // trim()을 써서 앞뒤 공백은 길이 계산에서 제외한다.
+            // 비슷한 기능은 다른 언어에도 자주 나오며,
+            // C 는 표준 trim 함수가 없어 직접 구현하는 경우가 많고, C++/C#/Swift/Java/JavaScript 는 trim(),
+            // Python 은 strip() 같은 이름을 쓴다.
+            val name = binding.yourNameEditText.text.trim()
+            binding.mainTextView.text = getString(R.string.name_length_fmt, name.length)
+        }
     }
 
     fun onDoItButtonClick(view: View) {
@@ -27,25 +45,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun doIt() {
-        // Kotlin 의 if 는 문장(statement)만이 아니라 값을 만드는 표현식(expression)으로도 쓸 수 있다.
-        // 그래서 체크 상태에 따라 String 자체가 아니라 문자열 리소스 ID 하나를 골라 val 에 바로 담을 수 있다.
+        // Kotlin 의 if 는 문장(statement)일 뿐 아니라 값을 만드는 표현식(expression)으로도 쓸 수 있다.
+        // 그래서 체크 상태에 따라 문자열 자체가 아니라 문자열 리소스 ID 하나를 골라 val 에 바로 담을 수 있다.
         val isGood = binding.goodProgrammerCheckbox.isChecked
         val strId = if (isGood) R.string.you_get_one_grand else R.string.you_have_nothing
 
-        // setText 는 CharSequence 를 받는 버전과 문자열 리소스 ID(Int)를 받는 버전이 따로 있다.
-        // 여기서는 if 표현식이 돌려준 R.string.xxx 값을 그대로 넘겨 리소스를 읽는 버전을 사용한다.
+        // setText 를 포함한 많은 Android API 는 CharSequence 버전과
+        // 문자열 리소스 ID(Int)를 받는 버전을 함께 제공한다.
+        // 여기서는 strId 를 getString 으로 실제 문자열로 읽어 아래의 포맷 문자열 조합에 사용한다.
         val msg = getString(strId)
 
-        // EditText 의 text 는 Editable 이므로, 다른 문자열과 조합하려면 보통 String 으로 바꿔 쓴다.
-        // trim() 을 적용하면 앞뒤 공백만 입력한 경우를 빈 문자열처럼 다룰 수 있어 결과 문장이 더 자연스럽다.
+        // EditText.text 는 Editable 이므로 보통 toString()으로 String 으로 바꿔 쓴다.
+        // trim()을 적용하면 앞뒤 공백만 입력한 경우도 빈 이름처럼 처리할 수 있다.
+        // 비슷한 기능은 다른 언어에도 자주 나오며,
+        // C 는 표준 trim 함수가 없어 직접 구현하는 경우가 많고, C++/C#/Swift/Java/JavaScript 는 trim(),
+        // Python 은 strip() 같은 이름을 쓴다.
         val nameInput = binding.yourNameEditText.text.toString().trim()
 
-        // 이름 입력이 비어 있으면 미리 준비한 noname 문자열 리소스를 대신 사용한다.
-        // 이렇게 하면 사용자가 아무것도 입력하지 않았을 때도 포맷 문자열이 깨지지 않고 일관된 문장을 만들 수 있다.
+        // 이름 입력이 비어 있으면 미리 준비한 noname 문자열을 기본값으로 사용한다.
+        // 이렇게 하면 사용자가 아무것도 입력하지 않아도 포맷 문자열이 자연스럽게 완성된다.
         val name = if (nameInput.isEmpty()) getString(R.string.noname) else nameInput
 
         // main_msg_fmt 는 %1$s, %2$s 자리표시자를 가진 포맷 문자열이다.
-        // 첫 번째 자리에 이름, 두 번째 자리에 결과 메시지를 넣어 최종 문장을 완성한다.
+        // 첫 번째 자리에는 이름, 두 번째 자리에는 결과 메시지를 넣어 최종 문장을 만든다.
         val text = getString(R.string.main_msg_fmt, name, msg)
 
         // text 프로퍼티에 String 을 대입하면 TextView 의 setText(CharSequence) 버전이 호출된다.
