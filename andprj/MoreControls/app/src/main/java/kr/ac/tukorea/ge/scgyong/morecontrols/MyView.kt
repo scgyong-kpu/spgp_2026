@@ -22,7 +22,7 @@ class MyView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    // 원의 테두리만 따로 그릴 때 사용하는 Paint.
+    // 원의 테두리와 Z 모양 선을 그릴 때 사용하는 Paint.
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.DKGRAY
         style = Paint.Style.STROKE
@@ -30,6 +30,21 @@ class MyView @JvmOverloads constructor(
     }
 
     private val path = Path()
+
+    fun setStrokeWidth(width: Float) {
+        strokePaint.strokeWidth = width
+        invalidate()
+    }
+
+    fun setStrokeCap(cap: Paint.Cap) {
+        strokePaint.strokeCap = cap
+        invalidate()
+    }
+
+    fun setStrokeJoin(join: Paint.Join) {
+        strokePaint.strokeJoin = join
+        invalidate()
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -50,10 +65,10 @@ class MyView @JvmOverloads constructor(
 
         val w6 = contentWidth / 6
         val h6 = contentHeight / 6
-        val x1 = paddingLeft + w6
-        val x2 = paddingLeft + contentWidth - w6
-        val y1 = paddingTop + h6
-        val y2 = paddingTop + contentHeight - h6
+        val x1 = contentLeft + w6
+        val x2 = contentRight - w6
+        val y1 = contentTop + h6
+        val y2 = contentBottom - h6
 
         path.reset()
         path.moveTo(x1, y1)
