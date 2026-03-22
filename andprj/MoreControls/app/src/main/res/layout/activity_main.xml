@@ -23,12 +23,24 @@
         android:onClick="onCheckGoodProgrammer"
         android:text="@string/good_programmer_checkbox_text" />
 
-    <Button
-        android:id="@+id/do_it_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:layout_marginStart="8dp"
-        android:onClick="onDoItButtonClick"
-        android:text="@string/do_it_button_text" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/do_it_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:onClick="onDoItButtonClick"
+            android:text="@string/do_it_button_text" />
+
+        <Switch
+            android:id="@+id/apply_immediately_switch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/apply_immediately" />
+    </LinearLayout>
 </LinearLayout>
