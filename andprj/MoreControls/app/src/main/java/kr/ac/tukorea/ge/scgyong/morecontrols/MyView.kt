@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.graphics.withTranslation
 
 class MyView @JvmOverloads constructor(
     context: Context,
@@ -110,10 +111,9 @@ class MyView @JvmOverloads constructor(
         scale: Float,
         depth: Int,
     ) {
-        canvas.save()
-        canvas.translate(translateX, translateY)
-        canvas.scale(scale, scale)
-        drawSmiley(canvas, depth)
-        canvas.restore()
+        canvas.withTranslation(translateX, translateY) {
+            scale(scale, scale)
+            drawSmiley(this, depth)
+        }
     }
 }
