@@ -6,4 +6,6 @@
     <string name="something_happened_text">Something Happened!!</string>
     <string name="you_get_one_grand">Congrats. You get $1000</string>
     <string name="you_have_nothing">You have nothing</string>
+    <string name="good_news">Really? Good to hear that</string>
+    <string name="bad_news">Sorry for you...</string>
 </resources>

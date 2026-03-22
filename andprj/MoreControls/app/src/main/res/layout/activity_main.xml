@@ -20,6 +20,7 @@
         android:id="@+id/good_programmer_checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="onCheckGoodProgrammer"
         android:text="@string/good_programmer_checkbox_text" />
 
     <Button

@@ -28,4 +28,10 @@ class MainActivity : AppCompatActivity() {
         // 여기서는 if 표현식이 돌려준 R.string.xxx 값을 그대로 넘겨 리소스를 읽는 버전을 사용한다.
         binding.mainTextView.setText(resultTextId)
     }
+
+    fun onCheckGoodProgrammer(view: View) {
+        val isGood = binding.goodProgrammerCheckbox.isChecked
+        val strId = if (isGood) R.string.good_news else R.string.bad_news
+        binding.mainTextView.setText(strId)
+    }
 }
