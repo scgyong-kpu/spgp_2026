@@ -43,7 +43,7 @@ class MyView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        drawSmiley(canvas, baseTranslateX, baseTranslateY, baseScale, 3)
+        canvas.drawSmiley(baseTranslateX, baseTranslateY, baseScale, 3)
     }
 
     private fun calculateFaceGeometry() {
@@ -67,9 +67,8 @@ class MyView @JvmOverloads constructor(
         )
     }
 
-    // 원래 버전: Canvas 와 depth 만 받는 smiley 함수.
-    // 실제 좌표계 이동과 확대/축소는 바깥쪽 overload 에서 처리한 뒤 이 함수가 호출된다.
-    private fun drawSmiley(canvas: Canvas, depth: Int = 3) {
+    // Canvas receiver extension 버전: 정규화 좌표계 안에서 smiley 자체를 그린다.
+    private fun Canvas.drawSmiley(depth: Int = 3) {
         val cx = 0.5f
         val cy = 0.5f
         val radius = 0.5f
@@ -79,15 +78,15 @@ class MyView @JvmOverloads constructor(
         val rightEyeCx = cx + radius / 3f
         val eyeCy = cy - radius / 4f
 
-        canvas.drawCircle(cx, cy, radius, fillPaint)
-        canvas.drawCircle(cx, cy, radius, strokePaint)
+        drawCircle(cx, cy, radius, fillPaint)
+        drawCircle(cx, cy, radius, strokePaint)
 
         if (depth > 1) {
-            drawSmiley(canvas, leftEyeCx - eyeRadius, eyeCy - eyeRadius, eyeRadius * 2f, depth - 1)
-            drawSmiley(canvas, rightEyeCx - eyeRadius, eyeCy - eyeRadius, eyeRadius * 2f, depth - 1)
+            drawSmiley(leftEyeCx - eyeRadius, eyeCy - eyeRadius, eyeRadius * 2f, depth - 1)
+            drawSmiley(rightEyeCx - eyeRadius, eyeCy - eyeRadius, eyeRadius * 2f, depth - 1)
         } else {
-            canvas.drawCircle(leftEyeCx, eyeCy, eyeRadius, strokePaint)
-            canvas.drawCircle(rightEyeCx, eyeCy, eyeRadius, strokePaint)
+            drawCircle(leftEyeCx, eyeCy, eyeRadius, strokePaint)
+            drawCircle(rightEyeCx, eyeCy, eyeRadius, strokePaint)
         }
 
         val mouthLeft = cx - radius / 2f
@@ -100,20 +99,19 @@ class MyView @JvmOverloads constructor(
         // 예를 들어 Android Canvas, Java AWT Graphics 는 start~sweep 계열이고,
         // 수학 설명이나 SVG, 일부 게임 코드에서는 start~end 처럼 설명하는 경우도 있다.
         // useCenter=false 면 부채꼴이 아니라 호만 그려지고, 양의 sweepAngle 은 시계 방향으로 진행된다.
-        canvas.drawArc(mouthLeft, eyeCy, mouthRight, mouthBottom, 15f, 150f, false, strokePaint)
+        drawArc(mouthLeft, eyeCy, mouthRight, mouthBottom, 15f, 150f, false, strokePaint)
     }
 
-    // 추가 버전: translate 와 scale 까지 함께 받아, 같은 smiley 를 다른 위치와 크기에 그린다.
-    private fun drawSmiley(
-        canvas: Canvas,
+    // 위치와 크기를 바꿔 같은 smiley 를 다시 그리고 싶을 때 쓰는 overload.
+    private fun Canvas.drawSmiley(
         translateX: Float,
         translateY: Float,
         scale: Float,
         depth: Int,
     ) {
-        canvas.withTranslation(translateX, translateY) {
+        withTranslation(translateX, translateY) {
             scale(scale, scale)
-            drawSmiley(this, depth)
+            drawSmiley(depth)
         }
     }
 }
