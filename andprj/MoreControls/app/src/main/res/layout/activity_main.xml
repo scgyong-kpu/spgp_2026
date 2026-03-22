@@ -63,6 +63,7 @@
             android:id="@+id/your_name_edit_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:hint="@string/noname" />
     </LinearLayout>
 </LinearLayout>
