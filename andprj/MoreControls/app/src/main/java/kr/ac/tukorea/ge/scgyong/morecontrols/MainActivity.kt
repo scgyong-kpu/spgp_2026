@@ -30,24 +30,6 @@ class MainActivity : AppCompatActivity() {
         // 컨트롤 값과 실제 의미 있는 값이 다를 수 있다는 점을 예제로 보여 준다.
         get() = binding.moneySeekBar.progress + 10
 
-    // #2 방식: 리스너를 멤버 프로퍼티로 따로 분리해 두고 setListener(member) 형태로 연결한다.
-    // 이렇게 하면 onCreate 안에 익명 구현 코드를 길게 늘어놓지 않아도 되어,
-    // 화면 초기화 흐름을 더 짧고 읽기 쉽게 유지할 수 있다.
-    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            updateMoneyLabel()
-            if (binding.applyImmediatelySwitch.isChecked) {
-                doIt()
-            }
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,9 +43,14 @@ class MainActivity : AppCompatActivity() {
         // Kotlin 에서는 필요한 동작만 람다로 바로 넘길 수 있어 코드가 훨씬 짧아진다.
         binding.yourNameEditText.addTextChangedListener { handleNameChanged() }
 
-        // SeekBar 리스너는 #2 방식으로 member 에 분리해 두었으므로,
-        // onCreate 에서는 어떤 리스너를 붙이는지만 짧게 읽히도록 정리한다.
-        binding.moneySeekBar.setOnSeekBarChangeListener(seekBarChangeListener)
+        // SeekBar 도 extension function 으로 감싸 두면
+        // setOnSeekBarChangeListener(object : ...) 대신 더 짧은 형태로 읽을 수 있다.
+        binding.moneySeekBar.onProgressChanged {
+            updateMoneyLabel()
+            if (binding.applyImmediatelySwitch.isChecked) {
+                doIt()
+            }
+        }
     }
 
     private fun handleNameChanged() {
@@ -113,4 +100,27 @@ class MainActivity : AppCompatActivity() {
         val strId = if (isGood) R.string.good_news else R.string.bad_news
         binding.mainTextView.setText(strId)
     }
+}
+
+// extension function 은 기존 클래스를 수정하지 않고도 "그 클래스에 함수가 추가된 것처럼"
+// 보이게 해 주는 Kotlin 문법이다.
+// 여기서는 SeekBar 클래스를 상속하거나 새 클래스를 만들지 않고도,
+// moneySeekBar.onProgressChanged { ... } 처럼 자연스럽게 호출할 수 있게 만든다.
+private fun SeekBar.onProgressChanged(action: (Int) -> Unit) {
+    // extension 안에서는 this 가 현재 SeekBar 를 가리킨다. (#1 방식)
+    // 따라서 setOnSeekBarChangeListener(this) 처럼 receiver 에 직접 작업을 붙이는 흐름을 보여줄 수 있다.
+    // action 은 호출하는 쪽에서 넘긴 람다이며, progress 값이 바뀔 때마다 실행된다.
+    setOnSeekBarChangeListener(
+        object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                action(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        },
+    )
 }
