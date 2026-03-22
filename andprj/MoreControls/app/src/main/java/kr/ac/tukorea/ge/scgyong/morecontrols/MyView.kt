@@ -27,21 +27,6 @@ class MyView @JvmOverloads constructor(
         strokeWidth = 6f
     }
 
-    fun setStrokeWidth(width: Float) {
-        strokePaint.strokeWidth = width
-        invalidate()
-    }
-
-    fun setStrokeCap(cap: Paint.Cap) {
-        strokePaint.strokeCap = cap
-        invalidate()
-    }
-
-    fun setStrokeJoin(join: Paint.Join) {
-        strokePaint.strokeJoin = join
-        invalidate()
-    }
-
     val rect = Rect()
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
