@@ -97,9 +97,7 @@
     <LinearLayout
         android:id="@+id/paintControlGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/seekbarGroup"
-        >
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -192,20 +190,17 @@
                     android:id="@+id/radioJoinBevel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thin"
-                    />
+                    android:text="Bevel" />
                 <RadioButton
                     android:id="@+id/radioJoinMiter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Medium"
-                    />
+                    android:text="Miter" />
                 <RadioButton
                     android:id="@+id/radioJoinRound"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thick"
-                    />
+                    android:text="Round" />
             </RadioGroup>
         </LinearLayout>
     </LinearLayout>
