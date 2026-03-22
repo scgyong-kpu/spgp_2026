@@ -12,11 +12,16 @@ class MyView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
+    // Paint 는 onDraw 에서 항상 필요한 기본 도구이므로, 프로퍼티 선언과 동시에 바로 만든다.
+    // 나중에 따로 채워 넣어야 하는 값이 아니어서 lateinit 이 어울리지 않고,
+    // 실제로 거의 즉시 필요하므로 lazy 로 미뤄도 얻는 이점이 거의 없다.
+    // 채워진 원의 내부 색을 그릴 때 사용하는 Paint.
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(255, 182, 193)
         style = Paint.Style.FILL
     }
 
+    // 원의 테두리만 따로 그릴 때 사용하는 Paint.
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.DKGRAY
         style = Paint.Style.STROKE
