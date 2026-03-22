@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.scgyong.morecontrols
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import kr.ac.tukorea.ge.scgyong.morecontrols.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -13,6 +14,21 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Java 에서는 EditText 의 텍스트 변경을 감지하려면 TextWatcher 인터페이스를 구현한 객체를 만들어 addTextChangedListener() 메서드에 넘겨야 했다.
+        // binding.yourNameEditText.addTextChangedListener(new TextWatcher() {
+        //    @Override
+        //    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        //    }
+        //
+        //    @Override
+        //    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        //    }
+        //
+        //    @Override
+        //    public void afterTextChanged(Editable editable) {
+        //    }
+        // });
     }
 
     fun onDoItButtonClick(view: View) {
