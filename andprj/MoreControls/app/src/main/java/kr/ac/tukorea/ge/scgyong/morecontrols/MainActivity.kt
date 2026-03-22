@@ -16,6 +16,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onDoItButtonClick(view: View) {
+        doIt()
+    }
+
+    private fun doIt() {
         // Kotlin 의 if 는 문장(statement)만이 아니라 값을 만드는 표현식(expression)으로도 쓸 수 있다.
         // 그래서 체크 상태에 따라 String 자체가 아니라 문자열 리소스 ID 하나를 골라 val 에 바로 담을 수 있다.
         val resultTextId = if (binding.goodProgrammerCheckbox.isChecked) {
