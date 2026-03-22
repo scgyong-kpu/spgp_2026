@@ -8,19 +8,18 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 
-
 class MyView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
-    // 채워진 원의 내부 색을 그릴 때 사용하는 Paint.
+    // 채워진 면의 내부 색을 그릴 때 사용하는 Paint.
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(255, 182, 193)
         style = Paint.Style.FILL
     }
 
-    // 원의 테두리와 Z 모양 선을 그릴 때 사용하는 Paint.
+    // 면의 테두리를 그릴 때 사용하는 Paint.
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.DKGRAY
         style = Paint.Style.STROKE
@@ -44,20 +43,25 @@ class MyView @JvmOverloads constructor(
 
     val rect = Rect()
 
+    init {
+        // 처음에는 생성 시점에 한 번만 계산해 두면 더 효율적일 것 같아 보인다.
+        // 하지만 이 시점에는 아직 View 의 실제 width/height 가 정해지지 않아,
+        // 기대한 좌표가 나오지 않고 결과도 생각대로 보이지 않는다.
+        calculateRect()
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // onDraw 는 "그리는 일"만 담당하고,
-        // 실제 사각형 좌표 계산은 calculateRect() 로 분리해 읽기 쉽게 정리한다.
-        // 하지만 여전히, 사각형 객체가 생성되는 곳이 onDraw 에서 호출되는 calculateRect() 라는 점은 변하지 않는다.
-        calculateRect()
+        // 그래서 지금 상태는 "이렇게 옮기면 안 된다"는 비교 예제에 가깝다.
+        // 실제 크기가 정해진 뒤에 다시 계산하는 더 올바른 위치는 다음 단계에서 다룬다.
         canvas.drawRect(rect, fillPaint)
         canvas.drawRect(rect, strokePaint)
     }
 
     private fun calculateRect() {
         // padding 을 제외한 내부 영역을 먼저 계산한 뒤,
-        // 그 안쪽에 한 칸 여백을 둔 사각형 좌표를 Rect 로 만들어 돌려준다.
+        // 그 안쪽에 한 칸 여백을 둔 사각형 좌표를 Rect 로 만든다.
         val contentLeft = paddingLeft.toFloat()
         val contentTop = paddingTop.toFloat()
         val contentRight = width - paddingRight.toFloat()
