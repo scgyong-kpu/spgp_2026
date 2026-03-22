@@ -15,20 +15,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Java 에서는 EditText 의 텍스트 변경을 감지하려면 TextWatcher 인터페이스를 구현한 객체를 만들어 addTextChangedListener() 메서드에 넘겨야 했다.
-        // binding.yourNameEditText.addTextChangedListener(new TextWatcher() {
-        //    @Override
-        //    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        //    }
-        //
-        //    @Override
-        //    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        //    }
-        //
-        //    @Override
-        //    public void afterTextChanged(Editable editable) {
-        //    }
-        // });
+        // addTextChangedListener 는 androidx.core.widget 가 제공하는 Kotlin 확장 함수이다.
+        // Java 에서는 TextWatcher 객체를 만들고 before/on/after 메서드를 모두 적어야 했지만,
+        // Kotlin 에서는 람다로 필요한 동작만 바로 넘길 수 있어 코드가 훨씬 짧아진다.
+        // 이름 입력이 바뀔 때마다 doIt()을 다시 호출해 화면의 결과 문장을 즉시 갱신한다.
+        binding.yourNameEditText.addTextChangedListener { doIt() }
     }
 
     fun onDoItButtonClick(view: View) {
