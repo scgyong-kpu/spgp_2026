@@ -53,6 +53,18 @@ class MyView @JvmOverloads constructor(
         canvas.drawCircle(faceCx, faceCy, faceRadius, strokePaint)
         canvas.drawCircle(leftEyeCx, eyeCy, eyeRadius, strokePaint)
         canvas.drawCircle(rightEyeCx, eyeCy, eyeRadius, strokePaint)
+
+        val mouthX1 = faceCx - faceRadius / 2
+        val mouthX2 = faceCx + faceRadius / 2
+        val mouthY = faceCy + faceRadius / 2
+
+        // Android Canvas.drawArc 는 startAngle, endAngle 이 아니라 startAngle, sweepAngle 방식이다.
+        // 즉 15f 에서 시작해서 150f 만큼 더 그린다는 뜻이며, 끝각이 150f 라는 뜻이 아니다.
+        // 같은 호 그리기라도 어떤 시스템은 start~end 를 쓰고 어떤 시스템은 start~sweep 을 쓰므로 API 문서를 확인해야 한다.
+        // 예를 들어 Android Canvas, Java AWT Graphics 는 start~sweep 계열이고,
+        // 수학 설명이나 SVG/게임 코드 일부는 start~end 처럼 시작각과 끝각으로 설명하는 경우가 많다.
+        // useCenter=false 면 부채꼴이 아니라 호만 그려지고, 양의 sweepAngle 은 시계 방향으로 진행된다.
+        canvas.drawArc(mouthX1, eyeCy, mouthX2, mouthY, 15f, 150f, false, strokePaint)
     }
 
     private fun calculateFaceGeometry() {
