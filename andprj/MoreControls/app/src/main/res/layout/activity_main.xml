@@ -66,4 +66,32 @@
             android:layout_weight="1"
             android:hint="@string/noname" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/money_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/money_label_text" />
+
+        <SeekBar
+            android:id="@+id/money_seek_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="9990"
+            android:progress="990" />
+
+        <TextView
+            android:id="@+id/money_value_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/money_value_initial" />
+    </LinearLayout>
 </LinearLayout>

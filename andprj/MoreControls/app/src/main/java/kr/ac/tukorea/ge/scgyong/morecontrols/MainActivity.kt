@@ -23,22 +23,51 @@ class MainActivity : AppCompatActivity() {
             return if (nameInput.isEmpty()) getString(R.string.noname) else nameInput
         }
 
+    private val selectedMoney: Int
+        // SeekBar 는 기본적으로 0 부터 시작하는 progress 값을 다루는 컨트롤이다.
+        // 여기서는 min 을 직접 쓰는 대신 progress + 10 으로 실제 돈 값을 계산해,
+        // 컨트롤 값과 실제 의미 있는 값이 다를 수 있다는 점을 예제로 보여 준다.
+        get() = binding.moneySeekBar.progress + 10
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.yourNameEditText.addTextChangedListener { handleNameChanged() }
-    }
+        updateMoneyLabel()
 
-    private fun handleNameChanged() {
         // addTextChangedListener 는 androidx.core.widget 가 제공하는 Kotlin 확장 함수이다.
         // Java 에서는 TextWatcher 객체를 만들고 before/on/after 메서드를 모두 구현해야 했지만,
         // Kotlin 에서는 필요한 동작만 람다로 바로 넘길 수 있어 코드가 훨씬 짧아진다.
-        // 지금은 람다 안 코드를 따로 handleNameChanged() 함수로 빼 두어,
-        // 입력 이벤트 처리와 실제 동작을 분리한 구조를 보여 준다.
+        binding.yourNameEditText.addTextChangedListener { handleNameChanged() }
 
+        // SeekBar 는 progress 값이 바뀔 때마다 현재 값을 다시 그려 준다.
+        // 여기서는 10..10000 범위를 쓰기 위해 min 속성을 직접 쓰기보다
+        // progress + 10 으로 실제 돈 값을 계산하는 방식을 사용한다.
+        binding.moneySeekBar.setOnSeekBarChangeListener(
+            object : android.widget.SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: android.widget.SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    updateMoneyLabel()
+                    if (binding.applyImmediatelySwitch.isChecked) {
+                        doIt()
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
+                }
+            },
+        )
+    }
+
+    private fun handleNameChanged() {
         // Switch 가 켜져 있으면 이름이 바뀔 때마다 doIt()을 다시 호출해
         // 최종 결과 문장을 즉시 다시 계산한다.
         if (binding.applyImmediatelySwitch.isChecked) {
@@ -53,20 +82,24 @@ class MainActivity : AppCompatActivity() {
         binding.mainTextView.text = getString(R.string.name_length_fmt, normalizedName.length)
     }
 
+    private fun updateMoneyLabel() {
+        binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
+    }
+
     fun onDoItButtonClick(view: View) {
         doIt()
     }
 
     private fun doIt() {
         // Kotlin 의 if 는 문장(statement)일 뿐 아니라 값을 만드는 표현식(expression)으로도 쓸 수 있다.
-        // 그래서 체크 상태에 따라 문자열 자체가 아니라 문자열 리소스 ID 하나를 골라 val 에 바로 담을 수 있다.
+        // 그래서 체크 상태에 따라 문자열 자체가 아니라 문자열 리소스 ID 하나를 고를 수도 있고,
+        // 필요한 경우에는 아래처럼 getString 결과 자체를 바로 고를 수도 있다.
         val isGood = binding.goodProgrammerCheckbox.isChecked
-        val strId = if (isGood) R.string.you_get_one_grand else R.string.you_have_nothing
-
-        // setText 를 포함한 많은 Android API 는 CharSequence 버전과
-        // 문자열 리소스 ID(Int)를 받는 버전을 함께 제공한다.
-        // 여기서는 strId 를 getString 으로 실제 문자열로 읽어 아래의 포맷 문자열 조합에 사용한다.
-        val msg = getString(strId)
+        val msg = if (isGood) {
+            getString(R.string.you_get_money_fmt, selectedMoney)
+        } else {
+            getString(R.string.you_have_nothing)
+        }
 
         // main_msg_fmt 는 %1$s, %2$s 자리표시자를 가진 포맷 문자열이다.
         // 첫 번째 자리에는 이름, 두 번째 자리에는 결과 메시지를 넣어 최종 문장을 만든다.

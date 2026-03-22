@@ -4,12 +4,15 @@
     <string name="good_programmer_checkbox_text">Check if you are a good programmer</string>
     <string name="do_it_button_text">Do It !!</string>
     <string name="something_happened_text">Something Happened!!</string>
-    <string name="you_get_one_grand">Congrats. You get $1000</string>
+    <string name="you_get_money_fmt">Congrats. You get $%1$d</string>
     <string name="you_have_nothing">You have nothing</string>
     <string name="good_news">Really? Good to hear that</string>
     <string name="bad_news">Sorry for you...</string>
     <string name="apply_immediately">Apply Immediately</string>
     <string name="your_name_label_text">Your Name:</string>
+    <string name="money_label_text">Money:</string>
+    <string name="money_value_fmt">$%1$d</string>
+    <string name="money_value_initial">$1000</string>
     <string name="main_msg_fmt">Hello %1$s, %2$s</string>
     <string name="name_length_fmt">Your name is %d character long.</string>
     <string name="noname">NoName</string>
