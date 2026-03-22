@@ -48,6 +48,17 @@ class MyView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        // onDraw 는 "그리는 일"만 담당하고,
+        // 실제 사각형 좌표 계산은 calculateRect() 로 분리해 읽기 쉽게 정리한다.
+        // 하지만 여전히, 사각형 객체가 생성되는 곳이 onDraw 에서 호출되는 calculateRect() 라는 점은 변하지 않는다.
+        val rect = calculateRect()
+        canvas.drawRect(rect, fillPaint)
+        canvas.drawRect(rect, strokePaint)
+    }
+
+    private fun calculateRect(): Rect {
+        // padding 을 제외한 내부 영역을 먼저 계산한 뒤,
+        // 그 안쪽에 한 칸 여백을 둔 사각형 좌표를 Rect 로 만들어 돌려준다.
         val contentLeft = paddingLeft.toFloat()
         val contentTop = paddingTop.toFloat()
         val contentRight = width - paddingRight.toFloat()
@@ -63,16 +74,8 @@ class MyView @JvmOverloads constructor(
         val y1 = contentTop + h6
         val y2 = contentBottom - h6
 
-        // Rect 는 left, top, right, bottom 네 값으로 사각형 영역을 나타내는 Android 기본 도형 클래스이다.
-        // 여기서는 padding 을 제외한 내부 영역 안쪽에 한 칸 여백을 둔 사각형 좌표를 만들어 사용한다.
-        //
-        // Android Studio 는 onDraw() 안에서 객체를 새로 만들면 경고를 띄운다.
-        // 그 이유는 onDraw() 가 매우 자주 호출되므로, 여기서 객체를 계속 만들면
-        // GC 부담이 늘어 화면이 끊길 수 있기 때문이다.
-        // 지금은 Rect 사용 예제를 보여주기 위해 단순하게 여기서 만들고 있지만,
-        // 성능까지 더 신경 쓴다면 멤버로 미리 만들어 두고 값을 바꿔 재사용하는 편이 좋다.
+        // Rect 는 left, top, right, bottom 네 값으로 사각형 영역을 나타내는 Android 기본 클래스이다.
         val rect = Rect(x1.toInt(), y1.toInt(), x2.toInt(), y2.toInt())
-        canvas.drawRect(rect, fillPaint)
-        canvas.drawRect(rect, strokePaint)
+        return rect
     }
 }
