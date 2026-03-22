@@ -25,10 +25,9 @@ class MainActivity : AppCompatActivity() {
         }
 
     private val selectedMoney: Int
-        // SeekBar 는 기본적으로 0 부터 시작하는 progress 값을 다루는 컨트롤이다.
-        // 여기서는 min 을 직접 쓰는 대신 progress + 10 으로 실제 돈 값을 계산해,
-        // 컨트롤 값과 실제 의미 있는 값이 다를 수 있다는 점을 예제로 보여 준다.
-        get() = binding.moneySeekBar.progress + 10
+        // SeekBar 의 min/max/progress 를 XML 에서 직접 설정해 두었으므로,
+        // 여기서는 progress 값 자체를 바로 실제 돈 값으로 사용한다.
+        get() = binding.moneySeekBar.progress
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         if (binding.applyImmediatelySwitch.isChecked) {
             doIt()
         }
-ㅏ    }
+    }
 
     private fun updateMoneyLabel() {
         binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
@@ -109,8 +108,7 @@ class MainActivity : AppCompatActivity() {
 // 여기서는 SeekBar 클래스를 상속하거나 새 클래스를 만들지 않고도,
 // moneySeekBar.onProgressChanged { ... } 처럼 자연스럽게 호출할 수 있게 만든다.
 private fun SeekBar.onProgressChanged(action: (Int) -> Unit) {
-    // extension 안에서는 this 가 현재 SeekBar 를 가리킨다. (#1 방식)
-    // 따라서 setOnSeekBarChangeListener(this) 처럼 receiver 에 직접 작업을 붙이는 흐름을 보여줄 수 있다.
+    // extension 안에서는 this 가 현재 SeekBar 를 가리킨다.
     // action 은 호출하는 쪽에서 넘긴 람다이며, progress 값이 바뀔 때마다 실행된다.
     setOnSeekBarChangeListener(
         object : SeekBar.OnSeekBarChangeListener {
