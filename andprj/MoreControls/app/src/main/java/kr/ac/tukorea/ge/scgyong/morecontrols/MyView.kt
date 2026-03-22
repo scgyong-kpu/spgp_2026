@@ -43,18 +43,18 @@ class MyView @JvmOverloads constructor(
 
     val rect = Rect()
 
-    init {
-        // 처음에는 생성 시점에 한 번만 계산해 두면 더 효율적일 것 같아 보인다.
-        // 하지만 이 시점에는 아직 View 의 실제 width/height 가 정해지지 않아,
-        // 기대한 좌표가 나오지 않고 결과도 생각대로 보이지 않는다.
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+
+        // View 의 실제 width/height 가 정해지거나 바뀌는 시점은 onSizeChanged 이다.
+        // rect 처럼 크기와 padding 에 의존하는 좌표는 이때 계산해 두는 것이 더 적절하다.
         calculateRect()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // 그래서 지금 상태는 "이렇게 옮기면 안 된다"는 비교 예제에 가깝다.
-        // 실제 크기가 정해진 뒤에 다시 계산하는 더 올바른 위치는 다음 단계에서 다룬다.
+        // onDraw 는 계산보다 실제 그리기에 집중한다.
         canvas.drawRect(rect, fillPaint)
         canvas.drawRect(rect, strokePaint)
     }
