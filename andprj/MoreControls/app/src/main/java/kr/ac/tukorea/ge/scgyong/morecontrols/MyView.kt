@@ -14,7 +14,7 @@ class MyView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
-    // 채워진 면의 내부 색을 그릴 때 사용하는 Paint.
+    // 면의 내부 색을 그릴 때 사용하는 Paint.
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.rgb(255, 182, 193)
         style = Paint.Style.FILL
@@ -47,6 +47,9 @@ class MyView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
+        // View 의 실제 width, height 가 정해지거나 바뀌면 onSizeChanged 가 호출된다.
+        // orientation|screenSize 를 configChanges 로 직접 처리하겠다고 선언하면
+        // Activity 를 다시 만들지는 않고, 이런 식으로 현재 View 에 새 크기 정보가 전달된다.
         Log.d(javaClass.simpleName, "onSizeChanged: (w=$w, h=$h) <= (oldw=$oldw, oldh=$oldh)")
         calculateRect()
     }
