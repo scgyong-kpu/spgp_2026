@@ -26,8 +26,18 @@ class MyView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val radius = minOf(width, height) * 0.4f
-        canvas.drawCircle(width / 2f, height / 2f, radius, fillPaint)
-        canvas.drawCircle(width / 2f, height / 2f, radius, strokePaint)
+        val contentLeft = paddingLeft.toFloat()
+        val contentTop = paddingTop.toFloat()
+        val contentRight = width - paddingRight.toFloat()
+        val contentBottom = height - paddingBottom.toFloat()
+
+        val contentWidth = contentRight - contentLeft
+        val contentHeight = contentBottom - contentTop
+        val radius = minOf(contentWidth, contentHeight) / 2f
+        val centerX = contentLeft + contentWidth / 2f
+        val centerY = contentTop + contentHeight / 2f
+
+        canvas.drawCircle(centerX, centerY, radius, fillPaint)
+        canvas.drawCircle(centerX, centerY, radius, strokePaint)
     }
 }
