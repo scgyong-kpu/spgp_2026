@@ -28,8 +28,20 @@ class MainActivity : AppCompatActivity() {
         // setText 는 CharSequence 를 받는 버전과 문자열 리소스 ID(Int)를 받는 버전이 따로 있다.
         // 여기서는 if 표현식이 돌려준 R.string.xxx 값을 그대로 넘겨 리소스를 읽는 버전을 사용한다.
         val msg = getString(strId)
-        val name = binding.yourNameEditText.text.toString()
+
+        // EditText 의 text 는 Editable 이므로, 다른 문자열과 조합하려면 보통 String 으로 바꿔 쓴다.
+        // trim() 을 적용하면 앞뒤 공백만 입력한 경우를 빈 문자열처럼 다룰 수 있어 결과 문장이 더 자연스럽다.
+        val nameInput = binding.yourNameEditText.text.toString().trim()
+
+        // 이름 입력이 비어 있으면 미리 준비한 noname 문자열 리소스를 대신 사용한다.
+        // 이렇게 하면 사용자가 아무것도 입력하지 않았을 때도 포맷 문자열이 깨지지 않고 일관된 문장을 만들 수 있다.
+        val name = if (nameInput.isEmpty()) getString(R.string.noname) else nameInput
+
+        // main_msg_fmt 는 %1$s, %2$s 자리표시자를 가진 포맷 문자열이다.
+        // 첫 번째 자리에 이름, 두 번째 자리에 결과 메시지를 넣어 최종 문장을 완성한다.
         val text = getString(R.string.main_msg_fmt, name, msg)
+
+        // text 프로퍼티에 String 을 대입하면 TextView 의 setText(CharSequence) 버전이 호출된다.
         binding.mainTextView.text = text
     }
 
