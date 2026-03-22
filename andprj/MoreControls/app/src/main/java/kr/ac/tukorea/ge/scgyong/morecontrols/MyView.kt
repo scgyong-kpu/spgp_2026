@@ -23,12 +23,12 @@ class MyView @JvmOverloads constructor(
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.DKGRAY
         style = Paint.Style.STROKE
-        strokeWidth = 6f
+        strokeWidth = 0.01f
     }
 
-    private var faceCx = 0f
-    private var faceCy = 0f
-    private var faceRadius = 0f
+    private var baseTranslateX = 0f
+    private var baseTranslateY = 0f
+    private var baseScale = 1f
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -43,9 +43,12 @@ class MyView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // onDraw 는 계산보다 실제 그리기에 집중하고,
-        // 미리 구해 둔 중심점과 반지름을 바탕으로 smiley 하나를 그리게 한다.
-        drawSmiley(canvas, faceCx, faceCy, faceRadius, 3)
+        // 실제 View 크기를 0.0~1.0 정규화 좌표계로 바꿔 놓고 smiley 를 그린다.
+        canvas.save()
+        canvas.translate(baseTranslateX, baseTranslateY)
+        canvas.scale(baseScale, baseScale)
+        drawSmiley(canvas)
+        canvas.restore()
     }
 
     private fun calculateFaceGeometry() {
@@ -57,48 +60,57 @@ class MyView @JvmOverloads constructor(
         val contentWidth = contentRight - contentLeft
         val contentHeight = contentBottom - contentTop
 
-        // 가로세로 중 더 짧은 쪽에 맞춰 반지름을 잡으면 타원이 아니라 원이 된다.
-        faceCx = (contentLeft + contentRight) / 2f
-        faceCy = (contentTop + contentBottom) / 2f
-        faceRadius = minOf(contentWidth, contentHeight) / 2f
+        // 정규화 좌표계에서 smiley 는 (0.5, 0.5) 중심, 반지름 0.5 로 그리므로
+        // 실제 화면에서는 왼쪽 위로 얼마나 옮길지와 몇 배로 키울지만 기억해 두면 된다.
+        baseScale = minOf(contentWidth, contentHeight)
+        baseTranslateX = (contentLeft + contentRight - baseScale) / 2f
+        baseTranslateY = (contentTop + contentBottom - baseScale) / 2f
 
         Log.d(
             javaClass.simpleName,
-            "calculateFaceGeometry: center=($faceCx, $faceCy), faceRadius=$faceRadius",
+            "calculateFaceGeometry: translate=($baseTranslateX, $baseTranslateY), scale=$baseScale",
         )
     }
 
-    private fun drawSmiley(
-        canvas: Canvas,
-        cx: Float,
-        cy: Float,
-        radius: Float,
-        depth: Int,
-    ) {
-        // 눈과 입은 모두 얼굴 원의 중심점과 반지름에서 파생되는 상대 위치로 계산한다.
-        // 그래서 더 작은 smiley 를 다시 그려도 같은 비율을 유지한 채 축소된다.
+    private fun drawSmiley(canvas: Canvas, depth: Int = 3) {
+        Log.d(javaClass.simpleName, "drawSmiley: depth=$depth")
+        // 이 함수는 정규화 좌표계를 기준으로 그린다.
+        // 따라서 얼굴은 항상 중심 (0.5, 0.5), 반지름 0.5 인 원으로 표현된다.
+        val cx = 0.5f
+        val cy = 0.5f
+        val radius = 0.5f
+
         val eyeRadius = radius / 4f
         val leftEyeCx = cx - radius / 3f
         val rightEyeCx = cx + radius / 3f
         val eyeCy = cy - radius / 4f
 
-        val mouthX1 = cx - radius / 2f
-        val mouthX2 = cx + radius / 2f
-        val mouthY = cy + radius / 2f
-
         canvas.drawCircle(cx, cy, radius, fillPaint)
         canvas.drawCircle(cx, cy, radius, strokePaint)
 
-        // depth 가 0보다 크면 눈 자리에 더 작은 smiley 를 그리고,
-        // 0이면 눈을 단순한 원으로만 그린다.
-        // 이렇게 하면 재귀 종료 조건(base case)과 재귀 호출 단계가 코드에서 더 직접적으로 보인다.
+        // depth 가 1보다 크면 눈 자리에 좌표계를 옮기고 축소한 뒤
+        // 더 작은 smiley 를 다시 그린다.
+        // 1이면 재귀를 멈추고 눈을 단순한 원으로만 그린다.
         if (depth > 1) {
-            drawSmiley(canvas, leftEyeCx, eyeCy, eyeRadius, depth - 1)
-            drawSmiley(canvas, rightEyeCx, eyeCy, eyeRadius, depth - 1)
+            canvas.save()
+            canvas.translate(leftEyeCx - eyeRadius, eyeCy - eyeRadius)
+            canvas.scale(eyeRadius * 2f, eyeRadius * 2f)
+            drawSmiley(canvas, depth - 1)
+            canvas.restore()
+
+            canvas.save()
+            canvas.translate(rightEyeCx - eyeRadius, eyeCy - eyeRadius)
+            canvas.scale(eyeRadius * 2f, eyeRadius * 2f)
+            drawSmiley(canvas, depth - 1)
+            canvas.restore()
         } else {
             canvas.drawCircle(leftEyeCx, eyeCy, eyeRadius, strokePaint)
             canvas.drawCircle(rightEyeCx, eyeCy, eyeRadius, strokePaint)
         }
+
+        val mouthLeft = cx - radius / 2f
+        val mouthRight = cx + radius / 2f
+        val mouthBottom = cy + radius / 2f
 
         // Android Canvas.drawArc 는 startAngle, endAngle 이 아니라 startAngle, sweepAngle 방식이다.
         // 즉 15f 에서 시작해서 150f 만큼 더 그린다는 뜻이며, 끝각이 150f 라는 뜻이 아니다.
@@ -106,6 +118,6 @@ class MyView @JvmOverloads constructor(
         // 예를 들어 Android Canvas, Java AWT Graphics 는 start~sweep 계열이고,
         // 수학 설명이나 SVG, 일부 게임 코드에서는 start~end 처럼 설명하는 경우도 있다.
         // useCenter=false 면 부채꼴이 아니라 호만 그려지고, 양의 sweepAngle 은 시계 방향으로 진행된다.
-        canvas.drawArc(mouthX1, eyeCy, mouthX2, mouthY, 15f, 150f, false, strokePaint)
+        canvas.drawArc(mouthLeft, eyeCy, mouthRight, mouthBottom, 15f, 150f, false, strokePaint)
     }
 }
