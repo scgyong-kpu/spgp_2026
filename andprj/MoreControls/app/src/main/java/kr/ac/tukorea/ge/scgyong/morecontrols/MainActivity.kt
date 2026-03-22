@@ -34,6 +34,16 @@ class MainActivity : AppCompatActivity() {
         binding.moneySeekBar.onProgressChanged { handleProgressChanged() }
     }
 
+    fun onDoItButtonClick(view: View) {
+        doIt()
+    }
+
+    fun onCheckGoodProgrammer(view: View) {
+        val isGood = binding.goodProgrammerCheckbox.isChecked
+        val strId = if (isGood) R.string.good_news else R.string.bad_news
+        binding.mainTextView.setText(strId)
+    }
+
     private fun handleNameChanged() {
         if (binding.applyImmediatelySwitch.isChecked) {
             doIt()
@@ -50,14 +60,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateMoneyLabel() {
-        binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
-    }
-
-    fun onDoItButtonClick(view: View) {
-        doIt()
-    }
-
     private fun doIt() {
         val isGood = binding.goodProgrammerCheckbox.isChecked
         val msg = if (isGood) {
@@ -70,10 +72,8 @@ class MainActivity : AppCompatActivity() {
         binding.mainTextView.text = text
     }
 
-    fun onCheckGoodProgrammer(view: View) {
-        val isGood = binding.goodProgrammerCheckbox.isChecked
-        val strId = if (isGood) R.string.good_news else R.string.bad_news
-        binding.mainTextView.setText(strId)
+    private fun updateMoneyLabel() {
+        binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
     }
 }
 
