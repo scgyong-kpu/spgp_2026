@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CardsA02</string>
+    <string name="card_clicked_fmt">뒤집은수: %1$d</string>
+    <string name="restart_dialog_message">진짜 다시할껴?</string>
+    <string name="done">완료</string>
+    <string name="restart_one_more_game">다 깼네. 한판더?</string>
+    <string name="flips_count_fmt">뒤집은수: %1$d</string>
+    <string name="yes">네</string>
+    <string name="no">아니오</string>
+    <string name="restart">재시작</string>
+</resources>
