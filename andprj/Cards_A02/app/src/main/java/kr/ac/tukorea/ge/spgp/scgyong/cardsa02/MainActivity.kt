@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
                 handleCardClick(index)
             }
         }
+
+        //imageResIds.shuffle()
     }
 
     fun handleCardClick(buttonIndex: Int) {
