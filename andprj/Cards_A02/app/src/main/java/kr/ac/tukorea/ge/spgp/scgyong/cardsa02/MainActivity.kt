@@ -26,6 +26,13 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private var flipCount = 0
+        set(value) {
+            field = value
+            val msg = getString(R.string.flips_count_fmt, value)
+            binding.flipCountTextView.text = msg
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -66,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                 openedButton.setImageResource(R.mipmap.card_blue_back)
             }
         }
+        flipCount++
         openedIndex = buttonIndex
     }
 
@@ -75,6 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startNewGame() {
         //imageResIds.shuffle()
+        flipCount = 0
 
         buttons.forEachIndexed { index, button ->
             button.setImageResource(R.mipmap.card_blue_back)
