@@ -7,23 +7,9 @@
     android:layout_height="match_parent"
     tools:context=".AnotherActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/another_main_text_view"
-        android:text="@string/another_main_text_view"
-        android:textSize="48sp"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="16dp"
+    <kr.ac.tukorea.ge.scgyong.morecontrols.BallView
+        android:id="@+id/ball_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         />
-    <kr.ac.tukorea.ge.scgyong.morecontrols.MyView
-        android:id="@+id/my_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@id/another_main_text_view"
-        android:layout_below="@id/another_main_text_view"
-        android:layout_alignEnd="@id/another_main_text_view"
-        />
-
 </RelativeLayout>
