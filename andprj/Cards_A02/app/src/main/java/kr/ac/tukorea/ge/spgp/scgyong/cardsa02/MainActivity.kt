@@ -69,6 +69,12 @@ class MainActivity : AppCompatActivity() {
         openedIndex = buttonIndex
     }
 
-    fun onRestartButtonClicked(view: View) {}
+    fun onRestartButtonClicked(view: View) {
+        startNewGame()
+    }
+
+    private fun startNewGame() {
+        TODO("Not yet implemented")
+    }
 
 }
