@@ -1,9 +1,9 @@
 package kr.ac.tukorea.ge.scgyong.morecontrols
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 
@@ -19,6 +19,8 @@ class BallView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(soccerBallBitmap, 0f, 0f, null)
+        val cx = width / 2.0f
+        val cy = height / 2.0f
+        canvas.drawBitmap(soccerBallBitmap, cx, cy, null)
     }
 }
