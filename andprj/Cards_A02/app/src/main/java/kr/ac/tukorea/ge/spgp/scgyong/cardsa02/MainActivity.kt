@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private var visibleCardCount = 0
     private var flipCount = 0
         set(value) {
             field = value
@@ -69,8 +70,9 @@ class MainActivity : AppCompatActivity() {
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
                 openedIndex = null
+                visibleCardCount -= 2
 
-                if (isGameOver()) {
+                if (visibleCardCount == 0) {
                     showRestartDialog(R.string.done, R.string.restart_one_more_game)
                 }
                 return
@@ -80,10 +82,6 @@ class MainActivity : AppCompatActivity() {
         }
         flipCount++
         openedIndex = buttonIndex
-    }
-
-    private fun isGameOver(): Boolean {
-        return buttons.all { b -> b.visibility == View.INVISIBLE }
     }
 
     fun onRestartButtonClicked(view: View) {
@@ -105,6 +103,7 @@ class MainActivity : AppCompatActivity() {
     private fun startNewGame() {
         //imageResIds.shuffle()
         flipCount = 0
+        visibleCardCount = buttons.size
 
         buttons.forEachIndexed { index, button ->
             button.setImageResource(R.mipmap.card_blue_back)
