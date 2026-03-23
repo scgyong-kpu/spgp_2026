@@ -1,4 +1,7 @@
 package kr.ac.tukorea.ge.scgyong.morecontrols
 
-class BallView {
+import android.view.View
+
+class BallView : View {
+
 }
