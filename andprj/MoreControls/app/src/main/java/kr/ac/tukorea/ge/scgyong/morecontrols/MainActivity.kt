@@ -1,11 +1,14 @@
 package kr.ac.tukorea.ge.scgyong.morecontrols
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import kr.ac.tukorea.ge.scgyong.morecontrols.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -74,6 +77,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateMoneyLabel() {
         binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
+    }
+
+    fun onOpenNaverButtonClicked(view: View) {
+        val uri = Uri.parse("https://www.naver.com/")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivity(intent)
     }
 
     fun onOpenAnotherActivityButtonClicked(view: View) {

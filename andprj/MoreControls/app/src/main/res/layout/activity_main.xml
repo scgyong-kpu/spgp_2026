@@ -103,6 +103,13 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/open_naver_button_text"
+            android:layout_marginEnd="8dp"
+            android:onClick="onOpenNaverButtonClicked"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/open_another_activity_button_text"
             android:onClick="onOpenAnotherActivityButtonClicked"
             />
