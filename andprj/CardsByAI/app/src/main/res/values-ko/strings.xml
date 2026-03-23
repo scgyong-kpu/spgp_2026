@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">카드게임 by AI</string>
+    <string name="flip_count">뒤집은 횟수: %d</string>
+    <string name="restart">재시작</string>
+    <string name="card_already_open">이미 열려 있는 카드입니다</string>
+    <string name="restart_confirm">게임을 재시작하시겠습니까?</string>
+    <string name="yes">예</string>
+    <string name="no">아니오</string>
+    <string name="play_again">축하합니다! 게임을 완료했습니다!\n\n다시 플레이하시겠습니까?</string>
+</resources>
