@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.spgp.scgyong.cardsa02
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa02.databinding.ActivityMainBinding
 
@@ -45,7 +46,17 @@ class MainActivity : AppCompatActivity() {
         button.setImageResource(imageResId)
 
         openedIndex?.let { index ->
-            buttons[index].setImageResource(R.mipmap.card_blue_back)
+            val openedButton = buttons[index]
+            val openedResId = imageResIds[index]
+
+            if (imageResId == openedResId) {
+                // 이전에 열려 있던 카드와 현재 클릭된 카드가 같은 이미지라면
+                // 두 카드를 맞춘 것으로 간주하고 삭제를 시도해 본다
+                openedButton.visibility = View.GONE
+                button.visibility = View.GONE
+            } else {
+                openedButton.setImageResource(R.mipmap.card_blue_back)
+            }
         }
         openedIndex = buttonIndex
     }
