@@ -2,8 +2,10 @@
     <string name="app_name">CardsA02</string>
     <string name="card_clicked_fmt">Clicked: %1$d</string>
     <string name="restart">Restart</string>
-    <string name="flips_count_fmt">Flips: %1$d</string>
     <string name="restart_dialog_message">Are you sure to restart the game?</string>
+    <string name="done">Done</string>
+    <string name="restart_one_more_game">All cards are cleared. Do you want to start one more game?</string>
+    <string name="flips_count_fmt">Flips: %1$d</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 </resources>

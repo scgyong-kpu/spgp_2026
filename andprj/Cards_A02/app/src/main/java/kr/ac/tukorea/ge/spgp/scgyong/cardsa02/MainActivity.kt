@@ -69,6 +69,10 @@ class MainActivity : AppCompatActivity() {
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
                 openedIndex = null
+
+                if (isGameOver()) {
+                    showRestartDialog(R.string.done, R.string.restart_one_more_game)
+                }
                 return
             } else {
                 openedButton.setImageResource(R.mipmap.card_blue_back)
@@ -78,14 +82,22 @@ class MainActivity : AppCompatActivity() {
         openedIndex = buttonIndex
     }
 
+    private fun isGameOver(): Boolean {
+        return buttons.all { b -> b.visibility == View.INVISIBLE }
+    }
+
     fun onRestartButtonClicked(view: View) {
+        showRestartDialog(R.string.restart, R.string.restart_dialog_message)
+    }
+
+    private fun showRestartDialog(titleResId: Int, messageResId: Int) {
         AlertDialog.Builder(this)
-            .setTitle(R.string.restart)
-            .setMessage(getString(R.string.restart_dialog_message))
+            .setTitle(titleResId)
+            .setMessage(messageResId)
             .setPositiveButton(R.string.yes) { _, _ ->
                 startNewGame()
             }
-            .setNegativeButton(getString(R.string.no), null)
+            .setNegativeButton(R.string.no, null)
             //.create()
             .show()
     }
