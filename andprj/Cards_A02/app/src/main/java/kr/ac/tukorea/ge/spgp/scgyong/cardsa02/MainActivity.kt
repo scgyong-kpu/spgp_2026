@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //imageResIds.shuffle()
+        startNewGame()
     }
 
     fun handleCardClick(buttonIndex: Int) {
@@ -74,7 +74,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startNewGame() {
-        TODO("Not yet implemented")
+        //imageResIds.shuffle()
+
+        buttons.forEachIndexed { index, button ->
+            button.setImageResource(R.mipmap.card_blue_back)
+            button.visibility = View.VISIBLE
+        }
     }
 
 }
