@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.spgp.scgyong.cardsa02
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa02.databinding.ActivityMainBinding
 
@@ -78,7 +79,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onRestartButtonClicked(view: View) {
-        startNewGame()
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Restart")
+        builder.setMessage("Are you sure to restart the game?")
+        builder.setPositiveButton("Yes") { _, _ ->
+            startNewGame()
+        }
+        builder.setNegativeButton("No", null)
+
+        val alert = builder.create()
+        alert.show()
     }
 
     private fun startNewGame() {
