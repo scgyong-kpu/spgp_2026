@@ -1,5 +1,8 @@
 package kr.ac.tukorea.ge.scgyong.morecontrols
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
@@ -8,20 +11,14 @@ class BallView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : View(context, attrs, defStyleAttr)
+) : View(context, attrs, defStyleAttr) {
+    // 이 시점에는 이미 View 가 context 와 연결된 상태라 resources 접근이 가능하다.
+    // 다만 View 생성 때마다 decodeResource 가 실행되므로, 동작 가능 여부와 별개로 비용은 따로 생각해야 한다.
+    private val soccerBallBitmap: Bitmap =
+        BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
-// Java 였다면 아래와 같이 3개의 Constructor overload 가 있어야 한다
-// 하지만 Kotlin에서는 @JvmOverloads 어노테이션을 사용하여 하나의 생성자로 모든 경우를 처리할 수 있다.
-// public class BallView extends View {
-//     public BallView(Context context) {
-//         super(context);
-//     }
-//
-//     public BallView(Context context, AttributeSet attrs) {
-//         super(context, attrs);
-//     }
-//
-//     public BallView(Context context, AttributeSet attrs, int defStyleAttr) {
-//         super(context, attrs, defStyleAttr);
-//     }
-// },
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        canvas.drawBitmap(soccerBallBitmap, 0f, 0f, null)
+    }
+}
