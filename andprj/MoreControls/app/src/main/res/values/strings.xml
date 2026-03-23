@@ -16,4 +16,5 @@
     <string name="main_msg_fmt">Hello %1$s, %2$s</string>
     <string name="name_length_fmt">Your name is %d character long.</string>
     <string name="noname">NoName</string>
+    <string name="open_another_activity_button_text">Open Another Activity</string>
 </resources>

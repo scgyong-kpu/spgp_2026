@@ -53,7 +53,7 @@ class MyView @JvmOverloads constructor(
         }
         Log.d(javaClass.simpleName, "Depth=$depth for radius $baseScale")
 
-        canvas.drawSmiley(baseTranslateX, baseTranslateY, baseScale, depth  )
+        canvas.drawSmiley(baseTranslateX, baseTranslateY, baseScale, depth)
     }
 
     private fun calculateFaceGeometry() {

@@ -75,6 +75,10 @@ class MainActivity : AppCompatActivity() {
     private fun updateMoneyLabel() {
         binding.moneyValueTextView.text = getString(R.string.money_value_fmt, selectedMoney)
     }
+
+    fun onOpenAnotherActivityButtonClicked(view: View) {
+
+    }
 }
 
 // SeekBar 변경 리스너를 람다 한 줄로 연결하기 위한 extension function.

@@ -95,6 +95,75 @@
             android:text="@string/money_value_initial" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/open_another_activity_button_text"
+            android:onClick="onOpenAnotherActivityButtonClicked"
+            />
+    </LinearLayout>
+
+<!--    그냥 Button 만 넣어도 전체 Linear 의 gravity 가 center 라서 가운데에 표시된다 -->
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/open_another_activity_button_text"-->
+<!--        android:onClick="onOpenAnotherActivityButtonClicked"-->
+<!--        />-->
+
+<!--    Spacer 를 양쪽에 넣는 방법이 있지만, API Level 33 부터 사용 가능하다 -->
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        >-->
+<!--        <Space-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            />-->
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/open_another_activity_button_text"-->
+<!--            android:onClick="onOpenAnotherActivityButtonClicked"-->
+<!--            />-->
+<!--        <Space-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            />-->
+<!--    </LinearLayout>-->
+
+<!--    Space 대신 View 를 써도 된다 -->
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        >-->
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            />-->
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/open_another_activity_button_text"-->
+<!--            android:onClick="onOpenAnotherActivityButtonClicked"-->
+<!--            />-->
+<!--        <View-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            />-->
+<!--    </LinearLayout>-->
+
     <kr.ac.tukorea.ge.scgyong.morecontrols.MyView
         android:id="@+id/my_view"
         android:layout_width="match_parent"
