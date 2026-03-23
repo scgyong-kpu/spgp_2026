@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CardsByAI</string>
+    <string name="flip_count">Flip Count: %d</string>
+    <string name="restart">Restart</string>
+    <string name="card_already_open">This card is already open</string>
+    <string name="restart_confirm">Restart the game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="play_again">Congratulations! You completed the game!\n\nPlay Again?</string>
+</resources>

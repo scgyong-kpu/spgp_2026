@@ -1,0 +1,88 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="192dp"
+    android:height="192dp"
+    android:viewportWidth="192"
+    android:viewportHeight="192">
+
+    <!-- background -->
+    <path
+        android:fillColor="#FF6B6B"
+        android:pathData="M0,45
+                          a45,45 0 0 1 45,-45
+                          h102
+                          a45,45 0 0 1 45,45
+                          v102
+                          a45,45 0 0 1 -45,45
+                          h-102
+                          a45,45 0 0 1 -45,-45
+                          z"/>
+
+    <!-- left card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#333333"
+        android:strokeWidth="2"
+        android:pathData="M30,50
+                          h60
+                          v92
+                          h-60
+                          z"/>
+
+    <!-- spade -->
+    <path
+        android:fillColor="#000"
+        android:pathData="M48,70
+                          c-10,12 -16,16 -16,22
+                          c0,6 4,10 10,10
+                          c3,0 5,-1 6,-3
+                          c1,2 3,3 6,3
+                          c6,0 10,-4 10,-10
+                          c0,-6 -6,-10 -16,-22
+                          z
+                          M48,99
+                          l4,10
+                          h-8
+                          z"/>
+
+    <!-- middle card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#333333"
+        android:strokeWidth="2"
+        android:pathData="M66,40
+                          h60
+                          v92
+                          h-60
+                          z"/>
+
+    <!-- heart -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M84,70
+c-5,-8 -11,-12 -14,-6
+c-3,6 2,18 14,36
+c12,-18 17,-30 14,-36
+c-3,-6 -9,-2 -14,6
+z"/>
+
+    <!-- right card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#333333"
+        android:strokeWidth="2"
+        android:pathData="M102,50
+                          h60
+                          v92
+                          h-60
+                          z"/>
+
+    <!-- diamond -->
+    <path
+        android:fillColor="#f00"
+        android:pathData="M120,72
+                          l12,20
+                          l-12,20
+                          l-12,-20
+                          z"/>
+
+</vector>

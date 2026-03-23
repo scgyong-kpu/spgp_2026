@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/flip_count_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/flip_count"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/restart_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/restart" />
+
+    </LinearLayout>
+
+    <!-- Row 0 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/cardImageView_00"
+            style="@style/cardImageViewStyle"
+            />
+
+        <ImageView
+            android:id="@+id/cardImageView_01"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_02"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_03"
+            style="@style/cardImageViewStyle" />
+
+    </LinearLayout>
+
+    <!-- Row 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/cardImageView_10"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_11"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_12"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_13"
+            style="@style/cardImageViewStyle" />
+
+    </LinearLayout>
+
+    <!-- Row 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/cardImageView_20"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_21"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_22"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_23"
+            style="@style/cardImageViewStyle" />
+
+    </LinearLayout>
+
+    <!-- Row 3 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/cardImageView_30"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_31"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_32"
+            style="@style/cardImageViewStyle" />
+
+        <ImageView
+            android:id="@+id/cardImageView_33"
+            style="@style/cardImageViewStyle" />
+
+    </LinearLayout>
+
+</LinearLayout>

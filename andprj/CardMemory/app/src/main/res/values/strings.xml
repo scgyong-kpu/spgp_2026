@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">CardMemory</string>
+    <string name="flip_count_format">Flip Count: %1$d</string>
+    <string name="restart_game">Restart</string>
+    <string name="restart_dialog_title">Restart Game</string>
+    <string name="restart_dialog_message">Do you want to start a new game?</string>
+    <string name="game_over_dialog_title">Game Over</string>
+    <string name="game_over_dialog_message">All cards are open. Do you want to start a new game?</string>
+    <string name="card_already_open_toast">This card is already open.</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+</resources>

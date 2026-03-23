@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cards</string>
+
+    <string name="restart">Restart</string>
+    <string name="restart_title">Restart Game</string>
+    <string name="restart_message">Do you want to restart the game?</string>
+
+    <string name="clear_title">Game Clear</string>
+    <string name="clear_message">All cards are removed. Do you want to play again?</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="already_open_card">This card is already open.</string>
+
+    <string name="flip_count_format">Flips: %1$d</string>
+</resources>
