@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
                 // 두 카드를 맞춘 것으로 간주하고 삭제를 시도해 본다
                 openedButton.visibility = View.INVISIBLE
                 button.visibility = View.INVISIBLE
+                openedIndex = null
+                return
             } else {
                 openedButton.setImageResource(R.mipmap.card_blue_back)
             }
