@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.scgyong.morecontrols
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,24 @@ class MainActivity : AppCompatActivity() {
 
         // SeekBar 진행값이 바뀌면 금액 표시를 갱신한다.
         binding.moneySeekBar.onProgressChanged { handleProgressChanged() }
+
+        Log.d(javaClass.simpleName, "onCreate called")
+    }
+
+    override fun onPause() {
+        Log.d(javaClass.simpleName, "onPause called")
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(javaClass.simpleName, "onResume called")
+    }
+
+    override fun onDestroy() {
+        // 이 로그는 찍힌다고 보장할 수 없다
+        Log.d(javaClass.simpleName, "onDestroy called")
+        super.onDestroy()
     }
 
     fun onDoItButtonClick(view: View) {
