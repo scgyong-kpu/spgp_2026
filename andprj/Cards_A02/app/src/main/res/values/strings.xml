@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">CardsA02</string>
     <string name="card_clicked_fmt">Clicked: %1$d</string>
+    <string name="restart">Restart</string>
+    <string name="flips_count_fmt">Flips: %1$d</string>
 </resources>

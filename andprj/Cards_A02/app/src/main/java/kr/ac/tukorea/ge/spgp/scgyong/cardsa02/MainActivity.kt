@@ -69,4 +69,6 @@ class MainActivity : AppCompatActivity() {
         openedIndex = buttonIndex
     }
 
+    fun onRestartButtonClicked(view: View) {}
+
 }
