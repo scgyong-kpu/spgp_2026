@@ -79,16 +79,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onRestartButtonClicked(view: View) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.restart)
-        builder.setMessage(getString(R.string.restart_dialog_message))
-        builder.setPositiveButton(R.string.yes) { _, _ ->
-            startNewGame()
-        }
-        builder.setNegativeButton(getString(R.string.no), null)
-
-        val alert = builder.create()
-        alert.show()
+        AlertDialog.Builder(this)
+            .setTitle(R.string.restart)
+            .setMessage(getString(R.string.restart_dialog_message))
+            .setPositiveButton(R.string.yes) { _, _ ->
+                startNewGame()
+            }
+            .setNegativeButton(getString(R.string.no), null)
+            //.create()
+            .show()
     }
 
     private fun startNewGame() {
