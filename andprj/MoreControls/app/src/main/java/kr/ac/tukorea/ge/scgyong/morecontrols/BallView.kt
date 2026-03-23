@@ -19,8 +19,14 @@ class BallView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val cx = width / 2.0f
-        val cy = height / 2.0f
-        canvas.drawBitmap(soccerBallBitmap, cx, cy, null)
+        val x = (width - soccerBallBitmap.width) / 2.0f
+        val y = (height - soccerBallBitmap.height) / 2.0f
+        canvas.drawBitmap(soccerBallBitmap, x, y, null)
+
+        // Java 였다면 getWidth() 나 getHeight() 메서드를 호출해야 했겠지만,
+        // Kotlin에서는 width 나 height 프로퍼티로 접근할 수 있다.
+        // float x = (getWidth() - soccerBallBitmap.getWidth()) / 2.0f;
+        // float y = (getHeight() - soccerBallBitmap.getHeight()) / 2.0f;
+        // canvas.drawBitmap(soccerBallBitmap, x, y, null);
     }
 }
