@@ -80,12 +80,12 @@ class MainActivity : AppCompatActivity() {
 
     fun onRestartButtonClicked(view: View) {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Restart")
-        builder.setMessage("Are you sure to restart the game?")
-        builder.setPositiveButton("Yes") { _, _ ->
+        builder.setTitle(R.string.restart)
+        builder.setMessage(getString(R.string.restart_dialog_message))
+        builder.setPositiveButton(R.string.yes) { _, _ ->
             startNewGame()
         }
-        builder.setNegativeButton("No", null)
+        builder.setNegativeButton(getString(R.string.no), null)
 
         val alert = builder.create()
         alert.show()

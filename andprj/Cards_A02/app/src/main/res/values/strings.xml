@@ -3,4 +3,7 @@
     <string name="card_clicked_fmt">Clicked: %1$d</string>
     <string name="restart">Restart</string>
     <string name="flips_count_fmt">Flips: %1$d</string>
+    <string name="restart_dialog_message">Are you sure to restart the game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
