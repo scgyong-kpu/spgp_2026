@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CardsA01</string>
+    <string name="restart">재시작</string>
+    <string name="flip_count_fmt">뒤집은 수: %1$d</string>
+    <string name="card_clicked_fmt">뒤집은 수: %1$d</string>
+    <string name="restart_dlg_title">재시작</string>
+    <string name="restart_dlg_message">정말 다시할껴?</string>
+    <string name="yes">그랴</string>
+    <string name="no">아니제</string>
+    <string name="gameover">껨오바</string>
+    <string name="restart_one_more_game">끝났는지 한판 더할껴?</string>
+</resources>

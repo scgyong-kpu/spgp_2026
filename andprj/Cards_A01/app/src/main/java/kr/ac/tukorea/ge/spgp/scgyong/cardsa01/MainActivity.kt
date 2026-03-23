@@ -2,9 +2,10 @@ package kr.ac.tukorea.ge.spgp.scgyong.cardsa01
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageButton
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp.scgyong.cardsa01.databinding.ActivityMainBinding
+import androidx.core.view.isInvisible
 
 class MainActivity : AppCompatActivity() {
     private var openedCardIndex: Int? = null
@@ -27,26 +28,81 @@ class MainActivity : AppCompatActivity() {
         R.mipmap.card_5s, R.mipmap.card_jc, R.mipmap.card_qh, R.mipmap.card_kd,
     )
 
+    private var visibleCardCount = 0
+    private var flipCount = 0
+        set(value) {
+            field = value
+            val msg = getString(R.string.flip_count_fmt, value)
+            binding.flipCountTextView.text = msg
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                onCardButtonClick(index)
+                handleCardClick(index)
             }
         }
+
+        startNewGame()
     }
 
-    fun onCardButtonClick(buttonIndex: Int) {
+    fun handleCardClick(buttonIndex: Int) {
+        if (buttonIndex == openedCardIndex) {
+            return
+        }
         val button = buttons[buttonIndex]
 
         val imgResId = imageResIds[buttonIndex]
         button.setImageResource(imgResId)
 
         openedCardIndex?.let { index ->
-            buttons[index].setImageResource(R.mipmap.card_blue_back)
+            val openedResId = imageResIds[index]
+            val openedButton = buttons[index]
+            if (imgResId == openedResId) {
+                openedButton.visibility = View.INVISIBLE
+                button.visibility = View.INVISIBLE
+                openedCardIndex = null
+                visibleCardCount -= 2
+                if (visibleCardCount == 0) {
+                    showRestartDialog(R.string.gameover, R.string.restart_one_more_game)
+                }
+                return
+            } else {
+                openedButton.setImageResource(R.mipmap.card_blue_back)
+            }
+
         }
+        flipCount++
         openedCardIndex = buttonIndex
+    }
+
+    fun onRestartButtonClicked(view: View) {
+        showRestartDialog(R.string.restart_dlg_title, R.string.restart_dlg_message)
+    }
+
+    private fun showRestartDialog(titleResId: Int, messageResId: Int) {
+        AlertDialog.Builder(this)
+            .setTitle(titleResId)
+            .setMessage(messageResId)
+            .setPositiveButton(R.string.yes) { _, _ ->
+                startNewGame()
+            }
+            .setNegativeButton(R.string.no, null)
+            //.create()
+            .show()
+    }
+
+    private fun startNewGame() {
+        // imageResIds.shuffle()
+        flipCount = 0
+        visibleCardCount = imageResIds.size
+
+        buttons.forEachIndexed { index, button ->
+            button.setImageResource(R.mipmap.card_blue_back)
+            button.visibility = View.VISIBLE
+        }
     }
 }

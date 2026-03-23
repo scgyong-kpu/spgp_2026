@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">CardsA01</string>
     <string name="card_clicked_fmt">Clicked: %1$d</string>
+    <string name="restart">Restart</string>
+    <string name="flip_count_fmt">Flips: %1$d</string>
+    <string name="restart_dlg_title">Restart</string>
+    <string name="restart_dlg_message">Are you sure to restart the game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="gameover">Game Over</string>
+    <string name="restart_one_more_game">Game Cleared. Do you want to play one more game?</string>
 </resources>
