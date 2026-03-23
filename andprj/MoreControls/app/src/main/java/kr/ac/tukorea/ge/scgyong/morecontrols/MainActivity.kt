@@ -105,7 +105,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onOpenAnotherActivityButtonClicked(view: View) {
-
+        val intent = Intent(this, AnotherActivity::class.java)
+        startActivity(intent)
     }
 }
 
