@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun handleCardClick(buttonIndex: Int) {
+        if (buttonIndex == openedIndex) {
+            return
+        }
+
         val msg = getString(R.string.card_clicked_fmt, buttonIndex)
         Log.d("MainActivity", msg)
         val button = buttons[buttonIndex]
