@@ -18,4 +18,5 @@
     <string name="noname">NoName</string>
     <string name="open_another_activity_button_text">Open Another Activity</string>
     <string name="open_naver_button_text">Open Naver</string>
+    <string name="another_main_text_view">Another Activity</string>
 </resources>
