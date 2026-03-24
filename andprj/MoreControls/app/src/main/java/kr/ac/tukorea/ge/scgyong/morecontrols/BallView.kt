@@ -4,19 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.PointF
+import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.View
-import androidx.core.graphics.withTranslation
 import kotlin.math.min
 
 class BallView(context: Context) : View(context) {
-    // 실제 화면 위에 가상 좌표계를 어디에 둘지 나타내는 이동량이다.
-    // 화면 비율이 9:16과 다를 수 있으므로 남는 공간을 가운데 정렬하기 위해 쓴다.
-    private val transformOffset = PointF()
-
-    // 가상 좌표계의 1칸이 실제 화면에서 몇 픽셀이 될지를 나타내는 배율이다.
-    private var transformScale = 0f
+    // 9x16 가상 좌표계를 실제 화면으로 옮기는 변환 행렬이다.
+    // 이동량과 배율을 따로 들고 있지 않고 Matrix 하나에 모아 둔다.
+    private val transformMatrix = Matrix()
 
     private val bitmapOptions = BitmapFactory.Options().apply {
         inScaled = false // density 에 따른 자동 확대/축소를 끄고, 파일의 원래 픽셀 크기 그대로 읽는다.
@@ -40,30 +36,36 @@ class BallView(context: Context) : View(context) {
         // 가로 기준 배율과 세로 기준 배율 중 더 작은 값을 선택한다.
         val scaleX = w / 9f
         val scaleY = h / 16f
-        transformScale = min(scaleX, scaleY)
+        val scale = min(scaleX, scaleY)
 
         // 가상 좌표계 전체가 차지하는 실제 픽셀 크기이다.
-        val contentWidth = 9f * transformScale
-        val contentHeight = 16f * transformScale
+        val contentWidth = 9f * scale
+        val contentHeight = 16f * scale
 
         // 남는 공간이 있으면 가운데에 오도록 offset 을 계산한다.
-        transformOffset.x = (w - contentWidth) / 2f
-        transformOffset.y = (h - contentHeight) / 2f
+        val offsetX = (w - contentWidth) / 2f
+        val offsetY = (h - contentHeight) / 2f
+
+        transformMatrix.reset()
+        transformMatrix.postTranslate(offsetX, offsetY)
+        transformMatrix.postScale(scale, scale, offsetX, offsetY)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // 먼저 실제 화면 좌표계를 가상 좌표계의 원점 위치로 옮긴다.
-        // 그 다음 1칸 = transformScale 픽셀이 되도록 확대한다.
-        // 이 블록 안에서는 9 x 16 가상 좌표계 기준으로 그대로 그리면 된다.
-        canvas.withTranslation(transformOffset.x, transformOffset.y) {
-            scale(transformScale, transformScale)
+        // 실제 Canvas 에 변환 행렬을 적용한 뒤,
+        // 이 안에서는 9 x 16 가상 좌표계 기준으로 그대로 그리면 된다.
+        // withMatrix 같은 helper 로 감쌀 수도 있지만,
+        // 여기서는 save / concat / restore 흐름을 직접 보여 주는 쪽이 수업 설명에 더 잘 맞는다.
+        canvas.save()
+        canvas.concat(transformMatrix)
 
-            // 배경을 먼저 깔고, 그 위에 공을 그려야 공이 배경에 가려지지 않는다.
-            drawBitmap(bgBitmap, null, bgRect, null)
-            drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
-        }
+        // 배경을 먼저 깔고, 그 위에 공을 그려야 공이 배경에 가려지지 않는다.
+        canvas.drawBitmap(bgBitmap, null, bgRect, null)
+        canvas.drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
+
+        canvas.restore()
     }
 }
 
