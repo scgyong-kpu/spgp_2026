@@ -20,23 +20,33 @@ class BallView(context: Context) : View(context) {
     // onDraw()가 호출될 때마다 새로 만들지 않고 한번만 만들어서 재사용한다.
     private val soccerBallRect = RectF()
 
+    // 배경 블록 이미지와, 그것을 View 전체에 늘려 그릴 목적 사각형이다.
+    // 이 역시 onDraw() 안에서 새로 만들지 않고 멤버로 재사용한다.
+    private val bgBitmap =
+        BitmapFactory.decodeResource(resources, R.mipmap.block_9x16, bitmapOptions)
+    private val bgRect = RectF()
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        // 화면 폭의 1/10 크기로 공을 그린다.
+        // 화면 폭의 1/9 크기로 공을 그린다.
         val cx = w / 2.0f
         val cy = h / 2.0f
-        val ballRadius = cx / 10
+        val ballRadius = cx / 9
 
         // 크기가 정해지거나 바뀌는 시점에 목적 사각형을 계산해 둔다.
         // onDraw()에서는 그리기만 하도록 계산과 렌더링의 역할을 나눈다.
         soccerBallRect.set(cx - ballRadius, cy - ballRadius, cx + ballRadius, cy + ballRadius)
+
+        // 배경은 View 전체를 꽉 채우도록 목적 사각형을 잡는다.
+        bgRect.set(0F, 0f, w.toFloat(), h.toFloat())
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        // 먼저 배경을 깔고, 그 위에 공을 그려야 공이 배경에 가려지지 않는다.
+        canvas.drawBitmap(bgBitmap, null, bgRect, null)
         canvas.drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
-        Log.d(javaClass.simpleName, "Bitmap Size: ${soccerBallRect.f2String}")
     }
 }
 
