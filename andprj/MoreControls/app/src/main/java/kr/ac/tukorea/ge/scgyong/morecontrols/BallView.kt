@@ -10,30 +10,15 @@ import android.view.View
 
 class BallView(context: Context) : View(context) {
 
-    // Java 였다면 getBitmapOptions() 를 lazy getter 비슷하게 만들어 이런 식으로 쓸 수 있다.
-    // private Bitmap soccerBallBitmap =
-    //     BitmapFactory.decodeResource(getResources(), R.mipmap.soccer_ball_240, getBitmapOptions());
-    //
-    // private BitmapFactory.Options bitmapOptions;
-    //
-    // private BitmapFactory.Options getBitmapOptions() {
-    //     if (bitmapOptions == null) {
-    //         bitmapOptions = new BitmapFactory.Options();
-    //         bitmapOptions.inScaled = false;
-    //     }
-    //     return bitmapOptions;
-    // }
-    //
-    // Kotlin 에서는 apply 로 옵션 객체를 더 간결하게 준비할 수 있다.
     private val bitmapOptions = BitmapFactory.Options().apply {
-        // density 에 따른 자동 확대/축소를 끄고, 파일의 원래 픽셀 크기 그대로 읽는다.
-        inScaled = false
+        inScaled = false // density 에 따른 자동 확대/축소를 끄고, 파일의 원래 픽셀 크기 그대로 읽는다.
     }
-
-    // 이 시점에는 이미 View 가 context 와 연결된 상태라 resources 접근이 가능하다.
-    // 다만 View 생성 때마다 decodeResource 가 실행되므로, 동작 가능 여부와 별개로 비용은 따로 생각해야 한다.
     private val soccerBallBitmap: Bitmap =
         BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240, bitmapOptions)
+
+    // 공을 그릴 사각형 영역을 나타내는 RectF 객체이다. 
+    // onDraw()가 호출될 때마다 새로 만들지 않고 한번만 만들어서 재사용한다.
+    private val soccerBallRect = RectF()
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -42,9 +27,12 @@ class BallView(context: Context) : View(context) {
         val cx = width / 2.0f
         val cy = height / 2.0f
         val ballRadius = cx / 10
-        val ballRect = RectF(cx - ballRadius, cy - ballRadius, cx + ballRadius, cy + ballRadius)
-        canvas.drawBitmap(soccerBallBitmap, null, ballRect, null)
-        Log.d(javaClass.simpleName, "Bitmap Size: ${ballRect.f2String}")
+
+        // 객체는 한 번만 만들어서 재사용한다. onDraw()가 호출될 때마다 새로 만들면 GC 부담이 커진다.
+        // 여기서는 생성되어 있는 객체에 값을 설정하기만 한다.
+        soccerBallRect.set(cx - ballRadius, cy - ballRadius, cx + ballRadius, cy + ballRadius)
+        canvas.drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
+        Log.d(javaClass.simpleName, "Bitmap Size: ${soccerBallRect.f2String}")
     }
 }
 
