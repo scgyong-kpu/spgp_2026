@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.view.View
+import androidx.core.graphics.withMatrix
 import kotlin.math.min
 
 class BallView(context: Context) : View(context) {
@@ -56,19 +57,16 @@ class BallView(context: Context) : View(context) {
 
         // 실제 Canvas 에 변환 행렬을 적용한 뒤,
         // 이 안에서는 9 x 16 가상 좌표계 기준으로 그대로 그리면 된다.
-        // withMatrix 같은 helper 로 감쌀 수도 있지만,
-        // 여기서는 save / concat / restore 흐름을 직접 보여 주는 쪽이 수업 설명에 더 잘 맞는다.
-        canvas.save()
-        canvas.concat(transformMatrix)
-
-        // 배경을 먼저 깔고, 그 위에 공을 그려야 공이 배경에 가려지지 않는다.
-        canvas.drawBitmap(bgBitmap, null, bgRect, null)
-        canvas.drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
-
-        canvas.restore()
+        // withMatrix 는 내부적으로 save / concat / restore 흐름을 감싸 주는 helper 이다.
+        // 이번 단계에서는 같은 동작을 조금 더 짧고 안전하게 쓰는 예제로 본다.
+        canvas.withMatrix(transformMatrix) {
+            // 배경을 먼저 깔고, 그 위에 공을 그려야 공이 배경에 가려지지 않는다.
+            drawBitmap(bgBitmap, null, bgRect, null)
+            drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
+        }
     }
 }
-
+    
 // RectF 좌표값(left, top, right, bottom)을 소수 둘째 자리까지 보이게 문자열로 바꾼다.
 // 로그에서 목적 사각형 좌표를 읽기 쉽게 보려고 쓰는 extension property 이다.
 val RectF.f2String: String
