@@ -20,17 +20,21 @@ class BallView(context: Context) : View(context) {
     // onDraw()가 호출될 때마다 새로 만들지 않고 한번만 만들어서 재사용한다.
     private val soccerBallRect = RectF()
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        // 화면 폭의 1/10 크기로 공을 그린다.
+        val cx = w / 2.0f
+        val cy = h / 2.0f
+        val ballRadius = cx / 10
+
+        // 크기가 정해지거나 바뀌는 시점에 목적 사각형을 계산해 둔다.
+        // onDraw()에서는 그리기만 하도록 계산과 렌더링의 역할을 나눈다.
+        soccerBallRect.set(cx - ballRadius, cy - ballRadius, cx + ballRadius, cy + ballRadius)
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // 화면 폭의 1/10 크기로 공을 그린다.
-        val cx = width / 2.0f
-        val cy = height / 2.0f
-        val ballRadius = cx / 10
-
-        // 객체는 한 번만 만들어서 재사용한다. onDraw()가 호출될 때마다 새로 만들면 GC 부담이 커진다.
-        // 여기서는 생성되어 있는 객체에 값을 설정하기만 한다.
-        soccerBallRect.set(cx - ballRadius, cy - ballRadius, cx + ballRadius, cy + ballRadius)
         canvas.drawBitmap(soccerBallBitmap, null, soccerBallRect, null)
         Log.d(javaClass.simpleName, "Bitmap Size: ${soccerBallRect.f2String}")
     }
