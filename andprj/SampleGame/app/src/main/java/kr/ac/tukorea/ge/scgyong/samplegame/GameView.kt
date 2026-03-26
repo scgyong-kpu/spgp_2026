@@ -55,18 +55,20 @@ class GameView @JvmOverloads constructor(
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
-            move()
+            update()
+            invalidate() // 화면 갱신을 요청한다. 그러면 onDraw() 가 다시 호출된다.
         }
         return super.onTouchEvent(event)
     }
 
-    private fun move() {
-        // ballRect 의 위치를 10 오른쪽, 20 아래로 옮긴다.
+    // 게임 루프에서 불릴 함수이므로 update() 라고 이름을 붙인다.
+    // Refactor -> Rename (Shift+F6)
+    // invalidate() 는 update() 의 내용이 아니므로 update() 밖으로 뺀다.
+    private fun update() {
+            // ballRect 의 위치를 10 오른쪽, 20 아래로 옮긴다.
         // left, top, right, bottom 모두 10, 20 씩 더해지는 효과가 있다.
         ballRect.offset(10f, 20f)
         Log.d(javaClass.simpleName, "ballRect: $ballRect")
-
-        invalidate() // 화면 갱신을 요청한다. 그러면 onDraw() 가 다시 호출된다.
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
