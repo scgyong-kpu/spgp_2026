@@ -11,9 +11,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.withMatrix
 
-
-// 게임이 내부적으로 사용할 가상 좌표계의 크기이다.
-// 실제 폰 화면 크기와는 별개로, 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
+// 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
+// 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
 private const val VIRTUAL_WIDTH = 900f
 private const val VIRTUAL_HEIGHT = 1600f
 
@@ -22,7 +21,6 @@ class GameView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
-
 
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
@@ -63,29 +61,28 @@ class GameView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         canvas.withMatrix(transformMatrix) {
-            // canvas 가 인자로 넘어가는데 이 블럭 안에서는 canvas 가 this 이므로
-            // drawDebugGrid(this) 로 써도 되고 drawDebugGrid(canvas) 로 써도 된다.
-            drawDebugGrid(canvas) // 가상 좌표계의 격자선을 그린다.
+            // drawDebugGrid 가 Canvas extension 이라서, 이 블록 안에서는 drawDebugGrid() 만으로 바로 쓸 수 있다.
+            drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             drawBitmap(ballBitmap, null, ballRect, null) // 공의 위치와 크기는 ballRect 로 정한다.
         }
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
-    fun drawDebugGrid(canvas: Canvas) {
-        canvas.drawRect(borderRect, borderPaint) // 900 x 1600 가상 좌표계의 경계
+    private fun Canvas.drawDebugGrid() {
+        drawRect(borderRect, borderPaint) // 900 x 1600 가상 좌표계의 경계
         val step = 100f
 
         // 세로 격자선: x 값을 100씩 늘리며 위에서 아래로 선을 긋는다.
         var x = 0f
         while (x <= VIRTUAL_WIDTH) {
-            canvas.drawLine(x, 0f, x, VIRTUAL_HEIGHT, gridPaint)
+            drawLine(x, 0f, x, VIRTUAL_HEIGHT, gridPaint)
             x += step
         }
 
         // 가로 격자선: y 값을 100씩 늘리며 왼쪽에서 오른쪽으로 선을 긋는다.
         var y = 0f
         while (y <= VIRTUAL_HEIGHT) {
-            canvas.drawLine(0f, y, VIRTUAL_WIDTH, y, gridPaint)
+            drawLine(0f, y, VIRTUAL_WIDTH, y, gridPaint)
             y += step
         }
     }
