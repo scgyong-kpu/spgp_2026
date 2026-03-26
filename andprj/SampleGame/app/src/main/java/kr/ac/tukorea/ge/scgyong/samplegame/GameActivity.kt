@@ -9,5 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 class GameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(GameView(this))
     }
 }
