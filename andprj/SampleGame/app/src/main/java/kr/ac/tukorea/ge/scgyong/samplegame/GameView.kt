@@ -8,6 +8,8 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
 
@@ -49,6 +51,23 @@ class GameView @JvmOverloads constructor(
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             drawBitmap(ballBitmap, null, ballRect, null) // 공의 위치와 크기는 ballRect 로 정한다.
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            move()
+        }
+        return super.onTouchEvent(event)
+    }
+
+    private fun move() {
+        // 공이 오른쪽으로 100씩 이동하도록 해 본다.
+        ballRect.left += 100f
+        Log.d(javaClass.simpleName, "ballRect: $ballRect")
+        // 공은 움직이지 않는다.
+        // 그렇다면 move() 가 호출되지 않는 것인지?
+        // move() 는 호출되는데 공이 움직이지 않는 것인지?
+        // 좌표 이동 관련 다른 문제는 없는지?
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
