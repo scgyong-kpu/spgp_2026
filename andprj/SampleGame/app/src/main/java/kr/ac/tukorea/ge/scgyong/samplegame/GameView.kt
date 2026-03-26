@@ -23,10 +23,6 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
-    init {
-        // 게임 화면이 만들어질 때, 일정 간격으로 update() 가 호출되도록 예약한다.
-        scheduleUpdate()
-    }
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
@@ -62,6 +58,12 @@ class GameView @JvmOverloads constructor(
             invalidate()
             postDelayed(this, 500) // 같은 Runnable 객체를 다시 500ms 뒤에 예약한다.
         }
+    }
+
+    // init block 보다 updateRunnable 선언이 먼저 되어야 null 이 아니게 된다.
+    init {
+        // 게임 화면이 만들어질 때, 일정 간격으로 update() 가 호출되도록 예약한다.
+        scheduleUpdate()
     }
 
     fun scheduleUpdate() {
