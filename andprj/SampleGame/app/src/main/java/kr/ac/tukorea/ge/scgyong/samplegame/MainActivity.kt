@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.scgyong.samplegame
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,5 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onStartGameClicked(view: View) {
         Log.d(javaClass.simpleName, "Start Game")
+        val intent = Intent(this, GameActivity::class.java)
+        startActivity(intent)
     }
 }
