@@ -52,12 +52,11 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    private val updateRunnable = object : Runnable {
-        override fun run() {
-            update()
-            invalidate()
-            postDelayed(this, 500) // 같은 Runnable 객체를 다시 500ms 뒤에 예약한다.
-        }
+    // 축약형 표현으로 Runnable 객체를 만들어 보자.
+    private val updateRunnable = Runnable {
+        update()
+        invalidate()
+        scheduleUpdate() // update() 가 끝난 뒤에 다음 업데이트를 예약한다.
     }
 
     // init block 보다 updateRunnable 선언이 먼저 되어야 null 이 아니게 된다.
