@@ -61,9 +61,9 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun move() {
-        // 공이 오른쪽으로 100씩 이동하도록 해 본다.
-        ballRect.left += 100f
-        ballRect.right += 100f
+        // ballRect 의 위치를 10 오른쪽, 20 아래로 옮긴다.
+        // left, top, right, bottom 모두 10, 20 씩 더해지는 효과가 있다.
+        ballRect.offset(10f, 20f)
         Log.d(javaClass.simpleName, "ballRect: $ballRect")
 
         invalidate() // 화면 갱신을 요청한다. 그러면 onDraw() 가 다시 호출된다.
