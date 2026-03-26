@@ -46,7 +46,7 @@ class GameView @JvmOverloads constructor(
 
         canvas.withMatrix(transformMatrix) {
             // drawDebugGrid 가 Canvas extension 이라서, 이 블록 안에서는 drawDebugGrid() 만으로 바로 쓸 수 있다.
-            //drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
+            drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             drawBitmap(ballBitmap, null, ballRect, null) // 공의 위치와 크기는 ballRect 로 정한다.
         }
     }
@@ -70,7 +70,6 @@ class GameView @JvmOverloads constructor(
             y += step
         }
     }
-
     private val borderRect by lazy { RectF(0f, 0f, VIRTUAL_WIDTH, VIRTUAL_HEIGHT) }
     private val borderPaint by lazy {
         Paint().apply {
@@ -86,4 +85,5 @@ class GameView @JvmOverloads constructor(
             strokeWidth = 1f
         }
     }
+
 }
