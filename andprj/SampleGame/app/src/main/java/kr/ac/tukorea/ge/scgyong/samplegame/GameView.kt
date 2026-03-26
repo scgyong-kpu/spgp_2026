@@ -9,7 +9,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
 
@@ -24,6 +23,10 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
+    init {
+        // 게임 화면이 만들어질 때, 일정 간격으로 update() 가 호출되도록 예약한다.
+        scheduleUpdate()
+    }
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
@@ -53,19 +56,16 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action == MotionEvent.ACTION_DOWN) {
+    fun scheduleUpdate() {
+        postDelayed({
             update()
-            invalidate() // 화면 갱신을 요청한다. 그러면 onDraw() 가 다시 호출된다.
-        }
-        return super.onTouchEvent(event)
+            invalidate()
+            scheduleUpdate() // 다시 자기 자신을 500ms 뒤에 호출한다.
+        }, 500)
     }
 
-    // 게임 루프에서 불릴 함수이므로 update() 라고 이름을 붙인다.
-    // Refactor -> Rename (Shift+F6)
-    // invalidate() 는 update() 의 내용이 아니므로 update() 밖으로 뺀다.
-    private fun update() {
-            // ballRect 의 위치를 10 오른쪽, 20 아래로 옮긴다.
+    fun update() {
+        // ballRect 의 위치를 10 오른쪽, 20 아래로 옮긴다.
         // left, top, right, bottom 모두 10, 20 씩 더해지는 효과가 있다.
         ballRect.offset(10f, 20f)
         Log.d(javaClass.simpleName, "ballRect: $ballRect")
