@@ -25,22 +25,6 @@ class GameView @JvmOverloads constructor(
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
-    private val borderRect by lazy { RectF(0f, 0f, VIRTUAL_WIDTH, VIRTUAL_HEIGHT) }
-    private val borderPaint by lazy {
-        Paint().apply {
-            style = Paint.Style.STROKE // 테두리만 그린다.
-            color = Color.RED
-            strokeWidth = 10f
-        }
-    }
-    private val gridPaint by lazy {
-        Paint().apply {
-            style = Paint.Style.STROKE // 테두리만 그린다.
-            color = Color.GRAY
-            strokeWidth = 1f
-        }
-    }
-
     private val transformMatrix = Matrix()
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -86,4 +70,20 @@ class GameView @JvmOverloads constructor(
             y += step
         }
     }
+    private val borderRect by lazy { RectF(0f, 0f, VIRTUAL_WIDTH, VIRTUAL_HEIGHT) }
+    private val borderPaint by lazy {
+        Paint().apply {
+            style = Paint.Style.STROKE // 테두리만 그린다.
+            color = Color.RED
+            strokeWidth = 10f
+        }
+    }
+    private val gridPaint by lazy {
+        Paint().apply {
+            style = Paint.Style.STROKE // 테두리만 그린다.
+            color = Color.GRAY
+            strokeWidth = 1f
+        }
+    }
+
 }
