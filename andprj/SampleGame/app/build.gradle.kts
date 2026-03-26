@@ -10,6 +10,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "kr.ac.tukorea.ge.scgyong.samplegame"
         minSdk = 24
