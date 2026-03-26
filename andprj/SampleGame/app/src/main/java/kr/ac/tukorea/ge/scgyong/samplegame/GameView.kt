@@ -57,10 +57,18 @@ class GameView @JvmOverloads constructor(
     }
 
     fun scheduleUpdate() {
-        postDelayed({
-            update()
-            invalidate()
-            scheduleUpdate() // 다시 자기 자신을 500ms 뒤에 호출한다.
+        // Kotlin 에서 lambda 표현은 Runnable 이 필요한 자리에서 Runnable 객체처럼 사용된다.
+        // 비캡처 lambda 는 컴파일러 최적화나 재사용의 여지가 있을 수 있지만,
+        // 개념적으로는 "지연 실행할 Runnable 을 하나 넘긴다" 라고 이해하는 편이 맞다.
+        // 다만 여기서 중요한 점은 lambda 문법 자체보다도, 반복 예약 구조 안에서
+        // 콜백이 계속 다시 필요해진다는 사실이며, 객체 생성을 더 줄이고 싶다면
+        // Runnable 을 멤버로 하나 만들어 재사용하는 방식까지 생각해 볼 수 있다는 점이다.
+        postDelayed(object : Runnable {
+            override fun run() {
+                update()
+                invalidate()
+                scheduleUpdate() // 다시 자기 자신을 500ms 뒤에 호출한다.
+            }
         }, 500)
     }
 
