@@ -7,10 +7,12 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
+import kotlin.math.roundToInt
 
 private const val VIRTUAL_WIDTH = 900f
 private const val VIRTUAL_HEIGHT = 1600f
@@ -80,13 +82,14 @@ class GameView @JvmOverloads constructor(
     // doFrame() 이 최초 호출 된 시점에는 previousNanos 가 0 이어서
     // 매우 큰 frameTime 이 생성되므로 0 일때에는 하면 안 된다.
     override fun doFrame(nanos: Long) {
-        if (gctx.currentTimeNanos != 0L) {
-            gctx.frameTime = (nanos - gctx.currentTimeNanos) / 1_000_000_000f
-            //Log.d(javaClass.simpleName, "frameTime=${gctx.frameTime}")
+        val previousNanos = gctx.currentTimeNanos
+        gctx.currentTimeNanos = nanos
+        if (previousNanos != 0L) {
+            gctx.frameTime = (nanos - previousNanos) / 1_000_000_000f
+            Log.d(javaClass.simpleName, "frameTime=${(gctx.frameTime / (1/60f)).roundToInt()} frame")
             update()
             invalidate()
         }
-        gctx.currentTimeNanos = nanos
         if (isShown) {
             Choreographer.getInstance().postFrameCallback(this)
         }

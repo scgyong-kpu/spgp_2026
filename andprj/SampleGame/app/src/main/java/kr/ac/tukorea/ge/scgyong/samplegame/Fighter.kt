@@ -3,9 +3,8 @@ package kr.ac.tukorea.ge.scgyong.samplegame
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.util.Log
+import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 private const val FIGHTER_X = 450f
@@ -21,6 +20,9 @@ class Fighter(gctx: GameContext) {
     private var angleDegree = -FIGHTER_ANGLE_OFFSET
     private var targetX = FIGHTER_X
     private var targetY = FIGHTER_Y
+    // dx, dy 는 이번 프레임에 더할 값이 아니라, 초당 몇 unit 씩 움직여야 하는지를 저장하는 속도 벡터이다.
+    private var dx = 0f
+    private var dy = -FIGHTER_SPEED
 
     init {
         setPosition(FIGHTER_X, FIGHTER_Y, appliesAngle = false)
@@ -32,9 +34,18 @@ class Fighter(gctx: GameContext) {
         targetX = x
         targetY = y
 
-        val dx = (targetX - this.x).toDouble()
-        val dy = (targetY - this.y).toDouble()
-        angleDegree = Math.toDegrees(atan2(dy, dx)).toFloat()
+        // 현재 위치에서 목표 지점까지의 방향 벡터를 구한다.
+        val dx = targetX - this.x
+        val dy = targetY - this.y
+        val distance = sqrt(dx * dx + dy * dy)
+        if (distance == 0f) return
+
+        // 방향 벡터를 단위 벡터로 만든 뒤, FIGHTER_SPEED 를 곱해 초당 속도 벡터로 바꿔 저장한다.
+        this.dx = dx / distance * FIGHTER_SPEED
+        this.dy = dy / distance * FIGHTER_SPEED
+
+        // 전투기가 바라볼 방향도 목표 지점을 향하도록 각도를 함께 계산해 둔다.
+        angleDegree = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
         Log.d(javaClass.simpleName, "angleDegree: ${"%.2f".format(angleDegree)}")
     }
 
@@ -57,23 +68,22 @@ class Fighter(gctx: GameContext) {
     }
 
     fun update(gctx: GameContext) {
-        val dx = targetX - x
-        val dy = targetY - y
-        val distance = sqrt(dx * dx + dy * dy)
-        if (distance == 0f) return
-
-        val step = FIGHTER_SPEED * gctx.frameTime
-        if (distance <= step) {
-            setPosition(targetX, targetY, appliesAngle = false)
+        // 목표 지점까지 얼마나 남았는지 본다.
+        val remainingDx = targetX - x
+        val remainingDy = targetY - y
+        if (remainingDx == 0f && remainingDy == 0f) {
             return
         }
 
-        val radian = Math.toRadians(angleDegree.toDouble())
-        setPosition(
-            x + (cos(radian) * step).toFloat(),
-            y + (sin(radian) * step).toFloat(),
-            appliesAngle = false,
-        )
+        // 이번 프레임 동안 x, y 축으로 각각 얼마나 움직일지를 계산한다.
+        val frameDx = this.dx * gctx.frameTime
+        val frameDy = this.dy * gctx.frameTime
+
+        // 어느 한 축이라도 이번 프레임 이동량이 남은 거리보다 크면 그 축만 목표값에 붙인다.
+        val nextX = if (abs(remainingDx) <= abs(frameDx)) targetX else x + frameDx
+        val nextY = if (abs(remainingDy) <= abs(frameDy)) targetY else y + frameDy
+
+        setPosition(nextX, nextY, appliesAngle = false)
     }
 
     fun draw(canvas: Canvas) {
