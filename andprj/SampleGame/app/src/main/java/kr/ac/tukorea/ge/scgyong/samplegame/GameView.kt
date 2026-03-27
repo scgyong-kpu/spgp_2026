@@ -24,17 +24,12 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-
     private var ballDx = 4f
     private var ballDy = 6f
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
-    // init block 에서 멤버를 접근하는 곳이 없으므로
-    // 위치를 맨 위로 옮긴다
     init {
-        // scheduleUpdate() 가 다음 한 줄 뿐이므로, 굳이 함수로 만들지 않는다
-        // 아래에서 한 번더 반복되지만, 부담되는 정도는 아니다
         Choreographer.getInstance().postFrameCallback(this)
     }
 
@@ -77,7 +72,26 @@ class GameView @JvmOverloads constructor(
 
     fun update() {
         ballRect.offset(ballDx, ballDy)
-        Log.d(javaClass.simpleName, "ballRect: $ballRect")
+
+        // 공이 좌우 벽을 넘으려 하면 X 방향 속도를 반대로 바꾼다.
+        if (ballRect.left < 0f || ballRect.right > VIRTUAL_WIDTH) {
+            // X 방향 속도를 반대로 바꾼다.
+            ballDx = -ballDx
+            // 공이 벽에 닿은 지점에서 튕겨나가도록, 공의 위치를 다시 보정한다.
+            // 이 보정을 하지 않으면 공이 벽에 닿은 지점에서 멈추지 않고, 벽을 뚫고 나가서 다시 튕겨나오는 모양이 된다.
+            // 벽 근처에서 계속 왔다갔다만 하는 현상이 생길 수 있다
+            ballRect.offset(ballDx, 0f)
+        }
+
+        // 공이 위아래 벽을 넘으려 하면 Y 방향 속도를 반대로 바꾼다.
+        if (ballRect.top < 0f || ballRect.bottom > VIRTUAL_HEIGHT) {
+            // Y 방향 속도를 반대로 바꾼다.
+            ballDy = -ballDy
+            // 공이 벽에 닿은 지점에서 튕겨나가도록, 공의 위치를 다시 보정한다.
+            ballRect.offset(0f, ballDy)
+        }
+
+        Log.d(javaClass.simpleName, "ballRect: $ballRect, dx=$ballDx, dy=$ballDy")
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
@@ -115,5 +129,4 @@ class GameView @JvmOverloads constructor(
             strokeWidth = 1f
         }
     }
-
 }
