@@ -81,7 +81,7 @@
 - [x] `MainScene`이 `Scene`을 상속하도록 변경
 - [x] `World` 도입
 - [x] `MainScene`이 `World`를 소유하도록 변경
-- [ ] `Scene`의 기본 `update()` / `draw()`가 `world?.update()` / `world?.draw()`를 위임하도록 정리
+- [x] `Scene`의 기본 `update()` / `draw()`가 `world?.update()` / `world?.draw()`를 위임하도록 정리
 - [ ] `GameView`에 `SceneStack` 도입
 - [ ] 현재 Scene을 `SceneStack`의 top 으로 처리하도록 변경
 - [ ] `World`에 layer 구조 도입
