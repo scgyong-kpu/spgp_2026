@@ -24,9 +24,13 @@ class GameView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
     private val gctx = GameContext(this, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-    private val balls = Array(10) { Ball.random(gctx) }
-    private val circles = Array(5) { BouncingCircle(gctx) }
-    private val fighter = Fighter(gctx)
+    private val gameObjects = buildList<IGameObject> {
+        repeat(10) { add(Ball.random(gctx)) }
+        repeat(5) { add(BouncingCircle(gctx)) }
+        add(Fighter(gctx))
+    }.toTypedArray()
+    private val fighter: Fighter
+        get() = gameObjects.last() as Fighter
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
@@ -56,13 +60,9 @@ class GameView @JvmOverloads constructor(
 
         canvas.withMatrix(transformMatrix) {
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
-            for (ball in balls) {
-                ball.draw(this)
+            for (gameObject in gameObjects) {
+                gameObject.draw(this)
             }
-            for (circle in circles) {
-                circle.draw(this)
-            }
-            fighter.draw(this)
         }
     }
 
@@ -98,13 +98,8 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
-        fighter.update(gctx)
-        for (ball in balls) {
-            ball.update(gctx)
-            // Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
-        }
-        for (circle in circles) {
-            circle.update(gctx)
+        for (gameObject in gameObjects) {
+            gameObject.update(gctx)
         }
     }
 
