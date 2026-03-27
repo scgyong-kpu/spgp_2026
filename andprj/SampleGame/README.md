@@ -78,7 +78,7 @@
 
 - [x] `Scene` 공통 추상 타입 도입
 - [x] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
-- [ ] `MainScene`이 `Scene`을 상속하도록 변경
+- [x] `MainScene`이 `Scene`을 상속하도록 변경
 - [ ] `World` 도입
 - [ ] `MainScene`이 `World`를 소유하도록 변경
 - [ ] `Scene`의 기본 `update()` / `draw()`가 `world?.update()` / `world?.draw()`를 위임하도록 정리
