@@ -26,9 +26,12 @@ class GameView @JvmOverloads constructor(
     private val gctx = GameContext(this)
     // Ball, Fighter, BouncingCircle 같은 실제 GameObject 들의 구성과 입력 처리는 MainScene 쪽으로 넘긴다.
     // 이로써 GameView 는 View 생명주기와 렌더링 루프에 더 집중하고, 화면 안에 무엇이 있는지는 Scene 이 맡게 된다.
-    // 이제 MainScene 이 Scene 을 상속하므로, GameView 는 Scene 타입 변수에 MainScene 을 바로 담아도 된다.
-    // 핵심은 여전히 GameView 가 구체 구현체보다 Scene 추상 타입만 바라본다는 점이다.
     private val scene: Scene = MainScene(gctx)
+    // 이제 GameView 는 Scene 하나 대신 SceneStack 을 소유하기 시작한다.
+    // 아직 현재 Scene 을 stack 의 top 으로 읽도록 바꾸기 전 단계이므로, 우선 기존 scene 을 push 해 두기만 한다.
+    private val sceneStack = SceneStack().apply {
+        push(scene)
+    }
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
