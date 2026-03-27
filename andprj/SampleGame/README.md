@@ -77,7 +77,7 @@
 진행하면서 항목을 지우거나 체크해 나갈 수 있도록 남겨 둔다.
 
 - [x] `Scene` 공통 추상 타입 도입
-- [ ] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
+- [x] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
 - [ ] `MainScene`이 `Scene`을 상속하도록 변경
 - [ ] `World` 도입
 - [ ] `MainScene`이 `World`를 소유하도록 변경

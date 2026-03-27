@@ -26,7 +26,24 @@ class GameView @JvmOverloads constructor(
     private val gctx = GameContext(this)
     // Ball, Fighter, BouncingCircle 같은 실제 GameObject 들의 구성과 입력 처리는 MainScene 쪽으로 넘긴다.
     // 이로써 GameView 는 View 생명주기와 렌더링 루프에 더 집중하고, 화면 안에 무엇이 있는지는 Scene 이 맡게 된다.
-    private val scene = MainScene(gctx)
+    // GameView 는 구체 MainScene 을 직접 상대하지 않고 Scene 추상 타입만 바라본다.
+    // 아직 MainScene 이 Scene 을 상속하기 전 단계이므로, 임시 adapter Scene 안에 MainScene 을 감싸 두었다.
+    // 다음 단계에서는 MainScene 자체가 Scene 을 상속하도록 바꿔 이 adapter 를 없앨 예정이다.
+    private val scene: Scene = object : Scene(gctx) {
+        private val mainScene = MainScene(gctx)
+
+        override fun update(gctx: GameContext) {
+            mainScene.update(gctx)
+        }
+
+        override fun draw(canvas: Canvas) {
+            mainScene.draw(canvas)
+        }
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            return mainScene.onTouchEvent(event)
+        }
+    }
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
