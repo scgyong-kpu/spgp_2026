@@ -40,6 +40,9 @@ class Fighter(gctx: GameContext) {
     }
 
     fun draw(canvas: Canvas) {
+        canvas.save()
+        canvas.rotate(angleDegree, x, y) // 반드시 x, y 를 회전의 중심으로 지정해야 한다.
         canvas.drawBitmap(bitmap, null, rect, null)
+        canvas.restore()
     }
 }
