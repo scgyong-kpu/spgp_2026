@@ -64,13 +64,13 @@ class GameView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         canvas.withMatrix(transformMatrix) {
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DRAWS_DEBUG_GRID) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
             for (gameObject in gameObjects) {
                 gameObject.draw(this)
             }
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DRAWS_DEBUG_INFO || BuildConfig.DRAWS_FPS_GRAPH) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
         }
@@ -114,10 +114,14 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun Canvas.drawDebugInfo() {
-        val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)}"
-        drawText(text, 20f, 60f, debugPaint)
-        debugFrames.add((gctx.frameTime / (1 / 60f)).roundToInt().toFloat())
-        debugFrames.draw(this)
+        if (BuildConfig.DRAWS_DEBUG_INFO) {
+            val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)}"
+            drawText(text, 20f, 60f, debugPaint)
+        }
+        if (BuildConfig.DRAWS_FPS_GRAPH) {
+            debugFrames.add((gctx.frameTime / (1 / 60f)).roundToInt().toFloat())
+            debugFrames.draw(this)
+        }
     }
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
     private fun Canvas.drawDebugGrid() {
