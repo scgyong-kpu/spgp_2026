@@ -10,24 +10,22 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 멤버로 하나 들고 있는 편이 더 단순하고 읽기 쉽다.
     private val fighter = Fighter(gctx)
     // Scene 안의 모든 오브젝트를 gameObjects 에 모아 두면, 종류가 달라도 공통 반복문으로 처리할 수 있다.
-    private val gameObjects = buildList<IGameObject> {
+    // MainScene 이 직접 gameObjects 목록을 들고 있기보다, World 를 하나 소유하고 그 안에 실제 GameObject 들을 담기 시작한다.
+    // 이렇게 하면 Scene 은 게임 규칙과 입력 처리 쪽에 더 집중하고, 오브젝트 보관과 공통 순회는 World 쪽으로 넘길 수 있다.
+    private val world = World(buildList {
         repeat(10) { add(Ball.random(gctx)) }
         repeat(5) { add(BouncingCircle(gctx)) }
         add(fighter)
-    }.toTypedArray()
+    })
 
     override fun update(gctx: GameContext) {
-        // 각 GameObject 는 Scene 이 준비한 공통 문맥 gctx 를 받아 자기 상태를 갱신한다.
-        for (obj in gameObjects) {
-            obj.update(gctx)
-        }
+        // 이제 Scene 이 직접 오브젝트 목록을 순회하지 않고 World 에게 공통 update 를 위임한다.
+        world.update(gctx)
     }
 
     override fun draw(canvas: Canvas) {
-        // Scene 안에 들어 있는 모든 GameObject 를 같은 순회 구조로 그린다.
-        for (obj in gameObjects) {
-            obj.draw(canvas)
-        }
+        // draw 도 같은 방식으로 World 에게 위임해, Scene 은 "어떤 월드를 가진 장면인지"에 더 집중한다.
+        world.draw(canvas)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
