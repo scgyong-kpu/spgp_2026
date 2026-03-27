@@ -5,12 +5,14 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
+import kotlin.math.roundToInt
 
 private const val VIRTUAL_WIDTH = 900f
 private const val VIRTUAL_HEIGHT = 1600f
@@ -41,6 +43,7 @@ class GameView @JvmOverloads constructor(
     private val transformMatrix = Matrix()
     private val inverseTransformMatrix = Matrix()
     private val touchPoint = floatArrayOf(0f, 0f)
+    private val debugFrames by lazy { DebugFrames() }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -65,6 +68,7 @@ class GameView @JvmOverloads constructor(
             for (gameObject in gameObjects) {
                 gameObject.draw(this)
             }
+            drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
         }
     }
 
@@ -105,6 +109,12 @@ class GameView @JvmOverloads constructor(
         }
     }
 
+    private fun Canvas.drawDebugInfo() {
+        val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)}"
+        drawText(text, 20f, 60f, debugPaint)
+        debugFrames.add((gctx.frameTime / (1 / 60f)).roundToInt().toFloat())
+        debugFrames.draw(this)
+    }
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
     private fun Canvas.drawDebugGrid() {
         drawRect(borderRect, borderPaint) // 900 x 1600 가상 좌표계의 경계
@@ -139,5 +149,66 @@ class GameView @JvmOverloads constructor(
             color = Color.GRAY
             strokeWidth = 1f
         }
+    }
+    private val debugPaint by lazy {
+        Paint().apply {
+            color = Color.BLUE
+            textSize = 50f
+        }
+    }
+}
+
+private class DebugFrames(capacity: Int = 150) {
+    private val values = FloatArray(capacity)
+    private var start = 0
+    private var count = 0
+    private val path = Path()
+    private val paint = Paint().apply {
+        color = Color.BLUE
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+    }
+
+    fun add(frameUnits: Float) {
+        val end = (start + count) % values.size
+        values[end] = frameUnits
+        if (count < values.size) {
+            count++
+        } else {
+            start = (start + 1) % values.size
+        }
+    }
+
+    fun draw(canvas: Canvas) {
+        if (count == 0) return
+
+        val graphX = 20f
+        val graphMinY = 100f
+        val graphWidth = 860f
+        val graphHeight = 120f
+        val maxFrameUnits = 6f
+        val dx = if (values.size > 1) graphWidth / (values.size - 1) else 0f
+
+        path.reset()
+        var previousX = 0f
+        var previousY = 0f
+        for (i in 0 until count) {
+            val index = (start + i) % values.size
+            val clamped = values[index].coerceIn(0f, maxFrameUnits)
+            val x = graphX + dx * i
+            val y = graphMinY + (clamped / maxFrameUnits) * graphHeight
+            if (i == 0) {
+                path.moveTo(x, y)
+            } else {
+                if (y != previousY) {
+                    path.lineTo(previousX, previousY)
+                    path.lineTo(x, y)
+                }
+            }
+            previousX = x
+            previousY = y
+        }
+        path.lineTo(previousX, previousY)
+        canvas.drawPath(path, paint)
     }
 }
