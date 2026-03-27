@@ -24,13 +24,10 @@ class GameView @JvmOverloads constructor(
 
     // 프레임 시간, 리소스 접근, 화면 metrics 같은 공통 게임 문맥을 한곳에 모아 둔다.
     private val gctx = GameContext(this)
-    // Ball, Fighter, BouncingCircle 같은 실제 GameObject 들의 구성과 입력 처리는 MainScene 쪽으로 넘긴다.
-    // 이로써 GameView 는 View 생명주기와 렌더링 루프에 더 집중하고, 화면 안에 무엇이 있는지는 Scene 이 맡게 된다.
-    private val scene: Scene = MainScene(gctx)
-    // 이제 GameView 는 Scene 하나 대신 SceneStack 을 소유하기 시작한다.
-    // 아직 현재 Scene 을 stack 의 top 으로 읽도록 바꾸기 전 단계이므로, 우선 기존 scene 을 push 해 두기만 한다.
+
+    // 이제 단일 scene 멤버 대신 SceneStack 이 현재 Scene 을 관리하고, GameView 는 sceneStack.top 만 바라본다.
     private val sceneStack = SceneStack().apply {
-        push(scene)
+        push(MainScene(gctx))
     }
 
     init {
@@ -38,7 +35,7 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
-        scene.update(gctx)
+        sceneStack.top.update(gctx)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -49,7 +46,7 @@ class GameView @JvmOverloads constructor(
             if (BuildConfig.DRAWS_DEBUG_GRID) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
-            scene.draw(this)
+            sceneStack.top.draw(this)
             if (BuildConfig.DRAWS_DEBUG_INFO || BuildConfig.DRAWS_FPS_GRAPH) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
@@ -66,7 +63,7 @@ class GameView @JvmOverloads constructor(
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return scene.onTouchEvent(event) || super.onTouchEvent(event)
+        return sceneStack.top.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
     // doFrame() 에게 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.

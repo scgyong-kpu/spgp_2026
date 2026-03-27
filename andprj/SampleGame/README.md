@@ -83,7 +83,7 @@
 - [x] `MainScene`이 `World`를 소유하도록 변경
 - [x] `Scene`의 기본 `update()` / `draw()`가 `world?.update()` / `world?.draw()`를 위임하도록 정리
 - [x] `GameView`에 `SceneStack` 도입
-- [ ] 현재 Scene을 `SceneStack`의 top 으로 처리하도록 변경
+- [x] 현재 Scene을 `SceneStack`의 top 으로 처리하도록 변경
 - [ ] `World`에 layer 구조 도입
 - [ ] layer 종류를 게임별로 다르게 둘 수 있는 방식 정리
 - [ ] `a2dg` 모듈 추가
