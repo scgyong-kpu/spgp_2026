@@ -7,7 +7,6 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
@@ -66,6 +65,7 @@ class GameView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                // event.x, event.y 는 실제 화면 좌표이므로, 역행렬을 적용해 가상 좌표계 값으로 되돌린다.
                 touchPoint[0] = event.x
                 touchPoint[1] = event.y
                 inverseTransformMatrix.mapPoints(touchPoint)
@@ -83,7 +83,7 @@ class GameView @JvmOverloads constructor(
     override fun doFrame(nanos: Long) {
         if (gctx.currentTimeNanos != 0L) {
             gctx.frameTime = (nanos - gctx.currentTimeNanos) / 1_000_000_000f
-            Log.d(javaClass.simpleName, "frameTime=${gctx.frameTime}")
+            //Log.d(javaClass.simpleName, "frameTime=${gctx.frameTime}")
             update()
             invalidate()
         }
