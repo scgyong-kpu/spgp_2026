@@ -35,6 +35,7 @@ class GameView @JvmOverloads constructor(
     private val transformMatrix = Matrix()
     private val inverseTransformMatrix = Matrix()
     private val touchPoint = floatArrayOf(0f, 0f)
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val scaleX = w / VIRTUAL_WIDTH
@@ -47,6 +48,7 @@ class GameView @JvmOverloads constructor(
         transformMatrix.reset()
         transformMatrix.postTranslate(offsetX, offsetY) // 먼저 가운데로 옮긴다.
         transformMatrix.postScale(scale, scale, offsetX, offsetY) // 그 위치를 기준으로 확대/축소한다.
+        transformMatrix.invert(inverseTransformMatrix) // 그리기용 변환이 정해질 때 입력용 역변환도 함께 계산해 둔다.
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -64,7 +66,6 @@ class GameView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                transformMatrix.invert(inverseTransformMatrix)
                 touchPoint[0] = event.x
                 touchPoint[1] = event.y
                 inverseTransformMatrix.mapPoints(touchPoint)
@@ -95,7 +96,7 @@ class GameView @JvmOverloads constructor(
     fun update() {
         for ((index, ball) in balls.withIndex()) {
             ball.update(gctx)
-            //Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
+            // Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
         }
     }
 
@@ -104,14 +105,14 @@ class GameView @JvmOverloads constructor(
         drawRect(borderRect, borderPaint) // 900 x 1600 가상 좌표계의 경계
         val step = 100f
 
-        // 세로 격자선: x 값을 100씩 늘리며 위에서 아래로 선을 긋는다.
+        // 세로 격자선은 x 값을 100씩 늘리며 위에서 아래로 선을 긋는다.
         var x = 0f
         while (x <= VIRTUAL_WIDTH) {
             drawLine(x, 0f, x, VIRTUAL_HEIGHT, gridPaint)
             x += step
         }
 
-        // 가로 격자선: y 값을 100씩 늘리며 왼쪽에서 오른쪽으로 선을 긋는다.
+        // 가로 격자선은 y 값을 100씩 늘리며 왼쪽에서 오른쪽으로 선을 긋는다.
         var y = 0f
         while (y <= VIRTUAL_HEIGHT) {
             drawLine(0f, y, VIRTUAL_WIDTH, y, gridPaint)
