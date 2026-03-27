@@ -66,15 +66,12 @@ class GameView @JvmOverloads constructor(
     }
 
     fun scheduleUpdate() {
-        // 반복 예약 구조를 계속 만들고 싶다면 Runnable 을 멤버로 하나 두고 재사용하는 편이 더 낫다.
-        // 지금은 updateRunnable 을 한 번만 만들어 두고, postDelayed 로 같은 객체를 계속 다시 예약한다.
-        postDelayed(updateRunnable, 500)
+        postDelayed(updateRunnable, 1000/60L)
+        // 1/60 초마다 updateRunnable 이 실행되도록 예약한다.
     }
 
     fun update() {
-        // ballRect 의 위치를 10 오른쪽, 20 아래로 옮긴다.
-        // left, top, right, bottom 모두 10, 20 씩 더해지는 효과가 있다.
-        ballRect.offset(10f, 20f)
+        ballRect.offset(1f, 2f)
         Log.d(javaClass.simpleName, "ballRect: $ballRect")
     }
 
