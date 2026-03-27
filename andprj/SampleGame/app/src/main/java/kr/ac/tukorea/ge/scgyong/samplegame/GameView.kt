@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.core.graphics.withMatrix
+import kotlin.math.max
 
 // 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
 // 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
@@ -65,9 +66,17 @@ class GameView @JvmOverloads constructor(
         scheduleUpdate()
     }
 
+    var lastUpdateTime: Long = 0
     fun scheduleUpdate() {
-        postDelayed(updateRunnable, 1000/60L)
-        // 1/60 초마다 updateRunnable 이 실행되도록 예약한다.
+        val now = System.currentTimeMillis()
+        val elapsedSinceLastUpdate: Long = now - lastUpdateTime
+        val targetDelay = (1000 / 60).toLong() // 60fps 라면 한 프레임 목표 시간은 약 16ms 이다.
+        // 이전 update 이후 이미 시간이 많이 지났다면 delay 는 0 에 가까워지고,
+        // 아직 덜 지났다면 남은 시간만큼 더 기다렸다가 다음 update 를 실행한다.
+        val delay = max(0, targetDelay - elapsedSinceLastUpdate)
+
+        postDelayed(updateRunnable, delay)
+        lastUpdateTime = now // 이번 예약 시각을 다음 delay 계산의 기준으로 남긴다.
     }
 
     fun update() {
