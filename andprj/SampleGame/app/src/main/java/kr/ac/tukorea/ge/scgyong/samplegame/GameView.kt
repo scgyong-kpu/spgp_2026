@@ -33,6 +33,8 @@ class GameView @JvmOverloads constructor(
     }
 
     private val transformMatrix = Matrix()
+    private val inverseTransformMatrix = Matrix()
+    private val touchPoint = floatArrayOf(0f, 0f)
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val scaleX = w / VIRTUAL_WIDTH
@@ -62,9 +64,11 @@ class GameView @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                // 일단은 화면 좌표를 가상 좌표계로 변환하지 않고 그대로 넘겨 본다.
-                // transformMatrix 의 역변환을 하지 않으면 터치한 위치와 전투기 위치가 어긋날 수 있다.
-                fighter.setPosition(event.x, event.y)
+                transformMatrix.invert(inverseTransformMatrix)
+                touchPoint[0] = event.x
+                touchPoint[1] = event.y
+                inverseTransformMatrix.mapPoints(touchPoint)
+                fighter.setPosition(touchPoint[0], touchPoint[1])
                 invalidate()
                 return true
             }
