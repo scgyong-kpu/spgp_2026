@@ -18,6 +18,7 @@ class GameActivity : AppCompatActivity() {
         setFullScreen()
     }
 
+    @Suppress("DEPRECATION")
     private fun setFullScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // API 30 이상: 최신 방식
@@ -31,7 +32,7 @@ class GameActivity : AppCompatActivity() {
             val flags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
                     View.SYSTEM_UI_FLAG_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            gameView.setSystemUiVisibility(flags)
+            gameView.systemUiVisibility = flags
         }
     }
 }

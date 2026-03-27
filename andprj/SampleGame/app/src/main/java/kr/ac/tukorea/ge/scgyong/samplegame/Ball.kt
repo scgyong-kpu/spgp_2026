@@ -36,12 +36,12 @@ class Ball(
         val offsetY = dy * gctx.frameTime
         rect.offset(offsetX, offsetY)
 
-        if (rect.left < 0f || rect.right > gctx.worldWidth) {
+        if (rect.left < 0f || rect.right > gctx.metrics.width) {
             dx = -dx
             rect.offset(-offsetX, 0f)
         }
 
-        if (rect.top < 0f || rect.bottom > gctx.worldHeight) {
+        if (rect.top < 0f || rect.bottom > gctx.metrics.height) {
             dy = -dy
             rect.offset(0f, -offsetY)
         }
@@ -61,8 +61,8 @@ class Ball(
         const val SPEED = 700
 
         fun random(gctx: GameContext): Ball {
-            val centerX = Random.nextFloat() * (gctx.worldWidth - SIZE) + SIZE / 2f
-            val centerY = Random.nextFloat() * (gctx.worldHeight - SIZE) + SIZE / 2f
+            val centerX = Random.nextFloat() * (gctx.metrics.width - SIZE) + SIZE / 2f
+            val centerY = Random.nextFloat() * (gctx.metrics.height - SIZE) + SIZE / 2f
             val angleDegree = Random.nextFloat() * 360f
             return Ball(gctx, centerX, centerY, angleDegree)
         }

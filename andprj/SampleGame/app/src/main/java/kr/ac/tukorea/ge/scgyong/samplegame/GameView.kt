@@ -14,8 +14,6 @@ import android.view.View
 import androidx.core.graphics.withMatrix
 import kotlin.math.roundToInt
 
-private const val VIRTUAL_WIDTH = 900f
-private const val VIRTUAL_HEIGHT = 1600f
 
 // 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
 // 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
@@ -25,7 +23,7 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    private val gctx = GameContext(this, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+    private val gctx = GameContext(this)
 
     // Fighter 는 onTouchEvent 에서 setTarget() 으로 직접 접근해야 하므로, gameObjects 안에만 숨기기보다
     // 멤버로 하나 들고 있는 편이 더 단순하고 읽기 쉽다.
@@ -40,30 +38,16 @@ class GameView @JvmOverloads constructor(
         Choreographer.getInstance().postFrameCallback(this)
     }
 
-    private val transformMatrix = Matrix()
-    private val inverseTransformMatrix = Matrix()
-    private val touchPoint = floatArrayOf(0f, 0f)
-    private val debugFrames by lazy { DebugFrames() }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        val scaleX = w / VIRTUAL_WIDTH
-        val scaleY = h / VIRTUAL_HEIGHT
-        val scale = minOf(scaleX, scaleY) // 잘리지 않게 더 작은 배율을 고른다.
-        val contentWidth = VIRTUAL_WIDTH * scale
-        val contentHeight = VIRTUAL_HEIGHT * scale
-        val offsetX = (w - contentWidth) / 2f
-        val offsetY = (h - contentHeight) / 2f
-        transformMatrix.reset()
-        transformMatrix.postTranslate(offsetX, offsetY) // 먼저 가운데로 옮긴다.
-        transformMatrix.postScale(scale, scale, offsetX, offsetY) // 그 위치를 기준으로 확대/축소한다.
-        transformMatrix.invert(inverseTransformMatrix) // 그리기용 변환이 정해질 때 입력용 역변환도 함께 계산해 둔다.
+    fun update() {
+        for (gameObject in gameObjects) {
+            gameObject.update(gctx)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        canvas.withMatrix(transformMatrix) {
+        canvas.withMatrix(gctx.metrics.transformMatrix) {
             if (BuildConfig.DRAWS_DEBUG_GRID) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
@@ -76,14 +60,20 @@ class GameView @JvmOverloads constructor(
         }
     }
 
+    private val debugFrames by lazy { DebugFrames() }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        gctx.metrics.onSize(w, h)
+    }
+
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
                 // event.x, event.y 는 실제 화면 좌표이므로, 역행렬을 적용해 가상 좌표계 값으로 되돌린다.
-                touchPoint[0] = event.x
-                touchPoint[1] = event.y
-                inverseTransformMatrix.mapPoints(touchPoint)
-                fighter.setTarget(touchPoint[0], touchPoint[1])
+                val pt = gctx.metrics.fromScreen(event.x, event.y)
+                fighter.setTarget(pt.x, pt.y)
                 return true
             }
         }
@@ -107,12 +97,6 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    fun update() {
-        for (gameObject in gameObjects) {
-            gameObject.update(gctx)
-        }
-    }
-
     private fun Canvas.drawDebugInfo() {
         if (BuildConfig.DRAWS_DEBUG_INFO) {
             val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)}"
@@ -130,20 +114,20 @@ class GameView @JvmOverloads constructor(
 
         // 세로 격자선은 x 값을 100씩 늘리며 위에서 아래로 선을 긋는다.
         var x = 0f
-        while (x <= VIRTUAL_WIDTH) {
-            drawLine(x, 0f, x, VIRTUAL_HEIGHT, gridPaint)
+        while (x <= gctx.metrics.width) {
+            drawLine(x, 0f, x, gctx.metrics.height, gridPaint)
             x += step
         }
 
         // 가로 격자선은 y 값을 100씩 늘리며 왼쪽에서 오른쪽으로 선을 긋는다.
         var y = 0f
-        while (y <= VIRTUAL_HEIGHT) {
-            drawLine(0f, y, VIRTUAL_WIDTH, y, gridPaint)
+        while (y <= gctx.metrics.height) {
+            drawLine(0f, y, gctx.metrics.width, y, gridPaint)
             y += step
         }
     }
 
-    private val borderRect by lazy { RectF(0f, 0f, VIRTUAL_WIDTH, VIRTUAL_HEIGHT) }
+    private val borderRect by lazy { RectF(0f, 0f, gctx.metrics.width, gctx.metrics.height) }
     private val borderPaint by lazy {
         Paint().apply {
             style = Paint.Style.STROKE // 테두리만 그린다.
