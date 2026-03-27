@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.RectF
+import kotlin.random.Random
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -12,7 +13,7 @@ class Ball(
     context: Context,
     centerX: Float,
     centerY: Float,
-    angle_degree: Float,
+    angle_degree: Float = Random.nextFloat() * 360f,
 ) {
     val rect = RectF(
         centerX - SIZE / 2f,
