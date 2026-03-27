@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -28,6 +30,7 @@ class GameView @JvmOverloads constructor(
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
     private val transformMatrix = Matrix()
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -75,7 +78,7 @@ class GameView @JvmOverloads constructor(
         // 아직 덜 지났다면 남은 시간만큼 더 기다렸다가 다음 update 를 실행한다.
         val delay = max(0, targetDelay - elapsedSinceLastUpdate)
 
-        postDelayed(updateRunnable, delay)
+        handler.postDelayed(updateRunnable, delay)
         lastUpdateTime = now // 이번 예약 시각을 다음 delay 계산의 기준으로 남긴다.
     }
 
