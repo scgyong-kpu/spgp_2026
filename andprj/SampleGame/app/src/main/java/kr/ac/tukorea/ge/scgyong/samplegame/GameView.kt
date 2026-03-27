@@ -24,12 +24,22 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    private var ballDx = 4f
-    private var ballDy = 6f
-    private var ball2Dx = 6f
-    private var ball2Dy = 4f
-    private val ballRect = RectF(350f, 700f, 550f, 900f)
-    private val ball2Rect = RectF(550f, 200f, 750f, 400f)
+    private val ball = Ball(
+        left = 350f,
+        top = 700f,
+        right = 550f,
+        bottom = 900f,
+        dx = 4f,
+        dy = 6f,
+    )
+    private val ball2 = Ball(
+        left = 550f,
+        top = 200f,
+        right = 750f,
+        bottom = 400f,
+        dx = 6f,
+        dy = 4f,
+    )
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
     init {
@@ -37,6 +47,7 @@ class GameView @JvmOverloads constructor(
     }
 
     private val transformMatrix = Matrix()
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val scaleX = w / VIRTUAL_WIDTH
@@ -56,8 +67,8 @@ class GameView @JvmOverloads constructor(
 
         canvas.withMatrix(transformMatrix) {
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
-            drawBitmap(ballBitmap, null, ballRect, null)
-            drawBitmap(ballBitmap, null, ball2Rect, null)
+            drawBitmap(ballBitmap, null, ball.rect, null)
+            drawBitmap(ballBitmap, null, ball2.rect, null)
         }
     }
 
@@ -73,39 +84,10 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
-        ballRect.offset(ballDx, ballDy)
-
-        // 공이 좌우 벽을 넘으려 하면 X 방향 속도를 반대로 바꾼다.
-        if (ballRect.left < 0f || ballRect.right > VIRTUAL_WIDTH) {
-            // X 방향 속도를 반대로 바꾼다.
-            ballDx = -ballDx
-            // 공이 벽에 닿은 지점에서 튕겨나가도록, 공의 위치를 다시 보정한다.
-            // 이 보정을 하지 않으면 공이 벽에 닿은 지점에서 멈추지 않고, 벽을 뚫고 나가서 다시 튕겨나오는 모양이 된다.
-            // 벽 근처에서 계속 왔다갔다만 하는 현상이 생길 수 있다
-            ballRect.offset(ballDx, 0f)
-        }
-
-        // 공이 위아래 벽을 넘으려 하면 Y 방향 속도를 반대로 바꾼다.
-        if (ballRect.top < 0f || ballRect.bottom > VIRTUAL_HEIGHT) {
-            // Y 방향 속도를 반대로 바꾼다.
-            ballDy = -ballDy
-            // 공이 벽에 닿은 지점에서 튕겨나가도록, 공의 위치를 다시 보정한다.
-            ballRect.offset(0f, ballDy)
-        }
-
-        ball2Rect.offset(ball2Dx, ball2Dy)
-
-        if (ball2Rect.left < 0f || ball2Rect.right > VIRTUAL_WIDTH) {
-            ball2Dx = -ball2Dx
-            ball2Rect.offset(ball2Dx, 0f)
-        }
-
-        if (ball2Rect.top < 0f || ball2Rect.bottom > VIRTUAL_HEIGHT) {
-            ball2Dy = -ball2Dy
-            ball2Rect.offset(0f, ball2Dy)
-        }
-
-        Log.d(javaClass.simpleName, "ballRect: $ballRect, dx=$ballDx, dy=$ballDy")
+        ball.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+        ball2.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+        Log.d(javaClass.simpleName, "ball=${ball.rect}, dx=${ball.dx}, dy=${ball.dy}")
+        Log.d(javaClass.simpleName, "ball2=${ball2.rect}, dx=${ball2.dx}, dy=${ball2.dy}")
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
