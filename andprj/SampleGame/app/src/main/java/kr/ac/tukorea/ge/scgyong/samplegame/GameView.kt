@@ -64,11 +64,15 @@ class GameView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         canvas.withMatrix(transformMatrix) {
-            drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
+            if (BuildConfig.DEBUG) {
+                drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
+            }
             for (gameObject in gameObjects) {
                 gameObject.draw(this)
             }
-            drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
+            if (BuildConfig.DEBUG) {
+                drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
+            }
         }
     }
 
