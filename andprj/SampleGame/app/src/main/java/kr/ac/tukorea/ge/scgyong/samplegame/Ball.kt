@@ -5,15 +5,15 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.RectF
-import kotlin.random.Random
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 
 class Ball(
     context: Context,
-    centerX: Float,
-    centerY: Float,
-    angle_degree: Float = Random.nextFloat() * 360f,
+    centerX: Float = Random.nextFloat() * (GameView.VIRTUAL_WIDTH - SIZE) + SIZE / 2f,
+    centerY: Float = Random.nextFloat() * (GameView.VIRTUAL_HEIGHT - SIZE) + SIZE / 2f,
+    angleDegree: Float = Random.nextFloat() * 360f,
 ) {
     val rect = RectF(
         centerX - SIZE / 2f,
@@ -28,10 +28,9 @@ class Ball(
     private val bitmap: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.mipmap.soccer_ball_240)
 
-
     // dx, dy 를 직접 넘기지 않고 angle 로부터 같은 SPEED 크기의 속도 벡터를 만든다.
     // 이렇게 하면 시작 방향만 다르고 속력 자체는 모든 Ball 이 같아진다.
-    val radian = Math.toRadians(angle_degree.toDouble())
+    private val radian = Math.toRadians(angleDegree.toDouble())
     var dx = (cos(radian) * SPEED).toFloat()
     var dy = (sin(radian) * SPEED).toFloat()
 
@@ -59,7 +58,7 @@ class Ball(
 
     // Kotlin 은 class 소속 static 변수/상수/함수 를 companion object 안에 선언한다.
     companion object {
-        const val SIZE = 200 // 공의 크기는 200 unit
-        const val SPEED = 700/60f // 초당 700 unit 를 이동하는 속도. update() 가 1/60 초마다 호출되므로 60으로 나눈 값을 사용한다.
+        const val SIZE = 200
+        const val SPEED = 700 / 60f
     }
 }

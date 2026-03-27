@@ -14,25 +14,14 @@ import androidx.core.graphics.withMatrix
 
 // 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
 // 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
-private const val VIRTUAL_WIDTH = 900f
-private const val VIRTUAL_HEIGHT = 1600f
-
 class GameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    private val ball = Ball(
-        context = context,
-        centerX = 450f,
-        centerY = 800f,
-    )
-    private val ball2 = Ball(
-        context = context,
-        centerX = 650f,
-        centerY = 300f,
-    )
+    private val ball = Ball(context = context)
+    private val ball2 = Ball(context = context)
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
@@ -116,5 +105,10 @@ class GameView @JvmOverloads constructor(
             color = Color.GRAY
             strokeWidth = 1f
         }
+    }
+
+    companion object {
+        const val VIRTUAL_WIDTH = 900f
+        const val VIRTUAL_HEIGHT = 1600f
     }
 }
