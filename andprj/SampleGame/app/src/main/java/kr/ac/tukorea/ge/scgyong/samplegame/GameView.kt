@@ -24,6 +24,9 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
+
+    private var ballDx = 4f
+    private var ballDy = 6f
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
@@ -73,7 +76,7 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
-        ballRect.offset(1f, 2f)
+        ballRect.offset(ballDx, ballDy)
         Log.d(javaClass.simpleName, "ballRect: $ballRect")
     }
 
