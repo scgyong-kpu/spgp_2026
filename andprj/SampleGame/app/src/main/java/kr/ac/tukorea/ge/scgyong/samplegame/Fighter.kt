@@ -6,6 +6,7 @@ import android.util.Log
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
+import androidx.core.graphics.withRotation
 
 private const val FIGHTER_X = 450f
 private const val FIGHTER_Y = 1200f
@@ -87,12 +88,10 @@ class Fighter(gctx: GameContext) {
     }
 
     fun draw(canvas: Canvas) {
-        canvas.save()
-        // 오른쪽을 바라보는 이미지였다면 atan2 각도를 그대로 써도 되지만,
-        // 현재 plane_240 은 위를 향한 이미지이므로 90도 보정을 더해 준다.
-        // 초기 angleDegree 도 -90도에서 시작해, 정지 상태일 때 위를 향한 기본 방향과 맞춘다.
-        canvas.rotate(angleDegree + FIGHTER_ANGLE_OFFSET, x, y)
-        canvas.drawBitmap(bitmap, null, rect, null)
-        canvas.restore()
+        canvas.withRotation(angleDegree + FIGHTER_ANGLE_OFFSET, x, y) {
+            // save, rotate, restore 가 자동으로 일어나는 withRotation 블록 안에서 그리면,
+            // 각도 만큼 회전된 상태로 그려진다. 실행 결과는 같고, 표현만 간결해 진다.
+            drawBitmap(bitmap, null, rect, null)
+        }
     }
 }
