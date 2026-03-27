@@ -29,8 +29,11 @@ class GameView @JvmOverloads constructor(
         repeat(5) { add(BouncingCircle(gctx)) }
         add(Fighter(gctx))
     }.toTypedArray()
+
+    // 나중에 gameObjects 안의 순서가 바뀌더라도 Fighter 를 안정적으로 찾기 위해 타입으로 검색한다.
+    // 다만 이 getter 는 호출할 때마다 처음부터 순회하므로 O(n) 탐색 비용이 든다.
     private val fighter: Fighter
-        get() = gameObjects.last() as Fighter
+        get() = gameObjects.first { it is Fighter } as Fighter
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
