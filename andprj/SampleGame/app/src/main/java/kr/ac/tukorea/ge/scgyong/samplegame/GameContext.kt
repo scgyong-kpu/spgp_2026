@@ -8,11 +8,17 @@ private const val VIRTUAL_WIDTH = 900f
 private const val VIRTUAL_HEIGHT = 1600f
 
 class GameMetrics() {
+    // 게임 안에서 공통으로 쓰는 가상 좌표계 크기이다.
     val width = VIRTUAL_WIDTH
     val height = VIRTUAL_HEIGHT
+
+    // 실제 화면에 그릴 때는 transformMatrix 를, 터치 입력을 가상 좌표계로 되돌릴 때는 inverseTransformMatrix 를 쓴다.
     val transformMatrix = Matrix()
     val inverseTransformMatrix = Matrix()
+
+    // mapPoints() 는 배열을 받는 API 이므로, 입력 좌표 변환에 쓸 작은 버퍼를 미리 만들어 재사용한다.
     private val touchPoint = floatArrayOf(0f, 0f)
+    // fromScreen(), toScreen() 이 PointF 를 매번 새로 만들지 않도록 반환용 객체도 하나만 재사용한다.
     private val sharedPointForReturn = PointF()
 
     fun onSize(w: Int, h: Int) {
@@ -28,6 +34,8 @@ class GameMetrics() {
         transformMatrix.postScale(scale, scale, offsetX, offsetY) // 그 위치를 기준으로 확대/축소한다.
         transformMatrix.invert(inverseTransformMatrix) // 그리기용 변환이 정해질 때 입력용 역변환도 함께 계산해 둔다.
     }
+
+    // 실제 화면 좌표를 가상 좌표계 좌표로 되돌린다.
     fun fromScreen(x: Float, y: Float): PointF {
         touchPoint[0] = x
         touchPoint[1] = y
@@ -35,6 +43,8 @@ class GameMetrics() {
         sharedPointForReturn.set(touchPoint[0], touchPoint[1])
         return sharedPointForReturn
     }
+
+    // 가상 좌표계 좌표를 실제 화면 좌표로 바꾼다.
     fun toScreen(x: Float, y: Float): PointF {
         touchPoint[0] = x
         touchPoint[1] = y
@@ -49,6 +59,7 @@ class GameContext(
     var frameTime: Float = 0f, // 이전 프레임과의 시간 간격을 초 단위로 저장하는 변수이다.
     var currentTimeNanos: Long = 0L, // doFrame() 에서 전달된 nanos 를 저장하는 변수이다.
 ) {
+    // 크기, 좌표계 변환, 입력 역변환 같은 화면 관련 정보는 metrics 안에 모아 둔다.
     val metrics = GameMetrics()
     fun getBitmapResource(id: Int) = BitmapFactory.decodeResource(view.resources, id)
 }

@@ -3,7 +3,6 @@ package kr.ac.tukorea.ge.scgyong.samplegame
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
@@ -23,37 +22,29 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
+    // 프레임 시간, 리소스 접근, 화면 metrics 같은 공통 게임 문맥을 한곳에 모아 둔다.
     private val gctx = GameContext(this)
-
-    // Fighter 는 onTouchEvent 에서 setTarget() 으로 직접 접근해야 하므로, gameObjects 안에만 숨기기보다
-    // 멤버로 하나 들고 있는 편이 더 단순하고 읽기 쉽다.
-    private val fighter = Fighter(gctx)
-    private val gameObjects = buildList<IGameObject> {
-        repeat(10) { add(Ball.random(gctx)) }
-        repeat(5) { add(BouncingCircle(gctx)) }
-        add(fighter)
-    }.toTypedArray()
+    // Ball, Fighter, BouncingCircle 같은 실제 GameObject 들의 구성과 입력 처리는 MainScene 쪽으로 넘긴다.
+    // 이로써 GameView 는 View 생명주기와 렌더링 루프에 더 집중하고, 화면 안에 무엇이 있는지는 Scene 이 맡게 된다.
+    private val scene = MainScene(gctx)
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
     }
 
     fun update() {
-        for (gameObject in gameObjects) {
-            gameObject.update(gctx)
-        }
+        scene.update(gctx)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        // 이 블록 안에서는 실제 화면 좌표가 아니라 900 x 1600 가상 좌표계 기준으로 그린다고 생각하면 된다.
         canvas.withMatrix(gctx.metrics.transformMatrix) {
             if (BuildConfig.DRAWS_DEBUG_GRID) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
-            for (gameObject in gameObjects) {
-                gameObject.draw(this)
-            }
+            scene.draw(this)
             if (BuildConfig.DRAWS_DEBUG_INFO || BuildConfig.DRAWS_FPS_GRAPH) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
@@ -64,20 +55,13 @@ class GameView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        // View 실제 크기가 바뀌는 시점에 metrics 안의 transform / inverse transform 도 함께 다시 계산한다.
         gctx.metrics.onSize(w, h)
     }
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                // event.x, event.y 는 실제 화면 좌표이므로, 역행렬을 적용해 가상 좌표계 값으로 되돌린다.
-                val pt = gctx.metrics.fromScreen(event.x, event.y)
-                fighter.setTarget(pt.x, pt.y)
-                return true
-            }
-        }
-        return super.onTouchEvent(event)
+        return scene.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
     // doFrame() 에게 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
@@ -103,6 +87,7 @@ class GameView @JvmOverloads constructor(
             drawText(text, 20f, 60f, debugPaint)
         }
         if (BuildConfig.DRAWS_FPS_GRAPH) {
+            // 최근 프레임을 1/60 초 기준 몇 frame 이었는지로 바꿔 저장하면 그래프를 더 직관적으로 읽을 수 있다.
             debugFrames.add((gctx.frameTime / (1 / 60f)).roundToInt().toFloat())
             debugFrames.draw(this)
         }
