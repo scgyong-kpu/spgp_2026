@@ -52,12 +52,20 @@ class GameView @JvmOverloads constructor(
         }
     }
 
+    private var previousNanos = 0L
+    private var frameTime = 0f
+
+    // doFrame() 에게 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
+    // doFrame() 이 최초 호출 된 시점에는 previousNanos 가 0 이어서
+    // 매우 큰 frameTime 이 생성되므로 0 일때에는 하면 안 된다.
     override fun doFrame(nanos: Long) {
-        update()
-        invalidate()
-        // Choreographer 는 화면이 다시 그려지는 시점에 콜백을 호출해준다.
-        // 그래서 화면이 60fps 라면 1초에 60번 update() 가 호출된다.
-        // View LifeCycle 과 관계 없이 동작하므로, 보이는 동안에만 다음 업데이트를 예약해야 한다.
+        if (previousNanos != 0L) {
+            frameTime = (nanos - previousNanos) / 1_000_000_000f
+            Log.d(javaClass.simpleName, "frameTime=$frameTime")
+            update()
+            invalidate()
+        }
+        previousNanos = nanos
         if (isShown) {
             Choreographer.getInstance().postFrameCallback(this)
         }
@@ -65,8 +73,8 @@ class GameView @JvmOverloads constructor(
 
     fun update() {
         for ((index, ball) in balls.withIndex()) {
-            ball.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-            Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
+            ball.update(frameTime, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+            //Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
         }
     }
 

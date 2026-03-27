@@ -34,17 +34,19 @@ class Ball(
     var dx = (cos(radian) * SPEED).toFloat()
     var dy = (sin(radian) * SPEED).toFloat()
 
-    fun update(worldWidth: Float, worldHeight: Float) {
-        rect.offset(dx, dy)
+    fun update(frameTime: Float, worldWidth: Float, worldHeight: Float) {
+        val offsetX = dx * frameTime
+        val offsetY = dy * frameTime
+        rect.offset(offsetX, offsetY)
 
         if (rect.left < 0f || rect.right > worldWidth) {
             dx = -dx
-            rect.offset(dx, 0f)
+            rect.offset(-offsetX, 0f)
         }
 
         if (rect.top < 0f || rect.bottom > worldHeight) {
             dy = -dy
-            rect.offset(0f, dy)
+            rect.offset(0f, -offsetY)
         }
     }
 
@@ -59,7 +61,7 @@ class Ball(
     // Kotlin 은 class 소속 static 변수/상수/함수 를 companion object 안에 선언한다.
     companion object {
         const val SIZE = 200
-        const val SPEED = 700 / 60f
+        const val SPEED = 700
 
         fun random(context: Context): Ball {
             val centerX = Random.nextFloat() * (GameView.VIRTUAL_WIDTH - SIZE) + SIZE / 2f
