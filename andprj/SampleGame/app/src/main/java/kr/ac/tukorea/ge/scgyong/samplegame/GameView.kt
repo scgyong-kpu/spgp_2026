@@ -26,7 +26,10 @@ class GameView @JvmOverloads constructor(
 
     private var ballDx = 4f
     private var ballDy = 6f
+    private var ball2Dx = 6f
+    private var ball2Dy = 4f
     private val ballRect = RectF(350f, 700f, 550f, 900f)
+    private val ball2Rect = RectF(550f, 200f, 750f, 400f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
     init {
@@ -34,7 +37,6 @@ class GameView @JvmOverloads constructor(
     }
 
     private val transformMatrix = Matrix()
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val scaleX = w / VIRTUAL_WIDTH
@@ -53,9 +55,9 @@ class GameView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         canvas.withMatrix(transformMatrix) {
-            // drawDebugGrid 가 Canvas extension 이라서, 이 블록 안에서는 drawDebugGrid() 만으로 바로 쓸 수 있다.
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
-            drawBitmap(ballBitmap, null, ballRect, null) // 공의 위치와 크기는 ballRect 로 정한다.
+            drawBitmap(ballBitmap, null, ballRect, null)
+            drawBitmap(ballBitmap, null, ball2Rect, null)
         }
     }
 
@@ -89,6 +91,18 @@ class GameView @JvmOverloads constructor(
             ballDy = -ballDy
             // 공이 벽에 닿은 지점에서 튕겨나가도록, 공의 위치를 다시 보정한다.
             ballRect.offset(0f, ballDy)
+        }
+
+        ball2Rect.offset(ball2Dx, ball2Dy)
+
+        if (ball2Rect.left < 0f || ball2Rect.right > VIRTUAL_WIDTH) {
+            ball2Dx = -ball2Dx
+            ball2Rect.offset(ball2Dx, 0f)
+        }
+
+        if (ball2Rect.top < 0f || ball2Rect.bottom > VIRTUAL_HEIGHT) {
+            ball2Dy = -ball2Dy
+            ball2Rect.offset(0f, ball2Dy)
         }
 
         Log.d(javaClass.simpleName, "ballRect: $ballRect, dx=$ballDx, dy=$ballDy")
