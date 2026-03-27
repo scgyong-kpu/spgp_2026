@@ -7,12 +7,10 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
-import kotlin.math.roundToInt
 
 private const val VIRTUAL_WIDTH = 900f
 private const val VIRTUAL_HEIGHT = 1600f
@@ -86,7 +84,7 @@ class GameView @JvmOverloads constructor(
         gctx.currentTimeNanos = nanos
         if (previousNanos != 0L) {
             gctx.frameTime = (nanos - previousNanos) / 1_000_000_000f
-            Log.d(javaClass.simpleName, "frameTime=${(gctx.frameTime / (1/60f)).roundToInt()} frame")
+            //Log.d(javaClass.simpleName, "frameTime=${(gctx.frameTime / (1/60f)).roundToInt()} frame")
             update()
             invalidate()
         }
