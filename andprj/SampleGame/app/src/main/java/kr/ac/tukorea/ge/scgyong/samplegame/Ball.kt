@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.scgyong.samplegame
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.RectF
 import kotlin.math.cos

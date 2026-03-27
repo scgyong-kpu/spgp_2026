@@ -25,6 +25,7 @@ class GameView @JvmOverloads constructor(
 
     private val gctx = GameContext(this, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
     private val balls = Array(10) { Ball.random(gctx) }
+    private val circles = Array(5) { BouncingCircle(gctx) }
     private val fighter = Fighter(gctx)
 
     init {
@@ -57,6 +58,9 @@ class GameView @JvmOverloads constructor(
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             for (ball in balls) {
                 ball.draw(this)
+            }
+            for (circle in circles) {
+                circle.draw(this)
             }
             fighter.draw(this)
         }
@@ -95,9 +99,12 @@ class GameView @JvmOverloads constructor(
 
     fun update() {
         fighter.update(gctx)
-        for ((index, ball) in balls.withIndex()) {
+        for (ball in balls) {
             ball.update(gctx)
             // Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
+        }
+        for (circle in circles) {
+            circle.update(gctx)
         }
     }
 
