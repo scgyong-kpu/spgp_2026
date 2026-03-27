@@ -27,15 +27,13 @@ class GameView @JvmOverloads constructor(
         context = context,
         centerX = 450f,
         centerY = 800f,
-        dx = 4f,
-        dy = 6f,
+        angle_degree = 56f,
     )
     private val ball2 = Ball(
         context = context,
         centerX = 650f,
         centerY = 300f,
-        dx = 6f,
-        dy = 4f,
+        angle_degree = 34f,
     )
 
     init {
