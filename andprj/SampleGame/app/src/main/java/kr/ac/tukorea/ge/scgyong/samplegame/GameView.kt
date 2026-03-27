@@ -69,8 +69,7 @@ class GameView @JvmOverloads constructor(
                 touchPoint[0] = event.x
                 touchPoint[1] = event.y
                 inverseTransformMatrix.mapPoints(touchPoint)
-                fighter.setPosition(touchPoint[0], touchPoint[1])
-                invalidate()
+                fighter.setTarget(touchPoint[0], touchPoint[1])
                 return true
             }
         }
@@ -94,6 +93,7 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
+        fighter.update(gctx)
         for ((index, ball) in balls.withIndex()) {
             ball.update(gctx)
             // Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
