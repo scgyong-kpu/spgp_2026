@@ -9,6 +9,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.Choreographer
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
 
@@ -56,6 +57,19 @@ class GameView @JvmOverloads constructor(
             }
             fighter.draw(this)
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
+                // 일단은 화면 좌표를 가상 좌표계로 변환하지 않고 그대로 넘겨 본다.
+                // transformMatrix 의 역변환을 하지 않으면 터치한 위치와 전투기 위치가 어긋날 수 있다.
+                fighter.setPosition(event.x, event.y)
+                invalidate()
+                return true
+            }
+        }
+        return super.onTouchEvent(event)
     }
 
     // doFrame() 에게 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
