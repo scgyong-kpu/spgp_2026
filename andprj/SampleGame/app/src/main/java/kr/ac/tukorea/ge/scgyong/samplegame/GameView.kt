@@ -12,6 +12,9 @@ import android.view.Choreographer
 import android.view.View
 import androidx.core.graphics.withMatrix
 
+private const val VIRTUAL_WIDTH = 900f
+private const val VIRTUAL_HEIGHT = 1600f
+
 // 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
 // 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
 class GameView @JvmOverloads constructor(
@@ -20,7 +23,8 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    private val balls = Array(10) { Ball.random(context) }
+    private val gctx = GameContext(this, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+    private val balls = Array(10) { Ball.random(gctx) }
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
@@ -52,20 +56,17 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    private var previousNanos = 0L
-    private var frameTime = 0f
-
     // doFrame() 에게 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
     // doFrame() 이 최초 호출 된 시점에는 previousNanos 가 0 이어서
     // 매우 큰 frameTime 이 생성되므로 0 일때에는 하면 안 된다.
     override fun doFrame(nanos: Long) {
-        if (previousNanos != 0L) {
-            frameTime = (nanos - previousNanos) / 1_000_000_000f
-            Log.d(javaClass.simpleName, "frameTime=$frameTime")
+        if (gctx.currentTimeNanos != 0L) {
+            gctx.frameTime = (nanos - gctx.currentTimeNanos) / 1_000_000_000f
+            Log.d(javaClass.simpleName, "frameTime=$gctx.frameTime")
             update()
             invalidate()
         }
-        previousNanos = nanos
+        gctx.currentTimeNanos = nanos
         if (isShown) {
             Choreographer.getInstance().postFrameCallback(this)
         }
@@ -73,7 +74,7 @@ class GameView @JvmOverloads constructor(
 
     fun update() {
         for ((index, ball) in balls.withIndex()) {
-            ball.update(frameTime, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+            ball.update(gctx)
             //Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
         }
     }
@@ -112,10 +113,5 @@ class GameView @JvmOverloads constructor(
             color = Color.GRAY
             strokeWidth = 1f
         }
-    }
-
-    companion object {
-        const val VIRTUAL_WIDTH = 900f
-        const val VIRTUAL_HEIGHT = 1600f
     }
 }
