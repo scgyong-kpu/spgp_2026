@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.scgyong.samplegame
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
@@ -25,6 +24,7 @@ class GameView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
     private val ball = Ball(
+        context = context,
         left = 350f,
         top = 700f,
         right = 550f,
@@ -33,6 +33,7 @@ class GameView @JvmOverloads constructor(
         dy = 6f,
     )
     private val ball2 = Ball(
+        context = context,
         left = 550f,
         top = 200f,
         right = 750f,
@@ -40,7 +41,6 @@ class GameView @JvmOverloads constructor(
         dx = 6f,
         dy = 4f,
     )
-    private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
@@ -67,8 +67,8 @@ class GameView @JvmOverloads constructor(
 
         canvas.withMatrix(transformMatrix) {
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
-            drawBitmap(ballBitmap, null, ball.rect, null)
-            drawBitmap(ballBitmap, null, ball2.rect, null)
+            ball.draw(this)
+            ball2.draw(this)
         }
     }
 
@@ -86,8 +86,8 @@ class GameView @JvmOverloads constructor(
     fun update() {
         ball.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
         ball2.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-        Log.d(javaClass.simpleName, "ball=${ball.rect}, dx=${ball.dx}, dy=${ball.dy}")
-        Log.d(javaClass.simpleName, "ball2=${ball2.rect}, dx=${ball2.dx}, dy=${ball2.dy}")
+        Log.d(javaClass.simpleName, "ball=${ball.debugString()}")
+        Log.d(javaClass.simpleName, "ball2=${ball2.debugString()}")
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
