@@ -27,6 +27,14 @@ class GameView @JvmOverloads constructor(
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
+    // init block 에서 멤버를 접근하는 곳이 없으므로
+    // 위치를 맨 위로 옮긴다
+    init {
+        // scheduleUpdate() 가 다음 한 줄 뿐이므로, 굳이 함수로 만들지 않는다
+        // 아래에서 한 번더 반복되지만, 부담되는 정도는 아니다
+        Choreographer.getInstance().postFrameCallback(this)
+    }
+
     private val transformMatrix = Matrix()
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -53,18 +61,6 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    // init block 보다 scheduleUpdate() 안에서 쓸 멤버들이 먼저 초기화되어야 한다.
-    init {
-        // 게임 화면이 만들어질 때, 일정 간격으로 update() 가 호출되도록 예약한다.
-        scheduleUpdate()
-    }
-
-    fun scheduleUpdate() {
-        // #3 방식(즉석에서 만든 객체에게 전달)에서 #1 방식(나에게 전달)으로 전환
-        // 여러 객체로부터 Callback 을 받는 경우가 아니므로 #1 방식도 괜찮다
-        Choreographer.getInstance().postFrameCallback(this)
-    }
-
     override fun doFrame(nanos: Long) {
         update()
         invalidate()
@@ -72,7 +68,7 @@ class GameView @JvmOverloads constructor(
         // 그래서 화면이 60fps 라면 1초에 60번 update() 가 호출된다.
         // View LifeCycle 과 관계 없이 동작하므로, 보이는 동안에만 다음 업데이트를 예약해야 한다.
         if (isShown) {
-            scheduleUpdate()
+            Choreographer.getInstance().postFrameCallback(this)
         }
     }
 
