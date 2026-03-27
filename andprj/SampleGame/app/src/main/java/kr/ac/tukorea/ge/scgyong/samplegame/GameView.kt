@@ -20,8 +20,8 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    private val ball = Ball(context = context)
-    private val ball2 = Ball(context = context)
+    private val ball = Ball.random(context)
+    private val ball2 = Ball.random(context)
 
     init {
         Choreographer.getInstance().postFrameCallback(this)

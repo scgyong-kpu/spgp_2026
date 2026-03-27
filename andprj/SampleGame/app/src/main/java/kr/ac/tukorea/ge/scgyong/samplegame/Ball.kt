@@ -11,9 +11,9 @@ import kotlin.random.Random
 
 class Ball(
     context: Context,
-    centerX: Float = Random.nextFloat() * (GameView.VIRTUAL_WIDTH - SIZE) + SIZE / 2f,
-    centerY: Float = Random.nextFloat() * (GameView.VIRTUAL_HEIGHT - SIZE) + SIZE / 2f,
-    angleDegree: Float = Random.nextFloat() * 360f,
+    centerX: Float,
+    centerY: Float,
+    angleDegree: Float,
 ) {
     val rect = RectF(
         centerX - SIZE / 2f,
@@ -60,5 +60,12 @@ class Ball(
     companion object {
         const val SIZE = 200
         const val SPEED = 700 / 60f
+
+        fun random(context: Context): Ball {
+            val centerX = Random.nextFloat() * (GameView.VIRTUAL_WIDTH - SIZE) + SIZE / 2f
+            val centerY = Random.nextFloat() * (GameView.VIRTUAL_HEIGHT - SIZE) + SIZE / 2f
+            val angleDegree = Random.nextFloat() * 360f
+            return Ball(context, centerX, centerY, angleDegree)
+        }
     }
 }
