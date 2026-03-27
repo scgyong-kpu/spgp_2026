@@ -10,7 +10,7 @@ import kotlin.random.Random
 
 private const val GRAVITY = 1800f // 중력 가속도. 단위는 unit/s^2
 
-class BouncingCircle(gctx: GameContext) {
+class BouncingCircle(gctx: GameContext) : IGameObject {
     val radius = Random.nextFloat() * 100 + 100f // 반지름을 100~200 사이의 랜덤한 값으로 설정
     val x = Random.nextFloat() * (gctx.worldWidth - 2 * radius) + radius // 원이 화면 밖으로 나가지 않도록 위치 설정
     var y = Random.nextFloat() * (gctx.worldHeight - 2 * radius) + radius // 원이 화면 밖으로 나가지 않도록 위치 설정
@@ -38,7 +38,7 @@ class BouncingCircle(gctx: GameContext) {
     }
 
 
-    fun update(gctx: GameContext) {
+    override fun update(gctx: GameContext) {
         // 위치 업데이트
         y += speed * gctx.frameTime
 
@@ -52,7 +52,7 @@ class BouncingCircle(gctx: GameContext) {
         speed += GRAVITY * gctx.frameTime // 중력 가속도 적용
     }
 
-    fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         canvas.drawCircle(x, y, radius, paint)
         canvas.drawText(text, x + textOffsetX, y + textOffsetY, paint)
     }

@@ -12,7 +12,7 @@ class Ball(
     centerX: Float,
     centerY: Float,
     angleDegree: Float,
-) {
+) : IGameObject {
     val rect = RectF(
         centerX - SIZE / 2f,
         centerY - SIZE / 2f,
@@ -31,7 +31,7 @@ class Ball(
     var dx = (cos(radian) * SPEED).toFloat()
     var dy = (sin(radian) * SPEED).toFloat()
 
-    fun update(gctx: GameContext) {
+    override fun update(gctx: GameContext) {
         val offsetX = dx * gctx.frameTime
         val offsetY = dy * gctx.frameTime
         rect.offset(offsetX, offsetY)
@@ -47,7 +47,7 @@ class Ball(
         }
     }
 
-    fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         canvas.drawBitmap(bitmap, null, rect, null)
     }
 

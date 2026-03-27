@@ -14,7 +14,7 @@ private const val FIGHTER_SIZE = 250f
 private const val FIGHTER_ANGLE_OFFSET = 90f
 private const val FIGHTER_SPEED = 500f
 
-class Fighter(gctx: GameContext) {
+class Fighter(gctx: GameContext) : IGameObject {
     private val rect = RectF()
     private var x = 0f
     private var y = 0f
@@ -68,7 +68,7 @@ class Fighter(gctx: GameContext) {
         this.y = y
     }
 
-    fun update(gctx: GameContext) {
+    override fun update(gctx: GameContext) {
         // 목표 지점까지 얼마나 남았는지 본다.
         val remainingDx = targetX - x
         val remainingDy = targetY - y
@@ -87,7 +87,7 @@ class Fighter(gctx: GameContext) {
         setPosition(nextX, nextY, appliesAngle = false)
     }
 
-    fun draw(canvas: Canvas) {
+    override fun draw(canvas: Canvas) {
         canvas.withRotation(angleDegree + FIGHTER_ANGLE_OFFSET, x, y) {
             // save, rotate, restore 가 자동으로 일어나는 withRotation 블록 안에서 그리면,
             // 각도 만큼 회전된 상태로 그려진다. 실행 결과는 같고, 표현만 간결해 진다.
