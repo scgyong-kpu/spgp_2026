@@ -22,7 +22,7 @@ class GameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : View(context, attrs, defStyleAttr) {
+) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
     private val ballRect = RectF(350f, 700f, 550f, 900f)
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
@@ -60,15 +60,19 @@ class GameView @JvmOverloads constructor(
     }
 
     fun scheduleUpdate() {
-        Choreographer.getInstance().postFrameCallback {
-            update()
-            invalidate()
-            // Choreographer 는 화면이 다시 그려지는 시점에 콜백을 호출해준다.
-            // 그래서 화면이 60fps 라면 1초에 60번 update() 가 호출된다.
-            // View LifeCycle 과 관계 없이 동작하므로, 보이는 동안에만 다음 업데이트를 예약해야 한다.
-            if (isShown) {
-                scheduleUpdate()
-            }
+        // #3 방식(즉석에서 만든 객체에게 전달)에서 #1 방식(나에게 전달)으로 전환
+        // 여러 객체로부터 Callback 을 받는 경우가 아니므로 #1 방식도 괜찮다
+        Choreographer.getInstance().postFrameCallback(this)
+    }
+
+    override fun doFrame(nanos: Long) {
+        update()
+        invalidate()
+        // Choreographer 는 화면이 다시 그려지는 시점에 콜백을 호출해준다.
+        // 그래서 화면이 60fps 라면 1초에 60번 update() 가 호출된다.
+        // View LifeCycle 과 관계 없이 동작하므로, 보이는 동안에만 다음 업데이트를 예약해야 한다.
+        if (isShown) {
+            scheduleUpdate()
         }
     }
 
