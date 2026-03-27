@@ -25,6 +25,7 @@ class GameView @JvmOverloads constructor(
 
     private val gctx = GameContext(this, VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
     private val balls = Array(10) { Ball.random(gctx) }
+    private val fighter = Fighter(gctx)
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
@@ -53,6 +54,7 @@ class GameView @JvmOverloads constructor(
             for (ball in balls) {
                 ball.draw(this)
             }
+            fighter.draw(this)
         }
     }
 
@@ -62,7 +64,7 @@ class GameView @JvmOverloads constructor(
     override fun doFrame(nanos: Long) {
         if (gctx.currentTimeNanos != 0L) {
             gctx.frameTime = (nanos - gctx.currentTimeNanos) / 1_000_000_000f
-            Log.d(javaClass.simpleName, "frameTime=$gctx.frameTime")
+            Log.d(javaClass.simpleName, "frameTime=${gctx.frameTime}")
             update()
             invalidate()
         }
