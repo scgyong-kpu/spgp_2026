@@ -7,13 +7,11 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Choreographer
 import android.view.View
 import androidx.core.graphics.withMatrix
-import kotlin.math.max
 
 // 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
 // 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
@@ -30,7 +28,6 @@ class GameView @JvmOverloads constructor(
     private val ballBitmap = BitmapFactory.decodeResource(resources, R.mipmap.soccer_ball_240)
 
     private val transformMatrix = Matrix()
-    private val handler = Handler(Looper.getMainLooper())
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -56,34 +53,23 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    // 축약형 표현으로 Runnable 객체를 만들어 보자.
-    private val updateRunnable = Runnable {
-        update()
-        invalidate()
-        if (isShown) { // View.isShown()
-            scheduleUpdate() // update() 가 끝난 뒤에 다음 업데이트를 예약한다.
-        }
-        // 이제 GameActivity 를 종료하여 GameView 가 화면에서 사라지면,
-        // isShown 이 false 가 되어서 더 이상 update() 가 예약되지 않게 된다.
-    }
-
-    // init block 보다 updateRunnable 선언이 먼저 되어야 null 이 아니게 된다.
+    // init block 보다 scheduleUpdate() 안에서 쓸 멤버들이 먼저 초기화되어야 한다.
     init {
         // 게임 화면이 만들어질 때, 일정 간격으로 update() 가 호출되도록 예약한다.
         scheduleUpdate()
     }
 
-    var lastUpdateTime: Long = 0
     fun scheduleUpdate() {
-        val now = System.currentTimeMillis()
-        val elapsedSinceLastUpdate: Long = now - lastUpdateTime
-        val targetDelay = (1000 / 60).toLong() // 60fps 라면 한 프레임 목표 시간은 약 16ms 이다.
-        // 이전 update 이후 이미 시간이 많이 지났다면 delay 는 0 에 가까워지고,
-        // 아직 덜 지났다면 남은 시간만큼 더 기다렸다가 다음 update 를 실행한다.
-        val delay = max(0, targetDelay - elapsedSinceLastUpdate)
-
-        handler.postDelayed(updateRunnable, delay)
-        lastUpdateTime = now // 이번 예약 시각을 다음 delay 계산의 기준으로 남긴다.
+        Choreographer.getInstance().postFrameCallback {
+            update()
+            invalidate()
+            // Choreographer 는 화면이 다시 그려지는 시점에 콜백을 호출해준다.
+            // 그래서 화면이 60fps 라면 1초에 60번 update() 가 호출된다.
+            // View LifeCycle 과 관계 없이 동작하므로, 보이는 동안에만 다음 업데이트를 예약해야 한다.
+            if (isShown) {
+                scheduleUpdate()
+            }
+        }
     }
 
     fun update() {
@@ -110,6 +96,7 @@ class GameView @JvmOverloads constructor(
             y += step
         }
     }
+
     private val borderRect by lazy { RectF(0f, 0f, VIRTUAL_WIDTH, VIRTUAL_HEIGHT) }
     private val borderPaint by lazy {
         Paint().apply {
