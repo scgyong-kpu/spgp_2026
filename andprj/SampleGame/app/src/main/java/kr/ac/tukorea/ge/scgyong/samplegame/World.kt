@@ -3,28 +3,32 @@ package kr.ac.tukorea.ge.scgyong.samplegame
 import android.graphics.Canvas
 
 // World 는 Scene 안에 존재하는 실제 GameObject 들을 담아 두는 컨테이너이다.
-// 지금 단계에서는 단순히 오브젝트 목록을 보관하고 update / draw 를 공통 반복문으로 처리하는 역할만 맡는다.
-// 나중에는 layer 지원이 들어가면서 Array of Array 같은 더 일반적인 구조로 커질 수 있다.
+// 이번 단계부터는 오브젝트를 단일 목록 하나에만 두지 않고, layer 별 목록으로 나누어 관리한다.
+// 이렇게 해 두면 나중에 배경, 플레이어, 적, UI 같은 순서를 layer 로 분리해 다룰 수 있다.
 class World(
-    initialObjects: Iterable<IGameObject> = emptyList(),
+    layerCount: Int = 1,
 ) {
-    // 우선은 가장 단순한 MutableList 하나로 시작한다.
-    // Scene 이 이 World 를 소유하고, World 가 다시 그 안의 GameObject 들을 소유하는 구조를 목표로 한다.
-    private val gameObjects = initialObjects.toMutableList()
+    // 지금은 가장 단순하게 "레이어 개수"만 받아 Array<MutableList<IGameObject>> 형태로 시작한다.
+    // 각 layer 는 같은 깊이에 있는 GameObject 들의 목록이라고 생각하면 된다.
+    private val layers = Array(layerCount) { mutableListOf<IGameObject>() }
 
-    fun add(gameObject: IGameObject) {
-        gameObjects.add(gameObject)
+    fun add(gameObject: IGameObject, layerIndex: Int = 0) {
+        layers[layerIndex].add(gameObject)
     }
 
     fun update(gctx: GameContext) {
-        for (obj in gameObjects) {
-            obj.update(gctx)
+        for (layer in layers) {
+            for (obj in layer) {
+                obj.update(gctx)
+            }
         }
     }
 
     fun draw(canvas: Canvas) {
-        for (obj in gameObjects) {
-            obj.draw(canvas)
+        for (layer in layers) {
+            for (obj in layer) {
+                obj.draw(canvas)
+            }
         }
     }
 }
