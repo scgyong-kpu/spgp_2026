@@ -20,15 +20,16 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    private val ball = Ball.random(context)
-    private val ball2 = Ball.random(context)
+    private val balls = arrayOf(
+        Ball.random(context),
+        Ball.random(context),
+    )
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
     }
 
     private val transformMatrix = Matrix()
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         val scaleX = w / VIRTUAL_WIDTH
@@ -48,8 +49,9 @@ class GameView @JvmOverloads constructor(
 
         canvas.withMatrix(transformMatrix) {
             drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
-            ball.draw(this)
-            ball2.draw(this)
+            for (ball in balls) {
+                ball.draw(this)
+            }
         }
     }
 
@@ -65,10 +67,10 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
-        ball.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-        ball2.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
-        Log.d(javaClass.simpleName, "ball=${ball.debugString()}")
-        Log.d(javaClass.simpleName, "ball2=${ball2.debugString()}")
+        for ((index, ball) in balls.withIndex()) {
+            ball.update(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+            Log.d(javaClass.simpleName, "ball[$index]=${ball.debugString()}")
+        }
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
