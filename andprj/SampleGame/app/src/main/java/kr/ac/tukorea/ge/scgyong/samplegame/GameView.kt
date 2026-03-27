@@ -60,7 +60,11 @@ class GameView @JvmOverloads constructor(
     private val updateRunnable = Runnable {
         update()
         invalidate()
-        scheduleUpdate() // update() 가 끝난 뒤에 다음 업데이트를 예약한다.
+        if (isShown) { // View.isShown()
+            scheduleUpdate() // update() 가 끝난 뒤에 다음 업데이트를 예약한다.
+        }
+        // 이제 GameActivity 를 종료하여 GameView 가 화면에서 사라지면,
+        // isShown 이 false 가 되어서 더 이상 update() 가 예약되지 않게 된다.
     }
 
     // init block 보다 updateRunnable 선언이 먼저 되어야 null 이 아니게 된다.
