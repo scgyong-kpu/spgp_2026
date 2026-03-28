@@ -11,7 +11,6 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
-import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
 import kr.ac.tukorea.ge.scgyong.samplegame.app.MainScene
 import kotlin.math.roundToInt
 
@@ -32,6 +31,14 @@ class GameView @JvmOverloads constructor(
         push(MainScene(gctx))
     }
 
+    companion object {
+        // GameView 가 직접 BuildConfig 를 읽지는 않지만,
+        // 바깥쪽 app 코드가 이 값을 채워 넣어 디버그 표시 여부를 제어할 수 있게 한다.
+        var drawsDebugGrid = true
+        var drawsDebugInfo = true
+        var drawsFpsGraph = true
+    }
+
     init {
         Choreographer.getInstance().postFrameCallback(this)
     }
@@ -45,11 +52,11 @@ class GameView @JvmOverloads constructor(
 
         // 이 블록 안에서는 실제 화면 좌표가 아니라 900 x 1600 가상 좌표계 기준으로 그린다고 생각하면 된다.
         canvas.withMatrix(gctx.metrics.transformMatrix) {
-            if (BuildConfig.DRAWS_DEBUG_GRID) {
+            if (drawsDebugGrid) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
             sceneStack.top.draw(this)
-            if (BuildConfig.DRAWS_DEBUG_INFO || BuildConfig.DRAWS_FPS_GRAPH) {
+            if (drawsDebugInfo || drawsFpsGraph) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
         }
@@ -86,11 +93,11 @@ class GameView @JvmOverloads constructor(
     }
 
     private fun Canvas.drawDebugInfo() {
-        if (BuildConfig.DRAWS_DEBUG_INFO) {
+        if (drawsDebugInfo) {
             val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)}"
             drawText(text, 20f, 60f, debugPaint)
         }
-        if (BuildConfig.DRAWS_FPS_GRAPH) {
+        if (drawsFpsGraph) {
             // 최근 프레임을 1/60 초 기준 몇 frame 이었는지로 바꿔 저장하면 그래프를 더 직관적으로 읽을 수 있다.
             debugFrames.add((gctx.frameTime / (1 / 60f)).roundToInt().toFloat())
             debugFrames.draw(this)

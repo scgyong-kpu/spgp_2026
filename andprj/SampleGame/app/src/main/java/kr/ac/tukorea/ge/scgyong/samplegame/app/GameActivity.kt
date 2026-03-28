@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
+import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
 import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.GameView
 
 
@@ -14,6 +15,11 @@ class GameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // app 모듈에서 BuildConfig 값을 읽어 GameView 의 companion object 에 넣는다.
+        // 이렇게 하면 GameView 는 app 의 BuildConfig 를 직접 참조하지 않아도 된다.
+        GameView.drawsDebugGrid = BuildConfig.DRAWS_DEBUG_GRID
+        GameView.drawsDebugInfo = BuildConfig.DRAWS_DEBUG_INFO
+        GameView.drawsFpsGraph = BuildConfig.DRAWS_FPS_GRAPH
         gameView = GameView(this)
         setContentView(gameView)
         setFullScreen()
