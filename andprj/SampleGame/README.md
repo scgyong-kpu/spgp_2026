@@ -85,7 +85,7 @@
 - [x] `GameView`에 `SceneStack` 도입
 - [x] 현재 Scene을 `SceneStack`의 top 으로 처리하도록 변경
 - [x] `World`에 layer 구조 도입
-- [ ] layer 종류를 게임별로 다르게 둘 수 있는 방식 정리
+- [x] layer 종류를 게임별로 다르게 둘 수 있는 방식 정리
 - [ ] `a2dg` 모듈 추가
 - [ ] 프레임워크 성격의 클래스들을 `a2dg`로 이동
 - [ ] `app`이 `a2dg`를 사용하도록 의존 방향 정리

@@ -3,7 +3,6 @@ package kr.ac.tukorea.ge.scgyong.samplegame
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.Log
 import kotlin.math.abs
 import kotlin.random.Random
