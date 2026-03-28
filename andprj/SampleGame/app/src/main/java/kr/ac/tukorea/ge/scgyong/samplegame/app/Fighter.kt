@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.graphics.Canvas
 import android.graphics.RectF
@@ -7,6 +7,9 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
 import androidx.core.graphics.withRotation
+import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.GameContext
+import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.IGameObject
+import kr.ac.tukorea.ge.scgyong.samplegame.R
 
 private const val FIGHTER_X = 450f
 private const val FIGHTER_Y = 1200f

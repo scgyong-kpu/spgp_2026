@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.a2dg
 
 import android.graphics.BitmapFactory
 import android.graphics.Matrix

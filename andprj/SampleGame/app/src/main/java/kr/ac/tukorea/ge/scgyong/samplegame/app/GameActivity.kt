@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.os.Build
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
+import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.GameView
 
 
 class GameActivity : AppCompatActivity() {

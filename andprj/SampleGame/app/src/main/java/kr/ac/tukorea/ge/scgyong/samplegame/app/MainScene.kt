@@ -1,6 +1,9 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.view.MotionEvent
+import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.GameContext
+import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.Scene
+import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.World
 
 class MainScene(gctx: GameContext) : Scene(gctx) {
     // layer 종류는 World 가 아니라 MainScene 같은 게임 쪽에서 정의한다.

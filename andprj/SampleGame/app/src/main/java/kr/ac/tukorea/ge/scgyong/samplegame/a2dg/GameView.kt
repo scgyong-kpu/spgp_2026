@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.a2dg
 
 import android.content.Context
 import android.graphics.Canvas
@@ -11,6 +11,8 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
+import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
+import kr.ac.tukorea.ge.scgyong.samplegame.app.MainScene
 import kotlin.math.roundToInt
 
 

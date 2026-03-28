@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.content.Intent
 import android.os.Bundle

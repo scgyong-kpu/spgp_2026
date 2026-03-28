@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SampleGame">
         <activity
-            android:name=".GameActivity"
+            android:name=".app.GameActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
