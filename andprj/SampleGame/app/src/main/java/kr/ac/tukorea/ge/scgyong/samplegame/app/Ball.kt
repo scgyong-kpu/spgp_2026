@@ -3,8 +3,8 @@ package kr.ac.tukorea.ge.scgyong.samplegame.app
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
-import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.GameContext
-import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.IGameObject
+import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
+import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
 import kr.ac.tukorea.ge.scgyong.samplegame.R
 import kotlin.math.cos
 import kotlin.math.sin

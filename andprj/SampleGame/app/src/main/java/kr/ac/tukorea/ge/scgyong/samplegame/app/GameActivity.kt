@@ -7,7 +7,7 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
-import kr.ac.tukorea.ge.scgyong.samplegame.a2dg.GameView
+import kr.ac.tukorea.ge.spgp2026.a2dg.GameView
 
 
 class GameActivity : AppCompatActivity() {

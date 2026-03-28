@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.graphics.Canvas
 import android.view.MotionEvent
