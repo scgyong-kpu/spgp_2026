@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SampleGame">
         <activity
-            android:name=".app.GameActivity"
+            android:name=".app.ShooterGameActivity"
             android:exported="false" />
         <activity
             android:name=".app.MainActivity"

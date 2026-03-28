@@ -6,24 +6,28 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
-import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
+import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameView
+import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
 
+abstract class BaseGameActivity : AppCompatActivity() {
+    protected lateinit var gameView: GameView
 
-class GameActivity : AppCompatActivity() {
-    private lateinit var gameView: GameView
+    // App code chooses the root scene.
+    protected abstract fun createRootScene(gctx: GameContext): Scene
+
+    // App code injects debug flags so a2dg does not depend on app BuildConfig.
+    protected open val drawsDebugGrid: Boolean = false
+    protected open val drawsDebugInfo: Boolean = false
+    protected open val drawsFpsGraph: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // app 모듈에서 BuildConfig 값을 읽어 GameView 의 companion object 에 넣는다.
-        // 이렇게 하면 GameView 는 app 의 BuildConfig 를 직접 참조하지 않아도 된다.
-        GameView.drawsDebugGrid = BuildConfig.DRAWS_DEBUG_GRID
-        GameView.drawsDebugInfo = BuildConfig.DRAWS_DEBUG_INFO
-        GameView.drawsFpsGraph = BuildConfig.DRAWS_FPS_GRAPH
+        GameView.drawsDebugGrid = drawsDebugGrid
+        GameView.drawsDebugInfo = drawsDebugInfo
+        GameView.drawsFpsGraph = drawsFpsGraph
         gameView = GameView(this)
-        // GameView 는 공통 프레임워크 쪽에 두고,
-        // 어떤 Scene 을 시작 장면으로 쓸지는 app 쪽이 factory 로 넘겨 결정한다.
-        gameView.setRootScene { ctx -> MainScene(ctx) }
+        gameView.setRootScene(::createRootScene)
         setContentView(gameView)
         setFullScreen()
     }
@@ -31,14 +35,12 @@ class GameActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     private fun setFullScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // API 30 이상: 최신 방식
             val insetsController = window.insetsController
             if (insetsController != null) {
                 insetsController.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 insetsController.hide(WindowInsets.Type.systemBars())
             }
         } else {
-            // API 29 이하: 기존 방식
             val flags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
                     View.SYSTEM_UI_FLAG_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
