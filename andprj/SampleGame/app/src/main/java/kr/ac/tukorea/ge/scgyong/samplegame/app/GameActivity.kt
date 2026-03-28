@@ -21,6 +21,9 @@ class GameActivity : AppCompatActivity() {
         GameView.drawsDebugInfo = BuildConfig.DRAWS_DEBUG_INFO
         GameView.drawsFpsGraph = BuildConfig.DRAWS_FPS_GRAPH
         gameView = GameView(this)
+        // GameView 는 공통 프레임워크 쪽에 두고,
+        // 어떤 Scene 을 시작 장면으로 쓸지는 app 쪽이 factory 로 넘겨 결정한다.
+        gameView.setRootScene { ctx -> MainScene(ctx) }
         setContentView(gameView)
         setFullScreen()
     }

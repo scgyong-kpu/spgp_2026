@@ -11,7 +11,6 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
-import kr.ac.tukorea.ge.scgyong.samplegame.app.MainScene
 import kotlin.math.roundToInt
 
 
@@ -27,9 +26,9 @@ class GameView @JvmOverloads constructor(
     private val gctx = GameContext(this)
 
     // 이제 단일 scene 멤버 대신 SceneStack 이 현재 Scene 을 관리하고, GameView 는 sceneStack.top 만 바라본다.
-    private val sceneStack = SceneStack().apply {
-        push(MainScene(gctx))
-    }
+    // GameView 는 SceneStack 만 소유하고, 어떤 Scene 을 최초로 넣을지는 바깥쪽 app 코드가 결정한다.
+    // 다만 sceneStack 자체를 바깥에서 직접 만지게 하기보다, setRootScene() 같은 API 로 의도를 드러내는 편이 더 낫다.
+    private val sceneStack = SceneStack()
 
     companion object {
         // GameView 가 직접 BuildConfig 를 읽지는 않지만,
@@ -41,6 +40,13 @@ class GameView @JvmOverloads constructor(
 
     init {
         Choreographer.getInstance().postFrameCallback(this)
+    }
+
+    // app 쪽은 "어떤 Scene 을 시작 장면으로 쓸지"만 factory 로 넘기고,
+    // GameView 는 자신의 gctx 를 넘겨 실제 Scene 생성을 요청한다.
+    // 이렇게 하면 a2dg 의 GameView 가 app 의 MainScene 을 직접 알 필요가 없다.
+    fun setRootScene(factory: (GameContext) -> Scene) {
+        sceneStack.push(factory(gctx))
     }
 
     fun update() {
