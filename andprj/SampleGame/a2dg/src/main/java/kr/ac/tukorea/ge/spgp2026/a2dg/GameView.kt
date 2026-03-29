@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -24,6 +25,18 @@ class GameView @JvmOverloads constructor(
 
     // 프레임 시간, 리소스 접근, 화면 metrics, scene stack 같은 공통 게임 문맥을 한곳에 모아 둔다.
     private val gctx = GameContext(this)
+
+    // context 가 Activity 이면 바로 반환하고,
+    // ContextThemeWrapper 같은 래퍼가 감싸고 있으면 체인을 따라가며 Activity 를 찾는다.
+    private val activity: Activity?
+        get() {
+            var ctx = context
+            while (ctx is ContextWrapper) {
+                if (ctx is Activity) return ctx
+                ctx = ctx.baseContext
+            }
+            return null
+        }
 
     companion object {
         // GameView 가 직접 BuildConfig 를 읽지는 않지만,
@@ -92,7 +105,7 @@ class GameView @JvmOverloads constructor(
             // Scene 의 update 나 touch 처리 도중 마지막 Scene 이 pop() 되어
             // stack 이 비었다면 더 이상 그릴 것이 없으므로 Activity 를 종료한다.
             if (gctx.sceneStack.top == null) {
-                (context as? Activity)?.finish()
+                activity?.finish()
                 return
             }
 
