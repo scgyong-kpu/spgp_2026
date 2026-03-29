@@ -100,7 +100,7 @@
 - [x] `app`은 루트 `Scene` 결정과 `BuildConfig` 주입만 맡도록 정리
 - [x] `SceneStack`에 `push()` / `pop()` 외에 `change()` 추가
 - [x] `Scene`에도 `push()` / `pop()` / `change()` 편의 함수 추가
-- [ ] `Scene`에 `onEnter()` / `onExit()` / `onPause()` / `onResume()` 생명주기 함수 추가
+- [x] `Scene`에 `onEnter()` / `onExit()` / `onPause()` / `onResume()` 생명주기 함수 추가
 - [ ] 여러 `Scene`이 `push()` / `pop()` 되는 흐름을 테스트
 - [ ] `Scene`에 `onBackPressed()`를 추가하고 기본 동작으로 `pop()` 처리
 - [ ] deprecated 된 `onBackPressed` 대신 `OnBackPressedCallback` 을 사용하는 것으로 변경

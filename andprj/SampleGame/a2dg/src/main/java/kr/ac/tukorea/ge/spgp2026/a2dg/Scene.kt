@@ -20,6 +20,20 @@ abstract class Scene(
         world?.draw(canvas)
     }
 
+    // Scene 이 stack 안에 들어오거나 나갈 때 호출되는 기본 생명주기 함수들이다.
+    // 필요한 Scene 만 override 해서 초기화, 정리, 일시정지, 재개 처리를 넣으면 된다.
+    open fun onEnter() {
+    }
+
+    open fun onExit() {
+    }
+
+    open fun onPause() {
+    }
+
+    open fun onResume() {
+    }
+
     // Scene 안에서는 gctx.sceneStack 을 통해
     // push / pop / change 를 더 짧게 호출한다.
     fun push() {

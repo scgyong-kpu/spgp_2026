@@ -9,18 +9,35 @@ class SceneStack {
         get() = scenes.last()
 
     fun push(scene: Scene) {
+        if (scenes.isNotEmpty()) {
+            top.onPause()
+        }
         scenes.add(scene)
+        scene.onEnter()
     }
 
     fun pop(): Scene {
-        return scenes.removeAt(scenes.lastIndex)
+        val popped = scenes.removeAt(scenes.lastIndex)
+        popped.onExit()
+        if (scenes.isNotEmpty()) {
+            top.onResume()
+        }
+        return popped
     }
 
-    // change 는 top 을 다른 Scene 으로 바꾸고 싶을 때 쓴다.
-    // stack 전체를 비우지 않고 맨 위 Scene 하나만 교체하는 동작이다.
+    // change 는 top 을 다른 Scene 으로 바꾸고, 나머지 stack 은 그대로 둔다.
+    // push / pop 을 따로 호출하면 아래 Scene 이 잠깐 resume 되었다가 다시 pause 되므로,
+    // change 는 그 중간 과정을 거치지 않고 맨 위 Scene 하나만 바로 교체한다.
     fun change(scene: Scene): Scene {
-        val previous = pop()
-        push(scene)
+        if (scenes.isEmpty()) {
+            push(scene)
+            return scene
+        }
+
+        val previous = scenes.removeAt(scenes.lastIndex)
+        previous.onExit()
+        scenes.add(scene)
+        scene.onEnter()
         return previous
     }
 }
