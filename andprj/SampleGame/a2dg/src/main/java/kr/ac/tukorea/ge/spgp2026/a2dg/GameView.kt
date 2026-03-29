@@ -74,6 +74,10 @@ class GameView @JvmOverloads constructor(
         return gctx.sceneStack.top.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
+    fun onBackPressed(): Boolean {
+        return gctx.sceneStack.top.onBackPressed()
+    }
+
     // doFrame() 에 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
     // doFrame() 이 최초 호출 된 시점에는 previousNanos 가 0 이어서
     // 매우 큰 frameTime 이 생성되므로 0 일때에는 하면 안 된다.

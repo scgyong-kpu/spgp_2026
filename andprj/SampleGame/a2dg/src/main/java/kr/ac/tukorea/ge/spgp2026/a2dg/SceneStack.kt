@@ -8,6 +8,9 @@ class SceneStack {
     val top: Scene
         get() = scenes.last()
 
+    val size: Int
+        get() = scenes.size
+
     fun push(scene: Scene) {
         if (scenes.isNotEmpty()) {
             top.onPause()

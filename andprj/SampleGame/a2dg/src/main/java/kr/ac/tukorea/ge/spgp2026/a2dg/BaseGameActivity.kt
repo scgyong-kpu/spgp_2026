@@ -30,6 +30,13 @@ abstract class BaseGameActivity : AppCompatActivity() {
     }
 
     @Suppress("DEPRECATION")
+    override fun onBackPressed() {
+        if (!gameView.onBackPressed()) {
+            super.onBackPressed()
+        }
+    }
+
+    @Suppress("DEPRECATION")
     private fun setFullScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val insetsController = window.insetsController

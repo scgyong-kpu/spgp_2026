@@ -51,4 +51,13 @@ abstract class Scene(
     open fun onTouchEvent(event: MotionEvent): Boolean {
         return false
     }
+
+    // 뒤로 가기 이벤트가 발생했을 때 호출된다.
+    // 기본 동작은 현재 Scene 을 pop() 하는 것이다.
+    // stack 에 Scene 이 하나뿐이면 pop() 하지 않고 false 를 반환한다.
+    open fun onBackPressed(): Boolean {
+        if (gctx.sceneStack.size <= 1) return false
+        pop()
+        return true
+    }
 }

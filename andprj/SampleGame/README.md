@@ -102,7 +102,7 @@
 - [x] `Scene`에도 `push()` / `pop()` / `change()` 편의 함수 추가
 - [x] `Scene`에 `onEnter()` / `onExit()` / `onPause()` / `onResume()` 생명주기 함수 추가
 - [x] 여러 `Scene`이 `push()` / `pop()` 되는 흐름을 테스트
-- [ ] `Scene`에 `onBackPressed()`를 추가하고 기본 동작으로 `pop()` 처리
+- [x] `Scene`에 `onBackPressed()`를 추가하고 기본 동작으로 `pop()` 처리
 - [ ] deprecated 된 `onBackPressed` 대신 `OnBackPressedCallback` 을 사용하는 것으로 변경
 - [ ] 마지막 `Scene`이 `pop()` 되면 `Activity` 종료
 - [ ] `Bitmap` 을 cache 하는 `BitmapPool` 도입
