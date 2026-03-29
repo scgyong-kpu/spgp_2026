@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame.app
+package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.os.Build
 import android.os.Bundle
@@ -6,9 +6,6 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameView
-import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
 
 abstract class BaseGameActivity : AppCompatActivity() {
     protected lateinit var gameView: GameView

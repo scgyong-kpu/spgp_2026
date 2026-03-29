@@ -96,7 +96,7 @@
 - [x] `app`이 `a2dg`를 사용하도록 의존 방향 정리
 - [x] `a2dg -> app` 의존이 생기지 않도록 구조 점검 (#11 준비단계에서 완료함)
 - [x] `GameActivity`에서 재사용 가능한 부분과 게임 전용 부분을 분리
-- [ ] 공통 `GameActivity` 또는 `BaseGameActivity`를 `a2dg`로 이동
+- [x] 공통 `GameActivity` 또는 `BaseGameActivity`를 `a2dg`로 이동
 - [x] `app`은 루트 `Scene` 결정과 `BuildConfig` 주입만 맡도록 정리
 - [ ] `SceneStack`에 `push()` / `pop()` 외에 `change()` 추가
 - [ ] `Scene`에도 `push()` / `pop()` / `change()` 편의 함수 추가
