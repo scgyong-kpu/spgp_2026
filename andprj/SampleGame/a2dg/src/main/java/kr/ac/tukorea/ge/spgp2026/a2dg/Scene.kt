@@ -10,8 +10,6 @@ abstract class Scene(
 ) {
     // 보통의 Scene 은 World 를 하나 소유하고, 기본 update / draw 를 그 World 에 위임한다.
     // World 가 없는 특수 Scene 이라면 null 을 유지한 채 update / draw 를 직접 override 하면 된다.
-    // World 가 generic 이더라도 Scene 쪽은 구체 layer 타입까지 알 필요가 없으므로
-    // 여기서는 World<*> 형태로 받아 공통 update / draw 만 위임한다.
     open val world: World<*>? = null
 
     open fun update(gctx: GameContext) {
@@ -20,6 +18,20 @@ abstract class Scene(
 
     open fun draw(canvas: Canvas) {
         world?.draw(canvas)
+    }
+
+    // Scene 안에서는 gctx.sceneStack 을 통해
+    // push / pop / change 를 더 짧게 호출한다.
+    fun push() {
+        gctx.sceneStack.push(this)
+    }
+
+    fun pop(): Scene {
+        return gctx.sceneStack.pop()
+    }
+
+    fun change(): Scene {
+        return gctx.sceneStack.change(this)
     }
 
     open fun onTouchEvent(event: MotionEvent): Boolean {

@@ -13,7 +13,6 @@ import android.view.View
 import androidx.core.graphics.withMatrix
 import kotlin.math.roundToInt
 
-
 // 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
 // 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
 class GameView @JvmOverloads constructor(
@@ -22,13 +21,8 @@ class GameView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr), Choreographer.FrameCallback {
 
-    // 프레임 시간, 리소스 접근, 화면 metrics 같은 공통 게임 문맥을 한곳에 모아 둔다.
+    // 프레임 시간, 리소스 접근, 화면 metrics, scene stack 같은 공통 게임 문맥을 한곳에 모아 둔다.
     private val gctx = GameContext(this)
-
-    // 이제 단일 scene 멤버 대신 SceneStack 이 현재 Scene 을 관리하고, GameView 는 sceneStack.top 만 바라본다.
-    // GameView 는 SceneStack 만 소유하고, 어떤 Scene 을 최초로 넣을지는 바깥쪽 app 코드가 결정한다.
-    // 다만 sceneStack 자체를 바깥에서 직접 만지게 하기보다, setRootScene() 같은 API 로 의도를 드러내는 편이 더 낫다.
-    private val sceneStack = SceneStack()
 
     companion object {
         // GameView 가 직접 BuildConfig 를 읽지는 않지만,
@@ -46,11 +40,11 @@ class GameView @JvmOverloads constructor(
     // GameView 는 자신의 gctx 를 넘겨 실제 Scene 생성을 요청한다.
     // 이렇게 하면 a2dg 의 GameView 가 app 의 MainScene 을 직접 알 필요가 없다.
     fun setRootScene(factory: (GameContext) -> Scene) {
-        sceneStack.push(factory(gctx))
+        gctx.sceneStack.push(factory(gctx))
     }
 
     fun update() {
-        sceneStack.top.update(gctx)
+        gctx.sceneStack.top.update(gctx)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -61,7 +55,7 @@ class GameView @JvmOverloads constructor(
             if (drawsDebugGrid) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
-            sceneStack.top.draw(this)
+            gctx.sceneStack.top.draw(this)
             if (drawsDebugInfo || drawsFpsGraph) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
@@ -76,12 +70,11 @@ class GameView @JvmOverloads constructor(
         gctx.metrics.onSize(w, h)
     }
 
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return sceneStack.top.onTouchEvent(event) || super.onTouchEvent(event)
+        return gctx.sceneStack.top.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
-    // doFrame() 에게 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
+    // doFrame() 에 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
     // doFrame() 이 최초 호출 된 시점에는 previousNanos 가 0 이어서
     // 매우 큰 frameTime 이 생성되므로 0 일때에는 하면 안 된다.
     override fun doFrame(nanos: Long) {
@@ -89,7 +82,6 @@ class GameView @JvmOverloads constructor(
         gctx.currentTimeNanos = nanos
         if (previousNanos != 0L) {
             gctx.frameTime = (nanos - previousNanos) / 1_000_000_000f
-            //Log.d(javaClass.simpleName, "frameTime=${(gctx.frameTime / (1/60f)).roundToInt()} frame")
             update()
             invalidate()
         }
@@ -109,6 +101,7 @@ class GameView @JvmOverloads constructor(
             debugFrames.draw(this)
         }
     }
+
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
     private fun Canvas.drawDebugGrid() {
         drawRect(borderRect, borderPaint) // 900 x 1600 가상 좌표계의 경계

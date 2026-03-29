@@ -61,5 +61,6 @@ class GameContext(
 ) {
     // 크기, 좌표계 변환, 입력 역변환 같은 화면 관련 정보는 metrics 안에 모아 둔다.
     val metrics = GameMetrics()
+    val sceneStack = SceneStack()
     fun getBitmapResource(id: Int) = BitmapFactory.decodeResource(view.resources, id)
 }
