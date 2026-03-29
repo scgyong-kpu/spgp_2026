@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.a2dg
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -44,7 +45,7 @@ class GameView @JvmOverloads constructor(
     }
 
     fun update() {
-        gctx.sceneStack.top.update(gctx)
+        gctx.sceneStack.top?.update(gctx)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -55,7 +56,7 @@ class GameView @JvmOverloads constructor(
             if (drawsDebugGrid) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
-            gctx.sceneStack.top.draw(this)
+            gctx.sceneStack.top?.draw(this)
             if (drawsDebugInfo || drawsFpsGraph) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
@@ -71,11 +72,11 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return gctx.sceneStack.top.onTouchEvent(event) || super.onTouchEvent(event)
+        return (gctx.sceneStack.top?.onTouchEvent(event) ?: false) || super.onTouchEvent(event)
     }
 
     fun onBackPressed(): Boolean {
-        return gctx.sceneStack.top.onBackPressed()
+        return gctx.sceneStack.top?.onBackPressed() ?: false
     }
 
     // doFrame() 에 전달된 nanos 간의 차이를 계산하여 frameTime 을 계산해 둔다.
@@ -87,6 +88,14 @@ class GameView @JvmOverloads constructor(
         if (previousNanos != 0L) {
             gctx.frameTime = (nanos - previousNanos) / 1_000_000_000f
             update()
+
+            // Scene 의 update 나 touch 처리 도중 마지막 Scene 이 pop() 되어
+            // stack 이 비었다면 더 이상 그릴 것이 없으므로 Activity 를 종료한다.
+            if (gctx.sceneStack.top == null) {
+                (context as? Activity)?.finish()
+                return
+            }
+
             invalidate()
         }
         if (isShown) {

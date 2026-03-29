@@ -5,16 +5,17 @@ package kr.ac.tukorea.ge.spgp2026.a2dg
 class SceneStack {
     private val scenes = mutableListOf<Scene>()
 
-    val top: Scene
-        get() = scenes.last()
+    val top: Scene?
+        get() = scenes.lastOrNull()
 
     val size: Int
         get() = scenes.size
 
+    val isEmpty: Boolean
+        get() = scenes.isEmpty()
+
     fun push(scene: Scene) {
-        if (scenes.isNotEmpty()) {
-            top.onPause()
-        }
+        top?.onPause()
         scenes.add(scene)
         scene.onEnter()
     }
@@ -22,9 +23,7 @@ class SceneStack {
     fun pop(): Scene {
         val popped = scenes.removeAt(scenes.lastIndex)
         popped.onExit()
-        if (scenes.isNotEmpty()) {
-            top.onResume()
-        }
+        top?.onResume()
         return popped
     }
 
