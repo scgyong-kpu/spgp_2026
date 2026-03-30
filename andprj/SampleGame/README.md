@@ -113,7 +113,7 @@
 - [x] 게임 내에서 실제 화면 크기도 알 수 있도록 정리
 - [x] `JoyStick` 클래스 추가
 - [x] `JoyStick` 기본 그리기
-- [ ] `JoyStick` 이 `Touch Down` 인 동안만 보이게 처리
+- [x] `JoyStick` 이 `Touch Down` 인 동안만 보이게 처리
 - [ ] `JoyStick` 이 `+/- BG_RADIUS` 범위 안에서만 움직이게 처리
 - [ ] `JoyStick` 이 적당한 반지름의 원 안에서만 움직이게 처리
 - [ ] `JoyStick` 의 `angle` 및 `power` 계산 적용

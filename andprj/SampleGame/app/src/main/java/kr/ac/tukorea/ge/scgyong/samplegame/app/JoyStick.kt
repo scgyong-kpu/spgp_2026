@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.scgyong.samplegame.app
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
+import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
 import kr.ac.tukorea.ge.scgyong.samplegame.R
@@ -10,7 +11,9 @@ import kr.ac.tukorea.ge.scgyong.samplegame.R
 // JoyStick 은 가상 패드 입력을 위한 게임 오브젝트이다.
 // 이번 단계에서는 사용자가 추가한 joystick_bg, joystick_thumb 이미지를 이용해
 // 화면에 기본 모양만 보이도록 만든다.
-// 아직 터치 처리나 thumb 이동, angle/power 계산은 붙이지 않는다.
+// 이번 커밋에서는 터치 메시지를 JoyStick 이 직접 받아
+// Touch Down 인 동안만 보이게 처리하고,
+// 아직 thumb 이동이나 angle/power 계산은 붙이지 않는다.
 class JoyStick(gctx: GameContext) : IGameObject {
     private val bgBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.joystick_bg)
     private val thumbBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.joystick_thumb)
@@ -36,10 +39,27 @@ class JoyStick(gctx: GameContext) : IGameObject {
         centerY + thumbRadius,
     )
 
+    private var isVisible = false
+
+    fun onTouchEvent(action: Int, x: Float, y: Float): Boolean {
+        when (action) {
+            MotionEvent.ACTION_DOWN -> {
+                isVisible = true
+            }
+            MotionEvent.ACTION_MOVE -> {
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                isVisible = false
+            }
+        }
+        return true
+    }
+
     override fun update(gctx: GameContext) {
     }
 
     override fun draw(canvas: Canvas) {
+        if (!isVisible) return
         canvas.drawBitmap(bgBitmap, null, bgRect, null)
         canvas.drawBitmap(thumbBitmap, null, thumbRect, null)
     }
