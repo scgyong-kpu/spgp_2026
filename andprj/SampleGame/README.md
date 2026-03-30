@@ -107,7 +107,7 @@
 - [x] 마지막 `Scene`이 `pop()` 되면 `Activity` 종료
   - [x] `context as? Activity` 대신 `ContextWrapper` 체인을 따라가는 `activity` 프로퍼티로 변경
 - [x] `Bitmap` 을 cache 하는 `BitmapPool` 도입
-- [ ] `Sprite` class 추가
+- [x] `Sprite` class 추가
 - [x] 화면 해상도에 관계없이 `Bitmap` 을 원본 크기로 로드
 - [ ] 게임마다 가상 좌표계를 다르게 둘 수 있는 구조 도입
 - [ ] 게임 내에서 실제 화면 크기도 알 수 있도록 정리

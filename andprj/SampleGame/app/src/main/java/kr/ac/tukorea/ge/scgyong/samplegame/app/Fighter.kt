@@ -1,14 +1,13 @@
 package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.graphics.Canvas
-import android.graphics.RectF
 import android.util.Log
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.sqrt
 import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
+import kr.ac.tukorea.ge.spgp2026.a2dg.Sprite
 import kr.ac.tukorea.ge.scgyong.samplegame.R
 
 private const val FIGHTER_X = 450f
@@ -17,10 +16,7 @@ private const val FIGHTER_SIZE = 250f
 private const val FIGHTER_ANGLE_OFFSET = 90f
 private const val FIGHTER_SPEED = 500f
 
-class Fighter(gctx: GameContext) : IGameObject {
-    private val rect = RectF()
-    private var x = 0f
-    private var y = 0f
+class Fighter(gctx: GameContext) : Sprite(gctx, R.mipmap.plane_240) {
     private var angleDegree = -FIGHTER_ANGLE_OFFSET
     private var targetX = FIGHTER_X
     private var targetY = FIGHTER_Y
@@ -29,10 +25,10 @@ class Fighter(gctx: GameContext) : IGameObject {
     private var dy = -FIGHTER_SPEED
 
     init {
+        width = FIGHTER_SIZE
+        height = FIGHTER_SIZE
         setPosition(FIGHTER_X, FIGHTER_Y, appliesAngle = false)
     }
-
-    private val bitmap = gctx.res.getBitmap(R.mipmap.plane_240)
 
     fun setTarget(x: Float, y: Float) {
         targetX = x
@@ -54,12 +50,6 @@ class Fighter(gctx: GameContext) : IGameObject {
     }
 
     private fun setPosition(x: Float, y: Float, appliesAngle: Boolean = true) {
-        rect.set(
-            x - FIGHTER_SIZE / 2f,
-            y - FIGHTER_SIZE / 2f,
-            x + FIGHTER_SIZE / 2f,
-            y + FIGHTER_SIZE / 2f,
-        )
         if (appliesAngle) {
             // 이전 위치에서 새 위치로 향하는 방향을 각도로 바꿔, 나중에 전투기 회전에 쓸 수 있게 둔다.
             val dx = (x - this.x).toDouble()
@@ -94,7 +84,8 @@ class Fighter(gctx: GameContext) : IGameObject {
         canvas.withRotation(angleDegree + FIGHTER_ANGLE_OFFSET, x, y) {
             // save, rotate, restore 가 자동으로 일어나는 withRotation 블록 안에서 그리면,
             // 각도 만큼 회전된 상태로 그려진다. 실행 결과는 같고, 표현만 간결해 진다.
-            drawBitmap(bitmap, null, rect, null)
+            syncDstRect()
+            drawBitmap(bitmap, srcRect, dstRect, null)
         }
     }
 }
