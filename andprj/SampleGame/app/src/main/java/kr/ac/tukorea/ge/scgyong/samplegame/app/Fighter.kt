@@ -10,16 +10,14 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.Sprite
 import kr.ac.tukorea.ge.scgyong.samplegame.R
 
-private const val FIGHTER_X = 450f
-private const val FIGHTER_Y = 1200f
 private const val FIGHTER_SIZE = 250f
 private const val FIGHTER_ANGLE_OFFSET = 90f
 private const val FIGHTER_SPEED = 500f
 
 class Fighter(gctx: GameContext) : Sprite(gctx, R.mipmap.plane_240) {
     private var angleDegree = -FIGHTER_ANGLE_OFFSET
-    private var targetX = FIGHTER_X
-    private var targetY = FIGHTER_Y
+    private var targetX = gctx.metrics.width / 2f
+    private var targetY = gctx.metrics.height - FIGHTER_SIZE
     // dx, dy 는 이번 프레임에 더할 값이 아니라, 초당 몇 unit 씩 움직여야 하는지를 저장하는 속도 벡터이다.
     private var dx = 0f
     private var dy = -FIGHTER_SPEED
@@ -27,7 +25,7 @@ class Fighter(gctx: GameContext) : Sprite(gctx, R.mipmap.plane_240) {
     init {
         width = FIGHTER_SIZE
         height = FIGHTER_SIZE
-        setPosition(FIGHTER_X, FIGHTER_Y, appliesAngle = false)
+        setPosition(targetX, targetY, appliesAngle = false)
     }
 
     fun setTarget(x: Float, y: Float) {

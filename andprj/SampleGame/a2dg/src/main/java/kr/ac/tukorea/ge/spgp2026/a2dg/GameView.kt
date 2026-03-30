@@ -13,10 +13,10 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
-import kotlin.math.roundToInt
 
-// 게임 내부 공간으로 사용할 가상 좌표계의 크기이다.
-// 실제 화면 크기와는 별개로 게임 안에서는 900 x 1600 공간이 있다고 생각하고 그린다.
+// GameView 는 GameMetrics 가 들고 있는 현재 가상 좌표계를 기준으로 장면을 그리고 입력을 처리한다.
+// 따라서 게임이 createRootScene() 같은 시점에서 metrics.setSize() 를 호출하면,
+// 그 이후에는 여기서도 그 새 가상 좌표계 크기를 기준으로 동작하게 된다.
 class GameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -64,7 +64,8 @@ class GameView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // 이 블록 안에서는 실제 화면 좌표가 아니라 900 x 1600 가상 좌표계 기준으로 그린다고 생각하면 된다.
+        // 이 블록 안에서는 실제 화면 좌표가 아니라
+        // 현재 GameMetrics 가 들고 있는 가상 좌표계 기준으로 그린다고 생각하면 된다.
         canvas.withMatrix(gctx.metrics.transformMatrix) {
             if (drawsDebugGrid) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
@@ -76,7 +77,7 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    private val debugFrames by lazy { DebugFrames() }
+    private val debugFrames by lazy { DebugFrames(gctx) }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -123,14 +124,14 @@ class GameView @JvmOverloads constructor(
         }
         if (drawsFpsGraph) {
             // 최근 프레임을 1/60 초 기준 몇 frame 이었는지로 바꿔 저장하면 그래프를 더 직관적으로 읽을 수 있다.
-            debugFrames.add((gctx.frameTime / (1 / 60f)).roundToInt().toFloat())
+            debugFrames.add((gctx.frameTime / (1 / 60f)))
             debugFrames.draw(this)
         }
     }
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
     private fun Canvas.drawDebugGrid() {
-        drawRect(borderRect, borderPaint) // 900 x 1600 가상 좌표계의 경계
+        drawRect(borderRect, borderPaint) // 현재 가상 좌표계의 경계
         val step = 100f
 
         // 세로 격자선은 x 값을 100씩 늘리며 위에서 아래로 선을 긋는다.
@@ -171,7 +172,7 @@ class GameView @JvmOverloads constructor(
     }
 }
 
-private class DebugFrames(capacity: Int = 150) {
+private class DebugFrames(val gctx: GameContext, capacity: Int = 150) {
     private val values = FloatArray(capacity)
     private var start = 0
     private var count = 0
@@ -196,8 +197,9 @@ private class DebugFrames(capacity: Int = 150) {
         if (count == 0) return
 
         val graphX = 20f
+        val graphMaxX = gctx.metrics.width - 20f
         val graphMinY = 100f
-        val graphWidth = 860f
+        val graphWidth = graphMaxX - graphX
         val graphHeight = 120f
         val maxFrameUnits = 6f
         val dx = if (values.size > 1) graphWidth / (values.size - 1) else 0f

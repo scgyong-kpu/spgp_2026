@@ -13,6 +13,7 @@ class ShooterGameActivity : BaseGameActivity() {
 
     // The app decides which scene becomes the root scene.
     override fun createRootScene(gctx: GameContext): Scene {
+        gctx.metrics.setSize(1500f, 1200f)
         return MainScene(gctx)
     }
 }

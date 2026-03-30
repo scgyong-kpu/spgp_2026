@@ -3,13 +3,18 @@ package kr.ac.tukorea.ge.spgp2026.a2dg
 import android.graphics.Matrix
 import android.graphics.PointF
 
-private const val VIRTUAL_WIDTH = 900f
-private const val VIRTUAL_HEIGHT = 1600f
+private const val DEFAULT_VIRTUAL_WIDTH = 900f
+private const val DEFAULT_VIRTUAL_HEIGHT = 1600f
 
 class GameMetrics {
     // 게임 안에서 공통으로 쓰는 가상 좌표계 크기이다.
-    val width = VIRTUAL_WIDTH
-    val height = VIRTUAL_HEIGHT
+    // 기본값은 예전처럼 900 x 1600 이지만,
+    // 특정 게임이 다른 내부 좌표계를 쓰고 싶다면 createRootScene() 같은 초기화 시점에
+    // setSize() 를 호출해 원하는 값으로 바꿀 수 있게 한다.
+    var width = DEFAULT_VIRTUAL_WIDTH
+        private set
+    var height = DEFAULT_VIRTUAL_HEIGHT
+        private set
 
     // 실제 화면에 그릴 때는 transformMatrix 를,
     // 터치 입력을 가상 좌표계로 되돌릴 때는 inverseTransformMatrix 를 사용한다.
@@ -21,12 +26,17 @@ class GameMetrics {
     // fromScreen(), toScreen() 이 PointF 를 매번 새로 만들지 않도록 반환용 객체도 하나만 재사용한다.
     private val sharedPointForReturn = PointF()
 
+    fun setSize(width: Float, height: Float) {
+        this.width = width
+        this.height = height
+    }
+
     fun onSize(w: Int, h: Int) {
-        val scaleX = w / VIRTUAL_WIDTH
-        val scaleY = h / VIRTUAL_HEIGHT
+        val scaleX = w / width
+        val scaleY = h / height
         val scale = minOf(scaleX, scaleY) // 찌그러지지 않게 더 작은 배율을 고른다.
-        val contentWidth = VIRTUAL_WIDTH * scale
-        val contentHeight = VIRTUAL_HEIGHT * scale
+        val contentWidth = width * scale
+        val contentHeight = height * scale
         val offsetX = (w - contentWidth) / 2f
         val offsetY = (h - contentHeight) / 2f
         transformMatrix.reset()
