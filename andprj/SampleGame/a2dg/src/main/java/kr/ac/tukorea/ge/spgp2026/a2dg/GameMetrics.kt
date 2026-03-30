@@ -2,6 +2,8 @@ package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.graphics.Matrix
 import android.graphics.PointF
+import android.graphics.RectF
+import android.util.Log
 
 private const val DEFAULT_VIRTUAL_WIDTH = 900f
 private const val DEFAULT_VIRTUAL_HEIGHT = 1600f
@@ -20,6 +22,11 @@ class GameMetrics {
     // 터치 입력을 가상 좌표계로 되돌릴 때는 inverseTransformMatrix 를 사용한다.
     val transformMatrix = Matrix()
     val inverseTransformMatrix = Matrix()
+
+    // 실제 화면의 사각형이 현재 가상 좌표계에서 어떤 범위로 보이는지를 저장한다.
+    // 예를 들어 좌우 또는 상하에 letterbox 여백이 생기면,
+    // 이 값은 단순히 (0,0,width,height) 와 같지 않을 수 있다.
+    val screenRect = RectF()
 
     // mapPoints() 는 배열을 받는 API 이므로 입력 좌표 변환에 쓸 작은 버퍼를 미리 만들어 재사용한다.
     private val touchPoint = floatArrayOf(0f, 0f)
@@ -43,6 +50,13 @@ class GameMetrics {
         transformMatrix.postTranslate(offsetX, offsetY) // 먼저 가운데로 옮긴다.
         transformMatrix.postScale(scale, scale, offsetX, offsetY) // 그 위치를 기준으로 확대/축소한다.
         transformMatrix.invert(inverseTransformMatrix) // 그리기용 변환이 정해지면 입력용 역변환도 함께 계산한다.
+
+        screenRect.set(0f, 0f, w.toFloat(), h.toFloat())
+        inverseTransformMatrix.mapRect(screenRect)
+        Log.d(
+            javaClass.simpleName,
+            "onSize: screen=${w}x$h, virtual=${width}x$height, screenRect=$screenRect"
+        )
     }
 
     // 실제 화면 좌표를 가상 좌표계 좌표로 되돌린다.
