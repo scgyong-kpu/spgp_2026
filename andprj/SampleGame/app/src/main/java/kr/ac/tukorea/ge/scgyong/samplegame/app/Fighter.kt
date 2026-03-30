@@ -32,7 +32,7 @@ class Fighter(gctx: GameContext) : IGameObject {
         setPosition(FIGHTER_X, FIGHTER_Y, appliesAngle = false)
     }
 
-    private val bitmap = gctx.getBitmapResource(R.mipmap.plane_240)
+    private val bitmap = gctx.res.getBitmap(R.mipmap.plane_240)
 
     fun setTarget(x: Float, y: Float) {
         targetX = x
