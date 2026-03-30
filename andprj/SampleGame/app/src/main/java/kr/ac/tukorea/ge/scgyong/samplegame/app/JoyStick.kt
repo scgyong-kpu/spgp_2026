@@ -7,8 +7,7 @@ import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
 import kr.ac.tukorea.ge.scgyong.samplegame.R
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.sqrt
 
 // JoyStick 은 가상 패드 입력을 위한 게임 오브젝트이다.
 // 이번 단계에서는 사용자가 추가한 joystick_bg, joystick_thumb 이미지를 이용해
@@ -26,6 +25,7 @@ class JoyStick(private val gctx: GameContext) : IGameObject {
 
     private val bgRadius = 180f
     private val thumbRadius = 90f
+    private val maxRadius = bgRadius - thumbRadius
 
     private val bgRect = RectF(
         centerX - bgRadius,
@@ -86,11 +86,21 @@ class JoyStick(private val gctx: GameContext) : IGameObject {
         canvas.drawBitmap(thumbBitmap, null, thumbRect, null)
     }
 
-    // 이번 단계에서는 thumb 가 배경 중심에서 +/- bgRadius 범위를 넘지 않도록
-    // x, y 를 각각 clamp 하는 방식만 먼저 적용한다.
-    // 아직 원형 범위 안으로 제한하는 처리는 다음 단계에서 따로 붙인다.
+    // thumb 중심이 배경 중심에서 maxRadius 를 넘지 않도록 원형 범위 안으로 제한한다.
+    // maxRadius 를 bgRadius - thumbRadius 로 두면
+    // thumb 의 가장자리가 배경 원 바깥으로 튀어나가지 않게 막을 수 있다.
     private fun updateThumbPosition(x: Float, y: Float) {
-        thumbX = max(centerX - bgRadius, min(centerX + bgRadius, x))
-        thumbY = max(centerY - bgRadius, min(centerY + bgRadius, y))
+        val dx = x - centerX
+        val dy = y - centerY
+        val distance = sqrt(dx * dx + dy * dy)
+        if (distance <= maxRadius || distance == 0f) {
+            thumbX = x
+            thumbY = y
+            return
+        }
+
+        val scale = maxRadius / distance
+        thumbX = centerX + dx * scale
+        thumbY = centerY + dy * scale
     }
 }
