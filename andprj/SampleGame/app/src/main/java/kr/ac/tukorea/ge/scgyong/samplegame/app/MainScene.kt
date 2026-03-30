@@ -47,17 +47,17 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        // 입력은 실제 화면 좌표로 들어오므로, 가상 좌표계 기준 값으로 먼저 바꾼다.
-        val pt = gctx.metrics.fromScreen(event.x, event.y)
-
         // 왼쪽 위의 작은 영역은 SceneStack 테스트 진입점으로 사용한다.
         // 여기서 Scene 1 을 push 해 두면,
         // Scene 1 -> Scene 2 -> pop -> Scene 1 -> pop 흐름을 바로 확인할 수 있다.
-        if (event.actionMasked == MotionEvent.ACTION_DOWN && pt.x < 180f && pt.y < 180f) {
-            StackTestScene1(gctx).push()
-            return true
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            val pt = gctx.metrics.fromScreen(event.x, event.y)
+            if (pt.x < 180f && pt.y < 180f) {
+                StackTestScene1(gctx).push()
+                return true
+            }
         }
 
-        return joyStick.onTouchEvent(event.actionMasked, pt.x, pt.y)
+        return joyStick.onTouchEvent(event)
     }
 }
