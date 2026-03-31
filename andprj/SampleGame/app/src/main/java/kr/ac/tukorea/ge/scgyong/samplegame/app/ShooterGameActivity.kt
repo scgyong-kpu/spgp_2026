@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
+import kr.ac.tukorea.ge.scgyong.samplegame.game.scene.main.MainScene
 import kr.ac.tukorea.ge.spgp2026.a2dg.activity.BaseGameActivity
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext

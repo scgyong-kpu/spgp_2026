@@ -1,8 +1,9 @@
-package kr.ac.tukorea.ge.scgyong.samplegame.app
+package kr.ac.tukorea.ge.scgyong.samplegame.game.scene.main
 
 import android.util.Log
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.scgyong.samplegame.R
+import kr.ac.tukorea.ge.scgyong.samplegame.game.scene.stacktest.StackTestScene1
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.JoyStick
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World

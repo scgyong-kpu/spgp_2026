@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.scgyong.samplegame.app
+package kr.ac.tukorea.ge.scgyong.samplegame.game.scene.main
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
