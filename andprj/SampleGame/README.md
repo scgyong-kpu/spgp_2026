@@ -119,7 +119,7 @@
 - [x] `JoyStick` 의 `angle` 및 `power` 계산 적용
 - [x] `Fighter` 를 `JoyStick` 으로 움직이게 변경
 - [x] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
-- [ ] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
+- [x] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
 - [ ] `JoyStick` 을 `a2dg` 로 이동
 - [ ] `Bullet` 추가 (`ConcurrentModificationException` 발생)
 - [ ] `ConcurrentModificationException` 해결

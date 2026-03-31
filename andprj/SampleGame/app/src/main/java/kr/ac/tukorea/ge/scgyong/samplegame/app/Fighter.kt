@@ -32,12 +32,13 @@ class Fighter(gctx: GameContext, private val joyStick: JoyStick) : Sprite(gctx, 
     }
 
     override fun update(gctx: GameContext) {
-        // 조이스틱의 angle 은 radian, power 는 0.0~1.0 이다.
-        // power 가 0 이면 멈춰 있고, 1.0 이면 최대 속도로 움직인다.
-        val distance = FIGHTER_SPEED * joyStick.power * gctx.frameTime
-        if (distance == 0f) {
+        // 이번 단계에서는 power 값을 속도 크기로 쓰지 않고,
+        // 움직일지 말지만 판단하는 용도로만 사용한다.
+        // 그래서 power 가 0 이면 바로 멈추고, 0 이 아니면 항상 같은 속도로 이동한다.
+        if (joyStick.power == 0f) {
             return
         }
+        val distance = FIGHTER_SPEED * gctx.frameTime
 
         // 8방향 입력만 쓰는 전투기에서는 JoyStick 의 연속 angle 을 그대로 쓰지 않고,
         // 45도 단위로 반올림한 snappedAngle 을 사용한다.
