@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.util.Log
 import android.view.MotionEvent
+import kr.ac.tukorea.ge.scgyong.samplegame.R
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.World
@@ -16,7 +17,15 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         JOYSTICK,
     }
 
-    private val joyStick = JoyStick(gctx)
+    private val joyStick = JoyStick(
+        gctx,
+        R.mipmap.joystick_bg,
+        R.mipmap.joystick_thumb,
+        centerX = 220f,
+        centerY = -220f,
+        bgRadius = 200f,
+        thumbRadius = 60f,
+    )
     // Fighter 는 이제 JoyStick 의 angle, power 를 직접 읽어 움직인다.
     // 그래서 생성할 때 JoyStick 참조를 함께 넘긴다.
     private val fighter = Fighter(gctx, joyStick)

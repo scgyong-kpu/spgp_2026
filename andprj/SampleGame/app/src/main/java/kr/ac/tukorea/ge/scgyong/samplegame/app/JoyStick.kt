@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
-import kr.ac.tukorea.ge.scgyong.samplegame.R
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sqrt
@@ -15,37 +14,45 @@ import kotlin.math.sqrt
 // JoyStick 은 가상 패드 입력을 위한 게임 오브젝트이다.
 // 이번 단계에서는 사용자가 추가한 joystick_bg, joystick_thumb 이미지를 이용해
 // 화면에 기본 모양만 보이도록 만든다.
-class JoyStick(private val gctx: GameContext) : IGameObject {
-    private val bgBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.joystick_bg)
-    private val thumbBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.joystick_thumb)
+class JoyStick(
+    private val gctx: GameContext,
+    bgResId: Int,
+    thumbResId: Int,
+    centerX: Float,
+    centerY: Float,
+    private val bgRadius: Float,
+    private val thumbRadius: Float,
+) : IGameObject {
+    private val bgBitmap: Bitmap = gctx.res.getBitmap(bgResId)
+    private val thumbBitmap: Bitmap = gctx.res.getBitmap(thumbResId)
 
-    // 일단은 화면 왼쪽 아래에 고정된 기본 위치에 그려 둔다.
-    private val centerX = 220f
-    private val centerY = gctx.metrics.height - 220f
-
-    private val bgRadius = 180f
-    private val thumbRadius = 90f
+    // JoyStick 의 위치와 크기도 게임마다 다를 수 있으므로,
+    // a2dg 로 옮기기 쉽게 생성자에서 값을 주입받도록 둔다.
+    // x, y 가 음수이면 각각 오른쪽, 아래쪽 경계에서부터의 상대 거리로 해석한다.
+    // 예를 들어 centerX = -220f 이면 "오른쪽에서 220 떨어진 곳"이 된다.
+    private val resolvedCenterX = if (centerX >= 0f) centerX else gctx.metrics.width + centerX
+    private val resolvedCenterY = if (centerY >= 0f) centerY else gctx.metrics.height + centerY
     private val maxRadius = bgRadius - thumbRadius
 
     private val bgRect = RectF(
-        centerX - bgRadius,
-        centerY - bgRadius,
-        centerX + bgRadius,
-        centerY + bgRadius,
+        resolvedCenterX - bgRadius,
+        resolvedCenterY - bgRadius,
+        resolvedCenterX + bgRadius,
+        resolvedCenterY + bgRadius,
     )
 
     private val thumbRect = RectF(
-        centerX - thumbRadius,
-        centerY - thumbRadius,
-        centerX + thumbRadius,
-        centerY + thumbRadius,
+        resolvedCenterX - thumbRadius,
+        resolvedCenterY - thumbRadius,
+        resolvedCenterX + thumbRadius,
+        resolvedCenterY + thumbRadius,
     )
 
     private var isVisible = false
-    private var thumbX = centerX
-    private var thumbY = centerY
-    private var downX = centerX
-    private var downY = centerY
+    private var thumbX = resolvedCenterX
+    private var thumbY = resolvedCenterY
+    private var downX = resolvedCenterX
+    private var downY = resolvedCenterY
 
     // angle 은 중심에서 thumb 로 향하는 방향을 radian 값으로 저장한다.
     // power 는 thumb 가 maxRadius 대비 얼마나 멀리 나가 있는지를 0.0~1.0 범위로 저장한다.
@@ -117,13 +124,13 @@ class JoyStick(private val gctx: GameContext) : IGameObject {
         // 0.0~1.0 범위 비율로 바꾼 값이다.
         power = (radius / maxRadius).coerceIn(0f, 1f)
         Log.d(javaClass.simpleName, "angle=${"%.2f".format(angle)} power=${"%.2f".format(power)}")
-        thumbX = centerX + dx
-        thumbY = centerY + dy
+        thumbX = resolvedCenterX + dx
+        thumbY = resolvedCenterY + dy
     }
 
     private fun resetThumb() {
-        thumbX = centerX
-        thumbY = centerY
+        thumbX = resolvedCenterX
+        thumbY = resolvedCenterY
         angle = 0f
         power = 0f
     }
