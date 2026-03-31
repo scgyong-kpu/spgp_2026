@@ -11,7 +11,7 @@
 
 ## Activity / App 시작
 
-- [ ] 타이틀 화면 성격의 `MainActivity` 에서 실제 게임 Activity 인 `DragonFlightActivity` 를 실행
+- [x] 타이틀 화면 성격의 `MainActivity` 에서 실제 게임 Activity 인 `DragonFlightActivity` 를 실행
 - [ ] 게임 Activity 를 portrait mode 로 고정
 - [ ] debug build 일 때만 debug 정보가 보이게 설정
 
