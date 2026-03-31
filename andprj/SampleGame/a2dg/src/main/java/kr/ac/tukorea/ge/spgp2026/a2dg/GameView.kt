@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.Choreographer
 import android.view.MotionEvent
@@ -119,9 +120,12 @@ class GameView @JvmOverloads constructor(
 
     private fun Canvas.drawDebugInfo() {
         if (drawsDebugInfo) {
-            val objectCount = gctx.sceneStack.top?.world?.objectCount ?: 0
-            val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)} objs: $objectCount"
-            drawText(text, 20f, 60f, debugPaint)
+            val fps = "%.1f".format(1 / gctx.frameTime)
+            val world = gctx.sceneStack.top?.world
+            val objectCount = world?.objectCount ?: 0
+            val countsForLayers = world?.getDebugCounts() ?: "[]"
+            drawText("$objectCount $countsForLayers", 20f, 50f, debugPaint)
+            drawText("FPS: $fps", 20f, 105f, debugPaint)
         }
         if (drawsFpsGraph) {
             // 최근 프레임을 1/60 초 기준 몇 frame 이었는지로 바꿔 저장하면 그래프를 더 직관적으로 읽을 수 있다.
@@ -168,7 +172,8 @@ class GameView @JvmOverloads constructor(
     private val debugPaint by lazy {
         Paint().apply {
             color = Color.BLUE
-            textSize = 50f
+            textSize = 40f
+            typeface = Typeface.MONOSPACE
         }
     }
 }
@@ -179,7 +184,7 @@ private class DebugFrames(val gctx: GameContext, capacity: Int = 150) {
     private var count = 0
     private val path = Path()
     private val paint = Paint().apply {
-        color = Color.BLUE
+        color = Color.MAGENTA
         style = Paint.Style.STROKE
         strokeWidth = 3f
     }

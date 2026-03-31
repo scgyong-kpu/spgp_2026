@@ -23,6 +23,23 @@ class World<TLayer>(
     val objectCount: Int
         get() = layers.values.sumOf { it.size }
 
+    fun countAt(layer: TLayer): Int {
+        return layers.getValue(layer).size
+    }
+
+    fun getDebugCounts(): String {
+        return buildString {
+            append('[')
+            var first = true
+            for (gameObjects in layers.values) {
+                if (!first) append(", ")
+                append(gameObjects.size)
+                first = false
+            }
+            append(']')
+        }
+    }
+
     fun add(gameObject: IGameObject, layer: TLayer) {
         // getValue(layer) 는 해당 layer 에 대응하는 목록을 꺼낸다는 뜻이다.
         // 그리고 그 목록에 gameObject 를 추가한다.
