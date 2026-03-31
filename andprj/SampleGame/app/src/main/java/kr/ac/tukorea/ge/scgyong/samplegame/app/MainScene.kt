@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.scgyong.samplegame.R
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
+import kr.ac.tukorea.ge.spgp2026.a2dg.JoyStick
 import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.World
 

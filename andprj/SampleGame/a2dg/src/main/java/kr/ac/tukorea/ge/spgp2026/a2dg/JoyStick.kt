@@ -1,19 +1,16 @@
-package kr.ac.tukorea.ge.scgyong.samplegame.app
+package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
-import android.view.MotionEvent
 import android.util.Log
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
+import android.view.MotionEvent
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sqrt
 
-// JoyStick 은 가상 패드 입력을 위한 게임 오브젝트이다.
-// 이번 단계에서는 사용자가 추가한 joystick_bg, joystick_thumb 이미지를 이용해
-// 화면에 기본 모양만 보이도록 만든다.
+// JoyStick 은 가상 패드 입력을 위한 공통 게임 오브젝트이다.
+// 배경/thumb 리소스와 위치, 크기는 게임마다 다를 수 있으므로 생성자에서 주입받는다.
 class JoyStick(
     private val gctx: GameContext,
     bgResId: Int,
@@ -26,8 +23,6 @@ class JoyStick(
     private val bgBitmap: Bitmap = gctx.res.getBitmap(bgResId)
     private val thumbBitmap: Bitmap = gctx.res.getBitmap(thumbResId)
 
-    // JoyStick 의 위치와 크기도 게임마다 다를 수 있으므로,
-    // a2dg 로 옮기기 쉽게 생성자에서 값을 주입받도록 둔다.
     // x, y 가 음수이면 각각 오른쪽, 아래쪽 경계에서부터의 상대 거리로 해석한다.
     // 예를 들어 centerX = -220f 이면 "오른쪽에서 220 떨어진 곳"이 된다.
     private val resolvedCenterX = if (centerX >= 0f) centerX else gctx.metrics.width + centerX

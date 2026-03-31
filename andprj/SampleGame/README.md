@@ -124,7 +124,7 @@
 - [x] `(추가)` 오브젝트가 현재 `Scene` 에 접근할 수 있도록 `GameContext` 에 `scene` 추가
 - [x] `(추가)` `JoyStick` 을 `a2dg` 로 이동시키기 위해 app 에 의존하던 bitmap res id 삭제
 - [x] `(추가)` `JoyStick` 의 위치와 크기를 app 에서 주입하도록 정리
-- [ ] `JoyStick` 을 `a2dg` 로 이동
+- [x] `JoyStick` 을 `a2dg` 로 이동
 - [ ] `Bullet` 추가 (`ConcurrentModificationException` 발생)
 - [ ] `ConcurrentModificationException` 해결
 - [ ] `a2dg` package 정리
