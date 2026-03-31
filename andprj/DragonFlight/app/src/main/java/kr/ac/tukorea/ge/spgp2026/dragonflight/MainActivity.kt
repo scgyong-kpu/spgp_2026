@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGameActivity() {
         Log.d(javaClass.simpleName, "Start Game")
-        //val intent = Intent(this, DragonFlightActivity::class.java)
-        //startActivity(intent)
+        val intent = Intent(this, DragonFlightActivity::class.java)
+        startActivity(intent)
     }
 }
