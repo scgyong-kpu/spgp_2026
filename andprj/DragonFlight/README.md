@@ -1,0 +1,85 @@
+# DragonFlight
+
+`DragonFlight` 는 이번 학기 Android 2D 게임 개발 수업에서 사용할 프로젝트이다.
+이번 학기에 진행할 작업 순서를 초안 형태로 정리한 것이다.
+
+현재 상태:
+
+- [x] 프로젝트 생성
+- [x] `Start Game` 버튼이 있는 시작 화면 추가
+- [x] `ViewBinding` 적용
+
+## Activity / App 시작
+
+- [ ] 타이틀 화면 성격의 `MainActivity` 에서 실제 게임 Activity 인 `DragonFlightActivity` 를 실행
+- [ ] 게임 Activity 를 portrait mode 로 고정
+- [ ] debug build 일 때만 debug 정보가 보이게 설정
+
+## a2dg 연결
+
+- [ ] `DragonFlight` 에 `a2dg` 모듈 연결
+- [ ] `DragonFlightActivity` 또는 그에 해당하는 Activity 가 `BaseGameActivity` 를 상속
+- [ ] 빈 `MainScene` 을 만들어 root scene 으로 push
+
+## 기본 게임 화면
+
+- [ ] `MainScene` 생성
+- [ ] `Fighter` 클래스 추가
+- [ ] `MainScene` 이 `Fighter` 를 생성해서 화면에 배치
+- [ ] 입력을 받아 `Fighter` 가 좌우 또는 목표 방향으로 이동
+- [ ] 화면 경계를 벗어나지 않게 처리
+
+## Bullet / Spark / 기본 전투
+
+- [ ] 일정 시간마다 `Bullet` 발사
+- [ ] 총알 시작 위치를 전투기 중심보다 자연스러운 위치로 보정
+- [ ] 총알이 화면 밖으로 나가면 삭제
+- [ ] 피격 효과용 `Spark` 추가
+- [ ] `Spark` 표시 시간 조정
+
+## Enemy / 생성 규칙
+
+- [ ] `Enemy` 클래스 추가
+- [ ] `Enemy` 생성 및 배치
+- [ ] 화면 위에서 생성되어 아래로 지나가게 처리
+- [ ] 화면 밖으로 나가면 삭제
+- [ ] `EnemyGenerator` 같은 생성 담당 객체 도입
+- [ ] wave 에 따른 생성 규칙 추가
+- [ ] level 별 이미지/속도 차이 적용
+
+## 충돌 / 점수 / HUD
+
+- [ ] Bullet 과 Enemy 충돌 처리
+- [ ] Enemy life 추가
+- [ ] Bullet power 적용
+- [ ] 충돌 시 점수 증가
+- [ ] `Score` 표시
+- [ ] 점수가 애니메이션되며 증가하도록 적용
+- [ ] `Gauge` 를 이용한 `Enemy` life / `Fighter` cooltime 표시
+
+## Background / Map
+
+- [ ] scrolling background 추가
+- [ ] 세로 스크롤 background 로 일반화
+- [ ] 배경 layer 를 여러 장으로 나누어 draw 순서 조정
+- [ ] map 관련 파일 복사 또는 추가
+- [ ] `TiledBackground` 적용
+- [ ] `ForestTiledBg` 같은 게임 전용 background subclass 적용
+
+## Recycle / Collision / Layer 활용
+
+- [ ] 객체 삭제 기능 확인
+- [ ] 객체 재활용 패턴 적용
+- [ ] 충돌 helper 및 box collision 적용
+
+## Pause / Time / Scene
+
+- [ ] pause 동안 시간이 흐르지 않도록 처리
+- [ ] Activity lifecycle 과 pause/resume 연결
+- [ ] `PauseScene` 에서 transparent scene 방식 적용
+
+## Notes
+
+- 이 문서는 지난해 `DragonFlight` 커밋 목록을 바탕으로 만든 초안이다.
+- 실제 수업에서는 각 항목을 더 작은 commit 단위로 다시 나눌 수 있다.
+- 어떤 항목은 이번 학기에는 생략되거나 다른 순서로 진행될 수 있다.
