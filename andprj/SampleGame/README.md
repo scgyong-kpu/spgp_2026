@@ -126,6 +126,7 @@
 - [x] `(추가)` `JoyStick` 의 위치와 크기를 app 에서 주입하도록 정리
 - [x] `JoyStick` 을 `a2dg` 로 이동
 - [x] `Bullet` 추가 (`ConcurrentModificationException` 발생)
+- [x] `(추가)` FPS 디버그 정보 옆에 현재 오브젝트 수 표시
 - [ ] `ConcurrentModificationException` 해결
 - [ ] `a2dg` package 정리
 - [ ] `app` package 정리

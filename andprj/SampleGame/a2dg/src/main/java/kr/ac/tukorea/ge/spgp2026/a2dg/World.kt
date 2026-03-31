@@ -19,6 +19,10 @@ class World<TLayer>(
     // 같은 map 구조가 된다.
     private val layers = orderedLayers.associateWith { mutableListOf<IGameObject>() }
 
+    // layer 별 목록 길이를 모두 더하면 현재 World 안에 들어 있는 전체 오브젝트 수가 된다.
+    val objectCount: Int
+        get() = layers.values.sumOf { it.size }
+
     fun add(gameObject: IGameObject, layer: TLayer) {
         // getValue(layer) 는 해당 layer 에 대응하는 목록을 꺼낸다는 뜻이다.
         // 그리고 그 목록에 gameObject 를 추가한다.

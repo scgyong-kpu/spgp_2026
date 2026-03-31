@@ -119,7 +119,8 @@ class GameView @JvmOverloads constructor(
 
     private fun Canvas.drawDebugInfo() {
         if (drawsDebugInfo) {
-            val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)}"
+            val objectCount = gctx.sceneStack.top?.world?.objectCount ?: 0
+            val text = "FPS: ${"%.1f".format(1 / gctx.frameTime)} objs: $objectCount"
             drawText(text, 20f, 60f, debugPaint)
         }
         if (drawsFpsGraph) {
