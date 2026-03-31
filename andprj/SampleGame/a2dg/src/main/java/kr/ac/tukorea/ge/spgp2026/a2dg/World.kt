@@ -46,6 +46,10 @@ class World<TLayer>(
         layers.getValue(layer).add(gameObject)
     }
 
+    fun remove(gameObject: IGameObject, layer: TLayer): Boolean {
+        return layers.getValue(layer).remove(gameObject)
+    }
+
     fun update(gctx: GameContext) {
         // 먼저 layer 들을 순서대로 돌고,
         // 각 layer 안에 들어 있는 GameObject 들을 다시 순서대로 update 한다.

@@ -16,6 +16,10 @@ class Bullet(
     override fun update(gctx: GameContext) {
         x += SPEED * cos(angle) * gctx.frameTime
         y += SPEED * sin(angle) * gctx.frameTime
+
+        if (x < -RADIUS || x > gctx.metrics.width + RADIUS || y < -RADIUS || y > gctx.metrics.height + RADIUS) {
+            (gctx.scene as? MainScene)?.world?.remove(this, MainScene.Layer.BULLET)
+        }
     }
 
     override fun draw(canvas: Canvas) {
