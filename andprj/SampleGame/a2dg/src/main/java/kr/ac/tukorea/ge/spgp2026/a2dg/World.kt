@@ -1,8 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.graphics.Canvas
-import android.os.Handler
-import android.os.Looper
 
 // World 는 Scene 안의 GameObject 들을 layer 별로 나누어 담는 컨테이너이다.
 // 이 단계부터는 layer 를 단순 Int 인덱스로 고정하지 않고, 게임이 정의한 layer 타입을 외부에서 받아 사용한다.
@@ -12,17 +10,6 @@ class World<TLayer>(
     // MainScene 에서는 이 자리에 MainScene.Layer enum 이 들어오고, 다른 게임이라면 다른 enum 이 들어올 수 있다.
     orderedLayers: Array<TLayer>,
 ) {
-    // 방법 1 실험:
-    // 순회 중 add/remove 가 일어날 때 ConcurrentModificationException 을 피하려고,
-    // 즉시 반영이 꼭 필요하지 않은 변경은 Handler 로 "조금 뒤에" 처리하도록 미룬다.
-    //
-    // 이 방법은 구현이 단순하지만 단점도 있다.
-    // add/remove 요청을 한 직후에는 layers 안의 실제 목록이 아직 안 바뀌어 있을 수 있어서,
-    // objectCount 나 getDebugCounts() 같은 디버그 값이 잠깐 실제 체감 상태와 어긋날 수 있다.
-    // 예를 들어 Bullet 을 하나 발사했는데 이번 프레임의 count 에는 아직 안 보이거나,
-    // 화면 밖으로 나간 Bullet 이 다음 프레임까지 count 에 잠깐 남아 있을 수 있다.
-    private val mainHandler = Handler(Looper.getMainLooper())
-
     // 전달받은 layer 순서를 draw / update 순서의 기준으로 사용한다.
     // associateWith 는 "각 layer 값을 key 로 하고, 거기에 대응하는 빈 목록을 value 로 만든다"는 뜻이다.
     // 결과적으로 layers 는
@@ -31,6 +18,25 @@ class World<TLayer>(
     //   Layer.FIGHTER -> MutableList<IGameObject>
     // 같은 map 구조가 된다.
     private val layers = orderedLayers.associateWith { mutableListOf<IGameObject>() }
+
+    // 방법 2:
+    // 순회 도중 add/remove 요청이 오면 즉시 목록을 건드리지 않고,
+    // "어떤 오브젝트를 어느 layer 에 넣거나 뺄지"를 큐에 기록해 둔다.
+    // 그 다음 update() 의 layer 순회가 모두 끝난 뒤 한 번에 반영한다.
+    //
+    // 이런 방식은 게임이 아니더라도 일반적인 컬렉션 순회 코드에서
+    // ConcurrentModificationException 을 피할 때 자주 사용하는 대표적인 방법 중 하나이다.
+    // 즉 "순회 중에는 수정 요청만 모아 두고, 순회가 끝난 뒤 일괄 반영한다"는 패턴으로 이해하면 된다.
+    //
+    // 여기서는 gameObject 만 저장하면 어느 목록에 넣고 빼야 할지 모르므로,
+    // layer 도 함께 기억하는 PendingEntry 구조를 사용한다.
+    private data class PendingEntry<TLayer>(
+        val gameObject: IGameObject,
+        val layer: TLayer,
+    )
+
+    private val objectsToAdd = mutableListOf<PendingEntry<TLayer>>()
+    private val objectsToRemove = mutableListOf<PendingEntry<TLayer>>()
 
     // layer 별 목록 길이를 모두 더하면 현재 World 안에 들어 있는 전체 오브젝트 수가 된다.
     val objectCount: Int
@@ -58,36 +64,30 @@ class World<TLayer>(
     //
     // immediately=false:
     // - update/draw 순회와 겹칠 수 있는 런타임 add 요청
-    // - Handler 로 메시지 큐에 넣어 두었다가 나중에 추가
+    // - objectsToAdd 큐에만 기록해 두고, update 끝에서 한 번에 추가
     //
     // immediately=true:
     // - Scene 시작 시점처럼 아직 순회가 돌고 있지 않은 초기 구성
     // - layers 목록에 즉시 반영
     fun add(gameObject: IGameObject, layer: TLayer, immediately: Boolean = false) {
-        val objects = layers.getValue(layer)
         if (immediately) {
-            objects.add(gameObject)
+            layers.getValue(layer).add(gameObject)
             return
         }
-        mainHandler.post {
-            objects.add(gameObject)
-        }
+        objectsToAdd.add(PendingEntry(gameObject, layer))
     }
 
     // remove 도 add 와 같은 규칙을 따른다.
     // 보통은 immediately=false 로 두어 나중에 지우고,
     // 순회와 관계없는 안전한 시점에만 immediately=true 를 쓸 수 있다.
     //
-    // 이 방법의 단점은 add 와 마찬가지로,
-    // 삭제 요청 직후에도 objectCount/getDebugCounts() 에는 잠깐 남아 보일 수 있다는 점이다.
+    // 이 방법은 Handler 방식보다 한 프레임 안에서 더 예측 가능하지만,
+    // 삭제 요청 직후에는 아직 layers 에 남아 있으므로 이번 update 중에는 계속 보일 수 있다.
     fun remove(gameObject: IGameObject, layer: TLayer, immediately: Boolean = false): Boolean {
-        val objects = layers.getValue(layer)
         if (immediately) {
-            return objects.remove(gameObject)
+            return layers.getValue(layer).remove(gameObject)
         }
-        mainHandler.post {
-            objects.remove(gameObject)
-        }
+        objectsToRemove.add(PendingEntry(gameObject, layer))
         return true
     }
 
@@ -99,6 +99,7 @@ class World<TLayer>(
                 obj.update(gctx)
             }
         }
+        flushPendingChanges()
     }
 
     fun draw(canvas: Canvas) {
@@ -109,5 +110,19 @@ class World<TLayer>(
                 obj.draw(canvas)
             }
         }
+    }
+
+    private fun flushPendingChanges() {
+        // 같은 프레임에 remove 와 add 가 함께 들어온 경우,
+        // 먼저 remove 를 반영한 뒤 add 를 반영하면 결과를 더 직관적으로 이해하기 쉽다.
+        for (entry in objectsToRemove) {
+            layers.getValue(entry.layer).remove(entry.gameObject)
+        }
+        objectsToRemove.clear()
+
+        for (entry in objectsToAdd) {
+            layers.getValue(entry.layer).add(entry.gameObject)
+        }
+        objectsToAdd.clear()
     }
 }
