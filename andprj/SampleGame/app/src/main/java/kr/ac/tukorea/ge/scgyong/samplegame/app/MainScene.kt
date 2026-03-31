@@ -35,10 +35,10 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // MainScene 은 실제 GameObject 구성과 배치를 담당하고,
     // World 는 그 GameObject 들을 layer 순서대로 update / draw 하는 역할을 맡는다.
     override val world = World(Layer.entries.toTypedArray()).apply {
-        repeat(10) { add(Ball.random(gctx), Layer.BALL, immediately = true) }
-        repeat(5) { add(BouncingCircle(gctx), Layer.CIRCLE, immediately = true) }
-        add(fighter, Layer.FIGHTER, immediately = true)
-        add(joyStick, Layer.JOYSTICK, immediately = true)
+        repeat(10) { add(Ball.random(gctx), Layer.BALL) }
+        repeat(5) { add(BouncingCircle(gctx), Layer.CIRCLE) }
+        add(fighter, Layer.FIGHTER)
+        add(joyStick, Layer.JOYSTICK)
     }
 
     override fun onEnter() {
