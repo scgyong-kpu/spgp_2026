@@ -65,22 +65,32 @@ class World<TLayer>(
         // 이렇게 하면 어떤 객체가 update() 도중 자기 자신을 remove() 해도
         // 아직 방문하지 않은 앞쪽 index 들은 영향을 덜 받고 안전하게 계속 순회할 수 있다.
         //
-        // 방법 4 설명:
-        // Iterator 를 쓰는 방식도 일반적인 해결책이다.
-        // 예를 들어 Java 스타일로는
-        //   val iterator = layer.iterator()
-        //   while (iterator.hasNext()) {
-        //       val obj = iterator.next()
-        //       obj.update(gctx)
-        //       if (/* 지워야 한다면 */) {
-        //           iterator.remove()
+        // 방법 5 설명:
+        // 또 다른 해결책은 "삭제 여부를 객체 내부 멤버 변수로 표시만 해 두고,
+        // 실제 remove() 는 나중에 한 번에 정리하는 것"이다.
+        //
+        // 예를 들어 Bullet 이 화면 밖으로 나가면 바로 remove() 하지 않고
+        // isDeleted = true 같은 플래그만 켜 둔 뒤,
+        // World 가 update 나 draw 의 적당한 시점에
+        // isDeleted 인 객체를 모아서 한 번에 정리할 수 있다.
+        //
+        // 예를 들면
+        //   for (layer in layers.values) {
+        //       for (obj in layer) {
+        //           obj.update(gctx)
+        //       }
+        //       for (obj in layer) {
+        //           if ((obj as? Deletable)?.isDeleted == true) {
+        //               // remove ...
+        //           }
         //       }
         //   }
-        // 처럼 "순회에 사용한 같은 Iterator" 로 remove() 해야 안전하다.
+        // 처럼 update loop 뒤에 "삭제 표시가 된 객체를 정리하는 루프"를
+        // 한 번 더 도는 방식으로 설명할 수 있다.
         //
-        // 다만 현재 프로젝트에서는 "객체가 자기 자신을 지우는" 흐름을 설명하려고 하므로,
-        // Iterator 자체를 객체 바깥에서 관리해야 하는 방법보다
-        // update loop 를 역순으로 도는 방법 3 이 더 직관적이라고 보고 그쪽을 최종 선택했다.
+        // 이 방법도 게임뿐 아니라 일반 컬렉션 처리에서 자주 쓰이는 지연 삭제 패턴이다.
+        // 다만 현재 프로젝트에서는 "객체가 자기 자신을 지우는" 흐름을 가장 직접적으로 보여주기 위해
+        // update loop 를 역순으로 도는 방법 3 을 최종 선택했다.
         for (layer in layers.values) {
             for (i in layer.lastIndex downTo 0) {
                 layer[i].update(gctx)
