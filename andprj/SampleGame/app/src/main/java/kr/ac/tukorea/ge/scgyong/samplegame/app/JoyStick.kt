@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.view.MotionEvent
+import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
 import kr.ac.tukorea.ge.scgyong.samplegame.R
@@ -14,9 +15,6 @@ import kotlin.math.sqrt
 // JoyStick 은 가상 패드 입력을 위한 게임 오브젝트이다.
 // 이번 단계에서는 사용자가 추가한 joystick_bg, joystick_thumb 이미지를 이용해
 // 화면에 기본 모양만 보이도록 만든다.
-// 이번 커밋에서는 터치 메시지를 JoyStick 이 직접 받아
-// Touch Down 인 동안만 보이게 처리하고,
-// 아직 thumb 이동이나 angle/power 계산은 붙이지 않는다.
 class JoyStick(private val gctx: GameContext) : IGameObject {
     private val bgBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.joystick_bg)
     private val thumbBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.joystick_thumb)
@@ -118,6 +116,7 @@ class JoyStick(private val gctx: GameContext) : IGameObject {
         // power 는 현재 thumb 가 중심에서 얼마나 멀리 나가 있는지를
         // 0.0~1.0 범위 비율로 바꾼 값이다.
         power = (radius / maxRadius).coerceIn(0f, 1f)
+        Log.d(javaClass.simpleName, "angle=${"%.2f".format(angle)} power=${"%.2f".format(power)}")
         thumbX = centerX + dx
         thumbY = centerY + dy
     }
