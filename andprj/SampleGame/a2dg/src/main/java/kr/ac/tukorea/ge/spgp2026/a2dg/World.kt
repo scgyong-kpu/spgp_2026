@@ -64,6 +64,23 @@ class World<TLayer>(
         // 각 layer 안에 들어 있는 GameObject 들은 뒤에서 앞으로 update 한다.
         // 이렇게 하면 어떤 객체가 update() 도중 자기 자신을 remove() 해도
         // 아직 방문하지 않은 앞쪽 index 들은 영향을 덜 받고 안전하게 계속 순회할 수 있다.
+        //
+        // 방법 4 설명:
+        // Iterator 를 쓰는 방식도 일반적인 해결책이다.
+        // 예를 들어 Java 스타일로는
+        //   val iterator = layer.iterator()
+        //   while (iterator.hasNext()) {
+        //       val obj = iterator.next()
+        //       obj.update(gctx)
+        //       if (/* 지워야 한다면 */) {
+        //           iterator.remove()
+        //       }
+        //   }
+        // 처럼 "순회에 사용한 같은 Iterator" 로 remove() 해야 안전하다.
+        //
+        // 다만 현재 프로젝트에서는 "객체가 자기 자신을 지우는" 흐름을 설명하려고 하므로,
+        // Iterator 자체를 객체 바깥에서 관리해야 하는 방법보다
+        // update loop 를 역순으로 도는 방법 3 이 더 직관적이라고 보고 그쪽을 최종 선택했다.
         for (layer in layers.values) {
             for (i in layer.lastIndex downTo 0) {
                 layer[i].update(gctx)
