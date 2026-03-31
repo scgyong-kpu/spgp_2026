@@ -116,7 +116,7 @@
 - [x] `JoyStick` 이 `Touch Down` 인 동안만 보이게 처리
 - [x] `JoyStick` 이 `+/- BG_RADIUS` 범위 안에서만 움직이게 처리
 - [x] `JoyStick` 이 적당한 반지름의 원 안에서만 움직이게 처리
-- [ ] `JoyStick` 의 `angle` 및 `power` 계산 적용
+- [x] `JoyStick` 의 `angle` 및 `power` 계산 적용
 - [ ] `Fighter` 를 `JoyStick` 으로 움직이게 변경
 - [ ] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
 - [ ] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
