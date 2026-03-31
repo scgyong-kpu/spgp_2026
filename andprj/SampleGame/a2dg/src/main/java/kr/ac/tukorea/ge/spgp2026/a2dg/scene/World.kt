@@ -1,6 +1,8 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.scene
 
 import android.graphics.Canvas
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 // World 는 Scene 안의 GameObject 들을 layer 별로 나누어 담는 컨테이너이다.
 // 이 단계부터는 layer 를 단순 Int 인덱스로 고정하지 않고, 게임이 정의한 layer 타입을 외부에서 받아 사용한다.

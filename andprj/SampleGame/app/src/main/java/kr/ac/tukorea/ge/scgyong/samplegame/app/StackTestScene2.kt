@@ -5,8 +5,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class StackTestScene2(gctx: GameContext) : Scene(gctx) {
     private val backgroundPaint = Paint().apply {

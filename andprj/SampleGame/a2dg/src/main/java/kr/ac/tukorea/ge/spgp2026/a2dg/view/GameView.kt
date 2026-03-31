@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.view
 
 import android.app.Activity
 import android.content.Context
@@ -14,6 +14,7 @@ import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withMatrix
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 
 // GameView 는 GameMetrics 가 들고 있는 현재 가상 좌표계를 기준으로 장면을 그리고 입력을 처리한다.
 // 따라서 게임이 createRootScene() 같은 시점에서 metrics.setSize() 를 호출하면,

@@ -1,9 +1,9 @@
 package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import kr.ac.tukorea.ge.scgyong.samplegame.BuildConfig
-import kr.ac.tukorea.ge.spgp2026.a2dg.BaseGameActivity
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.activity.BaseGameActivity
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class ShooterGameActivity : BaseGameActivity() {
     // BuildConfig stays in the app module.

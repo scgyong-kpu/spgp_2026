@@ -3,10 +3,10 @@ package kr.ac.tukorea.ge.scgyong.samplegame.app
 import android.util.Log
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.scgyong.samplegame.R
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.JoyStick
-import kr.ac.tukorea.ge.spgp2026.a2dg.Scene
-import kr.ac.tukorea.ge.spgp2026.a2dg.World
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.JoyStick
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class MainScene(gctx: GameContext) : Scene(gctx) {
     // layer 종류는 World 가 아니라 MainScene 같은 게임 쪽에서 정의한다.

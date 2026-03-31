@@ -3,9 +3,9 @@ package kr.ac.tukorea.ge.scgyong.samplegame.app
 import android.graphics.Canvas
 import android.util.Log
 import androidx.core.graphics.withRotation
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.JoyStick
-import kr.ac.tukorea.ge.spgp2026.a2dg.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.JoyStick
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.scgyong.samplegame.R
 import kotlin.math.cos
 import kotlin.math.max

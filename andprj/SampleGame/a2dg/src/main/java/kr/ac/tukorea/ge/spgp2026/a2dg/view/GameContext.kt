@@ -1,4 +1,8 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.view
+
+import kr.ac.tukorea.ge.spgp2026.a2dg.res.GameResources
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.SceneStack
 
 class GameContext(
     val view: GameView,

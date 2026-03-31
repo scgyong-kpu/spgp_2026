@@ -1,9 +1,10 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.objects
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 // Sprite 는 비트맵 하나를 가지는 가장 단순한 GameObject 기반 클래스이다.
 // 게임 로직에서 다루기 쉬운 중심점 x, y 와 화면에 그릴 width, height 를 직접 멤버로 둔다.

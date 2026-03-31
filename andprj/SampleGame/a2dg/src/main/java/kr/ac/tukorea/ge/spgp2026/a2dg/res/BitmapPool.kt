@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.res
 
 import android.content.res.Resources
 import android.graphics.Bitmap

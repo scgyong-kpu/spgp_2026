@@ -1,7 +1,7 @@
 package kr.ac.tukorea.ge.scgyong.samplegame.app
 
-import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.scgyong.samplegame.R
 import kotlin.math.cos
 import kotlin.math.sin

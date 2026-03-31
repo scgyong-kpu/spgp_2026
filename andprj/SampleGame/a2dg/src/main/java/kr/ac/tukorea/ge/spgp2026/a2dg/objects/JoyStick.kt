@@ -1,10 +1,11 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.objects
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sqrt

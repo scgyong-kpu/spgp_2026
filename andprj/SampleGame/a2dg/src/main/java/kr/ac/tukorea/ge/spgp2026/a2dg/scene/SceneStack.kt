@@ -1,4 +1,6 @@
-package kr.ac.tukorea.ge.spgp2026.a2dg
+package kr.ac.tukorea.ge.spgp2026.a2dg.scene
+
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 // SceneStack 은 Scene 들을 stack 구조로 관리하는 가장 단순한 컨테이너이다.
 // 지금은 push / pop / change 와 현재 Scene 을 읽는 top 프로퍼티를 제공한다.
