@@ -35,9 +35,8 @@ class Fighter(gctx: GameContext, private val joyStick: JoyStick) : Sprite(gctx, 
         if (bulletCoolTime <= 0f) {
             val bulletAngle = Math.toRadians(angleDegree.toDouble()).toFloat()
             val bullet = Bullet(x, y, bulletAngle)
-            // Bullet 은 현재 Scene 의 World 에 바로 추가한다.
-            // 지금 단계에서는 update 중에 add() 가 일어나므로,
-            // 다음 단계에서 ConcurrentModificationException 을 확인하고 해결할 예정이다.
+            // Bullet 생성 요청은 현재 Scene 의 World 에 보낸다.
+            // 실제 add() 를 바로 반영할지, 나중에 반영할지는 World 가 결정한다.
             (gctx.scene as? MainScene)?.world?.add(bullet, MainScene.Layer.BULLET)
             bulletCoolTime = BULLET_INTERVAL
         }

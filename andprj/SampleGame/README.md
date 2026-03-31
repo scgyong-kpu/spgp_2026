@@ -129,7 +129,7 @@
 - [x] `(추가)` FPS 디버그 정보 옆에 현재 오브젝트 수 표시
 - [x] `(추가)` FPS 디버그 정보 아래에 레이어별 오브젝트 수 표시
 - [ ] `ConcurrentModificationException` 해결
-  - [ ] 방법 1: `Handler` 를 통해 나중에 삭제하기
+  - [x] 방법 1: `Handler` 를 통해 나중에 삭제하기
   - [ ] 방법 2: add/remove 요청을 등록해 두었다가 `update()` 가 끝나면 일괄 반영하기
   - [ ] 방법 3: `update` loop 를 거꾸로 돌기
   - [ ] 방법 4: `Iterator` 를 사용해 순회 중 안전하게 삭제하기

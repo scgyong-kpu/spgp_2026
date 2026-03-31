@@ -1,6 +1,8 @@
 package kr.ac.tukorea.ge.spgp2026.a2dg
 
 import android.graphics.Canvas
+import android.os.Handler
+import android.os.Looper
 
 // World 는 Scene 안의 GameObject 들을 layer 별로 나누어 담는 컨테이너이다.
 // 이 단계부터는 layer 를 단순 Int 인덱스로 고정하지 않고, 게임이 정의한 layer 타입을 외부에서 받아 사용한다.
@@ -10,6 +12,17 @@ class World<TLayer>(
     // MainScene 에서는 이 자리에 MainScene.Layer enum 이 들어오고, 다른 게임이라면 다른 enum 이 들어올 수 있다.
     orderedLayers: Array<TLayer>,
 ) {
+    // 방법 1 실험:
+    // 순회 중 add/remove 가 일어날 때 ConcurrentModificationException 을 피하려고,
+    // 즉시 반영이 꼭 필요하지 않은 변경은 Handler 로 "조금 뒤에" 처리하도록 미룬다.
+    //
+    // 이 방법은 구현이 단순하지만 단점도 있다.
+    // add/remove 요청을 한 직후에는 layers 안의 실제 목록이 아직 안 바뀌어 있을 수 있어서,
+    // objectCount 나 getDebugCounts() 같은 디버그 값이 잠깐 실제 체감 상태와 어긋날 수 있다.
+    // 예를 들어 Bullet 을 하나 발사했는데 이번 프레임의 count 에는 아직 안 보이거나,
+    // 화면 밖으로 나간 Bullet 이 다음 프레임까지 count 에 잠깐 남아 있을 수 있다.
+    private val mainHandler = Handler(Looper.getMainLooper())
+
     // 전달받은 layer 순서를 draw / update 순서의 기준으로 사용한다.
     // associateWith 는 "각 layer 값을 key 로 하고, 거기에 대응하는 빈 목록을 value 로 만든다"는 뜻이다.
     // 결과적으로 layers 는
@@ -40,14 +53,42 @@ class World<TLayer>(
         }
     }
 
-    fun add(gameObject: IGameObject, layer: TLayer) {
-        // getValue(layer) 는 해당 layer 에 대응하는 목록을 꺼낸다는 뜻이다.
-        // 그리고 그 목록에 gameObject 를 추가한다.
-        layers.getValue(layer).add(gameObject)
+    // 즉시 반영이 필요 없는 보통 경우에는 immediately=false 로 두고,
+    // 초기 Scene 구성처럼 순회와 무관한 시점에만 immediately=true 를 사용한다.
+    //
+    // immediately=false:
+    // - update/draw 순회와 겹칠 수 있는 런타임 add 요청
+    // - Handler 로 메시지 큐에 넣어 두었다가 나중에 추가
+    //
+    // immediately=true:
+    // - Scene 시작 시점처럼 아직 순회가 돌고 있지 않은 초기 구성
+    // - layers 목록에 즉시 반영
+    fun add(gameObject: IGameObject, layer: TLayer, immediately: Boolean = false) {
+        val objects = layers.getValue(layer)
+        if (immediately) {
+            objects.add(gameObject)
+            return
+        }
+        mainHandler.post {
+            objects.add(gameObject)
+        }
     }
 
-    fun remove(gameObject: IGameObject, layer: TLayer): Boolean {
-        return layers.getValue(layer).remove(gameObject)
+    // remove 도 add 와 같은 규칙을 따른다.
+    // 보통은 immediately=false 로 두어 나중에 지우고,
+    // 순회와 관계없는 안전한 시점에만 immediately=true 를 쓸 수 있다.
+    //
+    // 이 방법의 단점은 add 와 마찬가지로,
+    // 삭제 요청 직후에도 objectCount/getDebugCounts() 에는 잠깐 남아 보일 수 있다는 점이다.
+    fun remove(gameObject: IGameObject, layer: TLayer, immediately: Boolean = false): Boolean {
+        val objects = layers.getValue(layer)
+        if (immediately) {
+            return objects.remove(gameObject)
+        }
+        mainHandler.post {
+            objects.remove(gameObject)
+        }
+        return true
     }
 
     fun update(gctx: GameContext) {

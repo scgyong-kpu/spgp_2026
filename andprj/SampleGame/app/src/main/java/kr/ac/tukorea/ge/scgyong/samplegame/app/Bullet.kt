@@ -18,6 +18,8 @@ class Bullet(
         y += SPEED * sin(angle) * gctx.frameTime
 
         if (x < -RADIUS || x > gctx.metrics.width + RADIUS || y < -RADIUS || y > gctx.metrics.height + RADIUS) {
+            // Bullet 은 삭제 정책을 모르고, 현재 Scene 의 World 에 remove() 만 요청한다.
+            // 실제 삭제를 바로 할지, 나중에 할지는 World 가 결정한다.
             (gctx.scene as? MainScene)?.world?.remove(this, MainScene.Layer.BULLET)
         }
     }
