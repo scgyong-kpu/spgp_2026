@@ -10,6 +10,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "kr.ac.tukorea.ge.spgp2026.dragonflight"
         minSdk = 24
