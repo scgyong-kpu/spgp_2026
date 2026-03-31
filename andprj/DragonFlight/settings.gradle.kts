@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "DragonFlight"
 include(":app")
+include(":a2dg")
  
