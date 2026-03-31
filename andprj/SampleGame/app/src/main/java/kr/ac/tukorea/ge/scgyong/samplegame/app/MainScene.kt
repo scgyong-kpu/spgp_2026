@@ -16,10 +16,10 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         JOYSTICK,
     }
 
-    // Fighter 는 터치 입력에서 직접 setTarget() 을 호출해야 하므로
-    // World 안에만 숨기지 않고 멤버로도 들고 있는 편이 더 단순하다.
-    private val fighter = Fighter(gctx)
     private val joyStick = JoyStick(gctx)
+    // Fighter 는 이제 JoyStick 의 angle, power 를 직접 읽어 움직인다.
+    // 그래서 생성할 때 JoyStick 참조를 함께 넘긴다.
+    private val fighter = Fighter(gctx, joyStick)
 
     // MainScene 은 실제 GameObject 구성과 배치를 담당하고,
     // World 는 그 GameObject 들을 layer 순서대로 update / draw 하는 역할을 맡는다.

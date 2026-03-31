@@ -2,80 +2,48 @@ package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.graphics.Canvas
 import android.util.Log
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.sqrt
 import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.Sprite
 import kr.ac.tukorea.ge.scgyong.samplegame.R
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.cos
+import kotlin.math.sin
 
 private const val FIGHTER_SIZE = 250f
 private const val FIGHTER_ANGLE_OFFSET = 90f
 private const val FIGHTER_SPEED = 500f
 
-class Fighter(gctx: GameContext) : Sprite(gctx, R.mipmap.plane_240) {
+class Fighter(gctx: GameContext, private val joyStick: JoyStick) : Sprite(gctx, R.mipmap.plane_240) {
     private var angleDegree = -FIGHTER_ANGLE_OFFSET
-    private var targetX = gctx.metrics.width / 2f
-    private var targetY = gctx.metrics.height - FIGHTER_SIZE
-    // dx, dy 는 이번 프레임에 더할 값이 아니라, 초당 몇 unit 씩 움직여야 하는지를 저장하는 속도 벡터이다.
-    private var dx = 0f
-    private var dy = -FIGHTER_SPEED
 
     init {
         width = FIGHTER_SIZE
         height = FIGHTER_SIZE
-        setPosition(targetX, targetY, appliesAngle = false)
-    }
-
-    fun setTarget(x: Float, y: Float) {
-        targetX = x
-        targetY = y
-
-        // 현재 위치에서 목표 지점까지의 방향 벡터를 구한다.
-        val dx = targetX - this.x
-        val dy = targetY - this.y
-        val distance = sqrt(dx * dx + dy * dy)
-        if (distance == 0f) return
-
-        // 방향 벡터를 단위 벡터로 만든 뒤, FIGHTER_SPEED 를 곱해 초당 속도 벡터로 바꿔 저장한다.
-        this.dx = dx / distance * FIGHTER_SPEED
-        this.dy = dy / distance * FIGHTER_SPEED
-
-        // 전투기가 바라볼 방향도 목표 지점을 향하도록 각도를 함께 계산해 둔다.
-        angleDegree = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
-        Log.d(javaClass.simpleName, "angleDegree: ${"%.2f".format(angleDegree)}")
-    }
-
-    private fun setPosition(x: Float, y: Float, appliesAngle: Boolean = true) {
-        if (appliesAngle) {
-            // 이전 위치에서 새 위치로 향하는 방향을 각도로 바꿔, 나중에 전투기 회전에 쓸 수 있게 둔다.
-            val dx = (x - this.x).toDouble()
-            val dy = (y - this.y).toDouble()
-            angleDegree = Math.toDegrees(atan2(dy, dx)).toFloat()
-            Log.d(javaClass.simpleName, "angleDegree: ${"%.2f".format(angleDegree)}")
-        }
-        this.x = x
-        this.y = y
+        // x, y 는 스프라이트 중심점이므로, 아래쪽에 보이게 하려면
+        // 높이 절반만큼은 화면 안쪽으로 들어오게 두어야 한다.
+        x = gctx.metrics.width / 2f
+        y = gctx.metrics.height - FIGHTER_SIZE / 2f
     }
 
     override fun update(gctx: GameContext) {
-        // 목표 지점까지 얼마나 남았는지 본다.
-        val remainingDx = targetX - x
-        val remainingDy = targetY - y
-        if (remainingDx == 0f && remainingDy == 0f) {
+        // 조이스틱의 angle 은 radian, power 는 0.0~1.0 이다.
+        // power 가 0 이면 멈춰 있고, 1.0 이면 최대 속도로 움직인다.
+        val distance = FIGHTER_SPEED * joyStick.power * gctx.frameTime
+        if (distance == 0f) {
             return
         }
 
-        // 이번 프레임 동안 x, y 축으로 각각 얼마나 움직일지를 계산한다.
-        val frameDx = this.dx * gctx.frameTime
-        val frameDy = this.dy * gctx.frameTime
-
-        // 어느 한 축이라도 이번 프레임 이동량이 남은 거리보다 크면 그 축만 목표값에 붙인다.
-        val nextX = if (abs(remainingDx) <= abs(frameDx)) targetX else x + frameDx
-        val nextY = if (abs(remainingDy) <= abs(frameDy)) targetY else y + frameDy
-
-        setPosition(nextX, nextY, appliesAngle = false)
+        val dx = cos(joyStick.angle) * distance
+        val dy = sin(joyStick.angle) * distance
+        val edgeMargin = FIGHTER_SIZE / 4f
+        // 전투기 중심점이 화면 경계보다 일정 거리만큼 더 바깥으로 나갈 수 있게 둔다.
+        // 이렇게 하면 스프라이트가 화면 가장자리에 걸칠 때도 이동이 덜 답답하게 느껴진다.
+        x = max(-edgeMargin, min(gctx.metrics.width + edgeMargin, x + dx))
+        y = max(-edgeMargin, min(gctx.metrics.height + edgeMargin, y + dy))
+        angleDegree = Math.toDegrees(joyStick.angle.toDouble()).toFloat()
+        Log.d(javaClass.simpleName, "angleDegree: ${"%.2f".format(angleDegree)} power=${"%.2f".format(joyStick.power)}")
     }
 
     override fun draw(canvas: Canvas) {
