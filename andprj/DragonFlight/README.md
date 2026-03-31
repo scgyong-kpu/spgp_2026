@@ -18,6 +18,9 @@
 ## a2dg 연결
 
 - [ ] `DragonFlight` 에 `a2dg` 모듈 연결
+  - [x] `SampleGame` 에서 작성한 `a2dg` 모듈 을 그대로 복사
+  - [ ] gradle 파일 에서 `a2dg` 사용여부 연결 (`settings.gradle.kts`)
+  - [ ] `app` 모듈 에서 `a2dg` 모듈에 의존하도록 연결 (`build.gradle.kts` / `:app`)
 - [ ] `DragonFlightActivity` 또는 그에 해당하는 Activity 가 `BaseGameActivity` 를 상속
 - [ ] 빈 `MainScene` 을 만들어 root scene 으로 push
 
