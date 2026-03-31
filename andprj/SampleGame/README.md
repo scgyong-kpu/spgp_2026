@@ -80,6 +80,7 @@
 
 아래 목록은 앞으로 여러 커밋에 걸쳐 하나씩 해결해 나갈 후보들이다.
 진행하면서 항목을 지우거나 체크해 나갈 수 있도록 남겨 둔다.
+`(추가)` 표시는 처음 계획에는 없었지만, 진행 중 필요해져 중간에 끼워 넣은 항목이다.
 
 - [x] `Scene` 공통 추상 타입 도입
 - [x] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
@@ -120,6 +121,7 @@
 - [x] `Fighter` 를 `JoyStick` 으로 움직이게 변경
 - [x] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
 - [x] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
+- [x] `(추가)` 오브젝트가 현재 `Scene` 에 접근할 수 있도록 `GameContext` 에 `scene` 추가
 - [ ] `JoyStick` 을 `a2dg` 로 이동
 - [ ] `Bullet` 추가 (`ConcurrentModificationException` 발생)
 - [ ] `ConcurrentModificationException` 해결

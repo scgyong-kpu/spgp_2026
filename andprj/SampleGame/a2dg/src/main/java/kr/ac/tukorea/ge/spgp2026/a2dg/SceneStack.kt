@@ -2,7 +2,7 @@ package kr.ac.tukorea.ge.spgp2026.a2dg
 
 // SceneStack 은 Scene 들을 stack 구조로 관리하는 가장 단순한 컨테이너이다.
 // 지금은 push / pop / change 와 현재 Scene 을 읽는 top 프로퍼티를 제공한다.
-class SceneStack {
+class SceneStack(private val gctx: GameContext) {
     private val scenes = mutableListOf<Scene>()
 
     val top: Scene?
@@ -17,13 +17,17 @@ class SceneStack {
     fun push(scene: Scene) {
         top?.onPause()
         scenes.add(scene)
+        gctx.scene = scene
         scene.onEnter()
     }
 
     fun pop(): Scene {
         val popped = scenes.removeAt(scenes.lastIndex)
         popped.onExit()
-        top?.onResume()
+        top?.let {
+            gctx.scene = it
+            it.onResume()
+        }
         return popped
     }
 
@@ -39,6 +43,7 @@ class SceneStack {
         val previous = scenes.removeAt(scenes.lastIndex)
         previous.onExit()
         scenes.add(scene)
+        gctx.scene = scene
         scene.onEnter()
         return previous
     }
