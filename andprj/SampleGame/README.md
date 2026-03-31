@@ -119,13 +119,13 @@
 - [x] `JoyStick` 이 적당한 반지름의 원 안에서만 움직이게 처리
 - [x] `JoyStick` 의 `angle` 및 `power` 계산 적용
 - [x] `Fighter` 를 `JoyStick` 으로 움직이게 변경
-- [x] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
-- [x] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
+- [ ] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
+- [ ] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
 - [x] `(추가)` 오브젝트가 현재 `Scene` 에 접근할 수 있도록 `GameContext` 에 `scene` 추가
 - [x] `(추가)` `JoyStick` 을 `a2dg` 로 이동시키기 위해 app 에 의존하던 bitmap res id 삭제
 - [x] `(추가)` `JoyStick` 의 위치와 크기를 app 에서 주입하도록 정리
 - [x] `JoyStick` 을 `a2dg` 로 이동
-- [ ] `Bullet` 추가 (`ConcurrentModificationException` 발생)
+- [x] `Bullet` 추가 (`ConcurrentModificationException` 발생)
 - [ ] `ConcurrentModificationException` 해결
 - [ ] `a2dg` package 정리
 - [ ] `app` package 정리

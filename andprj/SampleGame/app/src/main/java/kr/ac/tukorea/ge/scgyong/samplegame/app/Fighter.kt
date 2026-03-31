@@ -7,21 +7,19 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.JoyStick
 import kr.ac.tukorea.ge.spgp2026.a2dg.Sprite
 import kr.ac.tukorea.ge.scgyong.samplegame.R
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.cos
-import kotlin.math.roundToInt
 import kotlin.math.sin
 
 private const val FIGHTER_SIZE = 250f
 private const val FIGHTER_ANGLE_OFFSET = 90f
 private const val FIGHTER_SPEED = 500f
-// 8방향은 360도를 8등분한 것이므로 한 칸 크기는 45도, 즉 PI / 4 radian 이다.
-// 아래 update() 에서는 이 값을 기준으로 JoyStick 의 연속 angle 을 가까운 8방향으로 반올림한다.
-private const val DIRECTION_8_STEP = (Math.PI / 4.0).toFloat()
+private const val BULLET_INTERVAL = 0.2f
 
 class Fighter(gctx: GameContext, private val joyStick: JoyStick) : Sprite(gctx, R.mipmap.plane_240) {
     private var angleDegree = -FIGHTER_ANGLE_OFFSET
+    private var bulletCoolTime = 0f
 
     init {
         width = FIGHTER_SIZE
@@ -33,44 +31,32 @@ class Fighter(gctx: GameContext, private val joyStick: JoyStick) : Sprite(gctx, 
     }
 
     override fun update(gctx: GameContext) {
-        // 이번 단계에서는 power 값을 속도 크기로 쓰지 않고,
-        // 움직일지 말지만 판단하는 용도로만 사용한다.
-        // 그래서 power 가 0 이면 바로 멈추고, 0 이 아니면 항상 같은 속도로 이동한다.
+        bulletCoolTime -= gctx.frameTime
+        if (bulletCoolTime <= 0f) {
+            val bulletAngle = Math.toRadians(angleDegree.toDouble()).toFloat()
+            val bullet = Bullet(x, y, bulletAngle)
+            // Bullet 은 현재 Scene 의 World 에 바로 추가한다.
+            // 지금 단계에서는 update 중에 add() 가 일어나므로,
+            // 다음 단계에서 ConcurrentModificationException 을 확인하고 해결할 예정이다.
+            (gctx.scene as? MainScene)?.world?.add(bullet, MainScene.Layer.BULLET)
+            bulletCoolTime = BULLET_INTERVAL
+        }
+
+        // JoyStick 의 angle 은 radian 값으로, power 는 0.0~1.0 세기 값으로 사용한다.
+        // 따라서 조이스틱을 조금만 밀면 천천히 움직이고, 끝까지 밀면 최대 속도로 움직인다.
         if (joyStick.power == 0f) {
             return
         }
-        val distance = FIGHTER_SPEED * gctx.frameTime
-
-        // 8방향 입력만 쓰는 전투기에서는 JoyStick 의 연속 angle 을 그대로 쓰지 않고,
-        // 45도 단위로 반올림한 snappedAngle 을 사용한다.
-        //
-        // 같은 방식으로 방향 수를 바꾸고 싶다면 step 값만 바꾸면 된다.
-        // 예를 들어:
-        // - 4방향  : step = PI / 2
-        // - 6방향  : step = PI / 3
-        // - 16방향 : step = PI / 8
-        //
-        // 일반식으로 쓰면:
-        //   val directionCount = 8
-        //   val step = (2f * Math.PI.toFloat()) / directionCount
-        //
-        // "각도 값" 대신 "몇 번째 방향 칸인가"를 정수로 얻고 싶다면,
-        // 아래처럼 roundToInt() 결과를 directionIndex 로 따로 저장해서 쓸 수 있다.
-        //   val directionIndex = (joyStick.angle / step).roundToInt()
-        //
-        // 이 directionIndex 를 쓰면:
-        // - sprite sheet 의 몇 번째 방향 프레임을 고를지 정하거나
-        // - 0~7, 0~5 같은 정수 방향값을 AI / 상태머신에 넘기거나
-        // - 0:오른쪽, 1:오른쪽아래 ... 같은 enum 과 연결하는 식의 응용이 가능하다.
-        val snappedAngle = (joyStick.angle / DIRECTION_8_STEP).roundToInt() * DIRECTION_8_STEP
-        val dx = cos(snappedAngle) * distance
-        val dy = sin(snappedAngle) * distance
+        val moveAngle = joyStick.angle
+        val distance = FIGHTER_SPEED * joyStick.power * gctx.frameTime
+        val dx = cos(moveAngle) * distance
+        val dy = sin(moveAngle) * distance
         val edgeMargin = FIGHTER_SIZE / 4f
         // 전투기 중심점이 화면 경계보다 일정 거리만큼 더 바깥으로 나갈 수 있게 둔다.
         // 이렇게 하면 스프라이트가 화면 가장자리에 걸칠 때도 이동이 덜 답답하게 느껴진다.
         x = max(-edgeMargin, min(gctx.metrics.width + edgeMargin, x + dx))
         y = max(-edgeMargin, min(gctx.metrics.height + edgeMargin, y + dy))
-        angleDegree = Math.toDegrees(snappedAngle.toDouble()).toFloat()
+        angleDegree = Math.toDegrees(moveAngle.toDouble()).toFloat()
         Log.d(javaClass.simpleName, "angleDegree: ${"%.2f".format(angleDegree)} power=${"%.2f".format(joyStick.power)}")
     }
 

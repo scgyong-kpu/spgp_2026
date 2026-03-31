@@ -15,6 +15,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         BALL,
         CIRCLE,
         FIGHTER,
+        BULLET,
         JOYSTICK,
     }
 

@@ -1,0 +1,34 @@
+package kr.ac.tukorea.ge.scgyong.samplegame.app
+
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
+import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
+import kotlin.math.cos
+import kotlin.math.sin
+
+class Bullet(
+    private var x: Float,
+    private var y: Float,
+    private val angle: Float,
+) : IGameObject {
+    override fun update(gctx: GameContext) {
+        x += SPEED * cos(angle) * gctx.frameTime
+        y += SPEED * sin(angle) * gctx.frameTime
+    }
+
+    override fun draw(canvas: Canvas) {
+        canvas.drawCircle(x, y, RADIUS, paint)
+    }
+
+    companion object {
+        private const val SPEED = 1000f
+        private const val RADIUS = 30f
+
+        private val paint = Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.RED
+        }
+    }
+}
