@@ -1,10 +1,11 @@
-package kr.ac.tukorea.ge.scgyong.samplegame
+package kr.ac.tukorea.ge.scgyong.samplegame.app
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.Log
+import kr.ac.tukorea.ge.spgp2026.a2dg.GameContext
+import kr.ac.tukorea.ge.spgp2026.a2dg.IGameObject
 import kotlin.math.abs
 import kotlin.random.Random
 

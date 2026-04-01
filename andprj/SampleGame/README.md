@@ -70,26 +70,61 @@
 3. `World`가 오브젝트를 소유하는 구조를 더 분명히 만든다.
 4. `World` 안에 layer 지원을 추가한다.
 5. 프레임워크 성격의 클래스를 `a2dg` 모듈로 이동한다.
+6. `GameActivity`를 공통 부분과 게임 전용 부분으로 나누고, 공통 `BaseGameActivity`를 `a2dg`로 올린다.
+7. `SceneStack`과 `Scene`에 scene 전환과 생명주기 API 를 추가하고 여러 scene 흐름을 테스트한다.
+8. `BitmapPool`, `Sprite`, `JoyStick` 같은 공통 리소스·입력 요소를 프레임워크 쪽으로 확장한다.
+9. `Bullet` 추가와 `ConcurrentModificationException` 해결을 통해 월드의 오브젝트 관리 구조를 보강한다.
+10. 게임마다 다른 가상 좌표계, 실제 화면 크기 노출, package 정리까지 반영해 프레임워크 경계를 더 다듬는다.
 
 ## 커밋 체크리스트
 
 아래 목록은 앞으로 여러 커밋에 걸쳐 하나씩 해결해 나갈 후보들이다.
 진행하면서 항목을 지우거나 체크해 나갈 수 있도록 남겨 둔다.
 
-- [ ] `Scene` 공통 추상 타입 도입
-- [ ] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
-- [ ] `MainScene`이 `Scene`을 상속하도록 변경
-- [ ] `World` 도입
-- [ ] `MainScene`이 `World`를 소유하도록 변경
-- [ ] `Scene`의 기본 `update()` / `draw()`가 `world?.update()` / `world?.draw()`를 위임하도록 정리
-- [ ] `GameView`에 `SceneStack` 도입
-- [ ] 현재 Scene을 `SceneStack`의 top 으로 처리하도록 변경
-- [ ] `World`에 layer 구조 도입
-- [ ] layer 종류를 게임별로 다르게 둘 수 있는 방식 정리
-- [ ] `a2dg` 모듈 추가
-- [ ] 프레임워크 성격의 클래스들을 `a2dg`로 이동
-- [ ] `app`이 `a2dg`를 사용하도록 의존 방향 정리
-- [ ] `a2dg -> app` 의존이 생기지 않도록 구조 점검
+- [x] `Scene` 공통 추상 타입 도입
+- [x] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
+- [x] `MainScene`이 `Scene`을 상속하도록 변경
+- [x] `World` 도입
+- [x] `MainScene`이 `World`를 소유하도록 변경
+- [x] `Scene`의 기본 `update()` / `draw()`가 `world?.update()` / `world?.draw()`를 위임하도록 정리
+- [x] `GameView`에 `SceneStack` 도입
+- [x] 현재 Scene을 `SceneStack`의 top 으로 처리하도록 변경
+- [x] `World`에 layer 구조 도입
+- [x] layer 종류를 게임별로 다르게 둘 수 있는 방식 정리
+- [x] `a2dg` 모듈 추가 (#11 에서 추가함)
+- [x] 프레임워크 성격의 클래스들을 `a2dg`로 이동
+- [x] `app`이 `a2dg`를 사용하도록 의존 방향 정리
+- [x] `a2dg -> app` 의존이 생기지 않도록 구조 점검 (#11 준비단계에서 완료함)
+- [x] `GameActivity`에서 재사용 가능한 부분과 게임 전용 부분을 분리
+- [x] 공통 `GameActivity` 또는 `BaseGameActivity`를 `a2dg`로 이동
+- [x] `app`은 루트 `Scene` 결정과 `BuildConfig` 주입만 맡도록 정리
+- [x] `SceneStack`에 `push()` / `pop()` 외에 `change()` 추가
+- [x] `Scene`에도 `push()` / `pop()` / `change()` 편의 함수 추가
+- [x] `Scene`에 `onEnter()` / `onExit()` / `onPause()` / `onResume()` 생명주기 함수 추가
+- [x] 여러 `Scene`이 `push()` / `pop()` 되는 흐름을 테스트
+- [x] `Scene`에 `onBackPressed()`를 추가하고 기본 동작으로 `pop()` 처리
+- [x] deprecated 된 `onBackPressed` 대신 `OnBackPressedCallback` 을 사용하는 것으로 변경
+- [x] 마지막 `Scene`이 `pop()` 되면 `Activity` 종료
+  - [x] `context as? Activity` 대신 `ContextWrapper` 체인을 따라가는 `activity` 프로퍼티로 변경
+- [x] `Bitmap` 을 cache 하는 `BitmapPool` 도입
+- [x] `Sprite` class 추가
+- [x] 화면 해상도에 관계없이 `Bitmap` 을 원본 크기로 로드
+- [x] 게임마다 가상 좌표계를 다르게 둘 수 있는 구조 도입
+- [x] 게임 내에서 실제 화면 크기도 알 수 있도록 정리
+- [ ] `JoyStick` 클래스 추가
+- [ ] `JoyStick` 기본 그리기
+- [ ] `JoyStick` 이 `Touch Down` 인 동안만 보이게 처리
+- [ ] `JoyStick` 이 `+/- BG_RADIUS` 범위 안에서만 움직이게 처리
+- [ ] `JoyStick` 이 적당한 반지름의 원 안에서만 움직이게 처리
+- [ ] `JoyStick` 의 `angle` 및 `power` 계산 적용
+- [ ] `Fighter` 를 `JoyStick` 으로 움직이게 변경
+- [ ] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
+- [ ] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
+- [ ] `JoyStick` 을 `a2dg` 로 이동
+- [ ] `Bullet` 추가 (`ConcurrentModificationException` 발생)
+- [ ] `ConcurrentModificationException` 해결
+- [ ] `a2dg` package 정리
+- [ ] `app` package 정리
 
 ## 메모
 
