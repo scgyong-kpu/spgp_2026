@@ -2,13 +2,14 @@ package kr.ac.tukorea.ge.spgp2026.dragonflight
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.graphics.RectF
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kotlin.math.abs
 
-class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
+class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
     // 먼저 화면에 보이는 기본 크기와 시작 위치만 override 해 둔다.
     // 나중에 Player 가 화면 경계를 벗어나지 않게 하거나,
     // 기체별 크기를 다르게 둘 때도 같은 방식으로 값을 바꿀 수 있다.
@@ -31,6 +32,17 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
     // Player 가 아직 target 위치에 도달하지 않은 동안만 이 위치를 그려 준다.
     private val targetBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.tu_joystick_thumb)
     private val targetRect = RectF()
+    private var rollTime = 0f
+
+    init {
+        // 값이 고정되어 있으니 Kotlin 스타일만 보면 property override 쪽이 더 자연스러워 보일 수 있다.
+        // 하지만 지금 Sprite.srcRect 는 open 프로퍼티가 아니므로 여기서는 override 할 수 없다.
+        // 그래서 현재 단계에서는 init 에서 한 번 설정해 두는 가장 단순한 방식을 사용한다.
+        // fighters.png 는 80x80 frame 이 11장 가로로 붙어 있는 sprite sheet 이다.
+        // Sprite 는 원래 bitmap 전체를 그리지만,
+        // roll 단계에서는 srcRect 를 사용해 현재 기울기 frame 하나만 골라 그린다.
+        srcRect = Rect(0, 0, PLANE_SRC_WIDTH, PLANE_SRC_WIDTH)
+    }
 
     override fun update(gctx: GameContext) {
         // 이번 단계에서는 "방향"보다 "목표 위치"를 먼저 저장해 두고,
@@ -53,6 +65,8 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
         // 지금은 화면 폭(gctx.metrics.width)과 플레이어 폭을 이용해 경계를 계산하므로,
         // 해상도나 가상 좌표계 폭이 달라져도 같은 방식으로 동작한다.
         x = x.coerceIn(minPlayerX, maxPlayerX)
+
+        updateRoll(gctx)
     }
 
     override fun draw(canvas: Canvas) {
@@ -88,10 +102,49 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
         return true
     }
 
+    private fun updateRoll(gctx: GameContext) {
+        // targetX 와 현재 x 의 관계를 보고 어느 쪽으로 기울어야 하는지 부호를 정한다.
+        var sign = when {
+            targetX < x -> -1
+            x < targetX -> 1
+            else -> 0
+        }
+
+        // 비행기가 목표 위치에 도착해 멈췄다면,
+        // 현재 남아 있는 기울기를 반대 방향으로 조금씩 줄여 0 으로 복귀시킨다.
+        if (x == targetX) {
+            if (rollTime > 0f) sign = -1
+            else if (rollTime < 0f) sign = 1
+        }
+
+        rollTime += sign * gctx.frameTime
+
+        // 0 으로 복귀하는 도중 반대편으로 지나치면 0 에 맞춘다.
+        if (x == targetX) {
+            if (sign < 0 && rollTime < 0f) rollTime = 0f
+            if (sign > 0 && rollTime > 0f) rollTime = 0f
+        }
+
+        rollTime = rollTime.coerceIn(-MAX_ROLL_TIME, MAX_ROLL_TIME)
+
+        // fighters.png 는 왼쪽 기울기 5장, 정면 1장, 오른쪽 기울기 5장으로 되어 있다.
+        // 그래서 rollTime 범위를 -MAX_ROLL_TIME ~ +MAX_ROLL_TIME 로 맞춘 뒤
+        // 현재 값을 0~10 frame index 로 바꿔 srcRect 에 반영한다.
+        val rollIndex = 5 + (rollTime * 5 / MAX_ROLL_TIME).toInt()
+        srcRect?.set(
+            rollIndex * PLANE_SRC_WIDTH,
+            0,
+            (rollIndex + 1) * PLANE_SRC_WIDTH,
+            PLANE_SRC_WIDTH,
+        )
+    }
+
     companion object {
         const val SPEED = 300f
         const val PLAYER_WIDTH = 144f
         const val PLAYER_HEIGHT = 160f
         const val TARGET_MARKER_SIZE = 72f
+        const val PLANE_SRC_WIDTH = 80
+        const val MAX_ROLL_TIME = 0.4f
     }
 }

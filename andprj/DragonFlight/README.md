@@ -34,12 +34,12 @@
   - [x] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
   - [x] Debug Grid 표시
     - [x] BuildConfig 를 사용해 표시
-- [ ] 입력을 받아 `Player` 가 좌우 또는 목표 방향으로 이동
+- [x] 입력을 받아 `Player` 가 좌우 또는 목표 방향으로 이동
   - [ ] `JoyStick` 사용
   - [x] 직접 처리
   - [x] 화면 경계를 벗어나지 않게 처리
   - [x] Target 을 향해 움직이도록
-  - [ ] Roll 적용
+  - [x] Roll 적용
 - [ ] 게임 캐릭터 이미지 적용
 
 ## Bullet / Spark / 기본 전투
