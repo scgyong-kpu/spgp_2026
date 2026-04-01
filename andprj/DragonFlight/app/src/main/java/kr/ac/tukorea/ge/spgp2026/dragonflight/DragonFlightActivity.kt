@@ -6,12 +6,9 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class DragonFlightActivity : BaseGameActivity() {
     override fun createRootScene(gctx: GameContext): Scene {
-        // 이번 단계의 목표는 DragonFlightActivity 가 BaseGameActivity 를 상속받아
-        // a2dg 의 GameView / Scene 흐름으로 진입하는 것까지 확인하는 데 있다.
-        //
-        // 그래서 아직은 MainScene 파일을 따로 만들지 않고,
-        // 가장 작은 형태인 anonymous Scene 을 root scene 으로 반환한다.
-        return object : Scene(gctx) {
-        }
+        // 이제는 anonymous Scene 대신 별도 MainScene 클래스를 root scene 으로 사용한다.
+        // 이렇게 하면 이후 commit 에서 Fighter, Bullet, Background 같은 요소를
+        // MainScene 파일 안에 차례대로 추가해 가는 흐름이 더 분명하게 보인다.
+        return MainScene(gctx)
     }
 }

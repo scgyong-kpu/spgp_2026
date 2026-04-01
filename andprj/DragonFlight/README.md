@@ -22,11 +22,11 @@
   - [x] gradle 파일 에서 `a2dg` 사용여부 연결 (`settings.gradle.kts`)
   - [x] `app` 모듈 에서 `a2dg` 모듈에 의존하도록 연결 (`build.gradle.kts` / `:app`)
 - [x] `DragonFlightActivity` 또는 그에 해당하는 Activity 가 `BaseGameActivity` 를 상속
-- [ ] 빈 `MainScene` 을 만들어 root scene 으로 push
+- [x] 빈 `MainScene` 을 만들어 root scene 으로 push
 
 ## 기본 게임 화면
 
-- [ ] `MainScene` 생성
+- [x] `MainScene` 생성
 - [ ] `Fighter` 클래스 추가
 - [ ] `MainScene` 이 `Fighter` 를 생성해서 화면에 배치
 - [ ] 입력을 받아 `Fighter` 가 좌우 또는 목표 방향으로 이동
