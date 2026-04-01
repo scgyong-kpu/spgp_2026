@@ -8,10 +8,15 @@ class Player(gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
     // 먼저 화면에 보이는 기본 크기와 시작 위치만 override 해 둔다.
     // 나중에 Player 가 화면 경계를 벗어나지 않게 하거나,
     // 기체별 크기를 다르게 둘 때도 같은 방식으로 값을 바꿀 수 있다.
-    override var width = 144f
-    override var height = 160f
-    override var x = 450f
-    override var y = 1400f
+    override var width = PLAYER_WIDTH
+    override var height = PLAYER_HEIGHT
+    override var x = gctx.metrics.width / 2f
+    override var y = gctx.metrics.height - PLAYER_HEIGHT
+
+    // x 는 Sprite 의 중심점이므로,
+    // 좌우 경계도 이미지 폭의 절반만큼 안쪽에서 계산해야 한다.
+    val minPlayerX = PLAYER_WIDTH / 2f
+    val maxPlayerX = gctx.metrics.width - PLAYER_WIDTH / 2f
 
     // dx 는 "이번 프레임에 어느 방향으로 움직일지"만 간단히 나타낸다.
     // -1 이면 왼쪽, +1 이면 오른쪽, 0 이면 정지이다.
@@ -30,6 +35,11 @@ class Player(gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
         // dx 가 -1, 0, +1 중 하나이므로
         // SPEED * frameTime 으로 나온 이동량에 그 방향만 곱해 주면 된다.
         x += SPEED * gctx.frameTime * dx
+
+        // 좌우 경계는 미리 계산해 둔 minPlayerX, maxPlayerX 범위 안으로 다시 맞춘다.
+        // 지금은 화면 폭(gctx.metrics.width)과 플레이어 폭을 이용해 경계를 계산하므로,
+        // 해상도나 가상 좌표계 폭이 달라져도 같은 방식으로 동작한다.
+        x = x.coerceIn(minPlayerX, maxPlayerX)
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
@@ -71,5 +81,7 @@ class Player(gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
     companion object {
         const val SPEED = 300f
         const val TOUCH_THRESHOLD = 10f
+        const val PLAYER_WIDTH = 144f
+        const val PLAYER_HEIGHT = 160f
     }
 }
