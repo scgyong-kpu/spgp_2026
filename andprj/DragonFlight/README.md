@@ -27,9 +27,12 @@
 ## 기본 게임 화면
 
 - [x] `MainScene` 생성
-- [ ] `Fighter` 클래스 추가
-- [ ] `MainScene` 이 `Fighter` 를 생성해서 화면에 배치
-- [ ] 입력을 받아 `Fighter` 가 좌우 또는 목표 방향으로 이동
+- [x] `Player` 클래스 추가
+  - [ ] `open`/`override` 관련 에러 처리
+- [ ] `MainScene` 이 `Player` 를 생성해서 화면에 배치
+  - [ ] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
+  - [ ] Debug Grid 표시
+- [ ] 입력을 받아 `Player` 가 좌우 또는 목표 방향으로 이동
 - [ ] 화면 경계를 벗어나지 않게 처리
 
 ## Bullet / Spark / 기본 전투
@@ -58,7 +61,7 @@
 - [ ] 충돌 시 점수 증가
 - [ ] `Score` 표시
 - [ ] 점수가 애니메이션되며 증가하도록 적용
-- [ ] `Gauge` 를 이용한 `Enemy` life / `Fighter` cooltime 표시
+- [ ] `Gauge` 를 이용한 `Enemy` life / `Player` cooltime 표시
 
 ## Background / Map
 
