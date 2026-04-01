@@ -30,12 +30,17 @@
 - [x] `MainScene` 생성
 - [x] `Player` 클래스 추가
   - [x] `open`/`override` 관련 에러 처리
-- [ ] `MainScene` 이 `Player` 를 생성해서 화면에 배치
-  - [ ] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
+- [x] `MainScene` 이 `Player` 를 생성해서 화면에 배치
+  - [x] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
   - [x] Debug Grid 표시
     - [x] BuildConfig 를 사용해 표시
 - [ ] 입력을 받아 `Player` 가 좌우 또는 목표 방향으로 이동
-- [ ] 화면 경계를 벗어나지 않게 처리
+  - [ ] `JoyStick` 사용
+  - [ ] 직접 처리
+  - [ ] 화면 경계를 벗어나지 않게 처리
+  - [ ] Target 을 향해 움직이도록
+  - [ ] Roll 적용
+- [ ] 게임 캐릭터 이미지 적용
 
 ## Bullet / Spark / 기본 전투
 
