@@ -3,12 +3,11 @@ package kr.ac.tukorea.ge.spgp2026.dragonflight
 import kr.ac.tukorea.ge.spgp2026.a2dg.activity.BaseGameActivity
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
-import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameView
 
 class DragonFlightActivity : BaseGameActivity() {
-    override val drawsDebugGrid = true
-    override val drawsDebugInfo = true
-    override val drawsFpsGraph = true
+    override val drawsDebugGrid = BuildConfig.DEBUG
+    override val drawsDebugInfo = BuildConfig.DEBUG
+    override val drawsFpsGraph = BuildConfig.DEBUG
 
     override fun createRootScene(gctx: GameContext): Scene {
         // 이제는 anonymous Scene 대신 별도 MainScene 클래스를 root scene 으로 사용한다.

@@ -13,7 +13,8 @@
 
 - [x] 타이틀 화면 성격의 `MainActivity` 에서 실제 게임 Activity 인 `DragonFlightActivity` 를 실행
 - [ ] 게임 Activity 를 portrait mode 로 고정
-- [ ] debug build 일 때만 debug 정보가 보이게 설정
+- [x] debug build 일 때만 debug 정보가 보이게 설정
+- [ ] Debug 용으로, `MainActivity` 생성시 자동으로 `DragonFlightActivity` 를 실행
 
 ## a2dg 연결
 
@@ -32,7 +33,7 @@
 - [ ] `MainScene` 이 `Player` 를 생성해서 화면에 배치
   - [ ] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
   - [x] Debug Grid 표시
-    - [ ] BuildConfig 를 사용해 표시
+    - [x] BuildConfig 를 사용해 표시
 - [ ] 입력을 받아 `Player` 가 좌우 또는 목표 방향으로 이동
 - [ ] 화면 경계를 벗어나지 않게 처리
 
