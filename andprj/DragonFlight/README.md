@@ -31,7 +31,8 @@
   - [x] `open`/`override` 관련 에러 처리
 - [ ] `MainScene` 이 `Player` 를 생성해서 화면에 배치
   - [ ] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
-  - [ ] Debug Grid 표시
+  - [x] Debug Grid 표시
+    - [ ] BuildConfig 를 사용해 표시
 - [ ] 입력을 받아 `Player` 가 좌우 또는 목표 방향으로 이동
 - [ ] 화면 경계를 벗어나지 않게 처리
 
