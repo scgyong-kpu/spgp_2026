@@ -3,6 +3,8 @@ package kr.ac.tukorea.ge.spgp2026.dragonflight
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +21,13 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContentView(binding.root)
+
+        // 디버그 빌드일 때에는 1초 후 게임 화면으로 바로 넘어가게 한다
+        if (BuildConfig.DEBUG) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                startGameActivity()
+            }, 1000)
+        }
     }
 
     fun onStartGameClicked(view: View) {

@@ -14,7 +14,7 @@
 - [x] 타이틀 화면 성격의 `MainActivity` 에서 실제 게임 Activity 인 `DragonFlightActivity` 를 실행
 - [ ] 게임 Activity 를 portrait mode 로 고정
 - [x] debug build 일 때만 debug 정보가 보이게 설정
-- [ ] Debug 용으로, `MainActivity` 생성시 자동으로 `DragonFlightActivity` 를 실행
+- [x] Debug 용으로, `MainActivity` 생성시 자동으로 `DragonFlightActivity` 를 실행
 
 ## a2dg 연결
 
