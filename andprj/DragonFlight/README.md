@@ -28,7 +28,7 @@
 
 - [x] `MainScene` 생성
 - [x] `Player` 클래스 추가
-  - [ ] `open`/`override` 관련 에러 처리
+  - [x] `open`/`override` 관련 에러 처리
 - [ ] `MainScene` 이 `Player` 를 생성해서 화면에 배치
   - [ ] Layer 로 `Int` 를 썼다가 `enum` 으로 변경
   - [ ] Debug Grid 표시

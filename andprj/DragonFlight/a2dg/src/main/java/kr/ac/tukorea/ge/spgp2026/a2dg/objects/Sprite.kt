@@ -38,14 +38,18 @@ open class Sprite(
     // x, y 는 Sprite 의 중심점이다.
     // 이동, 거리 계산, 회전 중심 처리 같은 게임 로직을 조금 더 직관적으로 쓰기 위해
     // left/top 대신 center 기준 좌표를 공통 상태로 사용한다.
-    var x = 0f
-    var y = 0f
+    // Kotlin 에서는 클래스와 멤버가 기본적으로 final 이다.
+    // 그래서 하위 클래스가 width = ... 처럼 프로퍼티를 override 하게 하려면 open 을 붙여야 한다.
+    // Java 로 치면 field 자체를 override 하는 것이 아니라, getter/setter 메서드를 override 가능하게 여는
+    // 감각에 가깝다고 보면 된다.
+    open var x = 0f
+    open var y = 0f
 
     // 화면에 그릴 크기이다.
     // bitmap 원본 크기와는 별개의 값이며, 하위 클래스가 자기 의미에 맞게 설정한다.
     // 예를 들어 Ball 은 SIZE, Fighter 는 FIGHTER_SIZE 를 넣을 수 있다.
-    var width = 0f
-    var height = 0f
+    open var width = 0f
+    open var height = 0f
 
     // 현재 bitmap 자체가 가진 원본 픽셀 크기이다.
     // 화면에 그릴 width, height 와는 다른 개념이므로 별도 이름으로 분리한다.
