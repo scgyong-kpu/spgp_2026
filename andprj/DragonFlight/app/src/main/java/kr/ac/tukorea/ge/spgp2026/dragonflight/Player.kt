@@ -1,11 +1,10 @@
 package kr.ac.tukorea.ge.spgp2026.dragonflight
 
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.JoyStick
+import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
-import kotlin.math.cos
 
-class Player(gctx: GameContext, val joystick: JoyStick) : Sprite(gctx, R.mipmap.fighter) {
+class Player(gctx: GameContext) : Sprite(gctx, R.mipmap.fighter) {
     // 먼저 화면에 보이는 기본 크기와 시작 위치만 override 해 둔다.
     // 나중에 Player 가 화면 경계를 벗어나지 않게 하거나,
     // 기체별 크기를 다르게 둘 때도 같은 방식으로 값을 바꿀 수 있다.
@@ -14,39 +13,63 @@ class Player(gctx: GameContext, val joystick: JoyStick) : Sprite(gctx, R.mipmap.
     override var x = 450f
     override var y = 1400f
 
+    // dx 는 "이번 프레임에 어느 방향으로 움직일지"만 간단히 나타낸다.
+    // -1 이면 왼쪽, +1 이면 오른쪽, 0 이면 정지이다.
+    private var dx = 0f
+
+    // lastTouchX 는 "직전 MOVE 에서의 x 좌표"를 기억한다.
+    // 이번 단계에서는 처음 DOWN 했던 위치보다,
+    // 바로 직전 좌표와 비교해서 왼쪽으로 가는지 오른쪽으로 가는지를 알아내는 것이 더 중요하다.
+    // 예를 들어 50 -> 40 까지 갔다가 41 이 되면,
+    // 41 은 최초 down 좌표 50 보다 여전히 작지만 직전 좌표 40 보다는 크다.
+    // 따라서 그 순간부터는 오른쪽(+1)으로 방향이 바뀌었다고 판단해야 한다.
+    private var lastTouchX = 0f
+
     override fun update(gctx: GameContext) {
-        // Player 이동식의 핵심은 아래 한 줄이다.
-        //
-        //   SPEED * gctx.frameTime * joystick.power * cos(joystick.angle)
-        //
-        // 각 항의 의미를 풀어 쓰면:
-        // - SPEED:
-        //   "1초에 얼마나 빠르게 움직일지"를 나타내는 기본 속도이다.
-        // - gctx.frameTime:
-        //   지난 프레임과 이번 프레임 사이의 시간(초)이다.
-        //   이 값을 곱해 주면 기기 성능이 달라도
-        //   "1초 기준으로 비슷한 거리"를 움직이게 만들 수 있다.
-        // - joystick.power:
-        //   조이스틱 thumb 가 중심에서 얼마나 멀리 나갔는지를 0.0~1.0 으로 나타낸 값이다.
-        //   0 이면 손을 떼었거나 거의 움직이지 않은 상태이고,
-        //   1 에 가까울수록 끝까지 민 상태이므로 더 빠르게 이동한다.
-        // - cos(joystick.angle):
-        //   현재 조이스틱 방향 벡터를 x축 성분만 꺼낸 값이다.
-        //   angle 이 0 이면 cos 값은 1 이라서 오른쪽으로 최대 이동하고,
-        //   angle 이 PI 이면 -1 이라서 왼쪽으로 최대 이동한다.
-        //   angle 이 위/아래 방향에 가까우면 cos 값이 0 에 가까워져
-        //   x축 이동량도 자연스럽게 줄어든다.
-        //
-        // 즉 이 한 줄은
-        // "기본 속도" * "프레임 시간" * "얼마나 세게 밀었는가" * "x축 방향 성분"
-        // 을 계산해서 이번 프레임의 x 이동량으로 더하는 것이다.
-        //
-        // 나중에 2차원 이동으로 확장할 때는 y 쪽에도 같은 방식으로
-        // sin(joystick.angle) 을 사용하면 된다.
-        x += SPEED * gctx.frameTime * joystick.power * cos(joystick.angle)
+        // 현재 구현은 좌/우 한 축만 먼저 다룬다.
+        // dx 가 -1, 0, +1 중 하나이므로
+        // SPEED * frameTime 으로 나온 이동량에 그 방향만 곱해 주면 된다.
+        x += SPEED * gctx.frameTime * dx
+    }
+
+    fun onTouchEvent(event: MotionEvent): Boolean {
+        // 이번 단계에서는 "직전 터치보다 왼쪽으로 갔는가, 오른쪽으로 갔는가"만 판단하면 된다.
+        // 즉 절대적인 가상 좌표값은 중요하지 않고, x 값의 대소 관계만 중요하다.
+        // 그래서 screen -> virtual 좌표 변환은 굳이 하지 않고 event.x 를 그대로 사용한다.
+        val x = event.x
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                // DOWN 순간에는 아직 이동 방향이 없으므로 dx 는 0 이고,
+                // 다음 MOVE 와 비교할 수 있도록 현재 x 만 기억해 둔다.
+                lastTouchX = x
+                dx = 0f
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (x < lastTouchX - TOUCH_THRESHOLD) {
+                    // 몇 픽셀 정도의 미세한 흔들림은 무시하고,
+                    // threshold 를 넘을 만큼 충분히 왼쪽으로 움직였을 때만 왼쪽으로 판단한다.
+                    dx = -1f
+                } else if (x > lastTouchX + TOUCH_THRESHOLD) {
+                    // 오른쪽도 같은 방식으로 threshold 를 넘을 때만 반응한다.
+                    dx = 1f
+                } else {
+                    // threshold 안쪽의 작은 움직임은 떨림으로 보고,
+                    // 새 방향으로 바꾸지 않고 원래 가던 방향을 그대로 유지한다.
+                }
+                // 이번 x 를 다음 MOVE 와 비교할 새 기준점으로 저장한다.
+                // 그래서 방향이 바뀌는 순간의 x 가 자동으로 새 기준이 된다.
+                lastTouchX = x
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                // 손을 떼면 이동 방향도 0 이 되어 정지한다.
+                dx = 0f
+            }
+        }
+        return true
     }
 
     companion object {
         const val SPEED = 300f
+        const val TOUCH_THRESHOLD = 10f
     }
 }
