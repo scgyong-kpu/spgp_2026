@@ -42,10 +42,14 @@
   - [ ] `Text` 같은, 문자열을 표시하는 공통 HUD 객체 추가
   - [ ] `Button` 공통 클래스 추가
 
-## Scene / View / Game Loop
+## Scene / World / View / Game Loop
 
 - [ ] `GameView`
   - [ ] frame time 이 비정상적으로 커지는 경우 대비
+
+- [x] `World`
+  - [x] `objectsAt(layer)` 로 특정 layer 의 읽기 전용 객체 목록을 가져오기
+  - [x] `forEachReversedAt(layer)` 로 삭제에 안전한 역순 순회 helper 추가
 
 - [ ] Scene lifecycle
   - [ ] Scene 이 transparent 하게 위에 올라가는 경우

@@ -29,6 +29,24 @@ class World<TLayer>(
         return layers.getValue(layer).size
     }
 
+    // 어떤 layer 안에 있는 객체들을 바깥에서 읽어야 할 때가 있다.
+    // 지금은 CollisionChecker 가 BULLET, ENEMY 목록을 순회하기 위해 이 함수를 사용한다.
+    // 반환 타입은 MutableList 가 아니라 List 로 두어,
+    // 바깥 코드가 이 목록 자체를 마음대로 add/remove 하지 않게 읽기 전용으로 제한한다.
+    fun objectsAt(layer: TLayer): List<IGameObject> {
+        return layers.getValue(layer)
+    }
+
+    // 같은 layer 안에서 조건에 맞는 객체를 지우는 경우에는
+    // 뒤에서 앞으로 순회해야 index 가 당겨져도 아직 방문하지 않은 앞쪽 객체를 안전하게 계속 볼 수 있다.
+    // 이 규칙을 World 안에 모아 두면 바깥 코드가 매번 lastIndex downTo 0 를 다시 적지 않아도 된다.
+    fun forEachReversedAt(layer: TLayer, action: (IGameObject) -> Unit) {
+        val objects = layers.getValue(layer)
+        for (i in objects.lastIndex downTo 0) {
+            action(objects[i])
+        }
+    }
+
     fun getDebugCounts(): String {
         return buildString {
             append('[')
