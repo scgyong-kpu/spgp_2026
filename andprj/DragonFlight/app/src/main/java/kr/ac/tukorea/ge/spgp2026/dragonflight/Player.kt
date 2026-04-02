@@ -32,6 +32,8 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
     // Player 가 아직 target 위치에 도달하지 않은 동안만 이 위치를 그려 준다.
     private val targetBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.tu_joystick_thumb)
     private val targetRect = RectF()
+    private val sparkBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.laser_spark)
+    private val sparkRect = RectF()
     private var rollTime = 0f
     private var fireCoolTime = FIRE_INTERVAL
 
@@ -73,6 +75,19 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+
+        // 총알을 막 발사한 직후의 아주 짧은 시간 동안만 스파크를 그린다.
+        // 별도 Spark 오브젝트를 만들지 않고 Player 가 직접 그리면,
+        // 발사 효과를 가장 작은 단계로 먼저 확인할 수 있다.
+        if (FIRE_INTERVAL - fireCoolTime < SPARK_DURATION) {
+            sparkRect.set(
+                x - SPARK_WIDTH / 2f,
+                y - SPARK_OFFSET - SPARK_HEIGHT / 2f,
+                x + SPARK_WIDTH / 2f,
+                y - SPARK_OFFSET + SPARK_HEIGHT / 2f,
+            )
+            canvas.drawBitmap(sparkBitmap, null, sparkRect, null)
+        }
 
         // 이미 targetX 에 거의 도달했다면 target 마커는 굳이 그리지 않는다.
         if (abs(targetX - x) < 0.5f) return
@@ -179,5 +194,9 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         const val MAX_ROLL_TIME = 0.4f
         const val FIRE_INTERVAL = 0.25f
         const val BULLET_OFFSET = 80f
+        const val SPARK_OFFSET = 52f
+        const val SPARK_DURATION = 0.1f
+        const val SPARK_WIDTH = 94f
+        const val SPARK_HEIGHT = SPARK_WIDTH * 3 / 5
     }
 }
