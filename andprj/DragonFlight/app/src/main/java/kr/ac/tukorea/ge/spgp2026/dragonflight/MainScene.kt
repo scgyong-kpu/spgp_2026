@@ -20,6 +20,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // Player 가 직접 터치 방향을 해석해 좌/우 이동 방향을 결정한다.
     val player = Player(gctx)
     private val enemyGenerator = EnemyGenerator(gctx)
+    private val collisionChecker = CollisionChecker(gctx)
 
     // layer 가 enum 이면 Layer.entries 로 enum 전체를 그대로 꺼낼 수 있다.
     // 그래서 arrayOf(Layer.PLAYER, ...) 를 일일이 다시 적지 않아도 된다.
@@ -30,6 +31,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     override val world = World(Layer.entries.toTypedArray()).apply {
         add(player, Layer.PLAYER)
         add(enemyGenerator, Layer.CONTROLLER)
+        add(collisionChecker, Layer.CONTROLLER)
     }
 
     // 현재 Scene 에서는 터치 입력을 따로 나누지 않고
