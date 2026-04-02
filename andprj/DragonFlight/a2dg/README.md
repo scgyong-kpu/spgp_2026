@@ -19,10 +19,10 @@
 - [ ] `Sprite`
   - [ ] bitmap 을 바꿀 수 있는 public API 추가
 
-- [ ] `AnimSprite`
-  - [ ] 여러 frame 을 순서대로 보여주는 공통 클래스 추가
-  - [ ] frame index 로 `srcRect` 를 바꾸기
-  - [ ] fps 를 변경할 수 있는 API 추가
+- [x] `AnimSprite`
+  - [x] 여러 frame 을 순서대로 보여주는 공통 클래스 추가
+  - [x] frame index 로 `srcRect` 를 바꾸기
+  - [x] fps 를 변경할 수 있는 API 추가
   - [ ] pause 되었을 때 애니메이션이 어떻게 동작해야 하는지 정리
 
 - [ ] `SheetSprite`
