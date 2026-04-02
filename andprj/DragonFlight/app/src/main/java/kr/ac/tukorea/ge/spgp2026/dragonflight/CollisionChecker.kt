@@ -10,34 +10,23 @@ class CollisionChecker(private val gctx: GameContext) : IGameObject {
     override fun update(gctx: GameContext) {
         val scene = gctx.scene as? MainScene ?: return
 
-        // 바깥쪽은 Enemy 목록을 읽기 전용으로 훑고,
-        // 안쪽 Bullet 목록만 forEachReversedAt() 로 뒤에서 앞으로 돈다.
-        // 이렇게 하면 "적 하나를 기준으로 어떤 총알이 닿았는지"를 보기 쉬우면서도,
-        // 충돌한 Bullet 은 즉시 remove() 해도 같은 BULLET layer 순회를 계속 안전하게 진행할 수 있다.
+        // 바깥쪽 Enemy 와 안쪽 Bullet 을 모두 forEachReversedAt() 로 뒤에서 앞으로 돈다.
+        // 그러면 충돌한 Bullet 이나 Enemy 를 즉시 remove() 해도
+        // 각 layer 안의 아직 방문하지 않은 앞쪽 객체들을 계속 안전하게 볼 수 있다.
         // 그리고 forEachReversedAt() 는 지금 inline 함수이므로,
         // helper 호출 형태로 써도 별도 함수/람다 객체가 추가로 생기지 않고
         // 호출 위치에 그대로 펴진다고 생각하면 된다.
-        var collisionHandled = false
-        for (enemyObject in scene.world.objectsAt(MainScene.Layer.ENEMY)) {
-            val enemy = enemyObject as? Enemy ?: continue
+        scene.world.forEachReversedAt(MainScene.Layer.ENEMY) { enemyObject ->
+            val enemy = enemyObject as? Enemy ?: return@forEachReversedAt
             scene.world.forEachReversedAt(MainScene.Layer.BULLET) { bulletObject ->
-                if (collisionHandled) return@forEachReversedAt
                 val bullet = bulletObject as? Bullet ?: return@forEachReversedAt
 
                 if (RectF.intersects(bullet.collisionRect, enemy.collisionRect)) {
                     Log.d(javaClass.simpleName, "Collision !! Enemy(level=${enemy.level}, x=${enemy.x}) - Bullet(y=${bullet.y})")
                     scene.world.remove(bullet, MainScene.Layer.BULLET)
                     scene.world.remove(enemy, MainScene.Layer.ENEMY)
-
-                    // 바깥쪽 Enemy 목록은 objectsAt() 로 읽고 있으므로,
-                    // 현재 Enemy 를 remove() 한 뒤 그 iterator 를 계속 진행하면
-                    // 다시 ConcurrentModificationException 문제가 생길 수 있다.
-                    // 그래서 이번 단계에서는 한 번 충돌을 처리했다고 표시해 두고,
-                    // 현재 람다가 끝난 뒤 바깥 for 문도 곧바로 빠져나간다.
-                    collisionHandled = true
                 }
             }
-            if (collisionHandled) break
         }
     }
 
