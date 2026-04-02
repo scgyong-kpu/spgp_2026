@@ -87,6 +87,11 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
+        // 총알이 실제로 보이는지 확인하기 위한 임시 단계이다.
+        // 자동 연사로 가기 전, 일단 ACTION_DOWN 때 Bullet 하나만 만들어 본다.
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            fireBullet()
+        }
         // 이번 단계에서는 터치한 "화면 위치"가 아니라
         // 플레이어가 이동해야 할 "가상 좌표계 안의 목표 위치"가 중요하다.
         // 그래서 screen 좌표를 그대로 비교하지 않고,
@@ -100,6 +105,12 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {}
         }
         return true
+    }
+
+    private fun fireBullet() {
+        val scene = gctx.scene as? MainScene ?: return
+        val bullet = Bullet(gctx, x, y)
+        scene.world.add(bullet, MainScene.Layer.BULLET)
     }
 
     private fun updateRoll(gctx: GameContext) {

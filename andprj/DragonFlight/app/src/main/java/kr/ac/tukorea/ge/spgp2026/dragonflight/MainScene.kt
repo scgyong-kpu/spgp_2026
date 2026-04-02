@@ -11,6 +11,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 나중에 BULLET, ENEMY, EFFECT 같은 layer 를 더 추가할 때도 코드가 더 읽기 쉬워진다.
     enum class Layer {
         PLAYER,
+        BULLET,
     }
 
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
@@ -18,8 +19,9 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     val player = Player(gctx)
 
     // World(arrayOf(...)) 에 넘기는 layer 순서가 곧 update / draw 순서가 된다.
-    // 지금은 Player 하나만 들어 있으므로 PLAYER layer 하나만 등록한다.
-    override val world = World(arrayOf(Layer.PLAYER)).apply {
+    // 아직 Bullet 을 실제로 발사하지는 않지만, 다음 단계에서 바로 add() 할 수 있도록
+    // BULLET layer 자리도 미리 잡아 둔다.
+    override val world = World(arrayOf(Layer.PLAYER, Layer.BULLET)).apply {
         add(player, Layer.PLAYER)
     }
 
