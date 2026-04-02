@@ -1,12 +1,13 @@
 package kr.ac.tukorea.ge.spgp2026.dragonflight
 
+import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class Enemy(
     gctx: GameContext,
     x: Float,
-    level: Int = 1,
+    val level: Int = 1,
     private val speed: Float = DEFAULT_SPEED,
 ) : AnimSprite(gctx, RES_IDS[level - 1], FPS) {
     // 리소스 이름이 enemy_01, enemy_02 ... enemy_20 처럼 1부터 시작하므로,
@@ -28,6 +29,16 @@ class Enemy(
     override var height = ENEMY_HEIGHT
     override var x = x
     override var y = -ENEMY_HEIGHT / 2f
+
+    // Enemy 도 현재는 draw 에 쓰는 목적 사각형(dstRect)을
+    // 그대로 충돌 범위로 사용한다.
+    // 나중에 그림보다 더 작거나 큰 충돌 범위가 필요해지면
+    // 이 property 만 따로 바꾸면 된다.
+    val collisionRect: RectF
+        get() {
+            syncDstRect()
+            return dstRect
+        }
 
     override fun update(gctx: GameContext) {
         // 아래쪽으로 움직일 때도 중심점 y 를 더한다.
