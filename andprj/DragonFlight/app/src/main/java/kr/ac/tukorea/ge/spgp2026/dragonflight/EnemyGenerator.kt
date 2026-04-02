@@ -3,13 +3,13 @@ package kr.ac.tukorea.ge.spgp2026.dragonflight
 import android.graphics.Canvas
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kotlin.random.Random
 
 class EnemyGenerator(
     private val gctx: GameContext,
 ) : IGameObject {
     private var enemyTime = 0f
     private var wave = 0
-    private var nextLevel = 1
 
     override fun update(gctx: GameContext) {
         enemyTime -= gctx.frameTime
@@ -37,11 +37,20 @@ class EnemyGenerator(
         repeat(COUNT_PER_WAVE) {
             val x = gap + Enemy.ENEMY_WIDTH / 2f + it * (Enemy.ENEMY_WIDTH + gap)
 
-            // 아직 최종 level 공식은 없으므로,
-            // 임시 정수형 변수 nextLevel 을 1..20 범위에서 1씩 증가시키며 순환 사용한다.
-            // 이렇게 하면 enemy_01 부터 enemy_20 까지 strip 이 실제로 모두 연결됐는지 한눈에 확인할 수 있다.
-            scene.world.add(Enemy(gctx, x, level = nextLevel, speed = speed), MainScene.Layer.ENEMY)
-            nextLevel = if (nextLevel == Enemy.MAX_LEVEL_COUNT) 1 else nextLevel + 1
+            // wave 가 올라갈수록 평균 level 이 천천히 올라가게 하는 식이다.
+            // (wave + 8) / 10 부분이 "기준 level"을 서서히 올려 주고,
+            // Random.nextInt(3)은 0, 1, 2 중 하나를 빼서
+            // 같은 wave 안에서도 적 level 이 조금씩 섞이게 만든다.
+            // 마지막 coerceIn() 은 level 이 너무 작거나 커지지 않게 범위를 제한한다.
+            //
+            // 이 계산 결과는 0-base level 이므로,
+            // enemy_01 처럼 1-base 이름을 쓰는 Enemy 생성자에 넘길 때는 마지막에 1을 더한다.
+            val zeroBasedLevel = ((wave + 8) / 10 - Random.nextInt(3))
+                .coerceIn(0, Enemy.MAX_LEVEL_COUNT - 1)
+            scene.world.add(
+                Enemy(gctx, x, level = zeroBasedLevel + 1, speed = speed),
+                MainScene.Layer.ENEMY,
+            )
         }
     }
 
