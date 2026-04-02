@@ -19,15 +19,17 @@ class Enemy(gctx: GameContext, x: Float) : Sprite(gctx, R.mipmap.enemy) {
     override var y = -ENEMY_HEIGHT / 2f
 
     override fun update(gctx: GameContext) {
-        // 이번 단계에서는 Enemy 가 위에서 아래로 지나가는 움직임만 먼저 확인한다.
-        // 화면 아래로 완전히 사라졌을 때 삭제하는 처리는 다음 커밋에서 따로 다룬다.
-        //
         // 아래쪽으로 움직일 때도 중심점 y 를 더한다.
-        // 나중에 삭제 조건을 잡을 때는
+        // 삭제 조건은
         //   y - height / 2f > gctx.metrics.height
         // 처럼 "적의 윗변이 화면 아래를 지나갔는지"를 보면
         // 적이 완전히 안 보인 뒤에 제거할 수 있다.
         y += SPEED * gctx.frameTime
+
+        if (y - height / 2f > gctx.metrics.height) {
+            val scene = gctx.scene as? MainScene ?: return
+            scene.world.remove(this, MainScene.Layer.ENEMY)
+        }
     }
 
     companion object {
