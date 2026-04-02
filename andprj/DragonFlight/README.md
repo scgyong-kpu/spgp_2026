@@ -67,6 +67,13 @@
 ## 충돌 / 점수 / HUD
 
 - [ ] Bullet 과 Enemy 충돌 처리
+  - [ ] `CollisionChecker` 를 두고 `BULLET`, `ENEMY` 를 순회하기 시작
+  - [ ] `Bullet`, `Enemy` 가 충돌 범위를 제공
+  - [ ] 충돌이 있는지 실제로 체크
+  - [ ] 충돌 시 `Bullet` 삭제
+  - [ ] 충돌 시 `Enemy` 삭제
+  - [ ] `dstRect` 와 `collisionRect` 는 다를 수 있음
+  - [ ] `IBoxCollidable` 적용
 - [ ] Enemy life 추가
 - [ ] Bullet power 적용
 - [ ] 충돌 시 점수 증가
