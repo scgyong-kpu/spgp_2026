@@ -45,6 +45,10 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         // Sprite 는 원래 bitmap 전체를 그리지만,
         // roll 단계에서는 srcRect 를 사용해 현재 기울기 frame 하나만 골라 그린다.
         srcRect = Rect(0, 0, PLANE_SRC_WIDTH, PLANE_SRC_WIDTH)
+
+        // draw() 에서 더 이상 자동 sync 하지 않으므로,
+        // 직접 지정한 초기 위치와 크기에 맞춰 dstRect 를 한 번 맞춰 둔다.
+        syncDstRect()
     }
 
     override fun update(gctx: GameContext) {
@@ -68,6 +72,11 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         // 지금은 화면 폭(gctx.metrics.width)과 플레이어 폭을 이용해 경계를 계산하므로,
         // 해상도나 가상 좌표계 폭이 달라져도 같은 방식으로 동작한다.
         x = x.coerceIn(minPlayerX, maxPlayerX)
+
+        // Player 는 update() 에서 x 를 직접 바꾸고,
+        // a2dg Sprite 는 draw() 에서 더 이상 자동 syncDstRect() 를 하지 않는다.
+        // 그래서 이동이 끝난 현재 위치를 기준으로 dstRect 를 여기서 다시 맞춰 둔다.
+        syncDstRect()
 
         fireBullet(gctx)
         updateRoll(gctx)

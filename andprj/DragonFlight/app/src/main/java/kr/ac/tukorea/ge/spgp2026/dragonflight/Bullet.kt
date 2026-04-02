@@ -14,6 +14,12 @@ class Bullet(
     override var x = startX
     override var y = startY
 
+    init {
+        // draw() 에서 자동 sync 를 하지 않으므로,
+        // 생성 시 직접 넣은 초기 위치/크기에 맞춰 dstRect 를 한 번 맞춰 둔다.
+        syncDstRect()
+    }
+
     // 지금 단계의 충돌 범위는 draw 에 쓰는 목적 사각형과 같은 값으로 본다.
     // 즉 Bullet 은 별도 collision box 를 따로 계산하지 않고,
     // 현재 화면에 그려질 영역(dstRect)을 그대로 collisionRect 로 사용한다.

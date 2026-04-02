@@ -30,10 +30,14 @@ class Enemy(
     override var x = x
     override var y = -ENEMY_HEIGHT / 2f
 
-    // Enemy 도 현재는 draw 에 쓰는 목적 사각형(dstRect)을
-    // 그대로 충돌 범위로 사용한다.
-    // 나중에 그림보다 더 작거나 큰 충돌 범위가 필요해지면
-    // 이 property 만 따로 바꾸면 된다.
+    init {
+        // Enemy 도 생성 시 직접 위치와 크기를 대입하므로,
+        // 첫 draw 전에 dstRect 를 미리 맞춰 둔다.
+        syncDstRect()
+    }
+
+    // Enemy 의 collisionRect 는 현재 단계에서는 dstRect 를 그대로 사용한다.
+    // 나중에 그림보다 안쪽으로 줄인 box 가 필요해지면 그때 별도 RectF 로 분리한다.
     val collisionRect: RectF
         get() {
             syncDstRect()
@@ -52,6 +56,7 @@ class Enemy(
             val scene = gctx.scene as? MainScene ?: return
             scene.world.remove(this, MainScene.Layer.ENEMY)
         }
+        syncDstRect()
     }
 
     companion object {
