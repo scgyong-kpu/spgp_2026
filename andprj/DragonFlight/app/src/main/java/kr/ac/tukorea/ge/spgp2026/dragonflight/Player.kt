@@ -126,7 +126,10 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         // fireCoolTime += FIRE_INTERVAL
 
         val scene = gctx.scene as? MainScene ?: return
-        val bullet = Bullet(gctx, x, y)
+        // 총알이 기체 중심에서 바로 나오면 몸체와 겹쳐 보여 어색하다.
+        // 그래서 이번 단계에서는 y 를 조금 위로 올린 위치에서 시작하게 해,
+        // 전투기 앞쪽에서 발사되는 느낌이 나도록 보정한다.
+        val bullet = Bullet(gctx, x, y - BULLET_OFFSET)
         scene.world.add(bullet, MainScene.Layer.BULLET)
     }
 
@@ -175,5 +178,6 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         const val PLANE_SRC_WIDTH = 80
         const val MAX_ROLL_TIME = 0.4f
         const val FIRE_INTERVAL = 0.25f
+        const val BULLET_OFFSET = 80f
     }
 }
