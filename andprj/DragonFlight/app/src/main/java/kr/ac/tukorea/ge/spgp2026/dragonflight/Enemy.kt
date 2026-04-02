@@ -1,9 +1,9 @@
 package kr.ac.tukorea.ge.spgp2026.dragonflight
 
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
-class Enemy(gctx: GameContext, x: Float) : Sprite(gctx, R.mipmap.enemy) {
+class Enemy(gctx: GameContext, x: Float) : AnimSprite(gctx, R.mipmap.enemy_01, FPS) {
     // Enemy 는 터치한 x 위치만 받아 화면 위에서 시작한다.
     // y 시작 위치는 "적은 위에서 내려온다"는 규칙으로 정해져 있으므로
     // 생성자에서 매번 넘기기보다 Enemy 안에서 고정하는 편이 더 읽기 쉽다.
@@ -36,5 +36,6 @@ class Enemy(gctx: GameContext, x: Float) : Sprite(gctx, R.mipmap.enemy) {
         const val ENEMY_WIDTH = 180f
         const val ENEMY_HEIGHT = 180f
         const val SPEED = 240f
+        const val FPS = 10f
     }
 }

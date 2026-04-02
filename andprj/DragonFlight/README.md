@@ -58,6 +58,7 @@
 - [x] 화면 위에서 생성되어 아래로 지나가게 처리
 - [x] 화면 밖으로 나가면 삭제
 - [x] `EnemyGenerator` 같은 생성 담당 객체 도입
+- [x] (추가) `Enemy` 를 `AnimSprite` 로 바꾸고 `enemy_01` strip 적용
 - [ ] wave 에 따른 생성 규칙 추가
 - [ ] level 별 이미지/속도 차이 적용
 
