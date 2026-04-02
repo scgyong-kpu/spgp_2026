@@ -17,8 +17,21 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 // 반대로 bitmap 자체의 원본 픽셀 크기가 필요할 수도 있으므로,
 // bitmapWidth, bitmapHeight 프로퍼티를 따로 제공해 두었다.
 //
-// 실제 draw() 에서는 x, y, width, height 로부터 dstRect 를 다시 계산한 뒤
-// canvas.drawBitmap() 을 호출한다.
+// dstRect 는 x, y, width, height 로부터 만들어지는 파생 상태이다.
+// DragonFlight 쪽 Sprite 는 draw() 에서 매번 syncDstRect() 를 하지 않으므로,
+// 하위 클래스가 x, y, width, height 를 직접 대입하는 패턴을 쓴다면
+// init 블록 마지막에서 syncDstRect() 를 한 번 호출해야 한다.
+// 순서는 "x/y/width/height 값을 모두 넣은 뒤 마지막에 syncDstRect()" 가 되어야 한다.
+// 중간에 먼저 sync 하면, 아직 덜 들어간 값 기준 사각형이 만들어질 수 있다.
+// 다만 Kotlin 은 "프로퍼티 초기화 -> 모든 init 블록" 순서가 아니라,
+// 클래스 본문에 적힌 순서대로 프로퍼티 초기화와 init 블록이 섞여서 실행된다.
+// init 블록도 여러 개 둘 수 있다.
+// 그래서 override var x = ..., override var y = ..., override var width = ..., override var height = ...
+// 같은 선언과 init 블록이 섞여 있다면, syncDstRect() 는 그 네 값 초기화보다 "뒤에 있는" init 블록에서 호출해야 한다.
+// 가장 안전한 패턴은 관련 프로퍼티 선언을 먼저 모아 두고, 그 다음 init 블록 마지막에서 syncDstRect() 를 호출하는 것이다.
+// 반대로 init 블록 안에서 값을 직접 대입하는 패턴이라면, 그 init 블록의 마지막 줄에서 호출해야 한다.
+//
+// 반대로 setCenter(), setSize() 같은 helper 를 쓰면 그 안에서 바로 syncDstRect() 가 호출된다.
 // 회전이나 일부 영역만 그리기 같은 더 복잡한 경우는 하위 클래스에서 draw() 를 override 하면 된다.
 open class Sprite(
     gctx: GameContext,
@@ -63,13 +76,25 @@ open class Sprite(
     }
 
     override fun draw(canvas: Canvas) {
-        syncDstRect()
         canvas.drawBitmap(bitmap, srcRect, dstRect, null)
     }
 
+    // 중심점 x, y 를 같이 바꾸는 가장 기본 helper 이다.
+    // 좌표 두 값을 이 helper 로 바꿀 때는 곧바로 dstRect 도 다시 맞춘다.
     protected fun setCenter(centerX: Float, centerY: Float) {
         x = centerX
         y = centerY
+        syncDstRect()
+    }
+
+    // width, height 를 같이 바꿀 때 한 줄로 묶어 적기 위한 helper 이다.
+    // 중심점 기준 Sprite 에서는 크기 두 값을 짝으로 다루는 경우가 많으므로
+    // setSize() 를 두면 "크기만 바꾸는 의도"가 더 또렷하게 읽힌다.
+    // 이 helper 를 사용할 때도 dstRect 가 바로 최신 상태가 되도록 syncDstRect() 를 함께 호출한다.
+    protected fun setSize(width: Float, height: Float) {
+        this.width = width
+        this.height = height
+        syncDstRect()
     }
 
     // 중심점 x, y 와 width, height 를 좌상단/우하단 좌표로 풀어

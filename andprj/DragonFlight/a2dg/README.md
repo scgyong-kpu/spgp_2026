@@ -18,6 +18,8 @@
 
 - [ ] `Sprite`
   - [ ] bitmap 을 바꿀 수 있는 public API 추가
+  - [x] `setCenter()`, `setSize()` helper 에서 `dstRect` 를 바로 sync 하도록 정리
+  - [x] `draw()` 에서 매번 sync 하지 않고, subclass 초기화 순서에 맞춰 `syncDstRect()` 를 호출하는 규칙 정리
 
 - [x] `AnimSprite`
   - [x] 여러 frame 을 순서대로 보여주는 공통 클래스 추가
