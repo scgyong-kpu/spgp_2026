@@ -3,8 +3,19 @@ package kr.ac.tukorea.ge.spgp2026.dragonflight
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
-class Enemy(gctx: GameContext, x: Float) : AnimSprite(gctx, R.mipmap.enemy_01, FPS) {
-    // Enemy 는 터치한 x 위치만 받아 화면 위에서 시작한다.
+class Enemy(
+    gctx: GameContext,
+    x: Float,
+    level: Int = 1,
+    private val speed: Float = DEFAULT_SPEED,
+) : AnimSprite(gctx, RES_IDS[level - 1], FPS) {
+    // 리소스 이름이 enemy_01, enemy_02 ... enemy_20 처럼 1부터 시작하므로,
+    // 수업 코드에서도 level 을 0-base 대신 1-base 로 다루는 편이 더 자연스럽다.
+    // 그래서 Enemy 생성자는 level = 1 이 첫 번째 적 이미지를 뜻하게 하고,
+    // 실제 배열 접근에서만 [level - 1] 로 바꿔 준다.
+    // Enemy 는 생성자가 넘겨 준 x 위치를 기준으로 화면 위에서 시작한다.
+    // 지금은 EnemyGenerator 가 각 적의 x 를 계산해 넘겨 주고 있으므로,
+    // Enemy 자신은 "어느 x 에 배치할지"보다 "화면 위에서 어떻게 내려올지"에만 집중하면 된다.
     // y 시작 위치는 "적은 위에서 내려온다"는 규칙으로 정해져 있으므로
     // 생성자에서 매번 넘기기보다 Enemy 안에서 고정하는 편이 더 읽기 쉽다.
     //
@@ -24,7 +35,7 @@ class Enemy(gctx: GameContext, x: Float) : AnimSprite(gctx, R.mipmap.enemy_01, F
         //   y - height / 2f > gctx.metrics.height
         // 처럼 "적의 윗변이 화면 아래를 지나갔는지"를 보면
         // 적이 완전히 안 보인 뒤에 제거할 수 있다.
-        y += SPEED * gctx.frameTime
+        y += speed * gctx.frameTime
 
         if (y - height / 2f > gctx.metrics.height) {
             val scene = gctx.scene as? MainScene ?: return
@@ -35,7 +46,14 @@ class Enemy(gctx: GameContext, x: Float) : AnimSprite(gctx, R.mipmap.enemy_01, F
     companion object {
         const val ENEMY_WIDTH = 180f
         const val ENEMY_HEIGHT = 180f
-        const val SPEED = 240f
+        const val DEFAULT_SPEED = 240f
         const val FPS = 10f
+        const val MAX_LEVEL_COUNT = 20
+        private val RES_IDS = intArrayOf(
+            R.mipmap.enemy_01, R.mipmap.enemy_02, R.mipmap.enemy_03, R.mipmap.enemy_04, R.mipmap.enemy_05,
+            R.mipmap.enemy_06, R.mipmap.enemy_07, R.mipmap.enemy_08, R.mipmap.enemy_09, R.mipmap.enemy_10,
+            R.mipmap.enemy_11, R.mipmap.enemy_12, R.mipmap.enemy_13, R.mipmap.enemy_14, R.mipmap.enemy_15,
+            R.mipmap.enemy_16, R.mipmap.enemy_17, R.mipmap.enemy_18, R.mipmap.enemy_19, R.mipmap.enemy_20,
+        )
     }
 }
