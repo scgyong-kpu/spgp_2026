@@ -7,14 +7,26 @@ class Enemy(gctx: GameContext, x: Float) : Sprite(gctx, R.mipmap.enemy) {
     // Enemy 는 터치한 x 위치만 받아 화면 위에서 시작한다.
     // y 시작 위치는 "적은 위에서 내려온다"는 규칙으로 정해져 있으므로
     // 생성자에서 매번 넘기기보다 Enemy 안에서 고정하는 편이 더 읽기 쉽다.
+    //
+    // x, y 는 Sprite 의 중심점이다.
+    // 그래서 y 를 ENEMY_HEIGHT / 2f 로 두면 화면 위에 "딱 붙어" 시작하고,
+    // y 를 -ENEMY_HEIGHT / 2f 로 두면 이미지 전체가 화면 밖에 있는 상태에서 내려오게 된다.
+    // DragonFlight 류 게임에서는 적이 화면 위 바깥에서 진입하는 느낌이 더 자연스러우므로
+    // 여기서는 후자를 사용한다.
     override var width = ENEMY_WIDTH
     override var height = ENEMY_HEIGHT
     override var x = x
-    override var y = ENEMY_HEIGHT / 2f
+    override var y = -ENEMY_HEIGHT / 2f
 
     override fun update(gctx: GameContext) {
         // 이번 단계에서는 Enemy 가 위에서 아래로 지나가는 움직임만 먼저 확인한다.
-        // 화면 밖으로 나갔을 때 삭제하는 처리는 다음 커밋에서 따로 다룬다.
+        // 화면 아래로 완전히 사라졌을 때 삭제하는 처리는 다음 커밋에서 따로 다룬다.
+        //
+        // 아래쪽으로 움직일 때도 중심점 y 를 더한다.
+        // 나중에 삭제 조건을 잡을 때는
+        //   y - height / 2f > gctx.metrics.height
+        // 처럼 "적의 윗변이 화면 아래를 지나갔는지"를 보면
+        // 적이 완전히 안 보인 뒤에 제거할 수 있다.
         y += SPEED * gctx.frameTime
     }
 
