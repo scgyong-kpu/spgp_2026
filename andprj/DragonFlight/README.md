@@ -72,7 +72,7 @@
   - [x] 충돌이 있는지 실제로 체크
   - [x] 충돌 시 `Bullet` 삭제
   - [x] 충돌 시 `Enemy` 삭제
-  - [ ] Loop 도는 방식 개선
+  - [x] Loop 도는 방식 개선
   - [ ] `dstRect` 와 `collisionRect` 는 다를 수 있음
   - [ ] `IBoxCollidable` 적용
 - [ ] Enemy life 추가
