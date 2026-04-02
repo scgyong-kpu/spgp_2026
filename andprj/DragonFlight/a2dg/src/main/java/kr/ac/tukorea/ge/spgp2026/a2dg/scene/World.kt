@@ -19,7 +19,11 @@ class World<TLayer>(
     //   Layer.CIRCLE -> MutableList<IGameObject>
     //   Layer.FIGHTER -> MutableList<IGameObject>
     // 같은 map 구조가 된다.
-    private val layers = orderedLayers.associateWith { mutableListOf<IGameObject>() }
+    // public inline 함수가 이 필드에 접근하므로,
+    // Kotlin 에서는 private 대신 @PublishedApi internal 로 열어 두어야 한다.
+    // 이렇게 하면 일반 사용 코드에는 여전히 숨기되, inline 으로 펴질 코드에서는 합법적으로 참조할 수 있다.
+    @PublishedApi
+    internal val layers = orderedLayers.associateWith { mutableListOf<IGameObject>() }
 
     // layer 별 목록 길이를 모두 더하면 현재 World 안에 들어 있는 전체 오브젝트 수가 된다.
     val objectCount: Int

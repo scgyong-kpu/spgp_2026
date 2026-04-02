@@ -51,6 +51,7 @@
   - [x] `objectsAt(layer)` 로 특정 layer 의 읽기 전용 객체 목록을 가져오기
   - [x] `forEachReversedAt(layer)` 로 삭제에 안전한 역순 순회 helper 추가
   - [x] `forEachReversedAt(layer)` 를 `inline` 으로 정리
+  - [x] `public inline` 함수가 `private` 필드에 접근할 수 없어 `@PublishedApi internal` 이 필요하다는 점 정리
 
 - [ ] Scene lifecycle
   - [ ] Scene 이 transparent 하게 위에 올라가는 경우
