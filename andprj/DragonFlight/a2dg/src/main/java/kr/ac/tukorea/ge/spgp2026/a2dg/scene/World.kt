@@ -40,7 +40,8 @@ class World<TLayer>(
     // 같은 layer 안에서 조건에 맞는 객체를 지우는 경우에는
     // 뒤에서 앞으로 순회해야 index 가 당겨져도 아직 방문하지 않은 앞쪽 객체를 안전하게 계속 볼 수 있다.
     // 이 규칙을 World 안에 모아 두면 바깥 코드가 매번 lastIndex downTo 0 를 다시 적지 않아도 된다.
-    fun forEachReversedAt(layer: TLayer, action: (IGameObject) -> Unit) {
+    // inline 으로 두면 작은 helper 를 자주 호출하는 경우 함수/람다 호출 부담을 줄이기 좋다.
+    inline fun forEachReversedAt(layer: TLayer, action: (IGameObject) -> Unit) {
         val objects = layers.getValue(layer)
         for (i in objects.lastIndex downTo 0) {
             action(objects[i])
