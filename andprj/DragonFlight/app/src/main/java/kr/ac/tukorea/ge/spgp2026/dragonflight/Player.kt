@@ -33,6 +33,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
     private val targetBitmap: Bitmap = gctx.res.getBitmap(R.mipmap.tu_joystick_thumb)
     private val targetRect = RectF()
     private var rollTime = 0f
+    private var fireCoolTime = FIRE_INTERVAL
 
     init {
         // 값이 고정되어 있으니 Kotlin 스타일만 보면 property override 쪽이 더 자연스러워 보일 수 있다.
@@ -66,6 +67,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         // 해상도나 가상 좌표계 폭이 달라져도 같은 방식으로 동작한다.
         x = x.coerceIn(minPlayerX, maxPlayerX)
 
+        fireBullet(gctx)
         updateRoll(gctx)
     }
 
@@ -87,11 +89,6 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        // 총알이 실제로 보이는지 확인하기 위한 임시 단계이다.
-        // 자동 연사로 가기 전, 일단 ACTION_DOWN 때 Bullet 하나만 만들어 본다.
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            fireBullet()
-        }
         // 이번 단계에서는 터치한 "화면 위치"가 아니라
         // 플레이어가 이동해야 할 "가상 좌표계 안의 목표 위치"가 중요하다.
         // 그래서 screen 좌표를 그대로 비교하지 않고,
@@ -107,7 +104,27 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         return true
     }
 
-    private fun fireBullet() {
+    private fun fireBullet(gctx: GameContext) {
+        fireCoolTime -= gctx.frameTime
+        if (fireCoolTime > 0f) return
+
+        // 발사 시점이 되었으면 다음 발사까지의 남은 시간을 다시 FIRE_INTERVAL 로 되돌린다.
+        // 이렇게 하면 "이번 프레임에서 발사했다"는 사실만 기준으로 다음 쿨타임을 단순하게 다시 시작한다.
+        fireCoolTime = FIRE_INTERVAL
+
+        // 반대로 fireCoolTime += FIRE_INTERVAL 로 쓰는 방식은
+        // "지금 프레임에서 얼마나 초과해서 늦었는지"를 일부 보존하고 다음 주기에 넘기는 방식이다.
+        // 예를 들어 frameTime 이 커서 fireCoolTime 이 -0.03f 까지 내려갔다면,
+        // += 는 그 0.03 초를 다음 쿨타임 계산에 반영하고,
+        // = 는 그 초과분을 버리고 항상 FIRE_INTERVAL 부터 다시 시작한다.
+
+        // 즉, FIRE_INTERVAL 간격 이내에는 발사를 안 하겠다는 건지
+        // 100 * FIRE_INTERVAL 시간 동안 100번 발사를 꼭 하겠다는 건지
+        // 선택을 하면 되는 문제이다.
+        //
+        // 현재 단계에서는 코드가 더 읽기 쉬운 = FIRE_INTERVAL 방식을 먼저 사용한다.
+        // fireCoolTime += FIRE_INTERVAL
+
         val scene = gctx.scene as? MainScene ?: return
         val bullet = Bullet(gctx, x, y)
         scene.world.add(bullet, MainScene.Layer.BULLET)
@@ -157,5 +174,6 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
         const val TARGET_MARKER_SIZE = 72f
         const val PLANE_SRC_WIDTH = 80
         const val MAX_ROLL_TIME = 0.4f
+        const val FIRE_INTERVAL = 0.25f
     }
 }
