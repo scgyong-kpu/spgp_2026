@@ -5,8 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.MotionEvent
+import androidx.core.content.ContextCompat
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kotlin.math.abs
 
@@ -37,6 +39,14 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
     private val sparkRect = RectF()
     private var rollTime = 0f
     private var fireCoolTime = FIRE_INTERVAL
+    // Enemy 는 여러 마리가 동시에 생기므로 Gauge 를 companion object 로 공유했지만,
+    // Player 는 화면에 한 대만 존재하므로 굳이 static 처럼 공유할 필요가 없다.
+    // 그래서 Player cooltime gauge 는 인스턴스 멤버로 두고, 이 Player 생성 시 바로 준비한다.
+    private val cooltimeGauge = Gauge(
+        0.1f,
+        ContextCompat.getColor(gctx.view.context, R.color.player_gauge_fg),
+        ContextCompat.getColor(gctx.view.context, R.color.player_gauge_bg),
+    )
 
     override val collisionRect = RectF()
 
@@ -89,6 +99,17 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+
+        // fireCoolTime 은 발사 직후 FIRE_INTERVAL 로 되돌아갔다가 0 쪽으로 감소한다.
+        // Gauge 에는 "얼마나 다시 발사 준비가 되었는지"를 보여 주고 싶으므로
+        // 남은 시간 비율이 아니라 준비된 비율 1 - fireCoolTime / FIRE_INTERVAL 을 넘긴다.
+        val cooltimeProgress = 1f - (fireCoolTime / FIRE_INTERVAL).coerceIn(0f, 1f)
+        val gaugeWidth = width * 0.7f
+        val gaugeX = x - gaugeWidth / 2f
+        // Player cooltime gauge 는 기체 위쪽이 아니라 중심 y 를 기준으로 조금 아래에 둔다.
+        // 이번 단계에서는 y + 70f 위치에 그려서 기체와 너무 겹치지 않게 본다.
+        val gaugeY = y + 70f
+        cooltimeGauge.draw(canvas, gaugeX, gaugeY, gaugeWidth, cooltimeProgress)
 
         // 총알을 막 발사한 직후의 아주 짧은 시간 동안만 스파크를 그린다.
         // 별도 Spark 오브젝트를 만들지 않고 Player 가 직접 그리면,

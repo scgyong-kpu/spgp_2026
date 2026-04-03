@@ -86,6 +86,7 @@
 - [x] `Gauge` 를 이용한 `Enemy` life / `Player` cooltime 표시
   - [x] (추가) `Enemy` 가 `Gauge` 로 life 표시
   - [x] (추가) `Enemy Gauge` 색을 color resource 에서 읽기
+  - [x] (추가) `Player cooltime Gauge` 색을 color resource 에서 읽기
   - [x] (추가) `ScoreNumber` 가 `ImageNumber` 로 점수 표시
 
 ## Background / Map
