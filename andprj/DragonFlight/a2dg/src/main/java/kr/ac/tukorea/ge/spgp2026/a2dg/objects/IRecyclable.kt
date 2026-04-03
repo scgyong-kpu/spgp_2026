@@ -9,13 +9,14 @@ package kr.ac.tukorea.ge.spgp2026.a2dg.objects
  *
  * 이번 a2dg 에서는 다음 순서를 염두에 두고 이 인터페이스를 먼저 만든다.
  * 1. World.remove() 가 IRecyclable 인 객체를 recycle bin 으로 수거한다.
- * 2. World.obtain(SomeClass::class.java) 가 bin 에 있으면 꺼내고, 없으면 새로 만든다.
- * 3. 호출하는 쪽은 obtain() 뒤에 init(...) 으로 필요한 상태만 다시 채운다.
+ * 2. World.obtain(SomeClass::class.java) 가 bin 에 있으면 꺼내고, 없으면 null 을 돌려준다.
+ * 3. 객체의 companion object 나 factory 함수가 "재활용 객체를 쓸지 새로 만들지"를 결정한다.
+ * 4. 마지막으로 init(...) 으로 필요한 상태만 다시 채운다.
  *
- * 여기서 중요한 점은 "재사용 여부는 World 가 결정하고, 초기화 내용은 객체가 책임진다"는 것이다.
+ * 여기서 중요한 점은 "World 는 recycle bin 조회만 맡고, 새 생성 여부는 객체 쪽 factory 가 결정한다"는 것이다.
  * 예를 들어 Bullet 을 쏠 때는:
  *
- * val bullet = world.obtain(Bullet::class.java)
+ * val bullet = world.obtain(Bullet::class.java) ?: Bullet(gctx)
  * bullet.init(gctx, x, y, power)
  *
  * 같은 흐름을 목표로 한다.
@@ -32,14 +33,8 @@ package kr.ac.tukorea.ge.spgp2026.a2dg.objects
  * - 하지만 "만일" inline 처리를 빼먹거나, lambda 가 바깥 값을 캡처하는 방식으로 남아 있으면
  *   작은 함수 객체라도 만들어질 수 있다.
  * - 이번 재활용 단계의 목표는 그런 중간 객체 생성 가능성까지 최대한 줄이는 것이다.
- * - 반면 Class 기반 reflection 생성은 "bin 이 비어 있을 때 새로 만드는 순간"에만 일어난다.
- *
- * 물론 reflection 기반 방식도 제약이 있다.
- * - 재활용 대상 클래스는 인자 없는 기본 생성자를 가져야 한다.
- * - 실제 사용 값은 생성자 대신 init(...) 에서 다시 넣는 패턴을 따라야 한다.
- *
- * 하지만 그 제약은 a2dg 개발자와 app 개발자가 "재활용 대상은 기본 생성자 + init(...)"
- * 규칙을 지키기로 약속하면 해결할 수 있다.
+ * - 그래서 obtain() 은 일단 Class 를 key 로 recycle bin 에서 꺼내기만 하고,
+ *   새로 만드는 코드는 Bullet(gctx), Enemy(gctx) 처럼 각 타입의 factory 에 명시적으로 남겨 둔다.
  *
  * onRecycle() 은 객체가 recycle bin 에 들어가기 직전에 마지막 정리를 할 기회를 준다.
  * 예를 들어:

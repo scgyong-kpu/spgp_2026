@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameView
 
@@ -28,6 +29,19 @@ class World<TLayer>(
     // 이렇게 하면 일반 사용 코드에는 여전히 숨기되, inline 으로 펴질 코드에서는 합법적으로 참조할 수 있다.
     @PublishedApi
     internal val layers = orderedLayers.associateWith { mutableListOf<IGameObject>() }
+
+    // recycleBin 은 "삭제되었지만 버리지 않고 다시 쓸 수 있는 객체들"을 타입별로 모아 두는 장소이다.
+    // key 는 Bullet::class.java, Enemy::class.java 같은 실제 클래스이고,
+    // value 는 그 타입의 재활용 대기 객체 목록이다.
+    //
+    // 여기서는 Class<out IRecyclable> 를 key 로 사용해
+    // "아무 클래스"가 아니라 "IRecyclable 을 구현한 클래스"만 bin 에 들어온다는 의도를 드러낸다.
+    //
+    // ArrayList 를 쓰는 이유는:
+    // - 재활용 풀은 보통 개수가 크지 않고
+    // - 앞/뒤에서 하나 꺼내고 넣는 정도면 충분하며
+    // - 별도 iterator 객체를 만들지 않고 바로 접근하기 쉽기 때문이다.
+    private val recycleBin = HashMap<Class<out IRecyclable>, ArrayList<IRecyclable>>()
 
     // layer 별 목록 길이를 모두 더하면 현재 World 안에 들어 있는 전체 오브젝트 수가 된다.
     val objectCount: Int
@@ -85,7 +99,48 @@ class World<TLayer>(
     }
 
     fun remove(gameObject: IGameObject, layer: TLayer): Boolean {
-        return layers.getValue(layer).remove(gameObject)
+        val removed = layers.getValue(layer).remove(gameObject)
+        if (!removed) return false
+
+        // 삭제된 객체가 IRecyclable 이면 그냥 버리지 않고 recycle bin 으로 모은다.
+        // onRecycle() 은 "다음 init(...) 전에 정리해야 할 마지막 상태"를 비우는 hook 이다.
+        if (gameObject is IRecyclable) {
+            gameObject.onRecycle()
+            collectRecyclable(gameObject)
+        }
+        return true
+    }
+
+    // 재활용 가능한 객체를 bin 에 넣는다.
+    // getOrPut() 도 쓸 수 있지만, 지금 단계에서는 작은 lambda 생성 가능성까지 피하기 위해
+    // null check 로 직접 분기한다.
+    private fun collectRecyclable(gameObject: IRecyclable) {
+        val clazz = gameObject.javaClass as Class<out IRecyclable>
+        var bin = recycleBin[clazz]
+        if (bin == null) {
+            bin = ArrayList()
+            recycleBin[clazz] = bin
+        }
+        bin.add(gameObject)
+    }
+
+    // obtain() 은 "재활용 bin 에 같은 타입 객체가 있으면 하나 꺼내고, 없으면 null"을 돌려준다.
+    // 새로 만들지 여부까지 World 가 결정하면 reflection 이나 factory lambda 를 내부에서 고민해야 하므로,
+    // 이번 단계에서는 recycle bin 조회까지만 맡고 새 생성은 각 타입의 factory 가 명시적으로 처리한다.
+    //
+    // 사용 예:
+    // val bullet = world.obtain(Bullet::class.java) ?: Bullet(gctx)
+    // bullet.init(gctx, x, y, power)
+    //
+    // 이렇게 두면 호출부는 lambda 없이도 재활용/신규생성을 모두 처리할 수 있고,
+    // obtain() 자체는 중간 객체를 만들지 않는 단순 조회 함수로 남는다.
+    fun <T : IRecyclable> obtain(clazz: Class<T>): T? {
+        val bin = recycleBin[clazz]
+        if (bin == null || bin.isEmpty()) {
+            return null
+        }
+        @Suppress("UNCHECKED_CAST")
+        return bin.removeAt(bin.lastIndex) as T
     }
 
     fun update(gctx: GameContext) {
