@@ -103,7 +103,8 @@
   - [ ] `JoyStick` 와 `Button` 이 생기면 공통 터치 계약이 필요한지 다시 보기
 
 - [ ] 충돌 / layer 관련 인터페이스
-  - [ ] `IBoxCollidable` 이 필요한지 검토
+  - [x] `IBoxCollidable` 추가
+  - [x] `collidesWith()` extension 으로 AABB 충돌 helper 추가
   - [ ] `ILayerProvider` 같은 보조 인터페이스가 필요한지 검토
 
 - [ ] 재활용 / 생명주기 관련 패턴
