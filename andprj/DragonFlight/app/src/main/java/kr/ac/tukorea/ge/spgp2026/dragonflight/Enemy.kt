@@ -7,6 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import androidx.core.graphics.toColorInt
 
 class Enemy(
     gctx: GameContext,
@@ -99,7 +100,7 @@ class Enemy(
         const val MAX_LEVEL_COUNT = 20
         const val COLLISION_INSET = 11f
         const val LIFE_PER_LEVEL = 10
-        private val gauge = Gauge(0.1f, Color.parseColor("#2B95F1"), Color.parseColor("#F5AAA4"))
+        private val gauge = Gauge(0.1f, "#2B95F1".toColorInt(), "#F5AAA4".toColorInt())
         private val RES_IDS = intArrayOf(
             R.mipmap.enemy_01, R.mipmap.enemy_02, R.mipmap.enemy_03, R.mipmap.enemy_04, R.mipmap.enemy_05,
             R.mipmap.enemy_06, R.mipmap.enemy_07, R.mipmap.enemy_08, R.mipmap.enemy_09, R.mipmap.enemy_10,
