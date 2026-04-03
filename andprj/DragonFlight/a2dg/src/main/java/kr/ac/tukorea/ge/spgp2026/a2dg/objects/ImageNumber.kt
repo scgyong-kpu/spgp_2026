@@ -11,7 +11,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 // 숫자 자체는 value 가 들고 있고,
 // 화면에 보이는 값은 displayValue 가 들고 있어
 // update() 에서 천천히 따라가게 만들 수 있다.
-class ImageNumber(
+open class ImageNumber(
     gctx: GameContext,
     mipmapId: Int,
     private val right: Float,
