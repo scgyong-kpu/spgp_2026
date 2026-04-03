@@ -109,7 +109,7 @@
   - [ ] `ILayerProvider` 같은 보조 인터페이스가 필요한지 검토
 
 - [ ] 재활용 / 생명주기 관련 패턴
-  - [ ] `IRecyclable` 이 필요한지 검토
+  - [x] `IRecyclable` 추가
   - [ ] 재활용 가능한 객체 패턴
   - [ ] 재활용과 Scene / World 생명주기 관계 정리
 
