@@ -14,6 +14,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         BULLET,
         ENEMY,
         CONTROLLER,
+        UI,
     }
 
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
@@ -21,6 +22,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     val player = Player(gctx)
     private val enemyGenerator = EnemyGenerator(gctx)
     private val collisionChecker = CollisionChecker(gctx)
+    private val scoreLabel = ScoreLabel()
 
     // layer 가 enum 이면 Layer.entries 로 enum 전체를 그대로 꺼낼 수 있다.
     // 그래서 arrayOf(Layer.PLAYER, ...) 를 일일이 다시 적지 않아도 된다.
@@ -32,6 +34,15 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         add(player, Layer.PLAYER)
         add(enemyGenerator, Layer.CONTROLLER)
         add(collisionChecker, Layer.CONTROLLER)
+        add(scoreLabel, Layer.UI)
+    }
+
+    fun addScore(amount: Int) {
+        scoreLabel.add(amount)
+    }
+
+    fun getScore(): Int {
+        return scoreLabel.getScore()
     }
 
     // 현재 Scene 에서는 터치 입력을 따로 나누지 않고

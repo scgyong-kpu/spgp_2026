@@ -36,6 +36,7 @@ class CollisionChecker(private val gctx: GameContext) : IGameObject {
                     if (enemy.dead) {
                         Log.d(javaClass.simpleName, "Enemy Dead")
                         scene.world.remove(enemy, MainScene.Layer.ENEMY)
+                        scene.addScore(enemy.getScore())
                     }
                 }
             }

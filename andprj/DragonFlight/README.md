@@ -80,8 +80,8 @@
   - [x] (추가) `Player` 와 `Enemy` 가 충돌하면 `Enemy` 삭제
 - [x] Enemy life 추가
 - [ ] Bullet power 적용
-- [ ] 충돌 시 점수 증가
-- [ ] `Score` 표시
+- [x] 충돌 시 점수 증가
+- [x] `Score` 표시
 - [ ] 점수가 애니메이션되며 증가하도록 적용
 - [ ] `Gauge` 를 이용한 `Enemy` life / `Player` cooltime 표시
   - [x] (추가) `Enemy` 가 `Gauge` 로 life 표시

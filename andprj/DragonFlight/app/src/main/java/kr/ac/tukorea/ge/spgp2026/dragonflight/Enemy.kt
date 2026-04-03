@@ -101,6 +101,12 @@ class Enemy(
         life -= power
     }
 
+    fun getScore(): Int {
+        // 현재 Enemy level 은 1-base 이므로,
+        // 점수도 level 1 -> 100, level 20 -> 2000 형태로 바로 읽히게 둔다.
+        return level * SCORE_PER_LEVEL
+    }
+
     companion object {
         const val ENEMY_WIDTH = 180f
         const val ENEMY_HEIGHT = 180f
@@ -109,6 +115,7 @@ class Enemy(
         const val MAX_LEVEL_COUNT = 20
         const val COLLISION_INSET = 11f
         const val LIFE_PER_LEVEL = 10
+        const val SCORE_PER_LEVEL = 100
         private var gauge: Gauge? = null
         private val RES_IDS = intArrayOf(
             R.mipmap.enemy_01, R.mipmap.enemy_02, R.mipmap.enemy_03, R.mipmap.enemy_04, R.mipmap.enemy_05,
