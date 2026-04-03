@@ -78,7 +78,7 @@
   - [x] `dstRect` 와 `collisionRect` 는 다를 수 있음
   - [x] `IBoxCollidable` 적용
   - [x] (추가) `Player` 와 `Enemy` 가 충돌하면 `Enemy` 삭제
-- [ ] Enemy life 추가
+- [x] Enemy life 추가
 - [ ] Bullet power 적용
 - [ ] 충돌 시 점수 증가
 - [ ] `Score` 표시

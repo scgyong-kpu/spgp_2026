@@ -38,10 +38,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
     private var rollTime = 0f
     private var fireCoolTime = FIRE_INTERVAL
 
-    // Player 도 현재 단계에서는 별도 collision box 를 두지 않고
-    // 화면에 그려지는 dstRect 를 그대로 충돌 범위로 사용한다.
-    override val collisionRect: RectF
-        get() = dstRect
+    override val collisionRect = RectF()
 
     init {
         // 값이 고정되어 있으니 Kotlin 스타일만 보면 property override 쪽이 더 자연스러워 보일 수 있다.
@@ -55,6 +52,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
         // draw() 에서 더 이상 자동 sync 하지 않으므로,
         // 직접 지정한 초기 위치와 크기에 맞춰 dstRect 를 한 번 맞춰 둔다.
         syncDstRect()
+        updateCollisionRect()
     }
 
     override fun update(gctx: GameContext) {
@@ -83,6 +81,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
         // a2dg Sprite 는 draw() 에서 더 이상 자동 syncDstRect() 를 하지 않는다.
         // 그래서 이동이 끝난 현재 위치를 기준으로 dstRect 를 여기서 다시 맞춰 둔다.
         syncDstRect()
+        updateCollisionRect()
 
         fireBullet(gctx)
         updateRoll(gctx)
@@ -200,6 +199,13 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
         )
     }
 
+    private fun updateCollisionRect() {
+        // Player 는 날개까지 모두 맞은 것으로 보지 않도록 충돌 범위를 조금 줄여 둔다.
+        // 좌우는 40, 상하는 20 만큼 안쪽으로 줄이면 보이는 그림보다 충돌 판정이 조금 보수적이 된다.
+        collisionRect.set(dstRect)
+        collisionRect.inset(COLLISION_INSET_X, COLLISION_INSET_Y)
+    }
+
     companion object {
         const val SPEED = 300f
         const val PLAYER_WIDTH = 160f
@@ -213,5 +219,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
         const val SPARK_DURATION = 0.1f
         const val SPARK_WIDTH = 94f
         const val SPARK_HEIGHT = SPARK_WIDTH * 3 / 5
+        const val COLLISION_INSET_X = 40f
+        const val COLLISION_INSET_Y = 20f
     }
 }

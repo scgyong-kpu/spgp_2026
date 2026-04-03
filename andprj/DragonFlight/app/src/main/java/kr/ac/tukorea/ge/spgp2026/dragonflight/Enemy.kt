@@ -11,7 +11,12 @@ class Enemy(
     val level: Int = 1,
     private val speed: Float = DEFAULT_SPEED,
 ) : AnimSprite(gctx, RES_IDS[level - 1], FPS), IBoxCollidable {
-    private val _collisionRect = RectF()
+    var life = level * LIFE_PER_LEVEL
+        private set
+    val maxLife = life
+    val dead: Boolean
+        get() = life <= 0
+    override val collisionRect = RectF()
 
     // 리소스 이름이 enemy_01, enemy_02 ... enemy_20 처럼 1부터 시작하므로,
     // 수업 코드에서도 level 을 0-base 대신 1-base 로 다루는 편이 더 자연스럽다.
@@ -36,6 +41,9 @@ class Enemy(
     init {
         // Enemy 도 생성 시 직접 위치와 크기를 대입하므로,
         // 첫 draw 전에 dstRect 와 collisionRect 를 미리 맞춰 둔다.
+        // 체력도 level 에 따라 다르게 시작한다.
+        // 현재 규칙은 level 1 이 10, level 20 이 200 이 되도록
+        // level * LIFE_PER_LEVEL 공식을 그대로 사용한다.
         syncDstRect()
         updateCollisionRect()
     }
@@ -43,9 +51,6 @@ class Enemy(
     // Enemy 의 collisionRect 는 그림에 쓰는 dstRect 와 완전히 같지 않다.
     // 현재 단계에서는 dstRect 를 복사한 뒤 사방을 11f 만큼 안쪽으로 줄여,
     // 눈에 보이는 날개/여백보다 조금 안쪽에서 충돌이 나도록 조정한다.
-    override val collisionRect: RectF
-        get() = _collisionRect
-
     override fun update(gctx: GameContext) {
         // 아래쪽으로 움직일 때도 중심점 y 를 더한다.
         // 삭제 조건은
@@ -63,8 +68,12 @@ class Enemy(
     }
 
     private fun updateCollisionRect() {
-        _collisionRect.set(dstRect)
-        _collisionRect.inset(COLLISION_INSET, COLLISION_INSET)
+        collisionRect.set(dstRect)
+        collisionRect.inset(COLLISION_INSET, COLLISION_INSET)
+    }
+
+    fun decreaseLife(power: Int) {
+        life -= power
     }
 
     companion object {
@@ -74,6 +83,7 @@ class Enemy(
         const val FPS = 10f
         const val MAX_LEVEL_COUNT = 20
         const val COLLISION_INSET = 11f
+        const val LIFE_PER_LEVEL = 10
         private val RES_IDS = intArrayOf(
             R.mipmap.enemy_01, R.mipmap.enemy_02, R.mipmap.enemy_03, R.mipmap.enemy_04, R.mipmap.enemy_05,
             R.mipmap.enemy_06, R.mipmap.enemy_07, R.mipmap.enemy_08, R.mipmap.enemy_09, R.mipmap.enemy_10,

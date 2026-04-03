@@ -21,7 +21,7 @@ class CollisionChecker(private val gctx: GameContext) : IGameObject {
             val enemy = enemyObject as? Enemy ?: return@forEachReversedAt
 
             if (player.collidesWith(enemy)) {
-                Log.d(javaClass.simpleName, "Collision !! Player - Enemy(level=${enemy.level}, x=${enemy.x})")
+                Log.w(javaClass.simpleName, "Collision !! Player - Enemy(level=${enemy.level}, x=${enemy.x})")
                 scene.world.remove(enemy, MainScene.Layer.ENEMY)
                 return@forEachReversedAt
             }
@@ -30,9 +30,13 @@ class CollisionChecker(private val gctx: GameContext) : IGameObject {
                 val bullet = bulletObject as? Bullet ?: return@forEachReversedAt
 
                 if (bullet.collidesWith(enemy)) {
-                    Log.d(javaClass.simpleName, "Collision !! Enemy(level=${enemy.level}, x=${enemy.x}) - Bullet(y=${bullet.y})")
+                    Log.v(javaClass.simpleName, "Collision !! Enemy(level=${enemy.level}, x=${enemy.x}, life=${enemy.life}/${enemy.maxLife}) - Bullet(y=${bullet.y})")
                     scene.world.remove(bullet, MainScene.Layer.BULLET)
-                    scene.world.remove(enemy, MainScene.Layer.ENEMY)
+                    enemy.decreaseLife(10)
+                    if (enemy.dead) {
+                        Log.d(javaClass.simpleName, "Enemy Dead")
+                        scene.world.remove(enemy, MainScene.Layer.ENEMY)
+                    }
                 }
             }
         }
