@@ -40,7 +40,7 @@
 
 - [ ] UI / HUD objects
   - [x] `Gauge` 공통 클래스 추가
-  - [ ] `Score` 같이 숫자 변화가 보이는 공통 HUD 객체 추가
+  - [x] `ImageNumber` 공통 클래스 추가
   - [x] `LabelUtil` 공통 클래스 추가
   - [ ] `Button` 공통 클래스 추가
 
