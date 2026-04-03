@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 class CollisionChecker(private val gctx: GameContext) : IGameObject {
     override fun update(gctx: GameContext) {
         val scene = gctx.scene as? MainScene ?: return
+        val player = scene.player
 
         // 바깥쪽 Enemy 와 안쪽 Bullet 을 모두 forEachReversedAt() 로 뒤에서 앞으로 돈다.
         // 그러면 충돌한 Bullet 이나 Enemy 를 즉시 remove() 해도
@@ -18,6 +19,13 @@ class CollisionChecker(private val gctx: GameContext) : IGameObject {
         // 호출 위치에 그대로 펴진다고 생각하면 된다.
         scene.world.forEachReversedAt(MainScene.Layer.ENEMY) { enemyObject ->
             val enemy = enemyObject as? Enemy ?: return@forEachReversedAt
+
+            if (player.collidesWith(enemy)) {
+                Log.d(javaClass.simpleName, "Collision !! Player - Enemy(level=${enemy.level}, x=${enemy.x})")
+                scene.world.remove(enemy, MainScene.Layer.ENEMY)
+                return@forEachReversedAt
+            }
+
             scene.world.forEachReversedAt(MainScene.Layer.BULLET) { bulletObject ->
                 val bullet = bulletObject as? Bullet ?: return@forEachReversedAt
 
