@@ -1,13 +1,12 @@
 package kr.ac.tukorea.ge.spgp2026.dragonflight
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.RectF
+import androidx.core.content.ContextCompat
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
-import androidx.core.graphics.toColorInt
 
 class Enemy(
     gctx: GameContext,
@@ -43,6 +42,16 @@ class Enemy(
     override var y = -ENEMY_HEIGHT / 2f
 
     init {
+        // Gauge 는 Enemy 마다 새로 만들지 않고,
+        // 첫 Enemy 가 생성될 때 한 번만 만들어 이후 Enemy 들이 함께 재사용한다.
+        if (gauge == null) {
+            gauge = Gauge(
+                0.1f,
+                ContextCompat.getColor(gctx.view.context, R.color.enemy_gauge_fg),
+                ContextCompat.getColor(gctx.view.context, R.color.enemy_gauge_bg),
+            )
+        }
+
         // Enemy 도 생성 시 직접 위치와 크기를 대입하므로,
         // 첫 draw 전에 dstRect 와 collisionRect 를 미리 맞춰 둔다.
         // 체력도 level 에 따라 다르게 시작한다.
@@ -80,7 +89,7 @@ class Enemy(
         val gaugeWidth = width * 0.7f
         val gaugeX = x - gaugeWidth / 2f
         val gaugeY = dstRect.bottom
-        gauge.draw(canvas, gaugeX, gaugeY, gaugeWidth, life.toFloat() / maxLife)
+        gauge?.draw(canvas, gaugeX, gaugeY, gaugeWidth, life.toFloat() / maxLife)
     }
 
     private fun updateCollisionRect() {
@@ -100,7 +109,7 @@ class Enemy(
         const val MAX_LEVEL_COUNT = 20
         const val COLLISION_INSET = 11f
         const val LIFE_PER_LEVEL = 10
-        private val gauge = Gauge(0.1f, "#2B95F1".toColorInt(), "#F5AAA4".toColorInt())
+        private var gauge: Gauge? = null
         private val RES_IDS = intArrayOf(
             R.mipmap.enemy_01, R.mipmap.enemy_02, R.mipmap.enemy_03, R.mipmap.enemy_04, R.mipmap.enemy_05,
             R.mipmap.enemy_06, R.mipmap.enemy_07, R.mipmap.enemy_08, R.mipmap.enemy_09, R.mipmap.enemy_10,
