@@ -6,11 +6,11 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.core.graphics.toColorInt
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
-import kr.ac.tukorea.ge.spgp2026.a2dg.util.Label
+import kr.ac.tukorea.ge.spgp2026.a2dg.util.LabelUtil
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class ScoreLabel : IGameObject {
-    private val label = Label(
+    private val label = LabelUtil(
         textSize = 80f,
         color = "#9D00FF".toColorInt(),
         align = Paint.Align.RIGHT,
