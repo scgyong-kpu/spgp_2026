@@ -39,7 +39,7 @@
   - [ ] 게임별 Background subclass 예제 추가
 
 - [ ] UI / HUD objects
-  - [ ] `Gauge` 공통 클래스 추가
+  - [x] `Gauge` 공통 클래스 추가
   - [ ] `Score` 같이 숫자 변화가 보이는 공통 HUD 객체 추가
   - [ ] `Text` 같은, 문자열을 표시하는 공통 HUD 객체 추가
   - [ ] `Button` 공통 클래스 추가
