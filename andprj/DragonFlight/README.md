@@ -84,6 +84,7 @@
 - [ ] `Score` 표시
 - [ ] 점수가 애니메이션되며 증가하도록 적용
 - [ ] `Gauge` 를 이용한 `Enemy` life / `Player` cooltime 표시
+  - [x] (추가) `Enemy` 가 `Gauge` 로 life 표시
 
 ## Background / Map
 

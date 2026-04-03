@@ -1,8 +1,11 @@
 package kr.ac.tukorea.ge.spgp2026.dragonflight
 
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
+import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class Enemy(
@@ -67,6 +70,18 @@ class Enemy(
         updateCollisionRect()
     }
 
+    override fun draw(canvas: Canvas) {
+        super.draw(canvas)
+
+        // Gauge 는 길이 1.0 기준선에 scale 을 곱해 그리므로,
+        // 여기서는 적 폭의 70%를 실제 gauge 길이로 사용한다.
+        // life / maxLife 를 넘기면 현재 체력 비율만큼만 앞쪽 선이 그려진다.
+        val gaugeWidth = width * 0.7f
+        val gaugeX = x - gaugeWidth / 2f
+        val gaugeY = dstRect.bottom
+        gauge.draw(canvas, gaugeX, gaugeY, gaugeWidth, life.toFloat() / maxLife)
+    }
+
     private fun updateCollisionRect() {
         collisionRect.set(dstRect)
         collisionRect.inset(COLLISION_INSET, COLLISION_INSET)
@@ -84,6 +99,7 @@ class Enemy(
         const val MAX_LEVEL_COUNT = 20
         const val COLLISION_INSET = 11f
         const val LIFE_PER_LEVEL = 10
+        private val gauge = Gauge(0.1f, Color.parseColor("#2B95F1"), Color.parseColor("#F5AAA4"))
         private val RES_IDS = intArrayOf(
             R.mipmap.enemy_01, R.mipmap.enemy_02, R.mipmap.enemy_03, R.mipmap.enemy_04, R.mipmap.enemy_05,
             R.mipmap.enemy_06, R.mipmap.enemy_07, R.mipmap.enemy_08, R.mipmap.enemy_09, R.mipmap.enemy_10,
