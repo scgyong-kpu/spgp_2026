@@ -32,7 +32,7 @@ class CollisionChecker(private val gctx: GameContext) : IGameObject {
                 if (bullet.collidesWith(enemy)) {
                     Log.v(javaClass.simpleName, "Collision !! Enemy(level=${enemy.level}, x=${enemy.x}, life=${enemy.life}/${enemy.maxLife}) - Bullet(y=${bullet.y})")
                     scene.world.remove(bullet, MainScene.Layer.BULLET)
-                    enemy.decreaseLife(10)
+                    enemy.decreaseLife(bullet.power)
                     if (enemy.dead) {
                         Log.d(javaClass.simpleName, "Enemy Dead")
                         scene.world.remove(enemy, MainScene.Layer.ENEMY)

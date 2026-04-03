@@ -155,10 +155,14 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
         // fireCoolTime += FIRE_INTERVAL
 
         val scene = gctx.scene as? MainScene ?: return
+        // score 가 올라갈수록 총알 위력도 조금씩 강해지게 한다.
+        // 현재 규칙은 score 0 일 때 power 10, 이후 1000 점마다 1씩 증가이다.
+        val power = 10 + scene.getScore() / 1000
+
         // 총알이 기체 중심에서 바로 나오면 몸체와 겹쳐 보여 어색하다.
         // 그래서 이번 단계에서는 y 를 조금 위로 올린 위치에서 시작하게 해,
         // 전투기 앞쪽에서 발사되는 느낌이 나도록 보정한다.
-        val bullet = Bullet(gctx, x, y - BULLET_OFFSET)
+        val bullet = Bullet(gctx, x, y - BULLET_OFFSET, power)
         scene.world.add(bullet, MainScene.Layer.BULLET)
     }
 

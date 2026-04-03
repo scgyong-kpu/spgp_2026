@@ -9,6 +9,7 @@ class Bullet(
     gctx: GameContext,
     startX: Float,
     startY: Float,
+    val power: Int,
 ) : Sprite(gctx, R.mipmap.laser_1), IBoxCollidable {
     override var width = BULLET_WIDTH
     override var height = BULLET_HEIGHT
