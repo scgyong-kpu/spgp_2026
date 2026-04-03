@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.spgp2026.dragonflight
 
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 class Enemy(
@@ -9,7 +10,7 @@ class Enemy(
     x: Float,
     val level: Int = 1,
     private val speed: Float = DEFAULT_SPEED,
-) : AnimSprite(gctx, RES_IDS[level - 1], FPS) {
+) : AnimSprite(gctx, RES_IDS[level - 1], FPS), IBoxCollidable {
     private val _collisionRect = RectF()
 
     // 리소스 이름이 enemy_01, enemy_02 ... enemy_20 처럼 1부터 시작하므로,
@@ -42,7 +43,7 @@ class Enemy(
     // Enemy 의 collisionRect 는 그림에 쓰는 dstRect 와 완전히 같지 않다.
     // 현재 단계에서는 dstRect 를 복사한 뒤 사방을 11f 만큼 안쪽으로 줄여,
     // 눈에 보이는 날개/여백보다 조금 안쪽에서 충돌이 나도록 조정한다.
-    val collisionRect: RectF
+    override val collisionRect: RectF
         get() = _collisionRect
 
     override fun update(gctx: GameContext) {
