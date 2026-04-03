@@ -5,11 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
 import android.view.MotionEvent
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kotlin.math.abs
 
-class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
+class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxCollidable {
     // 먼저 화면에 보이는 기본 크기와 시작 위치만 override 해 둔다.
     // 나중에 Player 가 화면 경계를 벗어나지 않게 하거나,
     // 기체별 크기를 다르게 둘 때도 같은 방식으로 값을 바꿀 수 있다.
@@ -36,6 +37,11 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
     private val sparkRect = RectF()
     private var rollTime = 0f
     private var fireCoolTime = FIRE_INTERVAL
+
+    // Player 도 현재 단계에서는 별도 collision box 를 두지 않고
+    // 화면에 그려지는 dstRect 를 그대로 충돌 범위로 사용한다.
+    override val collisionRect: RectF
+        get() = dstRect
 
     init {
         // 값이 고정되어 있으니 Kotlin 스타일만 보면 property override 쪽이 더 자연스러워 보일 수 있다.
@@ -196,7 +202,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters) {
 
     companion object {
         const val SPEED = 300f
-        const val PLAYER_WIDTH = 144f
+        const val PLAYER_WIDTH = 160f
         const val PLAYER_HEIGHT = 160f
         const val TARGET_MARKER_SIZE = 72f
         const val PLANE_SRC_WIDTH = 80
