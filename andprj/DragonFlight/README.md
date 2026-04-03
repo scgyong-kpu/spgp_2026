@@ -75,7 +75,7 @@
   - [x] 충돌 시 `Enemy` 삭제
   - [x] Loop 도는 방식 개선
   - [x] (추가) `collisionRect` 를 빨간 사각형으로 디버그 표시
-  - [ ] `dstRect` 와 `collisionRect` 는 다를 수 있음
+  - [x] `dstRect` 와 `collisionRect` 는 다를 수 있음
   - [ ] `IBoxCollidable` 적용
 - [ ] Enemy life 추가
 - [ ] Bullet power 적용
