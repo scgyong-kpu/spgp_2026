@@ -48,7 +48,7 @@ class EnemyGenerator(
             val zeroBasedLevel = ((wave + 8) / 10 - Random.nextInt(3))
                 .coerceIn(0, Enemy.MAX_LEVEL_COUNT - 1)
             scene.world.add(
-                Enemy(gctx, x, level = zeroBasedLevel + 1, speed = speed),
+                Enemy.get(gctx, x, level = zeroBasedLevel + 1, speed = speed),
                 MainScene.Layer.ENEMY,
             )
         }

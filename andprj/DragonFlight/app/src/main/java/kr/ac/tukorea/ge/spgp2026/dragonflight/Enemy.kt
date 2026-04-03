@@ -5,18 +5,19 @@ import android.graphics.RectF
 import androidx.core.content.ContextCompat
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
-class Enemy(
-    gctx: GameContext,
-    x: Float,
-    val level: Int = 1,
-    private val speed: Float = DEFAULT_SPEED,
-) : AnimSprite(gctx, RES_IDS[level - 1], FPS), IBoxCollidable {
+class Enemy private constructor(
+    private val gctx: GameContext,
+) : AnimSprite(gctx, RES_IDS[0], FPS), IBoxCollidable, IRecyclable {
+    var level = 1
+        private set
     var life = level * LIFE_PER_LEVEL
         private set
-    val maxLife = life
+    var maxLife = life
+        private set
     val dead: Boolean
         get() = life <= 0
     override val collisionRect = RectF()
@@ -38,8 +39,9 @@ class Enemy(
     // 여기서는 후자를 사용한다.
     override var width = ENEMY_WIDTH
     override var height = ENEMY_HEIGHT
-    override var x = x
+    override var x = 0f
     override var y = -ENEMY_HEIGHT / 2f
+    private var speed = DEFAULT_SPEED
 
     init {
         // Gauge 는 Enemy 마다 새로 만들지 않고,
@@ -59,6 +61,30 @@ class Enemy(
         // level * LIFE_PER_LEVEL 공식을 그대로 사용한다.
         syncDstRect()
         updateCollisionRect()
+    }
+
+    // Enemy 는 Bullet 보다 재초기화할 값이 더 많다.
+    // 재활용 객체를 다시 꺼냈을 때는:
+    // - image strip
+    // - level
+    // - speed
+    // - life / maxLife
+    // - 위치와 dstRect / collisionRect
+    // 를 모두 현재 wave 조건에 맞게 다시 세팅해야 한다.
+    fun init(x: Float, level: Int, speed: Float): Enemy {
+        this.level = level
+        this.speed = speed
+        this.life = level * LIFE_PER_LEVEL
+        this.maxLife = life
+        // 현재 a2dg AnimSprite 에는 setImageResourceId() 같은 helper 가 아직 없으므로,
+        // 재활용된 Enemy 는 여기서 bitmap 만 직접 바꾼다.
+        // Enemy strip 들은 fps 와 frame 구조가 모두 같으므로, 생성자에서 정한 애니메이션 설정을 그대로 써도 된다.
+        bitmap = gctx.res.getBitmap(RES_IDS[level - 1])
+        this.x = x
+        this.y = -ENEMY_HEIGHT / 2f
+        syncDstRect()
+        updateCollisionRect()
+        return this
     }
 
     // Enemy 의 collisionRect 는 그림에 쓰는 dstRect 와 완전히 같지 않다.
@@ -107,6 +133,9 @@ class Enemy(
         return level * SCORE_PER_LEVEL
     }
 
+    override fun onRecycle() {
+    }
+
     companion object {
         const val ENEMY_WIDTH = 180f
         const val ENEMY_HEIGHT = 180f
@@ -123,5 +152,14 @@ class Enemy(
             R.mipmap.enemy_11, R.mipmap.enemy_12, R.mipmap.enemy_13, R.mipmap.enemy_14, R.mipmap.enemy_15,
             R.mipmap.enemy_16, R.mipmap.enemy_17, R.mipmap.enemy_18, R.mipmap.enemy_19, R.mipmap.enemy_20,
         )
+
+        // Enemy 도 Bullet 과 같은 재활용 패턴을 따른다.
+        // 호출하는 쪽은 Enemy 가 재활용되었는지 새로 만들어졌는지 신경 쓰지 않고,
+        // Enemy.get(...) 이 world.obtain(...) ?: Enemy(gctx) 로 내부에서 처리한다.
+        fun get(gctx: GameContext, x: Float, level: Int, speed: Float): Enemy {
+            val scene = gctx.scene as? MainScene ?: return Enemy(gctx).init(x, level, speed)
+            val enemy = scene.world.obtain(Enemy::class.java) ?: Enemy(gctx)
+            return enemy.init(x, level, speed)
+        }
     }
 }

@@ -103,6 +103,7 @@
 - [ ] 객체 삭제 기능 확인
 - [ ] 객체 재활용 패턴 적용
   - [x] `Bullet.get(...)` 으로 재활용 또는 새 생성을 감추기
+  - [x] `Enemy.get(...)` 으로 재활용 또는 새 생성을 감추기
 - [ ] 충돌 helper 및 box collision 적용
 
 ## Pause / Time / Scene
