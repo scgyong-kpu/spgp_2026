@@ -183,7 +183,7 @@ class Player(val gctx: GameContext) : Sprite(gctx, R.mipmap.fighters), IBoxColli
         // 총알이 기체 중심에서 바로 나오면 몸체와 겹쳐 보여 어색하다.
         // 그래서 이번 단계에서는 y 를 조금 위로 올린 위치에서 시작하게 해,
         // 전투기 앞쪽에서 발사되는 느낌이 나도록 보정한다.
-        val bullet = Bullet(gctx, x, y - BULLET_OFFSET, power)
+        val bullet = Bullet.get(gctx, x, y - BULLET_OFFSET, power)
         scene.world.add(bullet, MainScene.Layer.BULLET)
     }
 
