@@ -1,8 +1,12 @@
 package kr.ac.tukorea.ge.spgp2026.a2dg.scene
 
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameView
 
 // World 는 Scene 안의 GameObject 들을 layer 별로 나누어 담는 컨테이너이다.
 // 이 단계부터는 layer 를 단순 Int 인덱스로 고정하지 않고, 게임이 정의한 layer 타입을 외부에서 받아 사용한다.
@@ -102,6 +106,27 @@ class World<TLayer>(
         for (layer in layers.values) {
             for (obj in layer) {
                 obj.draw(canvas)
+            }
+        }
+
+        // 예전처럼 collision box 디버그 표시는 World 가 전체 객체를 한 번 더 훑으며 처리한다.
+        // 이렇게 두면 CollisionChecker 가 Bullet/Enemy 전용 draw 책임을 따로 가질 필요가 없다.
+        if (GameView.drawsDebugInfo) {
+            for (layer in layers.values) {
+                for (obj in layer) {
+                    if (obj !is IBoxCollidable) continue
+                    canvas.drawRect(obj.collisionRect, bboxPaint)
+                }
+            }
+        }
+    }
+
+    companion object {
+        private val bboxPaint by lazy {
+            Paint().apply {
+                style = Paint.Style.STROKE
+                color = Color.RED
+                strokeWidth = 3f
             }
         }
     }

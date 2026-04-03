@@ -54,6 +54,7 @@
   - [x] `forEachReversedAt(layer)` 로 삭제에 안전한 역순 순회 helper 추가
   - [x] `forEachReversedAt(layer)` 를 `inline` 으로 정리
   - [x] `public inline` 함수가 `private` 필드에 접근할 수 없어 `@PublishedApi internal` 이 필요하다는 점 정리
+  - [x] `IBoxCollidable` 객체의 collision box 디버그 draw 를 `World.draw()` 로 이동
 
 - [ ] Scene lifecycle
   - [ ] Scene 이 transparent 하게 위에 올라가는 경우
