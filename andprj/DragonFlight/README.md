@@ -60,14 +60,14 @@
 - [x] `EnemyGenerator` 같은 생성 담당 객체 도입
 - [x] (추가) `Enemy` 를 `AnimSprite` 로 바꾸고 `enemy_01` strip 적용
 - [x] (추가) `enemy_02` ~ `enemy_20` 리소스를 복사하고 `Enemy` level 이미지 연결
-- [ ] (추가) `a2dg Sprite` 의 `dstRect` sync 규칙 변경에 맞춰 app 초기화 코드 정리
+- [x] (추가) `a2dg Sprite` 의 `dstRect` sync 규칙 변경에 맞춰 app 초기화 코드 정리
 - [x] wave 에 따른 생성 규칙 추가
-  - [x] weve 별 점차 센 적이 나오지만 랜덤 요소도 있도록
+  - [x] wave 별 점차 센 적이 나오지만 랜덤 요소도 있도록
 - [x] level 별 이미지/속도 차이 적용
 
 ## 충돌 / 점수 / HUD
 
-- [ ] Bullet 과 Enemy 충돌 처리
+- [x] Bullet 과 Enemy 충돌 처리
   - [x] `CollisionChecker` 를 두고 `BULLET`, `ENEMY` 를 순회하기 시작
   - [x] `Bullet`, `Enemy` 가 충돌 범위를 제공
   - [x] 충돌이 있는지 실제로 체크
@@ -100,16 +100,16 @@
 
 ## Recycle / Collision / Layer 활용
 
-- [ ] 객체 삭제 기능 확인
-- [ ] 객체 재활용 패턴 적용
+- [x] 객체 삭제 기능 확인
+- [x] 객체 재활용 패턴 적용
   - [x] `Bullet.get(...)` 으로 재활용 또는 새 생성을 감추기
   - [x] `Enemy.get(...)` 으로 재활용 또는 새 생성을 감추기
-- [ ] 충돌 helper 및 box collision 적용
+- [x] 충돌 helper 및 box collision 적용
 
 ## Pause / Time / Scene
 
-- [ ] pause 동안 시간이 흐르지 않도록 처리
-- [ ] Activity lifecycle 과 pause/resume 연결
+- [x] pause 동안 시간이 흐르지 않도록 처리
+- [x] Activity lifecycle 과 pause/resume 연결
 - [ ] `PauseScene` 에서 transparent scene 방식 적용
 
 ## Notes
