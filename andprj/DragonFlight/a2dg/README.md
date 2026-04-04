@@ -47,7 +47,8 @@
 ## Scene / World / View / Game Loop
 
 - [ ] `GameView`
-  - [ ] frame time 이 비정상적으로 커지는 경우 대비
+  - [x] Activity resume 직후 첫 frame 의 nanos 차이가 pause 시간까지 포함되지 않도록 리셋
+  - [x] frame time 이 비정상적으로 커지는 경우 대비
 
 - [x] `World`
   - [x] `objectsAt(layer)` 로 특정 layer 의 읽기 전용 객체 목록을 가져오기
