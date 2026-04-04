@@ -10,6 +10,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 하지만 enum 을 쓰면 "이 숫자가 무슨 layer 였지?"를 외우지 않아도 되고,
     // 나중에 BULLET, ENEMY, EFFECT 같은 layer 를 더 추가할 때도 코드가 더 읽기 쉬워진다.
     enum class Layer {
+        BACKGROUND,
         PLAYER,
         BULLET,
         ENEMY,
@@ -19,6 +20,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
 
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
     // Player 가 직접 터치 방향을 해석해 좌/우 이동 방향을 결정한다.
+    private val background = Background(gctx)
     val player = Player(gctx)
     private val enemyGenerator = EnemyGenerator(gctx)
     private val collisionChecker = CollisionChecker(gctx)
@@ -31,6 +33,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 이 layer 를 ENEMY 뒤에 두면, 방금 생성된 Enemy 는 다음 프레임부터 움직이게 되어
     // 생성과 이동의 흐름을 구분해서 보기 쉽다.
     override val world = World(Layer.entries.toTypedArray()).apply {
+        add(background, Layer.BACKGROUND)
         add(player, Layer.PLAYER)
         add(enemyGenerator, Layer.CONTROLLER)
         add(collisionChecker, Layer.CONTROLLER)
