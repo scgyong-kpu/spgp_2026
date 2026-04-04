@@ -57,6 +57,7 @@
   - [x] `IBoxCollidable` 객체의 collision box 디버그 draw 를 `World.draw()` 로 이동
   - [x] recycle bin 과 `obtain(clazz)` 추가
   - [x] `remove()` 가 `IRecyclable` 객체를 자동 수거하도록 정리
+  - [x] `update()` / `draw()` 의 layer 순회를 iterator 없이 돌도록 정리
 
 - [ ] Scene lifecycle
   - [ ] Scene 이 transparent 하게 위에 올라가는 경우

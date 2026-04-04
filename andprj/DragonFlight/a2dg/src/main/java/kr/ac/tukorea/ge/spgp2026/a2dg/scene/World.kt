@@ -27,6 +27,8 @@ class World<TLayer>(
     // public inline 함수가 이 필드에 접근하므로,
     // Kotlin 에서는 private 대신 @PublishedApi internal 로 열어 두어야 한다.
     // 이렇게 하면 일반 사용 코드에는 여전히 숨기되, inline 으로 펴질 코드에서는 합법적으로 참조할 수 있다.
+    private val orderedLayers = orderedLayers
+
     @PublishedApi
     internal val layers = orderedLayers.associateWith { mutableListOf<IGameObject>() }
 
@@ -148,30 +150,50 @@ class World<TLayer>(
         // 각 layer 안에 들어 있는 GameObject 들은 뒤에서 앞으로 update 한다.
         // 이렇게 하면 어떤 객체가 update() 도중 자기 자신을 remove() 해도
         // 아직 방문하지 않은 앞쪽 index 들은 영향을 덜 받고 안전하게 계속 순회할 수 있다.
-        for (layer in layers.values) {
+        //
+        // 여기서는 layers.values 나 for (obj in layer) 형태를 쓰지 않고,
+        // orderedLayers 배열과 index 기반 반복을 직접 사용한다.
+        // 실제 프로파일링에서 ArrayList$Itr, LinkedHashMap$LinkedValueIterator 할당이 많이 보여
+        // update/draw hot path 만큼은 iterator 없이 돌도록 정리한 것이다.
+        var layerIndex = 0
+        while (layerIndex < orderedLayers.size) {
+            val layer = layers.getValue(orderedLayers[layerIndex])
             for (i in layer.lastIndex downTo 0) {
                 layer[i].update(gctx)
             }
+            layerIndex++
         }
     }
 
     fun draw(canvas: Canvas) {
         // draw 도 update 와 같은 순서로 layer 별 순회를 한다.
         // 따라서 어떤 layer 를 먼저 주었는지가 그리기 순서에도 그대로 반영된다.
-        for (layer in layers.values) {
-            for (obj in layer) {
-                obj.draw(canvas)
+        var layerIndex = 0
+        while (layerIndex < orderedLayers.size) {
+            val layer = layers.getValue(orderedLayers[layerIndex])
+            var objectIndex = 0
+            while (objectIndex < layer.size) {
+                layer[objectIndex].draw(canvas)
+                objectIndex++
             }
+            layerIndex++
         }
 
         // 예전처럼 collision box 디버그 표시는 World 가 전체 객체를 한 번 더 훑으며 처리한다.
         // 이렇게 두면 CollisionChecker 가 Bullet/Enemy 전용 draw 책임을 따로 가질 필요가 없다.
         if (GameView.drawsDebugInfo) {
-            for (layer in layers.values) {
-                for (obj in layer) {
-                    if (obj !is IBoxCollidable) continue
-                    canvas.drawRect(obj.collisionRect, bboxPaint)
+            layerIndex = 0
+            while (layerIndex < orderedLayers.size) {
+                val layer = layers.getValue(orderedLayers[layerIndex])
+                var objectIndex = 0
+                while (objectIndex < layer.size) {
+                    val obj = layer[objectIndex]
+                    if (obj is IBoxCollidable) {
+                        canvas.drawRect(obj.collisionRect, bboxPaint)
+                    }
+                    objectIndex++
                 }
+                layerIndex++
             }
         }
     }
