@@ -80,6 +80,7 @@
 
 아래 목록은 앞으로 여러 커밋에 걸쳐 하나씩 해결해 나갈 후보들이다.
 진행하면서 항목을 지우거나 체크해 나갈 수 있도록 남겨 둔다.
+`(추가)` 표시는 처음 계획에는 없었지만, 진행 중 필요해져 중간에 끼워 넣은 항목이다.
 
 - [x] `Scene` 공통 추상 타입 도입
 - [x] `GameView`가 구체 `MainScene` 대신 `Scene` 타입만 바라보도록 정리
@@ -111,18 +112,28 @@
 - [x] 화면 해상도에 관계없이 `Bitmap` 을 원본 크기로 로드
 - [x] 게임마다 가상 좌표계를 다르게 둘 수 있는 구조 도입
 - [x] 게임 내에서 실제 화면 크기도 알 수 있도록 정리
-- [ ] `JoyStick` 클래스 추가
-- [ ] `JoyStick` 기본 그리기
-- [ ] `JoyStick` 이 `Touch Down` 인 동안만 보이게 처리
-- [ ] `JoyStick` 이 `+/- BG_RADIUS` 범위 안에서만 움직이게 처리
-- [ ] `JoyStick` 이 적당한 반지름의 원 안에서만 움직이게 처리
-- [ ] `JoyStick` 의 `angle` 및 `power` 계산 적용
-- [ ] `Fighter` 를 `JoyStick` 으로 움직이게 변경
+- [x] `JoyStick` 클래스 추가
+- [x] `JoyStick` 기본 그리기
+- [x] `JoyStick` 이 `Touch Down` 인 동안만 보이게 처리
+- [x] `JoyStick` 이 `+/- BG_RADIUS` 범위 안에서만 움직이게 처리
+- [x] `JoyStick` 이 적당한 반지름의 원 안에서만 움직이게 처리
+- [x] `JoyStick` 의 `angle` 및 `power` 계산 적용
+- [x] `Fighter` 를 `JoyStick` 으로 움직이게 변경
 - [ ] `JoyStick` 을 8방향 입력만 사용하는 경우 처리
 - [ ] `power` 를 쓰지 않고 움직임 여부만 사용하는 경우 처리
-- [ ] `JoyStick` 을 `a2dg` 로 이동
-- [ ] `Bullet` 추가 (`ConcurrentModificationException` 발생)
-- [ ] `ConcurrentModificationException` 해결
+- [x] `(추가)` 오브젝트가 현재 `Scene` 에 접근할 수 있도록 `GameContext` 에 `scene` 추가
+- [x] `(추가)` `JoyStick` 을 `a2dg` 로 이동시키기 위해 app 에 의존하던 bitmap res id 삭제
+- [x] `(추가)` `JoyStick` 의 위치와 크기를 app 에서 주입하도록 정리
+- [x] `JoyStick` 을 `a2dg` 로 이동
+- [x] `Bullet` 추가 (`ConcurrentModificationException` 발생)
+- [x] `(추가)` FPS 디버그 정보 옆에 현재 오브젝트 수 표시
+- [x] `(추가)` FPS 디버그 정보 아래에 레이어별 오브젝트 수 표시
+- [x] `ConcurrentModificationException` 해결
+  - [x] 방법 1: `Handler` 를 통해 나중에 삭제하기
+  - [x] 방법 2: add/remove 요청을 등록해 두었다가 `update()` 가 끝나면 일괄 반영하기
+  - [x] 방법 3: `update` loop 를 거꾸로 돌기
+  - [x] 방법 4: `Iterator` 를 사용해 순회 중 안전하게 삭제하기
+  - [x] 방법 5: 삭제 여부를 멤버 변수에 표시해 두고 나중에 정리하기
 - [ ] `a2dg` package 정리
 - [ ] `app` package 정리
 
