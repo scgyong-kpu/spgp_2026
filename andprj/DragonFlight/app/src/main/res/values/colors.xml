@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="enemy_gauge_bg">#F5AAA4</color>
+    <color name="enemy_gauge_fg">#2B95F1</color>
+    <color name="player_gauge_bg">#9FB8C6DB</color>
+    <color name="player_gauge_fg">#9FF5C542</color>
+</resources>
