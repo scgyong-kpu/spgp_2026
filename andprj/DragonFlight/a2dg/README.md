@@ -35,7 +35,7 @@
 
 
 - [ ] Background objects
-  - [ ] 세로 스크롤 Background 공통 클래스 추가
+  - [x] 세로 스크롤 Background 공통 클래스 추가
   - [ ] 가로 스크롤 Background 공통 클래스 추가
   - [ ] `TiledBackground` 공통 클래스 추가
   - [ ] 게임별 Background subclass 예제 추가
