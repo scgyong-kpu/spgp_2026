@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.dragonflight
 
 import android.view.MotionEvent
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.VertScrollBackground
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -20,7 +21,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
 
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
     // Player 가 직접 터치 방향을 해석해 좌/우 이동 방향을 결정한다.
-    private val background = ForestBackground(gctx, BACKGROUND_SPEED)
+    private val background = VertScrollBackground(gctx, R.mipmap.df_bg, BACKGROUND_SPEED)
     val player = Player(gctx)
     private val enemyGenerator = EnemyGenerator(gctx)
     private val collisionChecker = CollisionChecker(gctx)
