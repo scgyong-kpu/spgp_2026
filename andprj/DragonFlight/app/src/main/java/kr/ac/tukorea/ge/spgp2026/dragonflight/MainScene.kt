@@ -20,7 +20,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
 
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
     // Player 가 직접 터치 방향을 해석해 좌/우 이동 방향을 결정한다.
-    private val background = Background(gctx)
+    private val background = ForestBackground(gctx)
     val player = Player(gctx)
     private val enemyGenerator = EnemyGenerator(gctx)
     private val collisionChecker = CollisionChecker(gctx)
