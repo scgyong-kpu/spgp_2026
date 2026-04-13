@@ -20,6 +20,8 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         UI,
     }
 
+    override val clipsRect = true
+
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
     // Player 가 직접 터치 방향을 해석해 좌/우 이동 방향을 결정한다.
     private val background = VertScrollBackground(gctx, R.mipmap.df_bg, BACKGROUND_SPEED)
