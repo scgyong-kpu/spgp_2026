@@ -27,6 +27,7 @@ class GameMetrics {
     // 예를 들어 좌우 또는 상하에 letterbox 여백이 생기면,
     // 이 값은 단순히 (0,0,width,height) 와 같지 않을 수 있다.
     val screenRect = RectF()
+    val borderRect = RectF(0f, 0f, DEFAULT_VIRTUAL_WIDTH, DEFAULT_VIRTUAL_HEIGHT)
 
     // mapPoints() 는 배열을 받는 API 이므로 입력 좌표 변환에 쓸 작은 버퍼를 미리 만들어 재사용한다.
     private val touchPoint = floatArrayOf(0f, 0f)
@@ -36,6 +37,7 @@ class GameMetrics {
     fun setSize(width: Float, height: Float) {
         this.width = width
         this.height = height
+        borderRect.set(0f, 0f, width, height)
     }
 
     fun onSize(w: Int, h: Int) {
