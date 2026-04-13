@@ -15,6 +15,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         PLAYER,
         BULLET,
         ENEMY,
+        CLOUD,
         CONTROLLER,
         UI,
     }
@@ -22,6 +23,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 이제는 JoyStick 같은 별도 입력 오브젝트를 두지 않고,
     // Player 가 직접 터치 방향을 해석해 좌/우 이동 방향을 결정한다.
     private val background = VertScrollBackground(gctx, R.mipmap.df_bg, BACKGROUND_SPEED)
+    private val clouds = VertScrollBackground(gctx, R.mipmap.clouds, CLOUD_SPEED)
     val player = Player(gctx)
     private val enemyGenerator = EnemyGenerator(gctx)
     private val collisionChecker = CollisionChecker(gctx)
@@ -36,6 +38,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     override val world = World(Layer.entries.toTypedArray()).apply {
         add(background, Layer.BACKGROUND)
         add(player, Layer.PLAYER)
+        add(clouds, Layer.CLOUD)
         add(enemyGenerator, Layer.CONTROLLER)
         add(collisionChecker, Layer.CONTROLLER)
         add(scoreNumber, Layer.UI)
@@ -51,6 +54,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
 
     companion object {
         private const val BACKGROUND_SPEED = 80f
+        private const val CLOUD_SPEED = 40f
     }
 
     // 현재 Scene 에서는 터치 입력을 따로 나누지 않고
