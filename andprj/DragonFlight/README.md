@@ -93,7 +93,7 @@
 
 - [x] (추가) 정지 background 이미지를 background layer 에 표시
 - [x] scrolling background 추가
-- [ ] 세로 스크롤 background 로 일반화
+- [x] 세로 스크롤 background 로 일반화
 - [x] 배경 layer 를 여러 장으로 나누어 draw 순서 조정
 - [ ] map 관련 파일 복사 또는 추가
 - [ ] `TiledBackground` 적용
