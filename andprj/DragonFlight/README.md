@@ -12,7 +12,7 @@
 ## Activity / App 시작
 
 - [x] 타이틀 화면 성격의 `MainActivity` 에서 실제 게임 Activity 인 `DragonFlightActivity` 를 실행
-- [ ] 게임 Activity 를 portrait mode 로 고정
+- [x] 게임 Activity 를 portrait mode 로 고정
 - [x] debug build 일 때만 debug 정보가 보이게 설정
 - [x] Debug 용으로, `MainActivity` 생성시 자동으로 `DragonFlightActivity` 를 실행
 
@@ -92,9 +92,9 @@
 ## Background / Map
 
 - [x] (추가) 정지 background 이미지를 background layer 에 표시
-- [ ] scrolling background 추가
-- [ ] 세로 스크롤 background 로 일반화
-- [ ] 배경 layer 를 여러 장으로 나누어 draw 순서 조정
+- [x] scrolling background 추가
+- [x] 세로 스크롤 background 로 일반화
+- [x] 배경 layer 를 여러 장으로 나누어 draw 순서 조정
 - [ ] map 관련 파일 복사 또는 추가
 - [ ] `TiledBackground` 적용
 - [ ] `ForestTiledBg` 같은 게임 전용 background subclass 적용

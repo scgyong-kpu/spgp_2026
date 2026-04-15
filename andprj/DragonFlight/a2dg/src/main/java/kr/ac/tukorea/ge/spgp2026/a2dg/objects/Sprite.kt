@@ -31,7 +31,8 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 // 가장 안전한 패턴은 관련 프로퍼티 선언을 먼저 모아 두고, 그 다음 init 블록 마지막에서 syncDstRect() 를 호출하는 것이다.
 // 반대로 init 블록 안에서 값을 직접 대입하는 패턴이라면, 그 init 블록의 마지막 줄에서 호출해야 한다.
 //
-// 반대로 setCenter(), setSize() 같은 helper 를 쓰면 그 안에서 바로 syncDstRect() 가 호출된다.
+// 반대로 setCenter(), setSize(), setCenterProportionalWidth(), setCenterProportionalHeight() 같은 helper 를 쓰면
+// 그 안에서 바로 syncDstRect() 가 호출된다.
 // 회전이나 일부 영역만 그리기 같은 더 복잡한 경우는 하위 클래스에서 draw() 를 override 하면 된다.
 open class Sprite(
     gctx: GameContext,
@@ -94,6 +95,28 @@ open class Sprite(
     protected fun setSize(width: Float, height: Float) {
         this.width = width
         this.height = height
+        syncDstRect()
+    }
+
+    // Spark, 아이템, 한 장짜리 적처럼 "중심은 정해져 있고 가로폭만 먼저 정하고 싶다"는 경우를 위한 helper 이다.
+    // 세로 크기는 현재 bitmap 원본 비율을 유지하도록 자동 계산한다.
+    // 매 프레임 자주 도는 setCenter() 에 분기 로직을 넣지 않고, 비율 유지가 필요한 호출만 별도 helper 로 분리한다.
+    protected fun setCenterProportionalWidth(centerX: Float, centerY: Float, width: Float) {
+        x = centerX
+        y = centerY
+        this.width = width
+        this.height = width * bitmapHeight / bitmapWidth.toFloat()
+        syncDstRect()
+    }
+
+    // 세로 크기를 먼저 정하고 싶을 때는 이 helper 를 쓴다.
+    // 예를 들어 세로 이펙트, 기둥형 오브젝트, 화면 높이 기준으로 맞추는 UI 이미지는
+    // height 를 먼저 정하는 쪽이 더 읽기 쉬울 수 있다.
+    protected fun setCenterProportionalHeight(centerX: Float, centerY: Float, height: Float) {
+        x = centerX
+        y = centerY
+        this.height = height
+        this.width = height * bitmapWidth / bitmapHeight.toFloat()
         syncDstRect()
     }
 

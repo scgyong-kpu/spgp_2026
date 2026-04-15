@@ -92,7 +92,12 @@ class GameView @JvmOverloads constructor(
             if (drawsDebugGrid) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
-            gctx.sceneStack.top?.draw(this)
+            gctx.sceneStack.top?.let { topScene ->
+                if (topScene.clipsRect) {
+                    canvas.clipRect(gctx.metrics.borderRect)
+                }
+                topScene.draw(this)
+            }
             if (drawsDebugInfo || drawsFpsGraph) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
@@ -161,7 +166,7 @@ class GameView @JvmOverloads constructor(
 
     // 가상 좌표계가 실제로 어떤 범위와 간격을 가지는지 눈으로 확인하려고 그리는 디버그 격자이다.
     private fun Canvas.drawDebugGrid() {
-        drawRect(borderRect, borderPaint) // 현재 가상 좌표계의 경계
+        drawRect(gctx.metrics.borderRect, borderPaint) // 현재 가상 좌표계의 경계
         val step = 100f
 
         // 세로 격자선은 x 값을 100씩 늘리며 위에서 아래로 선을 긋는다.
@@ -179,7 +184,6 @@ class GameView @JvmOverloads constructor(
         }
     }
 
-    private val borderRect by lazy { RectF(0f, 0f, gctx.metrics.width, gctx.metrics.height) }
     private val borderPaint by lazy {
         Paint().apply {
             style = Paint.Style.STROKE // 테두리만 그린다.

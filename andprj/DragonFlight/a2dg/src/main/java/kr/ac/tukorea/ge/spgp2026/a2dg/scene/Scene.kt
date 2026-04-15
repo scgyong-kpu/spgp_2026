@@ -12,6 +12,7 @@ abstract class Scene(
     // 보통의 Scene 은 World 를 하나 소유하고, 기본 update / draw 를 그 World 에 위임한다.
     // World 가 없는 특수 Scene 이라면 null 을 유지한 채 update / draw 를 직접 override 하면 된다.
     open val world: World<*>? = null
+    open val clipsRect = false
 
     open fun update(gctx: GameContext) {
         world?.update(gctx)
