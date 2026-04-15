@@ -10,10 +10,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:appCategory="game"
         android:theme="@style/Theme.DragonFlight">
         <activity
             android:name=".DragonFlightActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

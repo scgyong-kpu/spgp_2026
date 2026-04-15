@@ -1,5 +1,30 @@
 # Homeworks
 
+## 2026-04-06 조사: Kotlin
+
+* Kotlin object syntax
+  * `apply`
+  * `also`
+  * `let`
+* Extension
+  * Extension function
+  * Extension property
+  * Android 에서 Extension 사용 예
+* Type system
+  * `is`, `as`, `as?`
+  * Elvis `?:` (이미 했지만 한번더)
+  * `fun interface`
+* `ConcurrentModificationException`
+  * 의미
+  * 언제 주로 발생하는지
+  * 어떻게 해결하는지
+* Android
+  * `Activity` Life-Cycle
+  * Profiling (Debugging)
+    * 의미
+    * 방법
+* Object Pooling (Recycle)
+
 ## 2026-03-27 텀프로젝트: 1차 발표
 
 발표 자료를 제작하고 과제 본문에는 다음 항목을 기재합니다. 링크 형태로 하여 클릭하여 볼 수 있도록 해 주세요.
