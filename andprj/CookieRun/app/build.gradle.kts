@@ -10,6 +10,11 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "kr.ac.tukorea.ge.spgp2026.cookierun"
         minSdk = 26
