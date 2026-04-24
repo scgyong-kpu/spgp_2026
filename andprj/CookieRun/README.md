@@ -36,7 +36,7 @@
 
 - [x] 타이틀 화면(`MainActivity`) 구성
 - [x] 실제 게임 Activity(`CookieRunActivity`) 추가 (layout xml 없이)
-- [ ] `MainActivity` 에서 `CookieRunActivity` 실행
+- [x] `MainActivity` 에서 `CookieRunActivity` 실행
 - [ ] 선택한 `cookieId` / `stage` 를 Intent extra 로 전달
 - [ ] 게임 Activity 를 landscape mode 로 고정
 
