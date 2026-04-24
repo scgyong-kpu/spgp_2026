@@ -17,12 +17,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-//        // 디버그 빌드일 때에는 1초 후 게임 화면으로 바로 넘어가게 한다
-//        if (BuildConfig.DEBUG) {
-//            Handler(Looper.getMainLooper()).postDelayed({
-//                startGameActivity()
-//            }, 1000)
-//        }
+        // 디버그 빌드일 때에는 1초 후 게임 화면으로 바로 넘어가게 한다
+        if (BuildConfig.DEBUG) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                startGameActivity()
+            }, 1000)
+        }
     }
 
     fun onBtnStartGame(view: View) {
