@@ -47,7 +47,7 @@
   - [x] `DragonFlight` 에서 `a2dg` 모듈 복사/연결
   - [x] gradle 파일에서 `a2dg` 사용 설정 (`settings.gradle.kts`)
   - [x] `versions.toml` 의존성 항목 보강
-  - [ ] `app` 모듈 의존성 연결 (`build.gradle.kts` / `:app`)
+  - [x] `app` 모듈 의존성 연결 (`build.gradle.kts` / `:app`)
 - [ ] `CookieRunActivity` 가 `GameActivity`/`BaseGameActivity` 계열을 상속
 - [ ] Activity 들을 `.app` package 로 옮김
 - [ ] `MainScene` 생성 및 root scene push
