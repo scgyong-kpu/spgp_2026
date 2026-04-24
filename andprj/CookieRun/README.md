@@ -45,7 +45,7 @@
 
 - [ ] `CookieRun` 에 `a2dg` 모듈 연결
   - [x] `DragonFlight` 에서 `a2dg` 모듈 복사/연결
-  - [ ] gradle 파일에서 `a2dg` 사용 설정 (`settings.gradle.kts`)
+  - [x] gradle 파일에서 `a2dg` 사용 설정 (`settings.gradle.kts`)
   - [ ] `versions.toml` 의존성 항목 보강
   - [ ] `app` 모듈 의존성 연결 (`build.gradle.kts` / `:app`)
 - [ ] `CookieRunActivity` 가 `GameActivity`/`BaseGameActivity` 계열을 상속

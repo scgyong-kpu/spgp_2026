@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CookieRun"
 include(":app")
+include(":a2dg")
