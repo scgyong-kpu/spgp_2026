@@ -23,4 +23,5 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 
