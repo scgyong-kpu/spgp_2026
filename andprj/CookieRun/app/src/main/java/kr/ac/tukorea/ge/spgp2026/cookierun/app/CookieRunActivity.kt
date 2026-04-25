@@ -11,6 +11,7 @@ class CookieRunActivity : BaseGameActivity() {
     override val drawsDebugInfo: Boolean = BuildConfig.DEBUG
     override val drawsFpsGraph: Boolean = BuildConfig.DEBUG
     override fun createRootScene(gctx: GameContext): Scene {
+        gctx.metrics.setSize(1600f, 900f)
         return MainScene(gctx)
     }
 }

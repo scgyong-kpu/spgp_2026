@@ -57,7 +57,7 @@
 - [ ] `PauseScene` transparent scene 처리(`isTransparent` / `popAll` 포함)
 
 ## MainScene 배경 및 화면 좌표계 설정
-- [ ] 가상좌표계 가로방향으로 설정
+- [x] 가상좌표계 가로방향으로 설정
 - [ ] BG 3장 추가
 
 
