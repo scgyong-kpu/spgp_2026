@@ -14,16 +14,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     }
 
     private val stateRects = mapOf(
-        State.RUN to listOf(
-            Rect(2, 274, 272, 544),
-            Rect(274, 274, 544, 544),
-            Rect(546, 274, 816, 544),
-            Rect(818, 274, 1088, 544),
-        ),
-        State.JUMP to listOf(
-            Rect(1906, 2, 2176, 272),
-            Rect(2178, 2, 2448, 272),
-        )
+        State.RUN to RUN_RECTS,
+        State.JUMP to JUMP_RECTS,
     )
 
     var state = State.RUN
@@ -31,9 +23,9 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             field = value
 
             // 상태가 바뀌면 그 상태에 맞는 Rect 목록을 SheetSprite 에 넘긴다.
-            // 이렇게 하면 상태 전환과 프레임 선택을 Player 가 담당하고,
-            // 실제 프레임 그리기 루프는 SheetSprite 가 공통 처리한다.
-            stateRects[value]?.let { setFrameRects(it) }
+            // 이렇게 하면 상태 전환과 프레임 선택은 Player 가 담당하고,
+            // 실제 그리기 루프는 SheetSprite 가 공통 처리한다.
+            stateRects[value]?.let { frameRects = it }
         }
 
     init {
@@ -41,7 +33,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         // 이후 Jump, Slide, 상태 애니메이션을 Player 클래스 안에서 계속 확장할 수 있다.
         width = Player.WIDTH
         height = Player.HEIGHT
-        setCenter(200f, 700f)
+        setCenter(200f, 510f)
         state = State.RUN
     }
 
@@ -57,7 +49,17 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     companion object {
         // 플레이어 크기는 일단 고정값으로 두고 시작한다.
         // 나중에는 화면 비율이나 가상 좌표계 기준으로 다시 정리할 수 있다.
-        const val WIDTH = 270f
-        const val HEIGHT = 270f
+        const val WIDTH = 386f
+        const val HEIGHT = 386f
+        val RUN_RECTS = listOf(
+            Rect(2, 274, 272, 544),
+            Rect(274, 274, 544, 544),
+            Rect(546, 274, 816, 544),
+            Rect(818, 274, 1088, 544),
+        )
+        val JUMP_RECTS = listOf(
+            Rect(1906, 2, 2176, 272),
+            Rect(2178, 2, 2448, 272),
+        )
     }
 }
