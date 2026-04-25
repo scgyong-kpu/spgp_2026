@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
+import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.HorzScrollBackground
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
@@ -15,6 +16,10 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
     override val clipsRect = true
+
+    // 플레이어를 멤버로 분리해 두면,
+    // 이후 입력 처리나 카메라 추적에서 MainScene 이 직접 접근하기 쉽다.
+    val player = Player(gctx)
 
     // World 는 레이어 순서대로 그려진다.
     // 여기서는 BG -> PLAYER 순서이므로 배경 뒤에 플레이어가 올라오는 구성이 된다.
@@ -34,6 +39,15 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
-        add(Player(gctx), Layer.PLAYER)
+        add(player, Layer.PLAYER)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            // 터치가 시작될 때마다 플레이어가 점프/달리기 상태를 번갈아 바꾸도록 해 둔다.
+            // 지금은 테스트용 토글이지만, 이후에는 버튼 입력과 물리 로직으로 바뀌게 된다.
+            player.jump()
+        }
+        return super.onTouchEvent(event)
     }
 }
