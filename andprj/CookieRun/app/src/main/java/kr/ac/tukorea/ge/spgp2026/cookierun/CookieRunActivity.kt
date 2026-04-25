@@ -5,9 +5,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kr.ac.tukorea.ge.spgp2026.a2dg.activity.BaseGameActivity
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
-class CookieRunActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class CookieRunActivity : BaseGameActivity() {
+    override val drawsDebugGrid: Boolean = true
+    override val drawsDebugInfo: Boolean = true
+    override fun createRootScene(gctx: GameContext): Scene {
+        return object : Scene(gctx) {
+        }
     }
 }
