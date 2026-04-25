@@ -11,8 +11,10 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 open class SheetSprite(
     gctx: GameContext,
     resId: Int,
-    private val fps: Float,
+    fps: Float,
 ) : AnimSprite(gctx, resId, fps, 1) {
+    // Player 같은 하위 클래스가 현재 상태에 맞는 Rect 목록을 넣어 주면,
+    // draw() 는 그 목록 중 현재 시간에 해당하는 프레임만 골라 그린다.
     protected var frameRects: List<Rect> = listOf()
 
     override fun draw(canvas: Canvas) {
