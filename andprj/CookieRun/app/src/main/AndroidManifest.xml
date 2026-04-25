@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CookieRun">
         <activity
-            android:name=".CookieRunActivity"
+            android:name=".app.CookieRunActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,14 +1,12 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun
+package kr.ac.tukorea.ge.spgp2026.cookierun.app
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import kr.ac.tukorea.ge.spgp2026.cookierun.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.cookierun.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
