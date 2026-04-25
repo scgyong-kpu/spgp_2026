@@ -51,10 +51,15 @@
   - [x] 추가 오류 해결 (`build.gradle.kts` / `:app`)
 - [x] `CookieRunActivity` 가 `GameActivity`/`BaseGameActivity` 계열을 상속
 - [x] Activity 들을 `.app` package 로 옮김
-- [ ] `MainScene` 생성 및 root scene push
+- [x] `MainScene` 생성 및 root scene push
 - [ ] debug build 일 때만 debug 정보가 보이게 설정
 - [ ] debug build 에서 Grid 표시
 - [ ] `PauseScene` transparent scene 처리(`isTransparent` / `popAll` 포함)
+
+## MainScene 배경 및 화면 좌표계 설정
+- [ ] 가상좌표계 가로방향으로 설정
+- [ ] BG 3장 추가
+
 
 ## Player / 입력 / 이동
 
