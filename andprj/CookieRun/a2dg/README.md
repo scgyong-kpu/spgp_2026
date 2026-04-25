@@ -36,9 +36,9 @@
 
 - [ ] Background objects
   - [x] 세로 스크롤 Background 공통 클래스 추가
-  - [ ] 가로 스크롤 Background 공통 클래스 추가
+  - [x] 가로 스크롤 Background 공통 클래스 추가
     - [x] 파일 복사
-    - [ ] Vert -> Horz 로 변경
+    - [x] Vert -> Horz 로 변경
   - [ ] `TiledBackground` 공통 클래스 추가
   - [ ] 게임별 Background subclass 예제 추가
 
