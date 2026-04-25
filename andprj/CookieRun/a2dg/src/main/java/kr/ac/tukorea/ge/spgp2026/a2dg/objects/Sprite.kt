@@ -82,7 +82,7 @@ open class Sprite(
 
     // 중심점 x, y 를 같이 바꾸는 가장 기본 helper 이다.
     // 좌표 두 값을 이 helper 로 바꿀 때는 곧바로 dstRect 도 다시 맞춘다.
-    protected fun setCenter(centerX: Float, centerY: Float) {
+    fun setCenter(centerX: Float, centerY: Float) {
         x = centerX
         y = centerY
         syncDstRect()
@@ -92,7 +92,7 @@ open class Sprite(
     // 중심점 기준 Sprite 에서는 크기 두 값을 짝으로 다루는 경우가 많으므로
     // setSize() 를 두면 "크기만 바꾸는 의도"가 더 또렷하게 읽힌다.
     // 이 helper 를 사용할 때도 dstRect 가 바로 최신 상태가 되도록 syncDstRect() 를 함께 호출한다.
-    protected fun setSize(width: Float, height: Float) {
+    fun setSize(width: Float, height: Float) {
         this.width = width
         this.height = height
         syncDstRect()
@@ -101,7 +101,7 @@ open class Sprite(
     // Spark, 아이템, 한 장짜리 적처럼 "중심은 정해져 있고 가로폭만 먼저 정하고 싶다"는 경우를 위한 helper 이다.
     // 세로 크기는 현재 bitmap 원본 비율을 유지하도록 자동 계산한다.
     // 매 프레임 자주 도는 setCenter() 에 분기 로직을 넣지 않고, 비율 유지가 필요한 호출만 별도 helper 로 분리한다.
-    protected fun setCenterProportionalWidth(centerX: Float, centerY: Float, width: Float) {
+    fun setCenterProportionalWidth(centerX: Float, centerY: Float, width: Float) {
         x = centerX
         y = centerY
         this.width = width
@@ -112,7 +112,7 @@ open class Sprite(
     // 세로 크기를 먼저 정하고 싶을 때는 이 helper 를 쓴다.
     // 예를 들어 세로 이펙트, 기둥형 오브젝트, 화면 높이 기준으로 맞추는 UI 이미지는
     // height 를 먼저 정하는 쪽이 더 읽기 쉬울 수 있다.
-    protected fun setCenterProportionalHeight(centerX: Float, centerY: Float, height: Float) {
+    fun setCenterProportionalHeight(centerX: Float, centerY: Float, height: Float) {
         x = centerX
         y = centerY
         this.height = height
@@ -122,7 +122,7 @@ open class Sprite(
 
     // 중심점 x, y 와 width, height 를 좌상단/우하단 좌표로 풀어
     // Canvas 가 이해하는 RectF 형태로 다시 맞춘다.
-    protected fun syncDstRect() {
+    fun syncDstRect() {
         dstRect.set(
             x - width / 2f,
             y - height / 2f,
