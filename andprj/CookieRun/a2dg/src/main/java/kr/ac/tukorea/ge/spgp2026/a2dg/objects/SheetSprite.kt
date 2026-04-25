@@ -1,8 +1,7 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.a2dg.objects
 
 import android.graphics.Canvas
 import android.graphics.Rect
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 // SheetSprite 는 상태마다 서로 다른 Rect 목록을 사용하는 스프라이트 공통 클래스다.

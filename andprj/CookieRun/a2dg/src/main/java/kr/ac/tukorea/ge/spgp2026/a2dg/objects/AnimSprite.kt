@@ -41,8 +41,6 @@ open class AnimSprite(
     }
 
     override fun draw(canvas: Canvas) {
-        syncDstRect()
-
         // "몇 초가 지났는가"만 알면 현재 프레임 번호를 계산할 수 있으므로
         // 별도 누적 time 변수 없이 생성 시각과 현재 시각 차이로 frame index 를 구한다.
         val time = (System.currentTimeMillis() - createdOn) / 1000f
