@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.HorzScrollBackground
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -13,8 +12,6 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         add(HorzScrollBackground(gctx, R.mipmap.cookie_run_bg_1, -50f), 0)
         add(HorzScrollBackground(gctx, R.mipmap.cookie_run_bg_2, -100f), 0)
         add(HorzScrollBackground(gctx, R.mipmap.cookie_run_bg_3, -150f), 0)
-        add(Sprite(gctx, R.mipmap.cookie_player).apply {
-            setCenterProportionalWidth(200f, 700f, 200f)
-        }, 0)
+        add(Player(gctx), 0)
     }
 }
