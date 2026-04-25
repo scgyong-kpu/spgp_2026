@@ -64,8 +64,8 @@
 ## Player / 입력 / 이동
 
 - [x] `Player` 클래스 추가
-- [ ] `SheetSprite` 기반 상태(state)별 애니메이션 구성
-- [ ] state 에 따라 프레임 Rect 집합 선택 및 애니메이션 전환
+- [x] `SheetSprite` 기반 상태(state)별 애니메이션 구성
+- [x] state 에 따라 프레임 Rect 집합 선택 및 애니메이션 전환
 - [ ] 입력 처리(`Jump` / `Slide` 버튼, `ACTION_DOWN/UP`)
 - [ ] 점프/슬라이드/낙하 동작 구현
 - [ ] 중력/더블 점프 물리 적용
