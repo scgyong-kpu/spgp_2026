@@ -6,18 +6,21 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 // 플레이어는 상태마다 다른 프레임 Rect 집합을 쓰므로 SheetSprite 를 상속한다.
-// RUN 과 JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
+// RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
 class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f) {
     enum class State {
-        // 지금은 RUN, JUMP 두 상태만 두고 시작한다.
+        // 지금은 RUN, JUMP, DOUBLE_JUMP 세 상태만 두고 시작한다.
         // 이후 Slide, Hit 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
-        RUN, JUMP,
+        RUN, JUMP, DOUBLE_JUMP,
     }
 
     private val stateRects = mapOf(
         State.RUN to RUN_RECTS,
         State.JUMP to JUMP_RECTS,
+        State.DOUBLE_JUMP to DOUBLE_JUMP_RECTS,
     )
+    // stateRects 는 상태 이름과 프레임 Rect 목록을 연결해 둔 표다.
+    // 상태가 바뀔 때 이 표를 통해 SheetSprite 가 그릴 프레임 묶음을 갈아끼운다.
 
     var state = State.RUN
         set(value) {
@@ -31,6 +34,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
 
     // 점프 중에는 위로 향하는 속도를 들고 있다가, 매 프레임 중력으로 줄여 나간다.
     var jumpSpeed = 0f
+    // jumpSpeed 는 y 방향 이동량의 기반 값이다.
+    // 음수면 위로 올라가고, 양수면 아래로 떨어지므로 점프 물리를 단순하게 표현할 수 있다.
 
     init {
         // 처음에는 이동 로직 없이, 화면에 보이는 플레이어 위치와 크기만 잡아 둔다.
@@ -42,18 +47,35 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     }
 
     fun jump() {
-        if (state != State.RUN) return
-        state = State.JUMP
-        jumpSpeed = -JUMP_POWER
+        // jump() 는 현재 상태에 따라 서로 다른 점프를 만든다.
+        // RUN 에서는 첫 점프, JUMP 에서는 더블 점프, DOUBLE_JUMP 에서는 이미 점프를 한 번 더 쓴 상태다.
+        when (state) {
+            State.RUN -> {
+                // 달리는 상태에서 점프하면 JUMP 상태로 바뀌고, 점프 속도가 초기화된다.
+                state = State.JUMP
+                jumpSpeed = -JUMP_POWER
+            }
+            State.JUMP -> {
+                // 점프 상태에서 점프하면 DOUBLE_JUMP 상태로 바뀌고, 점프 속도가 추가된다.
+                state = State.DOUBLE_JUMP
+                jumpSpeed -= JUMP_POWER
+            }
+            State.DOUBLE_JUMP -> {
+                // 더블 점프 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
+                return
+            }
+        }
     }
 
     override fun update(gctx: GameContext) {
+        // RUN 은 멈춰 있고, JUMP / DOUBLE_JUMP 는 같은 중력 루프로 처리한다.
+        // 상태는 다르지만 실제 y 이동 규칙은 같으므로 물리 계산은 한곳에 모아 둔다.
         when (state) {
             State.RUN -> {
                 // 달리는 상태에서는 별도 이동 로직이 없다.
                 // 이후에는 달리는 속도에 맞춰 x 를 조금씩 증가시키는 로직이 들어갈 수 있다.
             }
-            State.JUMP -> {
+            State.JUMP, State.DOUBLE_JUMP -> {
                 // 점프 상태에서는 y 위치를 위아래로 움직이는 간단한 테스트 로직을 넣어 둔다.
                 // 이후에는 점프 시작 시점의 속도와 중력 가속도를 이용해 포물선 운동을 하는 로직으로 바뀌게 된다.
                 y += jumpSpeed * gctx.frameTime
@@ -73,6 +95,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         // 플레이어 크기는 일단 고정값으로 두고 시작한다.
         // 나중에는 화면 비율이나 가상 좌표계 기준으로 다시 정리할 수 있다.
         // INIT_X / INIT_Y 는 시작 위치, GRAVITY / JUMP_POWER 는 테스트용 점프 물리값이다.
+        // 즉 여기 숫자들은 "지금은 테스트용"이라는 뜻을 코드 옆에서 바로 읽게 해 준다.
         const val WIDTH = 386f
         const val HEIGHT = 386f
         const val INIT_X = 200f
@@ -88,6 +111,12 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         val JUMP_RECTS = listOf(
             Rect(1906, 2, 2176, 272),
             Rect(2178, 2, 2448, 272),
+        )
+        val DOUBLE_JUMP_RECTS = listOf(
+            Rect(274, 2, 544, 272),
+            Rect(546, 2, 816, 272),
+            Rect(818, 2, 1088, 272),
+            Rect(1090, 2, 1360, 272),
         )
     }
 }
