@@ -20,12 +20,13 @@
     - `PauseScene` : 게임이 일시정지되어 재개/종료 를 물음
   - Classes/Objects:
     - `Player` : Cookie 주인공. `SheetSprite` 를 상속하게 될 예정.
-    - `MapObject` : 화면 오른쪽에서 생성되어 왼쪽으로 흐르는 맵 구성요소들의 공통 기반.
-        - `Platform` / `Floor` : Player 가 착지하고 달릴 바닥 타일. `Floor.Type` 으로 타일 종류를 구분한다.
-        - `JellyItem` : 획득 가능한 아이템. 화면 밖으로 나가면 제거하거나 재활용.
-        - `Obstacle` : 정적 장애물.
-            - `AnimObstacle` : 시간에 따라 이미지가 바뀌는 장애물.
-            - `FallingObstacle` : `ValueAnimator` 기반 움직임이 있는 장애물.
+    - `MapObject` : 맵 위에 놓이는 오브젝트들의 공통 기반.
+      - `Floor` : Player 가 착지하고 달릴 바닥 타일. `Floor.Type` 으로 타일 종류를 구분한다.
+      - `JellyItem` : 획득 가능한 아이템. 스프라이트 시트의 `index` 로 칸을 고른다.
+      - `Obstacle` : 정적 장애물.
+        - `AnimObstacle` : 시간에 따라 이미지가 바뀌는 장애물.
+        - `FallingObstacle` : `ValueAnimator` 기반 움직임이 있는 장애물.
+    - `MapObject` 계열은 앞으로 왼쪽으로 흐르는 맵 요소를 함께 다루는 데 쓰인다.
     - `ObstacleFactory` : 장애물 종류에 따라 적절한 객체를 생성.
     - `MapLoader` : text file 또는 JSON 기반 맵 데이터를 읽어 `MapObject` 를 배치.
     - UI Components:
@@ -80,10 +81,10 @@
 
 - [ ] 수평 스크롤 배경(`HorzScrollBackground`) 적용
 - [x] 바닥 타일(`Platform`/`Floor`) 기반 맵 구성
-- [ ] 장애물(`Obstacle`) 클래스 추가
+- [ ] `JellyItem` 추가 및 재활용 처리
+- [ ] `Obstacle` 클래스 추가
 - [ ] `ObstacleFactory` 로 장애물 생성 분리
 - [ ] `AnimObstacle`/`FallingObstacle` 등 하위 타입 추가
-- [ ] `JellyItem` 추가 및 재활용 처리
 - [ ] 텍스트 파일 기반 맵 로딩(`MapLoader`) 구현
 - [ ] JSON 기반 맵 로딩 가능성 검토
 - [ ] 맵 진행 상황 `Gauge` 표시
