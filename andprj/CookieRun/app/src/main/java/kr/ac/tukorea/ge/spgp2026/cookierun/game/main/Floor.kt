@@ -6,17 +6,25 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 // Floor 는 MapObject 아래에서 동작하는 플레이어가 밟는 바닥 타일을 뜻한다.
 // 배경처럼 연속 스크롤하는 대상이 아니라, type 에 따라 서로 다른 크기/이미지의 타일을 배치하는 용도다.
 class Floor(
-    gctx: GameContext,
+    val gctx: GameContext,
     private val type: Type,
-) : MapObject(gctx, type.resId) {
+) : MapObject(gctx, type.resId, 0f, 0f, 0f, 0f) {
     // Floor 는 항상 바닥 레이어에만 놓이는 오브젝트다.
     // layer 를 멤버 변수로 저장하지 않고 getter 로만 돌려주면, 객체마다 추가 메모리를 쓰지 않는다.
     override val layer get() = MainScene.Layer.FLOOR
 
     init {
-        // type 에 들어 있는 width/height 는 이 타일을 게임 화면 안에서 얼마나 크게 그릴지 나타내는 값이다.
-        // bitmap 원본 크기와는 별개이므로, type 하나만 바꾸면 같은 이미지 계열도 다른 크기의 바닥으로 쓸 수 있다.
-        setSize(type.width, type.height)
+        dstRect.set(0f, 0f, type.width, type.height)
+    }
+
+    // 생성 후 위치를 초기화하도록 한다. 이 함수는 재활용 된 뒤에도 불릴 예정이다
+    fun init(type: Type, left: Float, top: Float) {
+        this.bitmap = gctx.res.getBitmap(type.resId)
+        dstRect.set(left, top, type.width, type.height)
+
+        // 아래 항목은 일단 설정해 두기는 하는데, 실제로는 dstRect 크기에 맞춰서 그려지므로 width, height 필드는 크게 의미가 없다.
+        this.width = type.width
+        this.height = type.height
     }
 
     // Floor.Type 은 바닥 타일의 종류를 구분하는 enum 이다.

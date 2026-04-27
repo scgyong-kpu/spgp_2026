@@ -5,7 +5,7 @@ import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly) {
+class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly, 0f, 0f, DST_SIZE, DST_SIZE) {
     // JellyItem 은 아이템 레이어에만 놓인다.
     // layer 를 계산 프로퍼티로 두면, JellyItem 마다 레이어 필드를 따로 저장하지 않아도 된다.
     override val layer get() = MainScene.Layer.ITEM
@@ -32,10 +32,6 @@ class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly) 
         // 그렇지 않으면 Rect() 가 비어 있는 채로 남아 drawBitmap() 이 아무 것도 그리지 않는다.
         srcRect = Rect()
         this.index = index
-        // 화면에 그릴 실제 크기는 스프라이트 시트의 원본 칸 크기와 별개로 정한다.
-        // JellyItem 은 게임 안에서 100x100 크기로 보이게 맞춘다.
-        width = DST_SIZE
-        height = DST_SIZE
     }
 
     companion object {
