@@ -25,7 +25,6 @@ abstract class MapObject(
         // 이후 update() 에서 dstRect 만 이동시키면, 화면에 그릴 때는 dstRect 기준으로 그려진다.
         dstRect.set(left, top, left + width, top + height)
 
-        // 아래 항목은 일단 설정해 두기는 하는데, 실제로는 dstRect 크기에 맞춰서 그려지므로 width, height 필드는 크게 의미가 없다.
         this.width = width
         this.height = height
     }

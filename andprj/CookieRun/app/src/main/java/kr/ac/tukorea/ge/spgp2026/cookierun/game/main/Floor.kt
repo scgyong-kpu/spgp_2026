@@ -22,7 +22,6 @@ class Floor(
         this.bitmap = gctx.res.getBitmap(type.resId)
         dstRect.set(left, top, type.width, type.height)
 
-        // 아래 항목은 일단 설정해 두기는 하는데, 실제로는 dstRect 크기에 맞춰서 그려지므로 width, height 필드는 크게 의미가 없다.
         this.width = type.width
         this.height = type.height
     }
