@@ -56,9 +56,11 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 jumpSpeed = -JUMP_POWER
             }
             State.JUMP -> {
-                // 점프 상태에서 점프하면 DOUBLE_JUMP 상태로 바뀌고, 점프 속도가 추가된다.
+                // 점프 상태에서 점프하면 DOUBLE_JUMP 상태로 바뀌고, 점프 속도를 초기화한다.
+                // 더블점프가 발에서 JUMP_POWER 만큼의 분사 로켓이라면 추가가 맞겠지만
+                // 게임적으로는 JUMP_POWER 로 초기화 되는 것이 더 자연스럽다.
                 state = State.DOUBLE_JUMP
-                jumpSpeed -= JUMP_POWER
+                jumpSpeed = -JUMP_POWER
             }
             State.DOUBLE_JUMP -> {
                 // 더블 점프 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
