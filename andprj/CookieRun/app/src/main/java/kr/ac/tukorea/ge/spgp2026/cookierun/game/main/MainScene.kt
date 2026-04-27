@@ -11,7 +11,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
-        BG, FLOOR, PLAYER
+        BG, FLOOR, ITEM, PLAYER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
@@ -52,6 +52,14 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         add(Floor(gctx, Floor.Type.T_3x1).apply {
             setCenter(1000f, 500f)
         }, Layer.FLOOR)
+
+        // 아이템도 마찬가지로 여러 종류를 흩뿌려 둔다.
+        add(JellyItem(gctx, 40).apply {
+            setCenter(700f, 600f)
+        }, Layer.ITEM)
+        add(JellyItem(gctx, 29).apply {
+            setCenter(1200f, 400f)
+        }, Layer.ITEM)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)
