@@ -11,7 +11,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
-        BG, FLOOR, ITEM, PLAYER
+        BG, FLOOR, ITEM, PLAYER, CONTROLLER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
@@ -39,28 +39,8 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         }
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
 
-        // 바닥은 한 장짜리 배경이 아니라, 여러 종류의 플랫폼 타일을 흩뿌려 두는 식으로 구성한다.
-        // Floor 는 클래스 내부의 고정 속도(SPEED)로 왼쪽으로 자동 스크롤한다.
-        add(Floor(gctx, Floor.Type.T_10x2).apply {
-            setCenter(500f, 800f)
-        }, Layer.FLOOR)
-        add(Floor(gctx, Floor.Type.T_2x2).apply {
-            setCenter(1100f, 800f)
-        }, Layer.FLOOR)
-        add(Floor(gctx, Floor.Type.T_3x1).apply {
-            setCenter(500f, 300f)
-        }, Layer.FLOOR)
-        add(Floor(gctx, Floor.Type.T_3x1).apply {
-            setCenter(1000f, 500f)
-        }, Layer.FLOOR)
-
-        // 아이템도 마찬가지로 여러 종류를 흩뿌려 둔다.
-        add(JellyItem(gctx, 40).apply {
-            setCenter(700f, 600f)
-        }, Layer.ITEM)
-        add(JellyItem(gctx, 29).apply {
-            setCenter(1200f, 400f)
-        }, Layer.ITEM)
+        //
+        add(MapLoader(gctx), Layer.CONTROLLER)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)
