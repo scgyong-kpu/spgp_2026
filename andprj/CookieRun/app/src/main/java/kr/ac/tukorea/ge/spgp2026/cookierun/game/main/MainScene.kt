@@ -11,7 +11,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
-        BG, PLAYER
+        BG, FLOOR, PLAYER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
@@ -22,7 +22,8 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     val player = Player(gctx)
 
     // World 는 레이어 순서대로 그려진다.
-    // 여기서는 BG -> PLAYER 순서이므로 배경 뒤에 플레이어가 올라오는 구성이 된다.
+    // 여기서는 BG -> FLOOR -> PLAYER 순서이므로
+    // 배경 뒤에 바닥이 깔리고 그 위에 플레이어가 올라오는 구성이 된다.
     override val world = World(Layer.entries.toTypedArray()).apply {
         // (배경 리소스, 스크롤 속도) 쌍을 한 번에 선언해 반복 추가한다.
         // speed 가 음수면 오른쪽에서 왼쪽으로 이동한다.
@@ -37,6 +38,20 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
             add(HorzScrollBackground(gctx, resId, speed), Layer.BG)
         }
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
+
+        // 바닥은 한 장짜리 배경이 아니라, 여러 종류의 플랫폼 타일을 흩뿌려 두는 식으로 구성한다.
+        add(Floor(gctx, Floor.Type.T_10x2).apply {
+            setCenter(500f, 800f)
+        }, Layer.FLOOR)
+        add(Floor(gctx, Floor.Type.T_2x2).apply {
+            setCenter(1100f, 800f)
+        }, Layer.FLOOR)
+        add(Floor(gctx, Floor.Type.T_3x1).apply {
+            setCenter(500f, 300f)
+        }, Layer.FLOOR)
+        add(Floor(gctx, Floor.Type.T_3x1).apply {
+            setCenter(1000f, 500f)
+        }, Layer.FLOOR)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)

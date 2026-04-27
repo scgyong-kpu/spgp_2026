@@ -21,7 +21,7 @@
   - Classes/Objects:
     - `Player` : Cookie 주인공. `SheetSprite` 를 상속하게 될 예정.
     - `MapObject` : 화면 오른쪽에서 생성되어 왼쪽으로 흐르는 맵 구성요소들의 공통 기반.
-        - `Platform` / `Floor` : Player 가 착지하고 달릴 바닥 타일.
+        - `Platform` / `Floor` : Player 가 착지하고 달릴 바닥 타일. `Floor.Type` 으로 타일 종류를 구분한다.
         - `JellyItem` : 획득 가능한 아이템. 화면 밖으로 나가면 제거하거나 재활용.
         - `Obstacle` : 정적 장애물.
             - `AnimObstacle` : 시간에 따라 이미지가 바뀌는 장애물.
@@ -59,6 +59,8 @@
 ## MainScene 배경 및 화면 좌표계 설정
 - [x] 가상좌표계 가로방향으로 설정
 - [x] BG 3장 추가
+- [x] 수평 스크롤 배경(`HorzScrollBackground`) 적용
+- [x] 바닥 타일(`Floor`) 기반 맵 구성
 
 
 ## Player / 입력 / 이동
@@ -77,7 +79,7 @@
 ## Map / 장애물 / 아이템
 
 - [ ] 수평 스크롤 배경(`HorzScrollBackground`) 적용
-- [ ] 바닥 타일(`Platform`/`Floor`) 기반 맵 구성
+- [x] 바닥 타일(`Platform`/`Floor`) 기반 맵 구성
 - [ ] 장애물(`Obstacle`) 클래스 추가
 - [ ] `ObstacleFactory` 로 장애물 생성 분리
 - [ ] `AnimObstacle`/`FallingObstacle` 등 하위 타입 추가
@@ -112,4 +114,3 @@
 
 - 이 문서는 작년 CookieRun 이력을 기준으로 정리했다.
 - 상황에 따라 항목이 추가/삭제될 수 있다.
-
