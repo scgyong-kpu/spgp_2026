@@ -40,6 +40,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
 
         // 바닥은 한 장짜리 배경이 아니라, 여러 종류의 플랫폼 타일을 흩뿌려 두는 식으로 구성한다.
+        // Floor 는 클래스 내부의 고정 속도(SPEED)로 왼쪽으로 자동 스크롤한다.
         add(Floor(gctx, Floor.Type.T_10x2).apply {
             setCenter(500f, 800f)
         }, Layer.FLOOR)

@@ -17,6 +17,13 @@ class Floor(
         setSize(type.width, type.height)
     }
 
+    override fun update(gctx: GameContext) {
+        // Floor 는 왼쪽으로 계속 흐르는 바닥 타일이다.
+        // speed 는 클래스 안에서 고정 상수로 두고, 모든 바닥 타일이 같은 속도로 움직이게 한다.
+        x += SPEED * gctx.frameTime
+        syncDstRect()
+    }
+
     // Floor.Type 은 바닥 타일의 종류를 구분하는 enum 이다.
     // enum 은 "미리 정해 둔 이름 목록"이라고 생각하면 된다.
     // 그리고 각 이름에는 resId, width, height 같은 값을 묶어서 함께 붙일 수 있다.
@@ -43,5 +50,11 @@ class Floor(
             R.mipmap.cookierun_floor_120x40,
             300f, 100f,
         ),
+    }
+
+    companion object {
+        // 바닥 타일은 화면 왼쪽으로 일정하게 흐른다.
+        // 음수 값이므로 x 가 줄어들고, 결과적으로 왼쪽으로 이동한다.
+        const val SPEED = -300f
     }
 }
