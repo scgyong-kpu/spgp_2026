@@ -1,15 +1,14 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-// Floor 는 플레이어가 밟는 바닥 타일을 뜻한다.
+// Floor 는 MapObject 아래에서 동작하는 플레이어가 밟는 바닥 타일을 뜻한다.
 // 배경처럼 연속 스크롤하는 대상이 아니라, type 에 따라 서로 다른 크기/이미지의 타일을 배치하는 용도다.
 class Floor(
     gctx: GameContext,
     private val type: Type,
-) : Sprite(gctx, type.resId) {
+) : MapObject(gctx, type.resId) {
 
     init {
         // type 에 들어 있는 width/height 는 이 타일을 게임 화면 안에서 얼마나 크게 그릴지 나타내는 값이다.

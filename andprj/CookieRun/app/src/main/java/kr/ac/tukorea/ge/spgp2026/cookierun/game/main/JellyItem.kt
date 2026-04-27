@@ -2,11 +2,11 @@ package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.graphics.Rect
 import android.util.Log
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-class JellyItem(gctx: GameContext, index: Int): Sprite(gctx, R.mipmap.jelly) {
+class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly) {
+    // JellyItem 은 MapObject 아래에서 동작하는 수집 아이템이다.
     // index 는 jelly 스프라이트 시트에서 어느 칸을 보여줄지 고르는 번호다.
     // setter 에서 index 를 (행, 열)로 바꾼 다음, 그 칸의 srcRect 를 직접 계산한다.
     var index = index
