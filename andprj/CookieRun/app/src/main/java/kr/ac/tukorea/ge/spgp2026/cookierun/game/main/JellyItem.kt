@@ -6,6 +6,10 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly) {
+    // JellyItem 은 아이템 레이어에만 놓인다.
+    // layer 를 계산 프로퍼티로 두면, JellyItem 마다 레이어 필드를 따로 저장하지 않아도 된다.
+    override val layer get() = MainScene.Layer.ITEM
+
     // JellyItem 은 MapObject 아래에서 동작하는 수집 아이템이다.
     // index 는 jelly 스프라이트 시트에서 어느 칸을 보여줄지 고르는 번호다.
     // setter 에서 index 를 (행, 열)로 바꾼 다음, 그 칸의 srcRect 를 직접 계산한다.

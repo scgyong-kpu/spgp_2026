@@ -9,6 +9,9 @@ class Floor(
     gctx: GameContext,
     private val type: Type,
 ) : MapObject(gctx, type.resId) {
+    // Floor 는 항상 바닥 레이어에만 놓이는 오브젝트다.
+    // layer 를 멤버 변수로 저장하지 않고 getter 로만 돌려주면, 객체마다 추가 메모리를 쓰지 않는다.
+    override val layer get() = MainScene.Layer.FLOOR
 
     init {
         // type 에 들어 있는 width/height 는 이 타일을 게임 화면 안에서 얼마나 크게 그릴지 나타내는 값이다.
