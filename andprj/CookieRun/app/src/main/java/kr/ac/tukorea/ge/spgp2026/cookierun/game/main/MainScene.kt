@@ -39,8 +39,10 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         }
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
 
-        //
-        add(MapLoader(gctx), Layer.CONTROLLER)
+        // MapLoader 를 생성할 시점에 MainScene 및 World 가 초기화되지 않을 시점이라서
+        // gctx 만으로는 world 에 접근할 수 없다. 그래서 MapLoader 생성자에 world 를 직접 넘겨 준다.
+        // 현재 World 생성 중 apply { } 블록 안이므로, this 는 아직 완성되지 않은 World 객체를 가리킨다.
+        add(MapLoader(gctx, this), Layer.CONTROLLER)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)

@@ -2,12 +2,11 @@ package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.graphics.Canvas
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
+import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene.Layer
 
-class MapLoader(val gctx: GameContext): IGameObject {
-    // kotlin.UninitializedPropertyAccessException: lateinit property scene has not been initialized
-    val world = (gctx.scene as MainScene).world
+class MapLoader(gctx: GameContext, val world: World<Layer>): IGameObject {
     init {
         // 바닥은 한 장짜리 배경이 아니라, 여러 종류의 플랫폼 타일을 흩뿌려 두는 식으로 구성한다.
         // Floor 는 클래스 내부의 고정 속도(SPEED)로 왼쪽으로 자동 스크롤한다.
