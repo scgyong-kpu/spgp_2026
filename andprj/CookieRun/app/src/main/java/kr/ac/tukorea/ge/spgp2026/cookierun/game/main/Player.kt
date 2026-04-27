@@ -11,13 +11,14 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     enum class State {
         // 지금은 RUN, JUMP, DOUBLE_JUMP 세 상태만 두고 시작한다.
         // 이후 Slide, Hit 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
-        RUN, JUMP, DOUBLE_JUMP,
+        RUN, JUMP, DOUBLE_JUMP, SLIDE,
     }
 
     private val stateRects = mapOf(
         State.RUN to RUN_RECTS,
         State.JUMP to JUMP_RECTS,
         State.DOUBLE_JUMP to DOUBLE_JUMP_RECTS,
+        State.SLIDE to SLIDE_RECTS,
     )
     // stateRects 는 상태 이름과 프레임 Rect 목록을 연결해 둔 표다.
     // 상태가 바뀔 때 이 표를 통해 SheetSprite 가 그릴 프레임 묶음을 갈아끼운다.
@@ -62,9 +63,23 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 state = State.DOUBLE_JUMP
                 jumpSpeed = -JUMP_POWER
             }
-            State.DOUBLE_JUMP -> {
-                // 더블 점프 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
+            else -> {
+                // 그 외 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
                 return
+            }
+        }
+    }
+
+    fun slide(sliding: Boolean) {
+        if (state == State.RUN) {
+            if (sliding) {
+                // 달리는 상태에서 슬라이드하면 SLIDE 상태로 바뀐다.
+                state = State.SLIDE
+            }
+        } else if (state == State.SLIDE) {
+            if (!sliding) {
+                // 슬라이드 상태에서 슬라이드 입력이 끝나면 RUN 상태로 바뀐다.
+                state = State.RUN
             }
         }
     }
@@ -73,10 +88,6 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         // RUN 은 멈춰 있고, JUMP / DOUBLE_JUMP 는 같은 중력 루프로 처리한다.
         // 상태는 다르지만 실제 y 이동 규칙은 같으므로 물리 계산은 한곳에 모아 둔다.
         when (state) {
-            State.RUN -> {
-                // 달리는 상태에서는 별도 이동 로직이 없다.
-                // 이후에는 달리는 속도에 맞춰 x 를 조금씩 증가시키는 로직이 들어갈 수 있다.
-            }
             State.JUMP, State.DOUBLE_JUMP -> {
                 // 점프 상태에서는 y 위치를 위아래로 움직이는 간단한 테스트 로직을 넣어 둔다.
                 // 이후에는 점프 시작 시점의 속도와 중력 가속도를 이용해 포물선 운동을 하는 로직으로 바뀌게 된다.
@@ -89,6 +100,9 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 }
                 syncDstRect()
                 jumpSpeed += GRAVITY * gctx.frameTime
+            }
+            else -> {
+                // 달리는 상태에 등에서는 별도 이동 로직이 없다.
             }
         }
     }
@@ -119,6 +133,10 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             Rect(546, 2, 816, 272),
             Rect(818, 2, 1088, 272),
             Rect(1090, 2, 1360, 272),
+        )
+        val SLIDE_RECTS = listOf(
+            Rect(2450, 2, 2720, 272),
+            Rect(2722, 2, 2992, 272),
         )
     }
 }

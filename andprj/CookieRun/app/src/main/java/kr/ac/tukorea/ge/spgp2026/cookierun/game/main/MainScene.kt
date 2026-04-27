@@ -43,10 +43,20 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            // 터치가 시작될 때마다 플레이어가 점프/달리기 상태를 번갈아 바꾸도록 해 둔다.
-            // 지금은 테스트용 토글이지만, 이후에는 버튼 입력과 물리 로직으로 바뀌게 된다.
-            player.jump()
+        // 버튼 UI 가 아직 없으므로 화면 절반을 기준으로 동작을 분기시킨다.
+        // 화면 오른쪽 절반을 누르면 jump
+        // 화면 왼쪽 절반에 누르면 slide(true), 떼면 slide(false)
+        val screenCenter = gctx.view.width / 2
+        if (event.x > screenCenter) {
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                player.jump()
+                return true
+            }
+        } else {
+            if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_UP) {
+                player.slide(event.action == MotionEvent.ACTION_DOWN)
+                return true
+            }
         }
         return super.onTouchEvent(event)
     }
