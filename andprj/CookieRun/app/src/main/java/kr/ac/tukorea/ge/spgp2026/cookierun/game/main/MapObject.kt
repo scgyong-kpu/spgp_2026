@@ -17,6 +17,11 @@ abstract class MapObject(
         // 개별 클래스는 배치나 표시 방식만 다루고, 공통 이동은 여기서 처리한다.
         x += SPEED * gctx.frameTime
         syncDstRect()
+        if (dstRect.right < 0) {
+            // 화면 왼쪽 바깥으로 완전히 나간 오브젝트는 제거한다.
+            Log.w(javaClass.simpleName, "Should be deleted: $this")
+            //gctx.scene.world.remove(this, layer=????)
+        }
     }
 
     companion object {
