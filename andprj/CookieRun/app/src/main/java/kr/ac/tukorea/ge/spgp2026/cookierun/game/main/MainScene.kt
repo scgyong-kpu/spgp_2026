@@ -7,7 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-class MainScene(gctx: GameContext) : Scene(gctx) {
+class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
@@ -43,7 +43,7 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         // CollisionChecker 를 먼저 추가하고 MapLoader 를 뒤에 추가해야
         // 매 프레임 item 생성이 먼저 일어나고, 그 다음 충돌 판정을 검사할 수 있다.
         add(CollisionChecker(this, player), Layer.CONTROLLER)
-        add(MapLoader(gctx, this), Layer.CONTROLLER)
+        add(MapLoader(gctx, this, stage), Layer.CONTROLLER)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)

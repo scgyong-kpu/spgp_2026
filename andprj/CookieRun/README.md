@@ -41,6 +41,8 @@
 - [x] `MainActivity` 에서 `CookieRunActivity` 실행
   - [x] Debug Build 시 1초 후 자동실행
 - [ ] 선택한 `cookieId` / `stage` 를 Intent extra 로 전달
+  - [x] 선택한 `stage` 를 Intent extra 로 전달
+  - [ ] 선택한 `cookieId` 를 Intent extra 로 전달
 - [ ] 게임 Activity 를 landscape mode 로 고정
 
 ## a2dg 연결

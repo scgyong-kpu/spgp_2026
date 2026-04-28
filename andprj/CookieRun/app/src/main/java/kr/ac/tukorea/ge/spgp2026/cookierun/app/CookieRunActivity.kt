@@ -10,8 +10,14 @@ class CookieRunActivity : BaseGameActivity() {
     override val drawsDebugGrid: Boolean = BuildConfig.DEBUG
     override val drawsDebugInfo: Boolean = BuildConfig.DEBUG
     override val drawsFpsGraph: Boolean = BuildConfig.DEBUG
+
     override fun createRootScene(gctx: GameContext): Scene {
         gctx.metrics.setSize(1600f, 900f)
-        return MainScene(gctx)
+        val stage = intent.getIntExtra(KEY_STAGE, 1)
+        return MainScene(gctx, stage)
+    }
+
+    companion object {
+        const val KEY_STAGE = "stage"
     }
 }
