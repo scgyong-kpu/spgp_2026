@@ -75,17 +75,18 @@
 - [x] `RUN` / `SLIDE` 중 발밑에 바닥이 없으면 `FALL` 상태로 전환
 - [x] `JUMP` / `FALL` 중 중력에 따라 낙하하고 바닥에 닿으면 `RUN` 으로 복귀
 - [ ] 입력 처리(`Jump` / `Slide` 버튼, `ACTION_DOWN/UP`)
-- [ ] 점프/슬라이드 동작 세부 다듬기
-- [ ] 중력/더블 점프 물리 세부 조정
-- [ ] 낙하 중 플랫폼 착지 시 달리기 상태로 전환
+- [x] 점프/슬라이드 동작 세부 다듬기
+- [x] 중력/더블 점프 물리 세부 조정
+- [x] 낙하 중 플랫폼 착지 시 달리기 상태로 전환
 - [ ] 플레이어 쿠키 스킨 선택 기능
 - [x] Magnification/Scale 아이템 효과 적용
 - [x] Magnification scale 에 따라 Player 크기와 점프 파워 조정
-- [ ] 플레이어 애니메이션 적용(run/jump/slide/hit)
+- [x] 플레이어 애니메이션 적용(run/jump/slide/fall)
+- [ ] 플레이어 hit 애니메이션 적용
 
 ## Map / 장애물 / 아이템
 
-- [ ] 수평 스크롤 배경(`HorzScrollBackground`) 적용
+- [x] 수평 스크롤 배경(`HorzScrollBackground`) 적용
 - [x] 바닥 타일(`Platform`/`Floor`) 기반 맵 구성
 - [x] `JellyItem` 추가 및 재활용 처리
 - [x] `JellyItem.MAGNIFICATION_INDEX` 로 특수 젤리 구분
