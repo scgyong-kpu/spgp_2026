@@ -85,49 +85,28 @@ class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: I
         // 각 row 에 있는 문자 하나를 보고 Floor, JellyItem 같은 객체를 생성한다.
         for (row in 0 until STAGE_HEIGHT) {
             val tile = getAt(column, row)
+            if (tile == INVALID_TILE || tile == EMPTY_TILE) continue
             val top = TILE_SIZE * row
             createObject(gctx, tile, x, top)
         }
     }
 
     private fun createObject(gctx: GameContext, tile: Char, left: Float, top: Float) {
-        // 먼저 바닥 문자인지 확인한다.
-        // 하나의 문자에서 객체가 만들어졌으면 바로 return 해서 중복 생성되지 않게 한다.
-        val floorType = floorTypeFor(tile)
-        if (floorType != null) {
-            world.add(Floor.get(gctx, floorType, left, top), Layer.FLOOR)
-            return
-        }
-
-        // 바닥이 아니면 아이템 문자인지 확인한다.
-        // 아직 Obstacle 은 구현하지 않았으므로, X/Y/Z/W/T 같은 문자는 여기서 아무것도 만들지 않는다.
-        val itemIndex = itemIndexFor(tile) ?: return
-        world.add(JellyItem.get(gctx, itemIndex, left, top), Layer.ITEM)
-    }
-
-    private fun floorTypeFor(tile: Char): Floor.Type? {
-        // stage 파일의 바닥 문자를 Floor.Type 으로 바꾼다.
-        // null 을 반환하면 "이 문자는 Floor 가 아니다"라는 뜻이다.
-        return when (tile) {
-            'O' -> Floor.Type.T_10x2
-            'P' -> Floor.Type.T_2x2
-            'Q' -> Floor.Type.T_3x1
-            else -> null
-        }
-    }
-
-    private fun itemIndexFor(tile: Char): Int? {
-        // 숫자 문자는 jelly.png 의 앞쪽 칸으로 연결한다.
-        // '@' 는 확대 효과를 테스트하기 위한 특수 젤리 index 로 연결한다.
-        return when (tile) {
-            '@' -> JellyItem.MAGNIFICATION_INDEX
-            in '1'..'8' -> tile - '1'
-            else -> null
+        // MapLoader 는 stage 파일을 읽고 좌표를 계산하는 역할만 맡는다.
+        // tile 문자가 Floor 인지, JellyItem 인지, 나중에 Obstacle 인지는 Registry 가 판단한다.
+        //
+        // Registry 에 등록된 문자가 아니면 null 이 돌아오고,
+        // 그 칸에는 아무 MapObject 도 만들지 않는다.
+        //
+        // 생성된 MapObject 는 자기 layer 를 알고 있으므로
+        // MapLoader 가 Floor/Item/Obstacle 레이어를 따로 판단하지 않아도 된다.
+        MapObjectRegistry.create(gctx, tile, left, top)?.let {
+            world.add(it, it.layer)
         }
     }
 
     private fun getAt(col: Int, row: Int): Char {
-        if (col >= stageWidth || pageWidth <= 0) return EMPTY_TILE
+        if (col >= stageWidth || pageWidth <= 0) return INVALID_TILE
         return try {
             // stage 파일은 9줄짜리 페이지가 가로로 이어진 형태다.
             // col 이 pageWidth 를 넘어가면 다음 9줄 묶음에서 같은 row 를 읽는다.
@@ -136,7 +115,7 @@ class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: I
             val line = lines[lineIndex]
             line[col % pageWidth]
         } catch (_: Exception) {
-            EMPTY_TILE
+            INVALID_TILE
         }
     }
 
@@ -158,7 +137,8 @@ class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: I
         // stage 문자 하나가 게임 좌표계에서 차지하는 가로/세로 크기이다.
         private const val TILE_SIZE = 100f
         // stage 끝이거나 읽을 수 없는 위치일 때는 아무것도 만들지 않는 문자로 처리한다.
-        private const val EMPTY_TILE = '\u0000'
+        private const val INVALID_TILE = '\u0000'
+        private const val EMPTY_TILE = ' '
         private const val MAP_GAUGE_X = 200f
         private const val MAP_GAUGE_Y = 100f
         private const val MAP_GAUGE_WIDTH = 1200f

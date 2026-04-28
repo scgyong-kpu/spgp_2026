@@ -17,6 +17,13 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
     override val clipsRect = true
 
+    init {
+        // MapLoader 는 stage 문자를 MapObjectRegistry 를 통해 객체로 바꾼다.
+        // 따라서 MapLoader 가 생성되기 전에, 이 게임에서 사용할 문자별 생성 규칙을 등록해 둔다.
+        // registerAll() 은 MainScene 이 다시 만들어져도 중복 등록되지 않도록 내부에서 한 번만 실행된다.
+        MapObjectCatalog.registerAll()
+    }
+
     // 플레이어를 멤버로 분리해 두면,
     // 이후 입력 처리나 카메라 추적에서 MainScene 이 직접 접근하기 쉽다.
     val player = Player(gctx)
