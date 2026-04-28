@@ -11,7 +11,10 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
-        BG, FLOOR, ITEM, PLAYER, CONTROLLER
+        // OBSTACLE 은 FLOOR/ITEM 보다 앞에, PLAYER 보다 뒤에 둔다.
+        // 이렇게 하면 장애물이 바닥과 아이템 위에 보이면서도,
+        // 플레이어가 장애물에 가려지지 않아 충돌 상황을 확인하기 쉽다.
+        BG, FLOOR, ITEM, OBSTACLE, PLAYER, CONTROLLER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.

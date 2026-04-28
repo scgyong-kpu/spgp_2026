@@ -44,5 +44,13 @@ object MapObjectCatalog {
         MapObjectRegistry.register('Q', { gctx, _, left, top ->
             Floor.get(gctx, Floor.Type.T_3x1, left, top)
         })
+
+        // 'X' 는 가장 기본 장애물이다.
+        // MapLoader 는 'X' 의 의미를 직접 알지 않고,
+        // Catalog 에 등록된 생성 규칙을 통해 Obstacle 을 만들게 된다.
+        // 이후 'Y', 'Z', 'W' 같은 애니메이션/낙하 장애물도 이 근처에 추가하면 된다.
+        MapObjectRegistry.register('X', { gctx, _, left, top ->
+            Obstacle.get(gctx, left, top)
+        })
     }
 }
