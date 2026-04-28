@@ -1,13 +1,15 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.graphics.Rect
+import android.graphics.RectF
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 // 플레이어는 상태마다 다른 프레임 Rect 집합을 쓰므로 SheetSprite 를 상속한다.
 // RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
-class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f) {
+class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f), IBoxCollidable {
     enum class State {
         // 지금은 RUN, JUMP, DOUBLE_JUMP 세 상태만 두고 시작한다.
         // 이후 Slide, Hit 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
@@ -46,6 +48,9 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         setCenter(INIT_X, INIT_Y)
         state = State.RUN
     }
+
+    override val collisionRect: RectF
+        get() = dstRect
 
     fun jump() {
         // jump() 는 현재 상태에 따라 서로 다른 점프를 만든다.

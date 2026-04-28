@@ -1,5 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
+import android.graphics.RectF
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -15,7 +17,7 @@ abstract class MapObject(
     top: Float,
     width: Float,
     height: Float,
-) : Sprite(gctx, resId), IRecyclable {
+) : Sprite(gctx, resId), IRecyclable, IBoxCollidable {
     // 각 맵 오브젝트는 자기 타입이 속한 레이어를 알아야
     // 화면 밖으로 나갔을 때 World 에서 자기 자신을 제거할 수 있다.
     abstract val layer: MainScene.Layer
@@ -28,6 +30,9 @@ abstract class MapObject(
         this.width = width
         this.height = height
     }
+
+    override val collisionRect: RectF
+        get() = dstRect
 
     // 생성 후 위치를 초기화하도록 한다. 이 함수는 재활용 된 뒤에도 불릴 예정이다
     fun setLeftTop(left: Float, top: Float) {
