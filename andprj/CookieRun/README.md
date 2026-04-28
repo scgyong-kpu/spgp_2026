@@ -19,7 +19,7 @@
     - `MainScene` : Cookie 가 달려감
     - `PauseScene` : 게임이 일시정지되어 재개/종료 를 물음
   - Classes/Objects:
-    - `Player` : Cookie 주인공. `SheetSprite` 를 상속하게 될 예정.
+    - `Player` : Cookie 주인공. `SheetSprite` 를 상속하고 상태별 프레임과 충돌 박스를 함께 관리한다.
     - `MapObject` : 맵 위에 놓이는 오브젝트들의 공통 기반.
       - `Floor` : Player 가 착지하고 달릴 바닥 타일. `Floor.Type` 으로 타일 종류를 구분한다.
       - `JellyItem` : 획득 가능한 아이템. 스프라이트 시트의 `index` 로 칸을 고른다.
@@ -70,9 +70,11 @@
 - [x] `Player` 클래스 추가
 - [x] `SheetSprite` 기반 상태(state)별 애니메이션 구성
 - [x] state 에 따라 프레임 Rect 집합 선택 및 애니메이션 전환
+- [x] `RUN` / `SLIDE` 중 발밑에 바닥이 없으면 `FALL` 상태로 전환
+- [x] `JUMP` / `FALL` 중 중력에 따라 낙하하고 바닥에 닿으면 `RUN` 으로 복귀
 - [ ] 입력 처리(`Jump` / `Slide` 버튼, `ACTION_DOWN/UP`)
-- [ ] 점프/슬라이드/낙하 동작 구현
-- [ ] 중력/더블 점프 물리 적용
+- [ ] 점프/슬라이드 동작 세부 다듬기
+- [ ] 중력/더블 점프 물리 세부 조정
 - [ ] 낙하 중 플랫폼 착지 시 달리기 상태로 전환
 - [ ] 플레이어 쿠키 스킨 선택 기능
 - [ ] Magnification/Scale 아이템 효과 적용
@@ -96,6 +98,7 @@
 - [x] `IBoxCollidable` 적용
 - [x] `CollisionChecker` 추가
 - [x] `Player` 와 `JellyItem` 충돌 처리
+- [x] `Player` / `JellyItem` 의 `collisionRect` 를 `dstRect` 와 분리해 inset 적용
 - [ ] `Player` 와 `Obstacle` 충돌 처리
 - [x] `collisionRect` / inset 조정
 - [ ] `AnimObstacle` collision rect 보정
