@@ -99,28 +99,36 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     }
 
     override fun update(gctx: GameContext) {
-        // RUN 은 멈춰 있고, JUMP / DOUBLE_JUMP 는 같은 중력 루프로 처리한다.
-        // 상태는 다르지만 실제 y 이동 규칙은 같으므로 물리 계산은 한곳에 모아 둔다.
+        // 플레이어 발의 현재 y 좌표 저장 (매 프레임 업데이트 전 읽음)
+        var foot = collisionRect.bottom
         when (state) {
             State.JUMP, State.DOUBLE_JUMP -> {
-                // 점프 상태에서는 y 위치를 위아래로 움직이는 간단한 테스트 로직을 넣어 둔다.
-                // 이후에는 점프 시작 시점의 속도와 중력 가속도를 이용해 포물선 운동을 하는 로직으로 바뀌게 된다.
-                y += jumpSpeed * gctx.frameTime
-                if (y >= INIT_Y) {
-                    y = INIT_Y
-                    state = State.RUN
-                    syncDstRect()
-                    updateCollisionRect()
-                    return
-                }
-                syncDstRect()
-                updateCollisionRect()
+                // 프레임 시간 동안 jumpSpeed 만큼 이동할 거리 계산
+                var dy = jumpSpeed * gctx.frameTime
+                // 중력을 적용하여 jumpSpeed 업데이트 (음수 → 양수로 변함, 점점 빠르게 떨어짐)
                 jumpSpeed += GRAVITY * gctx.frameTime
+                
+                if (jumpSpeed >= 0) {
+                    // 낙하 중일 때만 착지 판정 (jumpSpeed 가 양수 = 아래로 떨어지는 중)
+                    val floor = findNearestFloorTop()
+                    // 다음 프레임에서 발이 floor 를 뚫고 지나갈 위치까지 간다면, floor 위에 정확히 플레이어를 배치
+                    if (foot + dy >= floor) {
+                        dy = floor - foot  // dy 조정: 정확히 floor 에 닿는 거리로 수정
+                        state = State.RUN  // 착지 → RUN 상태로 전환
+                    }
+                }
+                foot += dy  // 계산된 거리만큼 이동
+                setPlayerFootY(foot)  // dstRect 위치 업데이트
             }
             else -> {
-                // 달리는 상태에 등에서는 별도 이동 로직이 없다.
+                // 달리는 상태에서는 별도 이동 로직이 없다.
             }
         }
+    }
+
+    fun setPlayerFootY(foot: Float) {
+        dstRect.set(dstRect.left, foot - height, dstRect.right, foot);
+        updateCollisionRect();
     }
 
     private fun updateCollisionRect() {
@@ -131,6 +139,41 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             dstRect.right - width * insets[2],
             dstRect.bottom - height * insets[3],
         )
+    }
+
+    private fun findNearestFloor(): Floor? {
+        // 플레이어 발의 y 좌표(collisionRect.bottom)에서 아래쪽으로 가장 가까운 floor 를 찾는다.
+        // floor 를 찾기 위해 다음 조건을 모두 만족하는 객체를 검색한다:
+        // 1. 플레이어의 x 좌표가 floor 의 좌우 범위 안에 있어야 함
+        // 2. floor 의 top 이 발보다 아래에 있어야 함 (발 위의 floor 는 제외)
+        // 3. 여러 floor 가 있으면, top 이 가장 작은(가장 가까운) floor 반환
+        val playerFootY = collisionRect.bottom
+        val scene = gctx.scene as? MainScene ?: return null
+        val floors = scene.world.objectsAt(MainScene.Layer.FLOOR)
+        
+        var nearest: Floor? = null
+        var minTop = Float.MAX_VALUE
+        
+        for (i in floors.indices) {
+            val floor = floors[i] as? Floor ?: continue
+            val rect = floor.collisionRect
+            // 플레이어 x 좌표가 floor 의 좌우 범위에 포함되는지 확인
+            if (x < rect.left || x > rect.right) continue
+            // floor 가 발보다 위에 있으면 대상에서 제외 (발 위의 floor 무시)
+            if (rect.top < playerFootY) continue
+            // 지금까지 찾은 것보다 더 가까운(top 이 더 작은) floor 인지 확인
+            if (minTop > rect.top) {
+                minTop = rect.top
+                nearest = floor
+            }
+        }
+        return nearest
+    }
+
+    private fun findNearestFloorTop(): Float {
+        // 플레이어 발 아래에서 가장 가까운 floor 의 상단 y 좌표를 반환한다.
+        // floor 가 없으면 INIT_Y (원래 바닥 위치) 를 반환하여, 게임이 시작된 위치로 돌아간다.
+        return findNearestFloor()?.collisionRect?.top ?: INIT_Y
     }
 
     companion object {
