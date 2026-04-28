@@ -30,6 +30,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     )
     // stateRects 는 상태 이름과 프레임 Rect 목록을 연결해 둔 표다.
     // 상태가 바뀔 때 이 표를 통해 SheetSprite 가 그릴 프레임 묶음을 갈아끼운다.
+    // stateInsets 는 상태별로 충돌 박스를 얼마나 안쪽으로 줄일지 기록해 둔 표다.
 
     var state = State.RUN
         set(value) {
@@ -124,16 +125,12 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
 
     private fun updateCollisionRect() {
         val insets = stateInsets[state] ?: return
-        val left = insets[0] * width
-        val top = insets[1] * height
-        val right = insets[2] * width
-        val bottom = insets[3] * height
         collisionRect.set(
             dstRect.left + width * insets[0],
             dstRect.top + height * insets[1],
             dstRect.right - width * insets[2],
             dstRect.bottom - height * insets[3],
-        );
+        )
     }
 
     companion object {
@@ -147,9 +144,6 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         const val INIT_Y = 510f
         const val GRAVITY = 1700f
         const val JUMP_POWER = 900f
-        // 플레이어의 충돌 박스는 좌우 40f, 상하 20f 만큼 안쪽으로 줄인다.
-        const val COLLISION_INSET_X = 40f
-        const val COLLISION_INSET_Y = 20f
         val RUN_RECTS = listOf(
             Rect(2, 274, 272, 544),
             Rect(274, 274, 544, 544),
@@ -170,6 +164,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             Rect(2450, 2, 2720, 272),
             Rect(2722, 2, 2992, 272),
         )
+        // 플레이어의 충돌 박스는 상태마다 조금씩 다르게 줄인다.
+        // 각 배열의 4개 값은 left, top, right, bottom 을 width/height 비율로 표현한 것이다.
         val INSETS_RUN = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
         val INSETS_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
         val INSETS_DOUBLE_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)

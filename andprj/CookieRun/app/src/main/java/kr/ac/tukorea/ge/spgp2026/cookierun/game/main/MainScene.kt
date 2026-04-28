@@ -39,9 +39,10 @@ class MainScene(gctx: GameContext) : Scene(gctx) {
         }
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
 
-        // MapLoader 를 생성할 시점에 MainScene 및 World 가 초기화되지 않을 시점이라서
-        // gctx 만으로는 world 에 접근할 수 없다. 그래서 MapLoader 생성자에 world 를 직접 넘겨 준다.
-        // 현재 World 생성 중 apply { } 블록 안이므로, this 는 아직 완성되지 않은 World 객체를 가리킨다.
+        // CONTROLLER 레이어 안에서는 update() 를 역순으로 돌기 때문에,
+        // CollisionChecker 를 먼저 추가하고 MapLoader 를 뒤에 추가해야
+        // 매 프레임 item 생성이 먼저 일어나고, 그 다음 충돌 판정을 검사할 수 있다.
+        add(CollisionChecker(this, player), Layer.CONTROLLER)
         add(MapLoader(gctx, this), Layer.CONTROLLER)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
