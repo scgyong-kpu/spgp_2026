@@ -50,6 +50,10 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     var jumpSpeed = 0f
     // jumpSpeed 는 y 방향 이동량의 기반 값이다.
     // 음수면 위로 올라가고, 양수면 아래로 떨어지므로 점프 물리를 단순하게 표현할 수 있다.
+    private var magnificationScale = SCALE_NORMAL
+    private var magnificationSpeed = 0f
+    // magnificationScale 은 움직임 상태와 별도로 적용되는 효과 배율이다.
+    // RUN/JUMP/FALL 같은 상태 enum 에 넣지 않으면, "점프 중 확대" 같은 조합도 자연스럽게 처리할 수 있다.
     // collisionRect 는 실제 스프라이트보다 조금 작은 사각형을 따로 둔다.
     // 눈에 보이는 가장자리보다 안쪽에서 충돌해야 더 자연스럽게 느껴진다.
     override val collisionRect = RectF()
@@ -71,14 +75,14 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             State.RUN -> {
                 // 달리는 상태에서 점프하면 JUMP 상태로 바뀌고, 점프 속도가 초기화된다.
                 state = State.JUMP
-                jumpSpeed = -JUMP_POWER
+                jumpSpeed = -currentJumpPower()
             }
             State.JUMP -> {
                 // 점프 상태에서 점프하면 DOUBLE_JUMP 상태로 바뀌고, 점프 속도를 초기화한다.
                 // 더블점프가 발에서 JUMP_POWER 만큼의 분사 로켓이라면 추가가 맞겠지만
                 // 게임적으로는 JUMP_POWER 로 초기화 되는 것이 더 자연스럽다.
                 state = State.DOUBLE_JUMP
-                jumpSpeed = -JUMP_POWER
+                jumpSpeed = -currentJumpPower()
             }
             else -> {
                 // 그 외 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
@@ -102,8 +106,20 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     }
 
     fun magnify() {
-        // 아직 실제 확대 애니메이션은 넣지 않고, 특수 젤리와 Player 가 연결되는지만 먼저 확인한다.
-        Log.d(javaClass.simpleName, "Magnification item collected")
+        magnificationSpeed = if (magnificationScale == SCALE_NORMAL) {
+            MAGNIFICATION_SPEED
+        } else {
+            -MAGNIFICATION_SPEED
+        }
+        Log.d(javaClass.simpleName, "Scale=$magnificationScale speed=$magnificationSpeed")
+    }
+
+    private fun currentJumpPower(): Float {
+        // 확대 비율이 1.0 에서 2.0 으로 커질수록 점프력도 1.0 에서 1.2 배로 함께 커진다.
+        // 이렇게 하면 확대 애니메이션 도중에도 현재 크기에 맞는 중간 점프력이 자연스럽게 적용된다.
+        val scaleProgress = (magnificationScale - SCALE_NORMAL) / (SCALE_MAGNIFIED - SCALE_NORMAL)
+        val powerRatio = 1.0f + scaleProgress * (MAGNIFIED_JUMP_POWER_RATIO - 1.0f)
+        return JUMP_POWER * powerRatio
     }
 
     override fun update(gctx: GameContext) {
@@ -138,15 +154,30 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 foot += dy  // 계산된 거리만큼 이동
                 setPlayerFootY(foot)  // dstRect 위치 업데이트
             }
-            else -> {
-                // 달리는 상태에서는 별도 이동 로직이 없다.
+        }
+
+        if (magnificationSpeed != 0f) {
+            // 크기가 바뀌어도 발은 같은 y 좌표에 붙어 있어야 한다.
+            // 그래서 현재 발 위치를 저장한 뒤, 크기를 바꾸고 다시 foot 기준으로 배치한다.
+            val footForScale = collisionRect.bottom
+            magnificationScale += gctx.frameTime * magnificationSpeed
+            if (magnificationSpeed < 0f && magnificationScale <= SCALE_NORMAL) {
+                magnificationScale = SCALE_NORMAL
+                magnificationSpeed = 0f
+            } else if (magnificationSpeed > 0f && magnificationScale >= SCALE_MAGNIFIED) {
+                magnificationScale = SCALE_MAGNIFIED
+                magnificationSpeed = 0f
             }
+            width = WIDTH * magnificationScale
+            height = HEIGHT * magnificationScale
+            setPlayerFootY(footForScale)
         }
     }
 
     fun setPlayerFootY(foot: Float) {
-        dstRect.set(dstRect.left, foot - height, dstRect.right, foot);
-        updateCollisionRect();
+        val halfWidth = width / 2f
+        dstRect.set(x - halfWidth, foot - height, x + halfWidth, foot)
+        updateCollisionRect()
     }
 
     private fun updateCollisionRect() {
@@ -205,6 +236,10 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         const val INIT_Y = 510f
         const val GRAVITY = 1700f
         const val JUMP_POWER = 900f
+        const val SCALE_NORMAL = 1.0f
+        const val SCALE_MAGNIFIED = 2.0f
+        const val MAGNIFICATION_SPEED = 1.0f
+        const val MAGNIFIED_JUMP_POWER_RATIO = 1.2f
         val RUN_RECTS = listOf(
             Rect(2, 274, 272, 544),
             Rect(274, 274, 544, 544),

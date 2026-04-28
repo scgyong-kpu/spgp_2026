@@ -77,7 +77,8 @@
 - [ ] 중력/더블 점프 물리 세부 조정
 - [ ] 낙하 중 플랫폼 착지 시 달리기 상태로 전환
 - [ ] 플레이어 쿠키 스킨 선택 기능
-- [ ] Magnification/Scale 아이템 효과 적용
+- [x] Magnification/Scale 아이템 효과 적용
+- [x] Magnification scale 에 따라 Player 크기와 점프 파워 조정
 - [ ] 플레이어 애니메이션 적용(run/jump/slide/hit)
 
 ## Map / 장애물 / 아이템
@@ -85,6 +86,7 @@
 - [ ] 수평 스크롤 배경(`HorzScrollBackground`) 적용
 - [x] 바닥 타일(`Platform`/`Floor`) 기반 맵 구성
 - [x] `JellyItem` 추가 및 재활용 처리
+- [x] `JellyItem.MAGNIFICATION_INDEX` 로 특수 젤리 구분
 - [x] `MapLoader` 가 매 프레임 `Floor` / `JellyItem` 을 생성
 - [ ] `Obstacle` 클래스 추가
 - [ ] `ObstacleFactory` 로 장애물 생성 분리
