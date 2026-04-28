@@ -12,7 +12,6 @@ class CollisionChecker(
     private val player: Player,
 ) : IGameObject {
     override fun update(gctx: GameContext) {
-        Log.v(javaClass.simpleName, "Checking Player-Item collisions")
         // Player 는 한 명뿐이므로 바깥쪽은 한 번만 잡고,
         // 안쪽 Item 목록만 뒤에서 앞으로 돌면서 충돌을 검사한다.
         // Item 을 즉시 remove() 하더라도 역순 순회라 아직 보지 않은 앞쪽 객체에는 영향이 적다.
@@ -26,7 +25,6 @@ class CollisionChecker(
                 "Collision !! Player - Item(index=${item.index}, x=${item.collisionRect.left}, y=${item.collisionRect.top})",
             )
             world.remove(item, MainScene.Layer.ITEM)
-            Log.d(javaClass.simpleName, "Removed collided item: $item")
         }
     }
 
