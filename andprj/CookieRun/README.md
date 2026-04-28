@@ -27,6 +27,7 @@
         - `AnimObstacle` : 시간에 따라 이미지가 바뀌는 장애물.
         - `FallingObstacle` : `ValueAnimator` 기반 움직임이 있는 장애물.
     - `MapObject` 계열은 앞으로 왼쪽으로 흐르는 맵 요소를 함께 다루는 데 쓰인다.
+    - `CollisionChecker` : `Player` 와 `JellyItem` 충돌을 검사하고 아이템을 지운다.
     - `ObstacleFactory` : 장애물 종류에 따라 적절한 객체를 생성.
     - `MapLoader` : text file 또는 JSON 기반 맵 데이터를 읽어 `MapObject` 를 배치.
     - UI Components:
@@ -81,7 +82,8 @@
 
 - [ ] 수평 스크롤 배경(`HorzScrollBackground`) 적용
 - [x] 바닥 타일(`Platform`/`Floor`) 기반 맵 구성
-- [ ] `JellyItem` 추가 및 재활용 처리
+- [x] `JellyItem` 추가 및 재활용 처리
+- [x] `MapLoader` 가 매 프레임 `Floor` / `JellyItem` 을 생성
 - [ ] `Obstacle` 클래스 추가
 - [ ] `ObstacleFactory` 로 장애물 생성 분리
 - [ ] `AnimObstacle`/`FallingObstacle` 등 하위 타입 추가
@@ -91,10 +93,11 @@
 
 ## 충돌 / 판정
 
-- [ ] `IBoxCollidable` 적용
-- [ ] `Player` 와 `JellyItem` 충돌 처리
+- [x] `IBoxCollidable` 적용
+- [x] `CollisionChecker` 추가
+- [x] `Player` 와 `JellyItem` 충돌 처리
 - [ ] `Player` 와 `Obstacle` 충돌 처리
-- [ ] `collisionRect` / inset 조정
+- [x] `collisionRect` / inset 조정
 - [ ] `AnimObstacle` collision rect 보정
 
 ## Game Loop / 상태 전환
