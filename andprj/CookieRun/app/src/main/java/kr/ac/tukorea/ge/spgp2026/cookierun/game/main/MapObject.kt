@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.util.Log
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
@@ -15,7 +16,7 @@ abstract class MapObject(
     top: Float,
     width: Float,
     height: Float,
-) : Sprite(gctx, resId) {
+) : Sprite(gctx, resId), IRecyclable {
     // 각 맵 오브젝트는 자기 타입이 속한 레이어를 알아야
     // 화면 밖으로 나갔을 때 World 에서 자기 자신을 제거할 수 있다.
     abstract val layer: MainScene.Layer
@@ -53,6 +54,8 @@ abstract class MapObject(
         }
     }
 
+    override fun onRecycle() {
+    }
     companion object {
         // 맵 오브젝트의 공통 스크롤 속도다.
         // 음수 값이므로 왼쪽으로 흐른다.

@@ -32,8 +32,13 @@ class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly, 
         // 그렇지 않으면 Rect() 가 비어 있는 채로 남아 drawBitmap() 이 아무 것도 그리지 않는다.
         srcRect = Rect()
         this.index = index
+
+        Log.d(javaClass.simpleName, "Created: $this")
     }
 
+    override fun toString(): String {
+        return "Item(${this.index},@${System.identityHashCode(this)})"
+    }
     companion object {
         // jelly.png 는 한 칸의 실제 이미지 크기가 66px 이고, 칸 사이에 2px 테두리(border)가 있다.
         // 그래서 index 하나가 곧바로 "몇 번째 칸인지"를 뜻하도록, srcRect 계산식에 66 과 2를 함께 쓴다.

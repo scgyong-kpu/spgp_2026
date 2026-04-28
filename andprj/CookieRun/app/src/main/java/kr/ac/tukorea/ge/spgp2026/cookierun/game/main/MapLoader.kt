@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.graphics.Canvas
-import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -20,9 +19,7 @@ class MapLoader(gctx: GameContext, val world: World<Layer>): IGameObject {
             // 바닥은 두 종류 중 하나를 고른다.
             // 이렇게 하면 같은 바닥만 반복되지 않고 맵의 모양이 조금씩 달라진다.
             val floorType = if (Random.nextBoolean()) Floor.Type.T_10x2 else Floor.Type.T_2x2
-            val floor = Floor(gctx, floorType)
-            floor.setLeftTop(floorRight, 700f)
-            Log.d(javaClass.simpleName, "Adding $floor")
+            val floor = Floor.get(gctx, floorType, floorRight, 700f)
             world.add(floor, Layer.FLOOR)
             // 새 바닥을 추가했으면, 다음 바닥은 지금 바닥의 오른쪽 끝에서 이어 붙인다.
             floorRight += floor.width
@@ -34,9 +31,7 @@ class MapLoader(gctx: GameContext, val world: World<Layer>): IGameObject {
                 // 20% 확률로 젤리 대신 바닥 타일을 하나 더 추가한다. 바닥 타일은 바닥 레이어에 추가한다.
                 // 아이템과 바닥을 완전히 분리하지 않고 섞어 두면, 같은 맵이라도 조금 더 변화가 생긴다.
                 val y = (1 .. 5).random() * 100f
-                val floor = Floor(gctx, Floor.Type.T_3x1)
-                floor.setLeftTop(itemRight, y)
-                Log.d(javaClass.simpleName, "Adding $item")
+                val floor = Floor.get(gctx, Floor.Type.T_3x1, itemRight, y)
                 world.add(floor, Layer.FLOOR)
                 itemRight += floor.width
                 continue
@@ -47,7 +42,6 @@ class MapLoader(gctx: GameContext, val world: World<Layer>): IGameObject {
             // 현재는 100px 단위 레인에서 무작위로 고르는 간단한 방식이다.
             val y = (0 .. 6).random() * 100f
             item.setLeftTop(itemRight, y)
-            Log.d(javaClass.simpleName, "Adding $item")
             world.add(item, Layer.ITEM)
             // 아이템도 오른쪽으로 이어 붙이되, 한 개의 폭만큼 다음 시작점을 옮긴다.
             itemRight += item.width
