@@ -119,14 +119,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 // 중력을 적용하여 jumpSpeed 업데이트 (음수 → 양수로 변함, 점점 빠르게 떨어짐)
                 jumpSpeed += GRAVITY * gctx.frameTime
 
-                if (jumpSpeed >= 0 && state != State.FALL) {
-                    // jumpSpeed 가 양수가 되면 꼭대기를 지난 상태이므로 FALL 상태로 바꾼다.
-                    // 아직 착지한 것은 아니고, 이제부터 내려오는 애니메이션을 보여준다.
-                    state = State.FALL
-                }
-
-                if (state == State.FALL) {
-                    // 낙하 중일 때만 착지 판정 (jumpSpeed 가 양수 = 아래로 떨어지는 중)
+                // 낙하 중일 때만 착지 판정 (jumpSpeed 가 양수 = 아래로 떨어지는 중)
+                if (jumpSpeed >= 0) {
                     val floor = findNearestFloorTop()
                     // 다음 프레임에서 발이 floor 를 뚫고 지나갈 위치까지 간다면, floor 위에 정확히 플레이어를 배치
                     if (foot + dy >= floor) {
