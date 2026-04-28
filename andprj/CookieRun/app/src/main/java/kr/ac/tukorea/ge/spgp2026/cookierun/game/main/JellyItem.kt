@@ -64,6 +64,9 @@ class JellyItem private constructor(
         const val COLLISION_INSET = 20f
         const val JELLY_COUNT = 60
         const val ITEMS_IN_A_ROW = 30
+        // Magnification 효과를 테스트하기 위해 먼저 "특수 젤리" index 만 이름 붙여 둔다.
+        // 실제 확대 처리는 CollisionChecker 와 Player 쪽 단계에서 이어 붙일 예정이다.
+        const val MAGNIFICATION_INDEX = 26
 
         const val DST_SIZE = 100f
 

@@ -36,7 +36,13 @@ class MapLoader(gctx: GameContext, val world: World<Layer>): IGameObject {
                 itemRight += floor.width
                 continue
             }
-            val itemIndex = (0 until JellyItem.JELLY_COUNT).random()
+            // Magnification 효과를 확인하기 전까지는 특수 젤리가 비교적 자주 나오게 둔다.
+            // 10% 정도면 플레이 중 금방 확인할 수 있고, 나중에 실제 맵 데이터로 바꾸기도 쉽다.
+            val itemIndex = if (Random.nextInt(10) == 0) {
+                JellyItem.MAGNIFICATION_INDEX
+            } else {
+                Random.nextInt(JellyItem.JELLY_COUNT)
+            }
             // 아이템은 여러 높이 중 하나에 놓는다.
             // 현재는 100px 단위 레인에서 무작위로 고르는 간단한 방식이다.
             val y = (0 .. 6).random() * 100f
