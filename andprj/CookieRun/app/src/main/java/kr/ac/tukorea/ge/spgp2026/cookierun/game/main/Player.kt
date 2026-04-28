@@ -22,6 +22,12 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         State.DOUBLE_JUMP to DOUBLE_JUMP_RECTS,
         State.SLIDE to SLIDE_RECTS,
     )
+    private val stateInsets = mapOf(
+        State.RUN to INSETS_RUN,
+        State.JUMP to INSETS_JUMP,
+        State.DOUBLE_JUMP to INSETS_DOUBLE_JUMP,
+        State.SLIDE to INSETS_SLIDE,
+    )
     // stateRects 는 상태 이름과 프레임 Rect 목록을 연결해 둔 표다.
     // 상태가 바뀔 때 이 표를 통해 SheetSprite 가 그릴 프레임 묶음을 갈아끼운다.
 
@@ -33,12 +39,16 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             // 이렇게 하면 상태 전환과 프레임 선택은 Player 가 담당하고,
             // 실제 그리기 루프는 SheetSprite 가 공통 처리한다.
             stateRects[value]?.let { frameRects = it }
+            updateCollisionRect()
         }
 
     // 점프 중에는 위로 향하는 속도를 들고 있다가, 매 프레임 중력으로 줄여 나간다.
     var jumpSpeed = 0f
     // jumpSpeed 는 y 방향 이동량의 기반 값이다.
     // 음수면 위로 올라가고, 양수면 아래로 떨어지므로 점프 물리를 단순하게 표현할 수 있다.
+    // collisionRect 는 실제 스프라이트보다 조금 작은 사각형을 따로 둔다.
+    // 눈에 보이는 가장자리보다 안쪽에서 충돌해야 더 자연스럽게 느껴진다.
+    override val collisionRect = RectF()
 
     init {
         // 처음에는 이동 로직 없이, 화면에 보이는 플레이어 위치와 크기만 잡아 둔다.
@@ -47,10 +57,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         height = Player.HEIGHT
         setCenter(INIT_X, INIT_Y)
         state = State.RUN
+        updateCollisionRect()
     }
-
-    override val collisionRect: RectF
-        get() = dstRect
 
     fun jump() {
         // jump() 는 현재 상태에 따라 서로 다른 점프를 만든다.
@@ -101,15 +109,31 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                     y = INIT_Y
                     state = State.RUN
                     syncDstRect()
+                    updateCollisionRect()
                     return
                 }
                 syncDstRect()
+                updateCollisionRect()
                 jumpSpeed += GRAVITY * gctx.frameTime
             }
             else -> {
                 // 달리는 상태에 등에서는 별도 이동 로직이 없다.
             }
         }
+    }
+
+    private fun updateCollisionRect() {
+        val insets = stateInsets[state] ?: return
+        val left = insets[0] * width
+        val top = insets[1] * height
+        val right = insets[2] * width
+        val bottom = insets[3] * height
+        collisionRect.set(
+            dstRect.left + width * insets[0],
+            dstRect.top + height * insets[1],
+            dstRect.right - width * insets[2],
+            dstRect.bottom - height * insets[3],
+        );
     }
 
     companion object {
@@ -123,6 +147,9 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         const val INIT_Y = 510f
         const val GRAVITY = 1700f
         const val JUMP_POWER = 900f
+        // 플레이어의 충돌 박스는 좌우 40f, 상하 20f 만큼 안쪽으로 줄인다.
+        const val COLLISION_INSET_X = 40f
+        const val COLLISION_INSET_Y = 20f
         val RUN_RECTS = listOf(
             Rect(2, 274, 272, 544),
             Rect(274, 274, 544, 544),
@@ -143,5 +170,11 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             Rect(2450, 2, 2720, 272),
             Rect(2722, 2, 2992, 272),
         )
+        val INSETS_RUN = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
+        val INSETS_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
+        val INSETS_DOUBLE_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
+        val INSETS_SLIDE = arrayOf(0.2f, 0.75f, 0.2f, 0.0f)
+        val INSETS_FALLING = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
+        val INSETS_HURT = arrayOf(0.3f, 0.50f, 0.4f, 0.0f)
     }
 }

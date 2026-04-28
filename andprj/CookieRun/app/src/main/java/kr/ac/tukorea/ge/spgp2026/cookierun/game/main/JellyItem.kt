@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.graphics.Rect
+import android.graphics.RectF
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
@@ -15,6 +16,8 @@ class JellyItem private constructor(
     // JellyItem 은 MapObject 아래에서 동작하는 수집 아이템이다.
     // index 는 jelly 스프라이트 시트에서 어느 칸을 보여줄지 고르는 번호다.
     // setter 에서 index 를 (행, 열)로 바꾼 다음, 그 칸의 srcRect 를 직접 계산한다.
+    // collisionRect 는 dstRect 보다 약간 작게 잡아 플레이어와 부딪히는 느낌을 줄인다.
+    override val collisionRect = RectF()
     var index = 0
         set(value) {
             if (value !in 0..<JELLY_COUNT) {
@@ -41,6 +44,12 @@ class JellyItem private constructor(
     fun init(index: Int, left: Float, top: Float) {
         this.index = index
         dstRect.set(left, top, left + DST_SIZE, top + DST_SIZE)
+        updateCollisionRect()
+    }
+
+    override fun update(gctx: GameContext) {
+        super.update(gctx)
+        updateCollisionRect()
     }
 
     override fun toString(): String {
@@ -51,6 +60,8 @@ class JellyItem private constructor(
         // 그래서 index 하나가 곧바로 "몇 번째 칸인지"를 뜻하도록, srcRect 계산식에 66 과 2를 함께 쓴다.
         const val SRC_SIZE = 66
         const val SRC_BORDER = 2
+        // JellyItem 의 충돌 박스는 사방 20f 만큼 안쪽으로 줄인다.
+        const val COLLISION_INSET = 20f
         const val JELLY_COUNT = 60
         const val ITEMS_IN_A_ROW = 30
 
@@ -63,5 +74,10 @@ class JellyItem private constructor(
             item.init(index, left, top)
             return item
         }
+    }
+
+    private fun updateCollisionRect() {
+        collisionRect.set(dstRect)
+        collisionRect.inset(COLLISION_INSET, COLLISION_INSET)
     }
 }
