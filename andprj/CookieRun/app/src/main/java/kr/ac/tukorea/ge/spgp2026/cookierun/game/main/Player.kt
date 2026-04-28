@@ -11,20 +11,22 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 // RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
 class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f), IBoxCollidable {
     enum class State {
-        // 지금은 RUN, JUMP, DOUBLE_JUMP 세 상태만 두고 시작한다.
+        // 지금은 RUN, JUMP, FALL, DOUBLE_JUMP 네 상태만 두고 시작한다.
         // 이후 Slide, Hit 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
-        RUN, JUMP, DOUBLE_JUMP, SLIDE,
+        RUN, JUMP, FALL, DOUBLE_JUMP, SLIDE,
     }
 
     private val stateRects = mapOf(
         State.RUN to RUN_RECTS,
         State.JUMP to JUMP_RECTS,
+        State.FALL to FALL_RECTS,
         State.DOUBLE_JUMP to DOUBLE_JUMP_RECTS,
         State.SLIDE to SLIDE_RECTS,
     )
     private val stateInsets = mapOf(
         State.RUN to INSETS_RUN,
         State.JUMP to INSETS_JUMP,
+        State.FALL to INSETS_FALL,
         State.DOUBLE_JUMP to INSETS_DOUBLE_JUMP,
         State.SLIDE to INSETS_SLIDE,
     )
@@ -102,18 +104,34 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         // 플레이어 발의 현재 y 좌표 저장 (매 프레임 업데이트 전 읽음)
         var foot = collisionRect.bottom
         when (state) {
-            State.JUMP, State.DOUBLE_JUMP -> {
+            State.RUN, State.SLIDE -> {
+                // 달리거나 슬라이드 중일 때, 발 아래 가장 가까운 floor 의 위치를 확인한다.
+                val floor = findNearestFloorTop()
+                // 발의 y 좌표가 floor 보다 위에 있으면 (floor 아래로 떨어져야 한다면) 낙하 상태로 전환
+                if (foot < floor) {
+                    jumpSpeed = 0f  // 자유낙하이므로 초기 속도는 0
+                    state = State.FALL
+                }
+            }
+            State.JUMP, State.FALL, State.DOUBLE_JUMP -> {
                 // 프레임 시간 동안 jumpSpeed 만큼 이동할 거리 계산
                 var dy = jumpSpeed * gctx.frameTime
                 // 중력을 적용하여 jumpSpeed 업데이트 (음수 → 양수로 변함, 점점 빠르게 떨어짐)
                 jumpSpeed += GRAVITY * gctx.frameTime
-                
-                if (jumpSpeed >= 0) {
+
+                if (jumpSpeed >= 0 && state != State.FALL) {
+                    // jumpSpeed 가 양수가 되면 꼭대기를 지난 상태이므로 FALL 상태로 바꾼다.
+                    // 아직 착지한 것은 아니고, 이제부터 내려오는 애니메이션을 보여준다.
+                    state = State.FALL
+                }
+
+                if (state == State.FALL) {
                     // 낙하 중일 때만 착지 판정 (jumpSpeed 가 양수 = 아래로 떨어지는 중)
                     val floor = findNearestFloorTop()
                     // 다음 프레임에서 발이 floor 를 뚫고 지나갈 위치까지 간다면, floor 위에 정확히 플레이어를 배치
                     if (foot + dy >= floor) {
                         dy = floor - foot  // dy 조정: 정확히 floor 에 닿는 거리로 수정
+                        jumpSpeed = 0f
                         state = State.RUN  // 착지 → RUN 상태로 전환
                     }
                 }
@@ -197,6 +215,10 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
             Rect(1906, 2, 2176, 272),
             Rect(2178, 2, 2448, 272),
         )
+        val FALL_RECTS = listOf(
+            Rect(2, 2, 272, 272),  // makeRects(0)
+        )
+        // FALL 은 아직 전용 프레임이 없어서, 내려오는 모양도 점프 계열 프레임을 재사용한다.
         val DOUBLE_JUMP_RECTS = listOf(
             Rect(274, 2, 544, 272),
             Rect(546, 2, 816, 272),
@@ -213,7 +235,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         val INSETS_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
         val INSETS_DOUBLE_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
         val INSETS_SLIDE = arrayOf(0.2f, 0.75f, 0.2f, 0.0f)
-        val INSETS_FALLING = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
+        val INSETS_FALL = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
         val INSETS_HURT = arrayOf(0.3f, 0.50f, 0.4f, 0.0f)
     }
 }
