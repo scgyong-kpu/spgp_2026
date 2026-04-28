@@ -1,6 +1,5 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
-import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -48,7 +47,7 @@ abstract class MapObject(
         dstRect.offset(dx, 0f)
         if (dstRect.right < 0f) {
             // 화면 왼쪽 바깥으로 완전히 나간 오브젝트는 World 에서 제거한다.
-            Log.d(javaClass.simpleName, "Removed after leaving screen: $this")
+//            Log.d(javaClass.simpleName, "Removed after leaving screen: $this")
             val scene = gctx.scene as MainScene
             scene.world.remove(this, layer)
         }

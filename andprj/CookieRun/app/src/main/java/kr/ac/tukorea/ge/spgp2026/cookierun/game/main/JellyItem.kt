@@ -5,7 +5,9 @@ import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly, 0f, 0f, DST_SIZE, DST_SIZE) {
+class JellyItem private constructor(
+    gctx: GameContext,
+): MapObject(gctx, R.mipmap.jelly, 0f, 0f, DST_SIZE, DST_SIZE) {
     // JellyItem 은 아이템 레이어에만 놓인다.
     // layer 를 계산 프로퍼티로 두면, JellyItem 마다 레이어 필드를 따로 저장하지 않아도 된다.
     override val layer get() = MainScene.Layer.ITEM
@@ -13,7 +15,7 @@ class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly, 
     // JellyItem 은 MapObject 아래에서 동작하는 수집 아이템이다.
     // index 는 jelly 스프라이트 시트에서 어느 칸을 보여줄지 고르는 번호다.
     // setter 에서 index 를 (행, 열)로 바꾼 다음, 그 칸의 srcRect 를 직접 계산한다.
-    var index = index
+    var index = 0
         set(value) {
             if (value !in 0..<JELLY_COUNT) {
                 Log.e(javaClass.simpleName, "Invalid index: $value")
@@ -31,9 +33,14 @@ class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly, 
         // index setter 에서 srcRect 를 계산하므로, 생성 시에도 setter 를 한 번 거쳐야 한다.
         // 그렇지 않으면 Rect() 가 비어 있는 채로 남아 drawBitmap() 이 아무 것도 그리지 않는다.
         srcRect = Rect()
-        this.index = index
 
         Log.d(javaClass.simpleName, "Created: $this")
+    }
+
+    // 생성 후 위치와 index를 초기화하도록 한다. 이 함수는 재활용 된 뒤에도 불릴 예정이다.
+    fun init(index: Int, left: Float, top: Float) {
+        this.index = index
+        dstRect.set(left, top, left + DST_SIZE, top + DST_SIZE)
     }
 
     override fun toString(): String {
@@ -48,5 +55,13 @@ class JellyItem(gctx: GameContext, index: Int): MapObject(gctx, R.mipmap.jelly, 
         const val ITEMS_IN_A_ROW = 30
 
         const val DST_SIZE = 100f
+
+        fun get(gctx: GameContext, index: Int, left: Float, top: Float): JellyItem {
+            val world = (gctx.scene as MainScene).world
+            // World 에서 재활용 가능한 JellyItem 이 있는지 찾아본다.
+            val item = world.obtain(JellyItem::class.java) ?: JellyItem(gctx)
+            item.init(index, left, top)
+            return item
+        }
     }
 }

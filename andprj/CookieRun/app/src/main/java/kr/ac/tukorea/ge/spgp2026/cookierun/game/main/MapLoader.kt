@@ -37,11 +37,10 @@ class MapLoader(gctx: GameContext, val world: World<Layer>): IGameObject {
                 continue
             }
             val itemIndex = (0 until JellyItem.JELLY_COUNT).random()
-            val item = JellyItem(gctx, itemIndex)
             // 아이템은 여러 높이 중 하나에 놓는다.
             // 현재는 100px 단위 레인에서 무작위로 고르는 간단한 방식이다.
             val y = (0 .. 6).random() * 100f
-            item.setLeftTop(itemRight, y)
+            val item = JellyItem.get(gctx, itemIndex, itemRight, y)
             world.add(item, Layer.ITEM)
             // 아이템도 오른쪽으로 이어 붙이되, 한 개의 폭만큼 다음 시작점을 옮긴다.
             itemRight += item.width
