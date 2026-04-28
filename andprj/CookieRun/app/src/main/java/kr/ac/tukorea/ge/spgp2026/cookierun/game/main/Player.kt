@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.graphics.Rect
 import android.graphics.RectF
+import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -98,6 +99,11 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 state = State.RUN
             }
         }
+    }
+
+    fun magnify() {
+        // 아직 실제 확대 애니메이션은 넣지 않고, 특수 젤리와 Player 가 연결되는지만 먼저 확인한다.
+        Log.d(javaClass.simpleName, "Magnification item collected")
     }
 
     override fun update(gctx: GameContext) {

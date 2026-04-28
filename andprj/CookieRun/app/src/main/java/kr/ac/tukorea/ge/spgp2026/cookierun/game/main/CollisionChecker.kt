@@ -24,6 +24,9 @@ class CollisionChecker(
                 javaClass.simpleName,
                 "Collision !! Player - Item(index=${item.index}, x=${item.collisionRect.left}, y=${item.collisionRect.top})",
             )
+            if (item.index == JellyItem.MAGNIFICATION_INDEX) {
+                player.magnify()
+            }
             world.remove(item, MainScene.Layer.ITEM)
         }
     }
