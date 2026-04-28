@@ -29,7 +29,7 @@
     - `MapObject` 계열은 앞으로 왼쪽으로 흐르는 맵 요소를 함께 다루는 데 쓰인다.
     - `CollisionChecker` : `Player` 와 `JellyItem` 충돌을 검사하고 아이템을 지운다.
     - `ObstacleFactory` : 장애물 종류에 따라 적절한 객체를 생성.
-    - `MapLoader` : text file 또는 JSON 기반 맵 데이터를 읽어 `MapObject` 를 배치.
+    - `MapLoader` : assets 의 `stage_*.txt` 를 읽어 `Floor` 와 `JellyItem` 을 배치.
     - UI Components:
         - `Gauge` : 맵 진행상황 같은 값을 시각적으로 표시.
         - `Button` : `Jump`, `Slide`, `Pause`, `Back` 입력을 처리하는 UI 객체.
@@ -88,10 +88,11 @@
 - [x] `JellyItem` 추가 및 재활용 처리
 - [x] `JellyItem.MAGNIFICATION_INDEX` 로 특수 젤리 구분
 - [x] `MapLoader` 가 매 프레임 `Floor` / `JellyItem` 을 생성
+- [x] assets 의 `stage_*.txt` 기반 맵 로딩
 - [ ] `Obstacle` 클래스 추가
 - [ ] `ObstacleFactory` 로 장애물 생성 분리
 - [ ] `AnimObstacle`/`FallingObstacle` 등 하위 타입 추가
-- [ ] 텍스트 파일 기반 맵 로딩(`MapLoader`) 구현
+- [x] 텍스트 파일 기반 맵 로딩(`MapLoader`) 구현
 - [ ] JSON 기반 맵 로딩 가능성 검토
 - [ ] 맵 진행 상황 `Gauge` 표시
 
