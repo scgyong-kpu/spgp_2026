@@ -3,7 +3,9 @@ package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 import android.graphics.Canvas
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
+import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.cookierun.R
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene.Layer
 
 // MapLoader 는 text 파일에 적힌 stage 정보를 읽어서,
@@ -28,6 +30,13 @@ class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: I
     // 파일에서 읽은 모든 줄을 그대로 보관한다.
     // getAt(col, row) 가 이 목록에서 알맞은 줄과 문자 위치를 계산한다.
     private val lines = mutableListOf<String>()
+    // MapLoader 는 stage 전체 폭과 현재 생성한 column 을 모두 알고 있다.
+    // 그래서 맵 진행률 gauge 도 별도 객체를 만들기보다 여기서 바로 그리는 편이 단순하다.
+    private val progressGauge = Gauge(
+        MAP_GAUGE_THICKNESS,
+        gctx.view.context.getColor(R.color.map_gauge_fg),
+        gctx.view.context.getColor(R.color.map_gauge_bg),
+    )
 
     init {
         loadStage(gctx, stage)
@@ -132,6 +141,15 @@ class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: I
     }
 
     override fun draw(canvas: Canvas) {
+        // column 은 지금까지 생성한 stage column 수이고,
+        // stageWidth 는 stage 파일 전체 column 수이다.
+        // 즉 column / stageWidth 는 "맵을 얼마나 진행했는가"를 0.0 ~ 1.0 범위로 표현한다.
+        val progress = if (stageWidth > 0) {
+            (column.toFloat() / stageWidth).coerceIn(0f, 1f)
+        } else {
+            0f
+        }
+        progressGauge.draw(canvas, MAP_GAUGE_X, MAP_GAUGE_Y, MAP_GAUGE_WIDTH, progress)
     }
 
     companion object {
@@ -141,5 +159,9 @@ class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: I
         private const val TILE_SIZE = 100f
         // stage 끝이거나 읽을 수 없는 위치일 때는 아무것도 만들지 않는 문자로 처리한다.
         private const val EMPTY_TILE = '\u0000'
+        private const val MAP_GAUGE_X = 200f
+        private const val MAP_GAUGE_Y = 100f
+        private const val MAP_GAUGE_WIDTH = 1200f
+        private const val MAP_GAUGE_THICKNESS = 0.025f
     }
 }

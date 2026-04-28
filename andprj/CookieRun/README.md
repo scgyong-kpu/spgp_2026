@@ -97,7 +97,7 @@
 - [ ] `AnimObstacle`/`FallingObstacle` 등 하위 타입 추가
 - [x] 텍스트 파일 기반 맵 로딩(`MapLoader`) 구현
 - [ ] JSON 기반 맵 로딩 가능성 검토
-- [ ] 맵 진행 상황 `Gauge` 표시
+- [x] 맵 진행 상황 `Gauge` 표시
 
 ## 충돌 / 판정
 
