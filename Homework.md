@@ -1,5 +1,26 @@
 # Homeworks
 
+## 2026-04-15 조사: Kotlin/Android
+
+* Kotlin Collections
+  * `List` vs `MutableList`
+  * `Set`
+  * `Map`
+* Android
+  * UI
+    * `Activity` & Life-cycle
+    * `View` & Life-cycle
+  * Event Model
+    * Event driven programming
+    * Listener pattern
+    * Android Touch Event
+  * `asset` vs `res`
+* Game Engine
+  * Game Loop
+  * `update` / `draw`
+  * Delta time
+  * Parallax Scrolling
+
 ## 2026-04-06 조사: Kotlin
 
 * Kotlin object syntax
