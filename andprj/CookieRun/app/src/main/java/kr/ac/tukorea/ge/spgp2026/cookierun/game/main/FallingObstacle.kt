@@ -88,10 +88,10 @@ class FallingObstacle(gctx: GameContext): Obstacle(gctx, R.mipmap.epn01_tm01_sda
     // 정상 구현에서는 recycle bin 에 들어가기 직전에 animator.cancel() 을 호출해
     // 더 이상 필요 없는 callback 을 끊어야 한다.
     // 그러면 화면에서 사라진 뒤 anim update 로그도 멈추는 것을 확인할 수 있다.
-    // override fun onRecycle() {
-    //     super.onRecycle()
-    //     animator?.cancel()
-    // }
+    override fun onRecycle() {
+        super.onRecycle()
+        animator?.cancel()
+    }
 
     companion object {
         // MapObjectCatalog 에 등록된 'W' 생성 규칙은 이 get() 을 통해 장애물을 얻는다.
