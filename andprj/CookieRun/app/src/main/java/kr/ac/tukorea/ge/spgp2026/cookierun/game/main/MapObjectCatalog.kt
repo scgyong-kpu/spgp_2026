@@ -59,5 +59,12 @@ object MapObjectCatalog {
             val type = if (ch == 'Y') AnimObstacle.Type.SPIKY_3 else AnimObstacle.Type.SPIKY_2
             AnimObstacle.get(gctx, type, left, top)
         })
+
+        // 'W' 는 낙하형 장애물이다.
+        // 지금은 FallingObstacle 의 기본 위치만 잡지만,
+        // 별도 등록 문자로 분리해 두면 이후 낙하 update() 를 추가해도 MapLoader 는 바뀌지 않는다.
+        MapObjectRegistry.register('W', { gctx, _, left, top ->
+            FallingObstacle.get(gctx, left, top)
+        })
     }
 }
