@@ -47,10 +47,17 @@ object MapObjectCatalog {
 
         // 'X' 는 가장 기본 장애물이다.
         // MapLoader 는 'X' 의 의미를 직접 알지 않고,
-        // Catalog 에 등록된 생성 규칙을 통해 Obstacle 을 만들게 된다.
-        // 이후 'Y', 'Z', 'W' 같은 애니메이션/낙하 장애물도 이 근처에 추가하면 된다.
+        // Catalog 에 등록된 생성 규칙을 통해 SimpleObstacle 을 만들게 된다.
         MapObjectRegistry.register('X', { gctx, _, left, top ->
-            Obstacle.get(gctx, left, top)
+            SimpleObstacle.get(gctx, left, top)
+        })
+
+        // 'Y' 와 'Z' 는 애니메이션 장애물이다.
+        // 두 문자가 같은 AnimObstacle 클래스를 쓰지만,
+        // 서로 다른 Type 을 넘겨 이미지 프레임 목록과 기준 폭을 다르게 잡는다.
+        MapObjectRegistry.register('Y'..'Z', { gctx, ch, left, top ->
+            val type = if (ch == 'Y') AnimObstacle.Type.SPIKY_3 else AnimObstacle.Type.SPIKY_2
+            AnimObstacle.get(gctx, type, left, top)
         })
     }
 }

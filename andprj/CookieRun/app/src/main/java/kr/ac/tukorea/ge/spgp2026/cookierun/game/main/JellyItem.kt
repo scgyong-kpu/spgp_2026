@@ -8,7 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 class JellyItem private constructor(
     gctx: GameContext,
-): MapObject(gctx, R.mipmap.jelly, 0f, 0f, DST_SIZE, DST_SIZE) {
+): MapObject(gctx, R.mipmap.jelly) {
     // JellyItem 은 아이템 레이어에만 놓인다.
     // layer 를 계산 프로퍼티로 두면, JellyItem 마다 레이어 필드를 따로 저장하지 않아도 된다.
     override val layer get() = MainScene.Layer.ITEM

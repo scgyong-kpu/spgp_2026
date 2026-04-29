@@ -9,7 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 class Floor private constructor(
     val gctx: GameContext,
     private var type: Type,
-) : MapObject(gctx, type.resId, 0f, 0f, 0f, 0f) {
+) : MapObject(gctx, type.resId) {
     // Floor 는 항상 바닥 레이어에만 놓이는 오브젝트다.
     // layer 를 멤버 변수로 저장하지 않고 getter 로만 돌려주면, 객체마다 추가 메모리를 쓰지 않는다.
     override val layer get() = MainScene.Layer.FLOOR
