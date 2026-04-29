@@ -1,14 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.animation.ValueAnimator
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.AnticipateInterpolator
-import android.view.animation.AnticipateOvershootInterpolator
 import android.view.animation.BounceInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
-import android.view.animation.OvershootInterpolator
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
@@ -46,16 +39,8 @@ class FallingObstacle(gctx: GameContext): Obstacle(gctx, R.mipmap.epn01_tm01_sda
             // Interpolator 는 시간 진행률(0.0~1.0)을 실제 움직임 진행률로 바꿔 주는 함수이다.
             // 같은 startTop/endTop 을 쓰더라도 어떤 Interpolator 를 쓰느냐에 따라
             // 떨어지는 느낌이 완전히 달라진다.
-            //
-            // 수업 시간에는 아래 줄을 하나씩 풀어서 움직임 차이를 확인해 볼 수 있다.
-//            interpolator = LinearInterpolator() // 일정한 속도로 딱딱하게 이동한다.
-//            interpolator = AccelerateInterpolator() // 처음에는 느리다가 점점 빨라져 중력 느낌이 난다.
-//            interpolator = DecelerateInterpolator() // 처음에는 빠르다가 끝에서 부드럽게 멈춘다.
-//            interpolator = AccelerateDecelerateInterpolator() // 천천히 시작해서 빨라졌다가 다시 천천히 멈춘다.
-//            interpolator = OvershootInterpolator() // 목표 지점을 살짝 지나쳤다가 되돌아온다.
-//            interpolator = AnticipateInterpolator() // 반대 방향으로 살짝 움찔한 뒤 출발한다.
-//            interpolator = AnticipateOvershootInterpolator() // 움찔했다가 지나치고 되돌아오는 과장된 움직임이다.
-//            interpolator = BounceInterpolator() // 바닥에 닿은 뒤 통통 튀는 느낌이다.
+            // BounceInterpolator 는 바닥에 닿은 뒤 통통 튀는 느낌을 만든다.
+            interpolator = BounceInterpolator()
             addUpdateListener { animation ->
                 val top = animation.animatedValue as Float
                 // MapObject.update() 는 매 프레임 dstRect 를 왼쪽으로 이동시킨다.
