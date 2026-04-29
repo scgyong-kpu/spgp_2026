@@ -4,18 +4,40 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 // AnimObstacle 은 stage 파일의 'Y', 'Z' 문자로 생성되는 애니메이션 장애물이다.
-// 지금 단계에서는 type 에 맞는 첫 프레임 bitmap 을 골라 배치하는 것까지 구현하고,
-// 시간에 따라 프레임을 바꾸는 update() 는 다음 단계에서 추가할 수 있다.
+// 화면 오른쪽 바깥에 미리 만들어 두었다가,
+// 플레이어가 볼 수 있을 만큼 가까워지면 프레임 애니메이션을 시작한다.
 //
 // 생성자에는 투명 이미지를 넘겨 두고, init() 에서 실제 type 이 정해진 뒤
-// 해당 type 의 bitmap 으로 교체한다.
+// 위치와 크기를 계산할 때만 첫 프레임 bitmap 으로 교체한다.
 class AnimObstacle(val gctx: GameContext) : Obstacle(gctx, R.mipmap.trans_00p) {
+    private lateinit var type: Type
+    private var time = 0f
 
     fun init(left: Float, top: Float, type: Type) {
+        this.type = type
+        time = 0f
         // Obstacle.init() 은 현재 bitmap 크기로 높이를 계산한다.
         // 따라서 공통 init() 을 호출하기 전에 type 에 맞는 첫 프레임 bitmap 을 먼저 넣어야 한다.
         bitmap = gctx.res.getBitmap(type.resIds[0])
         super.init(left, top, type.width)
+
+        // 배치 크기를 계산한 뒤에는 다시 투명 bitmap 으로 바꿔 둔다.
+        // 이렇게 하면 화면 오른쪽 멀리 있을 때부터 장애물이 보이지 않고,
+        // update() 에서 시작 위치에 도달한 뒤에야 실제 프레임이 나타난다.
+        bitmap = gctx.res.getBitmap(R.mipmap.trans_00p)
+    }
+
+    override fun update(gctx: GameContext) {
+        super.update(gctx)
+        if (dstRect.left >= START_ANIM_LEFT) {
+            // 아직 플레이어 시야에 들어오기 전이면 시간도 누적하지 않는다.
+            // 그래야 모든 AnimObstacle 이 화면에 가까워진 시점부터 같은 속도로 애니메이션된다.
+            return
+        }
+
+        time += gctx.frameTime
+        val frameIndex = (time * FPS).toInt().coerceAtMost(type.resIds.lastIndex)
+        bitmap = gctx.res.getBitmap(type.resIds[frameIndex])
     }
 
     // Type 은 애니메이션 장애물의 종류를 구분한다.
@@ -51,6 +73,8 @@ class AnimObstacle(val gctx: GameContext) : Obstacle(gctx, R.mipmap.trans_00p) {
             obs.init(left, top, type)
             return obs
         }
+        private const val FPS = 8f
+        private const val START_ANIM_LEFT = 1000f
         private const val SPIKY3_WIDTH = 101f
         private const val SPIKY2_WIDTH = 109f
     }
