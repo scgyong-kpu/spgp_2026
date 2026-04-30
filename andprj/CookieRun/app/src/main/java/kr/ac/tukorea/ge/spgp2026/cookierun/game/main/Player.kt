@@ -114,6 +114,18 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         Log.d(javaClass.simpleName, "Scale=$magnificationScale speed=$magnificationSpeed")
     }
 
+    fun hurt(obstacle: Obstacle) {
+        // 아직 HIT 상태나 무적 시간은 붙이지 않고,
+        // CollisionChecker 에서 Player -> Obstacle 충돌 흐름이 연결됐는지만 확인한다.
+        // 그래서 플레이어와 장애물이 계속 겹쳐 있는 동안에는
+        // 매 프레임 hurt() 가 호출되어 로그가 여러 번 찍히는 것이 정상이다.
+        // 다음 단계에서 HIT 상태나 invincible time 을 넣으면 이런 반복 처리를 막을 수 있다.
+        Log.d(
+            javaClass.simpleName,
+            "Hurt !! obstacle=${obstacle.javaClass.simpleName}, player=${collisionRect}, obstacleRect=${obstacle.collisionRect}",
+        )
+    }
+
     private fun currentJumpPower(): Float {
         // 확대 비율이 1.0 에서 2.0 으로 커질수록 점프력도 1.0 에서 1.2 배로 함께 커진다.
         // 이렇게 하면 확대 애니메이션 도중에도 현재 크기에 맞는 중간 점프력이 자연스럽게 적용된다.
