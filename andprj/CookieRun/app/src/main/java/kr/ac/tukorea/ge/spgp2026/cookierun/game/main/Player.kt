@@ -54,6 +54,10 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     private var magnificationSpeed = 0f
     // magnificationScale 은 움직임 상태와 별도로 적용되는 효과 배율이다.
     // RUN/JUMP/FALL 같은 상태 enum 에 넣지 않으면, "점프 중 확대" 같은 조합도 자연스럽게 처리할 수 있다.
+    private var obstacle: Obstacle? = null
+    // obstacle 은 최근에 충돌한 장애물을 기억한다.
+    // 다음 단계에서 HIT 상태를 추가하면, update() 에서 이 장애물과 더 이상 겹치지 않는지 확인해
+    // RUN 상태로 복귀시키는 데 사용할 예정이다.
     // collisionRect 는 실제 스프라이트보다 조금 작은 사각형을 따로 둔다.
     // 눈에 보이는 가장자리보다 안쪽에서 충돌해야 더 자연스럽게 느껴진다.
     override val collisionRect = RectF()
@@ -117,9 +121,14 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     fun hurt(obstacle: Obstacle) {
         // 아직 HIT 상태나 무적 시간은 붙이지 않고,
         // CollisionChecker 에서 Player -> Obstacle 충돌 흐름이 연결됐는지만 확인한다.
-        // 그래서 플레이어와 장애물이 계속 겹쳐 있는 동안에는
-        // 매 프레임 hurt() 가 호출되어 로그가 여러 번 찍히는 것이 정상이다.
-        // 다음 단계에서 HIT 상태나 invincible time 을 넣으면 이런 반복 처리를 막을 수 있다.
+        // 다만 같은 장애물과 계속 겹쳐 있는 동안 매 프레임 로그가 반복되지는 않도록,
+        // 바로 직전에 기억한 obstacle 과 같으면 이번 호출은 무시한다.
+        // 다음 단계에서 HIT 상태를 추가하면, 이 obstacle 과 더 이상 겹치지 않을 때 RUN 으로 돌아갈 수 있다.
+        if (this.obstacle == obstacle) {
+            return
+        }
+
+        this.obstacle = obstacle
         Log.d(
             javaClass.simpleName,
             "Hurt !! obstacle=${obstacle.javaClass.simpleName}, player=${collisionRect}, obstacleRect=${obstacle.collisionRect}",
