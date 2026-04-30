@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
+import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
@@ -13,6 +14,10 @@ class AnimObstacle(val gctx: GameContext) : Obstacle(gctx, R.mipmap.trans_00p) {
     private lateinit var type: Type
     private var time = 0f
 
+    // AnimObstacle 도 실제 가시 영역이 dstRect 보다 작기 때문에
+    // 타입별 inset 을 적용할 별도 collisionRect backing field 를 가진다.
+    override val collisionRect = RectF()
+
     fun init(left: Float, top: Float, type: Type) {
         this.type = type
         time = 0f
@@ -20,6 +25,7 @@ class AnimObstacle(val gctx: GameContext) : Obstacle(gctx, R.mipmap.trans_00p) {
         // 따라서 공통 init() 을 호출하기 전에 type 에 맞는 첫 프레임 bitmap 을 먼저 넣어야 한다.
         bitmap = gctx.res.getBitmap(type.resIds[0])
         super.init(left, top, type.width)
+        updateCollisionRect(type.collisionInsetRatios)
 
         // 배치 크기를 계산한 뒤에는 다시 투명 bitmap 으로 바꿔 둔다.
         // 이렇게 하면 화면 오른쪽 멀리 있을 때부터 장애물이 보이지 않고,
@@ -29,6 +35,7 @@ class AnimObstacle(val gctx: GameContext) : Obstacle(gctx, R.mipmap.trans_00p) {
 
     override fun update(gctx: GameContext) {
         super.update(gctx)
+        updateCollisionRect(type.collisionInsetRatios)
         if (dstRect.left >= START_ANIM_LEFT) {
             // 아직 플레이어 시야에 들어오기 전이면 시간도 누적하지 않는다.
             // 그래야 모든 AnimObstacle 이 화면에 가까워진 시점부터 같은 속도로 애니메이션된다.
@@ -43,23 +50,26 @@ class AnimObstacle(val gctx: GameContext) : Obstacle(gctx, R.mipmap.trans_00p) {
     // Type 은 애니메이션 장애물의 종류를 구분한다.
     // resIds 는 시간에 따라 보여 줄 프레임 이미지 목록이고,
     // width 는 이 장애물이 게임 좌표계에서 차지할 기준 폭이다.
+    // collisionInsetRatios 는 left/top/right/bottom 순서로,
+    // dstRect 전체 크기 대비 collisionRect 를 줄일 비율이다.
     enum class Type(
         val resIds: IntArray,
-        val width: Float
+        val width: Float,
+        val collisionInsetRatios: FloatArray,
     ) {
         SPIKY_3(intArrayOf(
             R.mipmap.epn01_tm01_jp1up_01,
             R.mipmap.epn01_tm01_jp1up_02,
             R.mipmap.epn01_tm01_jp1up_03,
             R.mipmap.epn01_tm01_jp1up_04,
-        ), SPIKY3_WIDTH),
+        ), SPIKY3_WIDTH, floatArrayOf(0.2f, 0.6f, 0.2f, 0.0f)),
         SPIKY_2(intArrayOf(
             R.mipmap.epn01_tm01_jp2up_01,
             R.mipmap.epn01_tm01_jp2up_02,
             R.mipmap.epn01_tm01_jp2up_03,
             R.mipmap.epn01_tm01_jp2up_04,
             R.mipmap.epn01_tm01_jp2up_05,
-        ), SPIKY2_WIDTH),
+        ), SPIKY2_WIDTH, floatArrayOf(0.2f, 0.4f, 0.2f, 0.0f)),
     }
     companion object {
         // MapObjectCatalog 에 등록된 'Y'/'Z' 생성 규칙은 이 get() 을 통해 장애물을 얻는다.

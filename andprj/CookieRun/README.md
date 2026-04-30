@@ -108,7 +108,7 @@
 - [x] `Player` / `JellyItem` 의 `collisionRect` 를 `dstRect` 와 분리해 inset 적용
 - [ ] `Player` 와 `Obstacle` 충돌 처리
 - [x] `collisionRect` / inset 조정
-- [ ] `AnimObstacle` collision rect 보정
+- [x] `AnimObstacle` collision rect 보정
 
 ## Game Loop / 상태 전환
 

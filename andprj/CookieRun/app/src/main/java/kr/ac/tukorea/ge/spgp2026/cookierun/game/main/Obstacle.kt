@@ -10,7 +10,6 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 // 이렇게 해 두면 정적 장애물, 애니메이션 장애물, 낙하 장애물이
 // 서로 다른 이미지/동작을 가지더라도 같은 배치 기준을 사용할 수 있다.
 abstract class Obstacle(gctx: GameContext, resId: Int) : MapObject(gctx, resId) {
-
     // 장애물은 OBSTACLE 레이어에 올라간다.
     // MapLoader 는 생성된 MapObject 의 layer 를 보고 world.add() 하므로,
     // 각 MapObject 하위 클래스가 자기 레이어를 알려 주는 구조가 된다.
@@ -36,5 +35,17 @@ abstract class Obstacle(gctx: GameContext, resId: Int) : MapObject(gctx, resId) 
         val right = left + 50f + width / 2
         val bottom = top + 100f
         this.dstRect.set(right - width, bottom - height, right, bottom)
+    }
+
+    // 실제 RectF backing field 와 inset ratio 는 줄인 판정이 필요한 하위 클래스가 직접 가진다.
+    // 이 helper 는 "dstRect 에서 비율만큼 안쪽으로 줄인 collisionRect 를 계산한다"는
+    // 공통 수식만 제공한다.
+    protected fun updateCollisionRect(insets: FloatArray) {
+        collisionRect.set(
+            dstRect.left + width * insets[0],
+            dstRect.top + height * insets[1],
+            dstRect.right - width * insets[2],
+            dstRect.bottom - height * insets[3],
+        )
     }
 }
