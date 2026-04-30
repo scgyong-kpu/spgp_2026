@@ -8,7 +8,7 @@
 - `BaseGameActivity`
 - `GameView`, `GameContext`, `GameMetrics`
 - `Scene`, `SceneStack`, `World`
-- `BitmapPool`, `GameResources`
+- `BitmapPool`, `GameResources`, `Sound`
 - `IGameObject`, `Sprite`, `JoyStick`
 
 아래 항목들은 아직 확정된 계획이라기보다,
@@ -78,8 +78,9 @@
   - [ ] Bitmap 외 다른 리소스도 이쪽으로 모을지 검토
   - [ ] bitmap 로딩 정책 문서 보강
 
-- [ ] `Sound`
-  - [ ] 사운드 관리 기능 추가
+- [x] `Sound`
+  - [x] `SoundPool` 기반 효과음 재생 helper 추가
+  - [x] `MediaPlayer` 기반 반복 배경음 재생 helper 추가
   - [ ] App pause / Scene pause 시 재생을 멈추는 공통 규칙 정리
   - [ ] resume 시 어떤 소리까지 복원할지 기준 정리
 

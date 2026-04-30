@@ -12,7 +12,7 @@ class GameContext(
     // 크기, 좌표계 변환, 입력 역변환 같은 화면 관련 정보는 metrics 안에 모아 둔다.
     val metrics = GameMetrics()
     val sceneStack = SceneStack(this)
-    val res = GameResources(view.resources)
+    val res = GameResources(view.resources, view.context)
 
     // 여러 게임 오브젝트가 "현재 Scene" 에 접근해야 하는 경우가 실제로 자주 있다.
     // 예를 들면 Bullet 같은 새 오브젝트를 현재 Scene/World 에 추가하거나,
