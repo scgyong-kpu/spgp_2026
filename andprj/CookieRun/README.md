@@ -28,8 +28,9 @@
         - `FallingObstacle` : `ValueAnimator` 기반 움직임이 있는 장애물.
     - `MapObject` 계열은 앞으로 왼쪽으로 흐르는 맵 요소를 함께 다루는 데 쓰인다.
     - `CollisionChecker` : `Player` 와 `JellyItem` 충돌을 검사하고 아이템을 지운다.
-    - `ObstacleFactory` : 장애물 종류에 따라 적절한 객체를 생성.
-    - `MapLoader` : assets 의 `stage_*.txt` 를 읽어 `Floor` 와 `JellyItem` 을 배치.
+    - `MapObjectRegistry` : stage 문자별 `MapObject` 생성 규칙을 저장한다.
+    - `MapObjectCatalog` : 이 게임에서 사용할 `Floor`, `JellyItem`, `Obstacle` 생성 규칙을 등록한다.
+    - `MapLoader` : assets 의 `stage_*.txt` 를 읽어 `Floor`, `JellyItem`, `Obstacle` 을 배치.
     - UI Components:
         - `Gauge` : 맵 진행상황 같은 값을 시각적으로 표시.
         - `Button` : `Jump`, `Slide`, `Pause`, `Back` 입력을 처리하는 UI 객체.
@@ -92,9 +93,9 @@
 - [x] `JellyItem.MAGNIFICATION_INDEX` 로 특수 젤리 구분
 - [x] `MapLoader` 가 매 프레임 `Floor` / `JellyItem` 을 생성
 - [x] assets 의 `stage_*.txt` 기반 맵 로딩
-- [ ] `Obstacle` 클래스 추가
-- [ ] `ObstacleFactory` 로 장애물 생성 분리
-- [ ] `AnimObstacle`/`FallingObstacle` 등 하위 타입 추가
+- [x] `Obstacle` 클래스 추가
+- [x] `MapObjectRegistry` / `MapObjectCatalog` 로 맵 오브젝트 생성 규칙 분리
+- [x] `SimpleObstacle`/`AnimObstacle`/`FallingObstacle` 등 장애물 하위 타입 추가
 - [x] 텍스트 파일 기반 맵 로딩(`MapLoader`) 구현
 - [ ] JSON 기반 맵 로딩 가능성 검토
 - [x] 맵 진행 상황 `Gauge` 표시
@@ -125,5 +126,5 @@
 
 ## Notes
 
-- 이 문서는 작년 CookieRun 이력을 기준으로 정리했다.
+- 이 문서는 수업 진행에 맞춰 구현 단계와 체크리스트를 함께 갱신한다.
 - 상황에 따라 항목이 추가/삭제될 수 있다.
