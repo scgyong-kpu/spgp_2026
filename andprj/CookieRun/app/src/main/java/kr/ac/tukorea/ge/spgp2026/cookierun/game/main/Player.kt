@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
@@ -13,8 +14,8 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f), IBoxCollidable {
     enum class State {
         // 지금은 RUN, JUMP, FALL, DOUBLE_JUMP 네 상태만 두고 시작한다.
-        // 이후 Slide, Hit 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
-        RUN, JUMP, FALL, DOUBLE_JUMP, SLIDE,
+        // 이후 Slide, Hurt 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
+        RUN, JUMP, FALL, DOUBLE_JUMP, SLIDE, HURT,
     }
 
     private val stateRects = mapOf(
@@ -23,6 +24,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         State.FALL to FALL_RECTS,
         State.DOUBLE_JUMP to DOUBLE_JUMP_RECTS,
         State.SLIDE to SLIDE_RECTS,
+        State.HURT to HURT_RECTS,
     )
     private val stateInsets = mapOf(
         State.RUN to INSETS_RUN,
@@ -30,6 +32,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         State.FALL to INSETS_FALL,
         State.DOUBLE_JUMP to INSETS_DOUBLE_JUMP,
         State.SLIDE to INSETS_SLIDE,
+        State.HURT to INSETS_HURT,
     )
     // stateRects 는 상태 이름과 프레임 Rect 목록을 연결해 둔 표다.
     // 상태가 바뀔 때 이 표를 통해 SheetSprite 가 그릴 프레임 묶음을 갈아끼운다.
@@ -56,7 +59,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     // RUN/JUMP/FALL 같은 상태 enum 에 넣지 않으면, "점프 중 확대" 같은 조합도 자연스럽게 처리할 수 있다.
     private var obstacle: Obstacle? = null
     // obstacle 은 최근에 충돌한 장애물을 기억한다.
-    // 다음 단계에서 HIT 상태를 추가하면, update() 에서 이 장애물과 더 이상 겹치지 않는지 확인해
+    // HURT 상태에서는 update() 에서 이 장애물과 더 이상 겹치지 않는지 확인해
     // RUN 상태로 복귀시키는 데 사용할 예정이다.
     // collisionRect 는 실제 스프라이트보다 조금 작은 사각형을 따로 둔다.
     // 눈에 보이는 가장자리보다 안쪽에서 충돌해야 더 자연스럽게 느껴진다.
@@ -119,15 +122,15 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     }
 
     fun hurt(obstacle: Obstacle) {
-        // 아직 HIT 상태나 무적 시간은 붙이지 않고,
-        // CollisionChecker 에서 Player -> Obstacle 충돌 흐름이 연결됐는지만 확인한다.
-        // 다만 같은 장애물과 계속 겹쳐 있는 동안 매 프레임 로그가 반복되지는 않도록,
-        // 바로 직전에 기억한 obstacle 과 같으면 이번 호출은 무시한다.
-        // 다음 단계에서 HIT 상태를 추가하면, 이 obstacle 과 더 이상 겹치지 않을 때 RUN 으로 돌아갈 수 있다.
-        if (this.obstacle == obstacle) {
+        // 장애물과 충돌하면 HURT 상태로 들어간다.
+        // 이미 HURT 상태라면 아직 이전 충돌에서 벗어나지 못한 것이므로,
+        // 다른 장애물과 새로 겹치더라도 이번 호출은 무시한다.
+        // 이 obstacle 과 더 이상 겹치지 않으면 update() 에서 RUN 으로 돌아간다.
+        if (state == State.HURT) {
             return
         }
 
+        state = State.HURT
         this.obstacle = obstacle
         Log.d(
             javaClass.simpleName,
@@ -154,6 +157,15 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 if (foot < floor) {
                     jumpSpeed = 0f  // 자유낙하이므로 초기 속도는 0
                     state = State.FALL
+                }
+            }
+            State.HURT -> {
+                // HURT 는 충돌이 시작된 뒤, 같은 장애물과 겹쳐 있는 동안 유지되는 상태다.
+                // 기억해 둔 obstacle 과 더 이상 충돌하지 않으면 피해 상태를 끝내고 RUN 으로 돌아간다.
+                val hitObstacle = obstacle
+                if (hitObstacle == null || !collidesWith(hitObstacle)) {
+                    this.obstacle = null
+                    state = State.RUN
                 }
             }
             State.JUMP, State.FALL, State.DOUBLE_JUMP -> {
@@ -284,6 +296,11 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         val SLIDE_RECTS = listOf(
             Rect(2450, 2, 2720, 272),
             Rect(2722, 2, 2992, 272),
+        )
+        val HURT_RECTS = listOf(
+            // makeRects(503, 504): 503/504 번째 프레임을 현재 시트 좌표로 직접 풀어 쓴다.
+            Rect(818, 1362, 1088, 1632),
+            Rect(1090, 1362, 1360, 1632),
         )
         // 플레이어의 충돌 박스는 상태마다 조금씩 다르게 줄인다.
         // 각 배열의 4개 값은 left, top, right, bottom 을 width/height 비율로 표현한 것이다.

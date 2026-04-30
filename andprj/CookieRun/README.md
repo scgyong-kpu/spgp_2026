@@ -83,7 +83,7 @@
 - [x] Magnification/Scale 아이템 효과 적용
 - [x] Magnification scale 에 따라 Player 크기와 점프 파워 조정
 - [x] 플레이어 애니메이션 적용(run/jump/slide/fall)
-- [ ] 플레이어 hit 애니메이션 적용
+- [x] 플레이어 hurt 애니메이션 적용
 
 ## Map / 장애물 / 아이템
 
