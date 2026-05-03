@@ -59,6 +59,31 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
         add(player, Layer.PLAYER)
     }
 
+    override fun onEnter() {
+        // MainScene 이 game stack 에 올라오면 배경음을 시작한다.
+        // 효과음은 각 오브젝트가 필요한 순간 직접 재생하지만,
+        // 배경음은 Scene 전체에 속한 상태라 Scene lifecycle 에 맞춰 다룬다.
+        gctx.res.sound.playMusic(R.raw.main)
+    }
+
+    override fun onExit() {
+        // MainScene 이 끝나면 MediaPlayer 도 정리한다.
+        // stopMusic() 은 내부 MediaPlayer 를 release 하므로,
+        // Scene 이 사라진 뒤에도 음악 리소스가 남아 있지 않게 한다.
+        gctx.res.sound.stopMusic()
+    }
+
+    override fun onPause() {
+        // Activity 가 background 로 가거나 PauseScene 이 올라오는 경우,
+        // 배경음은 현재 위치를 유지한 채 잠시 멈춘다.
+        gctx.res.sound.pauseMusic()
+    }
+
+    override fun onResume() {
+        // pauseMusic() 으로 멈춘 배경음을 이어서 재생한다.
+        gctx.res.sound.resumeMusic()
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         // 버튼 UI 가 아직 없으므로 화면 절반을 기준으로 동작을 분기시킨다.
         // 화면 오른쪽 절반을 누르면 jump
