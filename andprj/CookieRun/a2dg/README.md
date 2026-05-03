@@ -9,7 +9,7 @@
 - `GameView`, `GameContext`, `GameMetrics`
 - `Scene`, `SceneStack`, `World`
 - `BitmapPool`, `GameResources`, `Sound`
-- `IGameObject`, `Sprite`, `JoyStick`
+- `IGameObject`, `Sprite`, `JoyStick`, `Button`
 
 아래 항목들은 아직 확정된 계획이라기보다,
 수업 중 하나씩 작은 commit 으로 풀어 가볼 수 있는 후보 목록이다.
@@ -46,7 +46,7 @@
   - [x] `Gauge` 공통 클래스 추가
   - [x] `ImageNumber` 공통 클래스 추가
   - [x] `LabelUtil` 공통 클래스 추가
-  - [ ] `Button` 공통 클래스 추가
+  - [x] `Button` 공통 클래스 추가
 
 ## Scene / World / View / Game Loop
 
