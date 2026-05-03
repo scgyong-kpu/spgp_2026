@@ -9,7 +9,7 @@
 - `GameView`, `GameContext`, `GameMetrics`
 - `Scene`, `SceneStack`, `World`
 - `BitmapPool`, `GameResources`, `Sound`
-- `IGameObject`, `ITouchable`, `Sprite`, `JoyStick`, `Button`
+- `IGameObject`, `ITouchable`, `Sprite`, `DrawableSprite`, `JoyStick`, `Button`
 
 아래 항목들은 아직 확정된 계획이라기보다,
 수업 중 하나씩 작은 commit 으로 풀어 가볼 수 있는 후보 목록이다.
@@ -22,6 +22,10 @@
   - [x] `setCenterProportionalWidth()` helper 로 bitmap 비율을 유지한 채 중심과 가로폭을 함께 맞출 수 있게 정리
   - [x] `setCenterProportionalHeight()` helper 로 bitmap 비율을 유지한 채 중심과 세로폭을 함께 맞출 수 있게 정리
   - [x] `draw()` 에서 매번 sync 하지 않고, subclass 초기화 순서에 맞춰 `syncDstRect()` 를 호출하는 규칙 정리
+
+- [x] `DrawableSprite`
+  - [x] Android `Drawable` 을 `IGameObject` 처럼 그리는 adapter 추가
+  - [x] bitmap 리소스 없이 단색/shape overlay 를 그릴 수 있도록 정리
 
 - [x] `AnimSprite`
   - [x] 여러 frame 을 순서대로 보여주는 공통 클래스 추가

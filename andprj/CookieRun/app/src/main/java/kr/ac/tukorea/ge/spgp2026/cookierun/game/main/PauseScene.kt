@@ -1,6 +1,9 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.DrawableSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
@@ -18,8 +21,8 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
 
     override val world = World(Layer.entries.toTypedArray()).apply {
         // PauseScene 은 transparent Scene 이므로 아래 MainScene 도 함께 그려진다.
-        // 여기서는 반투명 검정 Sprite 만 올려 아래 장면을 어둡게 보이게 한다.
-        add(Sprite(gctx, R.mipmap.trans_50b).apply {
+        // 여기서는 bitmap 리소스 대신 DrawableSprite 로 반투명 검정 overlay 를 그린다.
+        add(DrawableSprite(ColorDrawable(Color.argb(128, 0, 0, 0))).apply {
             setCenter(gctx.metrics.width / 2f, gctx.metrics.height / 2f)
             setSize(gctx.metrics.width, gctx.metrics.height)
         }, Layer.BG)
