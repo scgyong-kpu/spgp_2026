@@ -83,6 +83,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 // 달리는 상태에서 점프하면 JUMP 상태로 바뀌고, 점프 속도가 초기화된다.
                 state = State.JUMP
                 jumpSpeed = -currentJumpPower()
+                gctx.res.sound.playEffect(R.raw.jump1)
             }
             State.JUMP -> {
                 // 점프 상태에서 점프하면 DOUBLE_JUMP 상태로 바뀌고, 점프 속도를 초기화한다.
@@ -90,6 +91,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 // 게임적으로는 JUMP_POWER 로 초기화 되는 것이 더 자연스럽다.
                 state = State.DOUBLE_JUMP
                 jumpSpeed = -currentJumpPower()
+                gctx.res.sound.playEffect(R.raw.jump2)
             }
             else -> {
                 // 그 외 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
@@ -132,6 +134,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
 
         state = State.HURT
         this.obstacle = obstacle
+        gctx.res.sound.playEffect(R.raw.hurt)
         Log.d(
             javaClass.simpleName,
             "Hurt !! obstacle=${obstacle.javaClass.simpleName}, player=${collisionRect}, obstacleRect=${obstacle.collisionRect}",
