@@ -12,6 +12,7 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
     companion object {
         private const val BUTTON_WIDTH = 200f
         private const val BUTTON_HEIGHT = 75f
+        private const val PAUSE_BUTTON_SIZE = 100f
     }
 
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
@@ -84,6 +85,12 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
             }
             false
         }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_pause, 1500f, 100f, PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE) { pressed ->
+            if (pressed) {
+                PauseScene(gctx).push()
+            }
+            false
+        }, Layer.TOUCH)
     }
 
     override fun touchObjects(): List<IGameObject> {
@@ -115,4 +122,8 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
         gctx.res.sound.resumeMusic()
     }
 
+    override fun onBackPressed(): Boolean {
+        PauseScene(gctx).push()
+        return true
+    }
 }
