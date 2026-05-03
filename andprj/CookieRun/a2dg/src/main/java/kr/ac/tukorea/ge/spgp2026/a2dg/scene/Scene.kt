@@ -74,6 +74,13 @@ abstract class Scene(
             return processed
         }
 
+        // 아무 객체도 capture 중이 아닐 때는 ACTION_DOWN 만 새 touchable 을 찾는다.
+        // MOVE/UP 은 원래 DOWN 을 처리한 객체에게 이어서 전달되어야 하므로,
+        // capture 대상이 없다면 새 객체를 찾지 않고 처리하지 않은 것으로 둔다.
+        if (event.actionMasked != MotionEvent.ACTION_DOWN) {
+            return false
+        }
+
         val objects = touchObjects() ?: return false
         for (i in objects.lastIndex downTo 0) {
             val touchable = objects[i] as? ITouchable ?: continue

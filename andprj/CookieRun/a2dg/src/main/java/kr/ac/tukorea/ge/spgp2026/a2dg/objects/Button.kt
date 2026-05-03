@@ -12,36 +12,27 @@ class Button(
     height: Float,
     private val onTouch: (pressed: Boolean) -> Boolean,
 ) : Sprite(gctx, resId), ITouchable {
-    // ACTION_DOWN 이 버튼 안에서 시작되면 captures 를 true 로 둔다.
-    // 이렇게 해야 Slide 버튼처럼 DOWN 이후 손가락이 버튼 밖으로 조금 움직여도
-    // ACTION_UP 을 같은 버튼이 받아서 pressed=false 를 전달할 수 있다.
-    private var captures = false
-
     init {
         setCenter(centerX, centerY)
         setSize(width, height)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return when (event.action) {
+        return when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 val point = gctx.metrics.fromScreen(event.x, event.y)
                 if (!dstRect.contains(point.x, point.y)) {
                     return false
                 }
 
-                captures = true
                 onTouch(true)
             }
-            MotionEvent.ACTION_UP -> {
-                if (!captures) {
-                    return false
-                }
-
-                captures = false
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 onTouch(false)
             }
-            else -> captures
+            // DOWN 을 처리한 Button 에 이후 event 를 계속 보내는 capture 책임은 Scene 이 가진다.
+            // Button 은 MOVE 같은 중간 event 를 소비했다고 알려 capture 가 유지되도록만 한다.
+            else -> true
         }
     }
 }
