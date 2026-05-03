@@ -166,9 +166,17 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
                 // HURT 는 충돌이 시작된 뒤, 같은 장애물과 겹쳐 있는 동안 유지되는 상태다.
                 // 기억해 둔 obstacle 과 더 이상 충돌하지 않으면 피해 상태를 끝내고 RUN 으로 돌아간다.
                 val hitObstacle = obstacle
-                if (hitObstacle == null || !collidesWith(hitObstacle)) {
-                    this.obstacle = null
+                if (hitObstacle == null) {
                     state = State.RUN
+                } else {
+                    // x 좌표 비교를 통해 플레이어가 장애물의 오른쪽으로 완전히 벗어났는지 확인한다.
+                    // State.HURT 상태에서는 collisionRect 가 달라질 수 있기 때문에 collidesWith() 대신 x 좌표로 직접 비교한다.
+                    val playerLeft = collisionRect.left
+                    val obstacleRight = hitObstacle.collisionRect.right
+                    if (playerLeft > obstacleRight) {
+                        this.obstacle = null
+                        state = State.RUN
+                    }
                 }
             }
             State.JUMP, State.FALL, State.DOUBLE_JUMP -> {
