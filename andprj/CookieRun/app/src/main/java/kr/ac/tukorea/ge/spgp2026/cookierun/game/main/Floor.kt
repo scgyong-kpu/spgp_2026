@@ -33,34 +33,39 @@ class Floor private constructor(
     }
 
     fun canPass(): Boolean {
-        return type == Type.T_3x1
+        return type.canPass
     }
 
     // Floor.Type 은 바닥 타일의 종류를 구분하는 enum 이다.
     // enum 은 "미리 정해 둔 이름 목록"이라고 생각하면 된다.
-    // 그리고 각 이름에는 resId, width, height 같은 값을 묶어서 함께 붙일 수 있다.
+    // 그리고 각 이름에는 resId, width, height, canPass 같은 값을 묶어서 함께 붙일 수 있다.
     // 이렇게 이름과 값이 연결되는 방식을 value association 이라고 볼 수 있다.
-    // 즉 T_10x2 라는 이름을 고르면, 그 이름에 연결된 이미지와 크기 정보가 같이 따라온다.
+    // 즉 T_10x2 라는 이름을 고르면, 그 이름에 연결된 이미지/크기/통과 가능 여부가 같이 따라온다.
+    // canPass 는 "Fall 버튼으로 아래로 통과할 수 있는 바닥인가"를 나타낸다.
     enum class Type(
         val resId: Int,
         val width: Float,
         val height: Float,
+        val canPass: Boolean,
     ) {
         // 길고 낮은 기본 바닥이다.
         // 이름 뒤 괄호 안의 값들이 enum 인스턴스에 들어가는 실제 데이터다.
         T_10x2(
             R.mipmap.cookierun_floor_480x48,
             1000f, 200f,
+            false,
         ),
         // 거의 정사각형에 가까운 블록형 바닥이다.
         T_2x2(
             R.mipmap.cookierun_floor_124x120,
             200f, 200f,
+            false,
         ),
         // 가로로 길고 세로가 얕은 작은 바닥이다.
         T_3x1(
             R.mipmap.cookierun_floor_120x40,
             300f, 100f,
+            true,
         ),
     }
 
