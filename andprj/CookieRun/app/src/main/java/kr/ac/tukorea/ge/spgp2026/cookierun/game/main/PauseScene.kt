@@ -14,10 +14,11 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
     }
 
     override val clipsRect = true
+    override val isTransparent = true
 
     override val world = World(Layer.entries.toTypedArray()).apply {
-        // 아직 transparent Scene 을 a2dg 에 넣지 않았으므로,
-        // PauseScene 이 자기 배경을 직접 그려 불투명한 일시정지 화면으로 동작하게 한다.
+        // PauseScene 은 transparent Scene 이므로 아래 MainScene 도 함께 그려진다.
+        // 여기서는 반투명 검정 Sprite 만 올려 아래 장면을 어둡게 보이게 한다.
         add(Sprite(gctx, R.mipmap.trans_50b).apply {
             setCenter(gctx.metrics.width / 2f, gctx.metrics.height / 2f)
             setSize(gctx.metrics.width, gctx.metrics.height)

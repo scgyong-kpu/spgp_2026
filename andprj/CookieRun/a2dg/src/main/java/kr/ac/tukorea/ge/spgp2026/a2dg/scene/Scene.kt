@@ -15,6 +15,7 @@ abstract class Scene(
     // World 가 없는 특수 Scene 이라면 null 을 유지한 채 update / draw 를 직접 override 하면 된다.
     open val world: World<*>? = null
     open val clipsRect = false
+    open val isTransparent = false
 
     // touch layer 에서 ACTION_DOWN 을 처리한 객체를 기억한다.
     // 예를 들어 Slide 버튼은 손가락이 버튼 밖으로 조금 움직여도 ACTION_UP 을 받아야

@@ -120,7 +120,7 @@
 - [x] `Fall` 버튼 추가
   - [x] 통과 가능한 바닥에서만 `Fall` 입력이 동작하도록 처리
 - [x] `PausedScene` push/pop 으로 일시정지 UI 구성
-  - [ ] transparent Scene 처리
+  - [x] transparent Scene 처리
 
 ## 이펙트 / 마무리
 

@@ -92,15 +92,36 @@ class GameView @JvmOverloads constructor(
             if (drawsDebugGrid) {
                 drawDebugGrid() // 가상 좌표계의 격자선을 그린다.
             }
-            gctx.sceneStack.top?.let { topScene ->
-                if (topScene.clipsRect) {
-                    canvas.clipRect(gctx.metrics.borderRect)
-                }
-                topScene.draw(this)
-            }
+            drawScenes(canvas)
             if (drawsDebugInfo || drawsFpsGraph) {
                 drawDebugInfo() // FPS 등의 디버그 정보를 그린다.
             }
+        }
+    }
+
+    private fun drawScenes(canvas: Canvas) {
+        val stack = gctx.sceneStack
+        if (stack.isEmpty) return
+
+        // top Scene 이 transparent 이면 그 아래 Scene 도 같이 그려야 한다.
+        // 위에서부터 아래로 내려가며 transparent 가 아닌 첫 Scene 을 찾고,
+        // 그 Scene 부터 top Scene 까지 다시 순서대로 그린다.
+        // 이렇게 하면 MainScene 위에 PauseScene 같은 overlay 를 올릴 수 있다.
+        var firstIndex = stack.lastIndex
+        while (firstIndex > 0 && stack.sceneAt(firstIndex).isTransparent) {
+            firstIndex--
+        }
+
+        var index = firstIndex
+        while (index <= stack.lastIndex) {
+            val scene = stack.sceneAt(index)
+            val saveCount = canvas.save()
+            if (scene.clipsRect) {
+                canvas.clipRect(gctx.metrics.borderRect)
+            }
+            scene.draw(canvas)
+            canvas.restoreToCount(saveCount)
+            index++
         }
     }
 

@@ -13,8 +13,15 @@ class SceneStack(private val gctx: GameContext) {
     val size: Int
         get() = scenes.size
 
+    val lastIndex: Int
+        get() = scenes.lastIndex
+
     val isEmpty: Boolean
         get() = scenes.isEmpty()
+
+    fun sceneAt(index: Int): Scene {
+        return scenes[index]
+    }
 
     fun push(scene: Scene) {
         top?.onPause()

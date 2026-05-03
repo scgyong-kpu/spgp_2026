@@ -65,7 +65,7 @@
   - [x] `update()` / `draw()` 의 layer 순회를 iterator 없이 돌도록 정리
 
 - [ ] Scene lifecycle
-  - [ ] Scene 이 transparent 하게 위에 올라가는 경우
+  - [x] Scene 이 transparent 하게 위에 올라가는 경우
   - [ ] 마지막 Scene 이 pop 되는 경우 처리
 
 - [ ] Scene structure
