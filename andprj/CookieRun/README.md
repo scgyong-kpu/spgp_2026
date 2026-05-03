@@ -76,6 +76,7 @@
 - [x] `RUN` / `SLIDE` 중 발밑에 바닥이 없으면 `FALL` 상태로 전환
 - [x] `JUMP` / `FALL` 중 중력에 따라 낙하하고 바닥에 닿으면 `RUN` 으로 복귀
 - [ ] 입력 처리(`Jump` / `Slide` 버튼, `ACTION_DOWN/UP`)
+  - [x] `MainScene` 이 `Layer.TOUCH` 를 Scene touch dispatch 대상으로 지정
 - [x] 점프/슬라이드 동작 세부 다듬기
 - [x] 중력/더블 점프 물리 세부 조정
 - [x] 낙하 중 플랫폼 착지 시 달리기 상태로 전환

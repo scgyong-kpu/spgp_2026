@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import android.view.MotionEvent
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.HorzScrollBackground
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
@@ -14,7 +15,9 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
         // OBSTACLE 은 FLOOR/ITEM 보다 앞에, PLAYER 보다 뒤에 둔다.
         // 이렇게 하면 장애물이 바닥과 아이템 위에 보이면서도,
         // 플레이어가 장애물에 가려지지 않아 충돌 상황을 확인하기 쉽다.
-        BG, FLOOR, ITEM, OBSTACLE, PLAYER, CONTROLLER
+        // TOUCH 는 화면에 그려지는 버튼을 담는 레이어이다.
+        // World 는 이 레이어를 draw 하고, Scene 은 같은 레이어를 touch dispatch 대상으로도 사용한다.
+        BG, FLOOR, ITEM, OBSTACLE, PLAYER, TOUCH, CONTROLLER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
@@ -57,6 +60,10 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)
+    }
+
+    override fun touchObjects(): List<IGameObject> {
+        return world.objectsAt(Layer.TOUCH)
     }
 
     override fun onEnter() {
