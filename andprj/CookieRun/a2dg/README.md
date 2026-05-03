@@ -81,6 +81,7 @@
 
 - [ ] `GameResources`
   - [ ] Bitmap 외 다른 리소스도 이쪽으로 모을지 검토
+  - [x] Drawable 리소스 로딩 helper 추가
   - [ ] bitmap 로딩 정책 문서 보강
 
 - [x] `Sound`

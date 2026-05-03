@@ -18,6 +18,8 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
 
     override val clipsRect = true
     override val isTransparent = true
+    private val panelWidth = gctx.metrics.width / 2f
+    private val panelHeight = gctx.metrics.height / 2f
 
     override val world = World(Layer.entries.toTypedArray()).apply {
         // PauseScene 은 transparent Scene 이므로 아래 MainScene 도 함께 그려진다.
@@ -25,6 +27,12 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
         add(DrawableSprite(ColorDrawable(Color.argb(128, 0, 0, 0))).apply {
             setCenter(gctx.metrics.width / 2f, gctx.metrics.height / 2f)
             setSize(gctx.metrics.width, gctx.metrics.height)
+        }, Layer.BG)
+        // XML drawable 로 만든 rounded rectangle panel 을 DrawableSprite 로 그린다.
+        // bitmap 없이도 stroke, corner radius, 반투명 fill 같은 UI 모양을 리소스 XML 로 표현할 수 있다.
+        add(DrawableSprite(gctx.res.getDrawable(R.drawable.pause_panel)).apply {
+            setCenter(gctx.metrics.width / 2f, gctx.metrics.height / 2f)
+            setSize(panelWidth, panelHeight)
         }, Layer.BG)
 
         add(Sprite(gctx, R.mipmap.cookie_run_title).apply {
