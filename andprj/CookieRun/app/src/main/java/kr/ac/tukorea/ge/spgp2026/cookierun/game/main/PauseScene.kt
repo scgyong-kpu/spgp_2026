@@ -49,9 +49,12 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
         }, Layer.TOUCH)
         add(Button(gctx, R.mipmap.btn_exit_n, gctx.metrics.width / 2f, 550f, 267f, 100f) { pressed ->
             if (pressed) {
-                // 지금은 Exit 버튼도 pop() 만 호출한다.
-                // 따라서 실제로 게임을 종료하지 않고, Resume 버튼처럼 PauseScene 만 닫히는 부작용이 있다.
-                // 다음 단계에서 SceneStack.popAll() 또는 Activity 종료 같은 진짜 exit 동작으로 바꿀 예정이다.
+                // 현재 stack 이 MainScene -> PauseScene 두 단계라고 알고 있으므로,
+                // pop() 을 두 번 호출하면 PauseScene 과 MainScene 이 차례로 빠진다.
+                // 하지만 이 코드는 "게임 종료"라는 의도가 드러나지 않고,
+                // stack 구조가 바뀌면 쉽게 깨지는 임시 구현이다.
+                // 다음 단계에서는 SceneStack.popAll() 같은 명시적인 함수로 바꿀 예정이다.
+                pop()
                 pop()
             }
             false
