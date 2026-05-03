@@ -1,6 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
-import android.view.MotionEvent
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.HorzScrollBackground
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
@@ -9,6 +9,11 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
+    companion object {
+        private const val BUTTON_WIDTH = 200f
+        private const val BUTTON_HEIGHT = 75f
+    }
+
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
@@ -60,6 +65,19 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)
+
+        // 버튼도 화면에 그려져야 하므로 World 의 TOUCH layer 에 넣는다.
+        // 동시에 MainScene.touchObjects() 가 같은 layer 를 Scene touch dispatch 대상으로 돌려준다.
+        add(Button(gctx, R.mipmap.btn_slide_n, 150f, 800f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
+            player.slide(pressed)
+            true
+        }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_jump_n, 1450f, 770f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
+            if (pressed) {
+                player.jump()
+            }
+            false
+        }, Layer.TOUCH)
     }
 
     override fun touchObjects(): List<IGameObject> {
@@ -91,22 +109,4 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
         gctx.res.sound.resumeMusic()
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        // 버튼 UI 가 아직 없으므로 화면 절반을 기준으로 동작을 분기시킨다.
-        // 화면 오른쪽 절반을 누르면 jump
-        // 화면 왼쪽 절반에 누르면 slide(true), 떼면 slide(false)
-        val screenCenter = gctx.view.width / 2
-        if (event.x > screenCenter) {
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                player.jump()
-                return true
-            }
-        } else {
-            if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_UP) {
-                player.slide(event.action == MotionEvent.ACTION_DOWN)
-                return true
-            }
-        }
-        return super.onTouchEvent(event)
-    }
 }
