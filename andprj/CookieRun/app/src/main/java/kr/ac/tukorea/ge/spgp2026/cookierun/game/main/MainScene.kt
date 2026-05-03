@@ -78,6 +78,12 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
             }
             false
         }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_fall_n, 1450f, 850f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
+            if (pressed) {
+                player.fall()
+            }
+            false
+        }, Layer.TOUCH)
     }
 
     override fun touchObjects(): List<IGameObject> {

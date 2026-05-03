@@ -75,7 +75,7 @@
 - [x] state 에 따라 프레임 Rect 집합 선택 및 애니메이션 전환
 - [x] `RUN` / `SLIDE` 중 발밑에 바닥이 없으면 `FALL` 상태로 전환
 - [x] `JUMP` / `FALL` 중 중력에 따라 낙하하고 바닥에 닿으면 `RUN` 으로 복귀
-- [x] 입력 처리(`Jump` / `Slide` 버튼, `ACTION_DOWN/UP`)
+- [x] 입력 처리(`Jump` / `Slide` / `Fall` 버튼, `ACTION_DOWN/UP`)
   - [x] `MainScene` 이 `Layer.TOUCH` 를 Scene touch dispatch 대상으로 지정
 - [x] 점프/슬라이드 동작 세부 다듬기
 - [x] 중력/더블 점프 물리 세부 조정
@@ -117,6 +117,7 @@
 - [ ] `Back` 버튼 처리
 - [ ] `Pause` 버튼 추가 및 입력 처리
 - [x] `Jump` / `Slide` 버튼 추가 (`Slide` pressed/released 처리)
+- [x] `Fall` 버튼 추가
 - [ ] `PausedScene` push/pop 으로 일시정지 UI 구성
 
 ## 이펙트 / 마무리

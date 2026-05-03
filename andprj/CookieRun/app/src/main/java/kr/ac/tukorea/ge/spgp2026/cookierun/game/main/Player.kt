@@ -114,6 +114,19 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         }
     }
 
+    fun fall() {
+        if (state != State.RUN && state != State.SLIDE) {
+            return
+        }
+
+        // 현재 밟고 있는 floor 의 top 과 player foot 이 정확히 같으면,
+        // FALL 로 바꾼 다음 프레임에 같은 floor 를 다시 찾아 곧바로 RUN 으로 착지할 수 있다.
+        // 그래서 발을 아주 조금 아래로 내려 "현재 floor 를 통과하기 시작했다"는 상태를 만든다.
+        jumpSpeed = 0f
+        state = State.FALL
+        setPlayerFootY(collisionRect.bottom + 0.1f)
+    }
+
     fun magnify() {
         magnificationSpeed = if (magnificationScale == SCALE_NORMAL) {
             MAGNIFICATION_SPEED
@@ -265,8 +278,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
 
     private fun findNearestFloorTop(): Float {
         // 플레이어 발 아래에서 가장 가까운 floor 의 상단 y 좌표를 반환한다.
-        // floor 가 없으면 INIT_Y (원래 바닥 위치) 를 반환하여, 게임이 시작된 위치로 돌아간다.
-        return findNearestFloor()?.collisionRect?.top ?: INIT_Y
+        // floor 가 없으면 화면 아래쪽까지 계속 떨어질 수 있도록 가상 화면 높이를 반환한다.
+        return findNearestFloor()?.collisionRect?.top ?: gctx.metrics.height
     }
 
     companion object {
