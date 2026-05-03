@@ -118,6 +118,10 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         if (state != State.RUN && state != State.SLIDE) {
             return
         }
+        val floor = findNearestFloor() ?: return
+        if (!floor.canPass()) {
+            return
+        }
 
         // 현재 밟고 있는 floor 의 top 과 player foot 이 정확히 같으면,
         // FALL 로 바꾼 다음 프레임에 같은 floor 를 다시 찾아 곧바로 RUN 으로 착지할 수 있다.
@@ -290,7 +294,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         const val WIDTH = 386f
         const val HEIGHT = 386f
         const val INIT_X = 200f
-        const val INIT_Y = 510f
+        const val INIT_Y = 300f
         const val GRAVITY = 1700f
         const val JUMP_POWER = 900f
         const val SCALE_NORMAL = 1.0f

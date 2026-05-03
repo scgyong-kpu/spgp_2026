@@ -118,6 +118,7 @@
 - [ ] `Pause` 버튼 추가 및 입력 처리
 - [x] `Jump` / `Slide` 버튼 추가 (`Slide` pressed/released 처리)
 - [x] `Fall` 버튼 추가
+  - [x] 통과 가능한 바닥에서만 `Fall` 입력이 동작하도록 처리
 - [ ] `PausedScene` push/pop 으로 일시정지 UI 구성
 
 ## 이펙트 / 마무리

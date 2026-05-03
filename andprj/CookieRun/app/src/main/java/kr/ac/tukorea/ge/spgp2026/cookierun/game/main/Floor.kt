@@ -32,6 +32,10 @@ class Floor private constructor(
         this.height = type.height
     }
 
+    fun canPass(): Boolean {
+        return type == Type.T_3x1
+    }
+
     // Floor.Type 은 바닥 타일의 종류를 구분하는 enum 이다.
     // enum 은 "미리 정해 둔 이름 목록"이라고 생각하면 된다.
     // 그리고 각 이름에는 resId, width, height 같은 값을 묶어서 함께 붙일 수 있다.
