@@ -9,7 +9,7 @@
 - `GameView`, `GameContext`, `GameMetrics`
 - `Scene`, `SceneStack`, `World`
 - `BitmapPool`, `GameResources`, `Sound`
-- `IGameObject`, `Sprite`, `JoyStick`, `Button`
+- `IGameObject`, `ITouchable`, `Sprite`, `JoyStick`, `Button`
 
 아래 항목들은 아직 확정된 계획이라기보다,
 수업 중 하나씩 작은 commit 으로 풀어 가볼 수 있는 후보 목록이다.
@@ -108,9 +108,9 @@
 
 ## Interfaces / Patterns
 
-- [ ] 입력 관련 인터페이스
-  - [ ] `ITouchable` 이 필요한지 검토
-  - [ ] `JoyStick` 와 `Button` 이 생기면 공통 터치 계약이 필요한지 다시 보기
+- [x] 입력 관련 인터페이스
+  - [x] `ITouchable` 이 필요한지 검토
+  - [x] `JoyStick` 와 `Button` 이 생기면 공통 터치 계약이 필요한지 다시 보기
 
 - [ ] 충돌 / layer 관련 인터페이스
   - [x] `IBoxCollidable` 추가
