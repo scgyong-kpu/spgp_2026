@@ -69,7 +69,7 @@
   - [ ] 마지막 Scene 이 pop 되는 경우 처리
 
 - [ ] Scene structure
-  - [ ] Scene 안의 touch 책임을 별도 객체로 위임하는 예제 정리
+  - [x] Scene 이 하위 Scene 이 지정한 World layer 를 touch 대상 목록으로 사용하도록 정리
   - [ ] Scene 교체와 push / pop 사용 기준 정리
 
 ## Resource / Audio
