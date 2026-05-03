@@ -47,14 +47,26 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
             }
             false
         }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_exit_n, gctx.metrics.width / 2f, 550f, 267f, 100f) { pressed ->
+            if (pressed) {
+                // 지금은 Exit 버튼도 pop() 만 호출한다.
+                // 따라서 실제로 게임을 종료하지 않고, Resume 버튼처럼 PauseScene 만 닫히는 부작용이 있다.
+                // 다음 단계에서 SceneStack.popAll() 또는 Activity 종료 같은 진짜 exit 동작으로 바꿀 예정이다.
+                pop()
+            }
+            false
+        }, Layer.TOUCH)
     }
 
     override fun touchObjects(): List<IGameObject> {
         return world.objectsAt(Layer.TOUCH)
     }
 
-    override fun onBackPressed(): Boolean {
-        pop()
-        return true
-    }
+//    override fun onBackPressed(): Boolean {
+//        // Scene 기본 구현도 stack 에 아래 Scene 이 있으면 pop() 하므로,
+//        // PauseScene 은 이 override 없이도 Back 키로 닫힌다.
+//        // 수업 중 기본 구현과 override 구현을 비교해 보이기 위해 주석으로 남겨 둔다.
+//        pop()
+//        return true
+//    }
 }
