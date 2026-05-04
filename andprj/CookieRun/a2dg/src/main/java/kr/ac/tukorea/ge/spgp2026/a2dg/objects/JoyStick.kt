@@ -20,7 +20,7 @@ class JoyStick(
     centerY: Float,
     private val bgRadius: Float,
     private val thumbRadius: Float,
-) : IGameObject {
+) : IGameObject, ITouchable {
     private val bgBitmap: Bitmap = gctx.res.getBitmap(bgResId)
     private val thumbBitmap: Bitmap = gctx.res.getBitmap(thumbResId)
 
@@ -57,7 +57,7 @@ class JoyStick(
     var power = 0f
         private set
 
-    fun onTouchEvent(event: MotionEvent): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         val pt = gctx.metrics.fromScreen(event.x, event.y)
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {

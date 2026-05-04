@@ -13,23 +13,17 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 abstract class MapObject(
     gctx: GameContext,
     resId: Int,
-    left: Float,
-    top: Float,
-    width: Float,
-    height: Float,
 ) : Sprite(gctx, resId), IRecyclable, IBoxCollidable {
+    // MapObject 는 더 이상 생성자에서 left/top/width/height 를 받지 않는다.
+    // Floor, JellyItem, Obstacle 처럼 하위 클래스마다 배치 기준이 조금씩 다르고,
+    // 재활용된 객체도 같은 init() 함수에서 위치와 크기를 다시 잡아야 하기 때문이다.
+    //
+    // 따라서 MapObject 는 공통 이동/제거/충돌 인터페이스만 제공하고,
+    // 실제 dstRect 설정은 각 하위 클래스의 init() 에서 담당한다.
+
     // 각 맵 오브젝트는 자기 타입이 속한 레이어를 알아야
     // 화면 밖으로 나갔을 때 World 에서 자기 자신을 제거할 수 있다.
     abstract val layer: MainScene.Layer
-
-    init {
-        // 맵 오브젝트는 생성 시 위치와 크기를 지정해서 배치한다.
-        // 이후 update() 에서 dstRect 만 이동시키면, 화면에 그릴 때는 dstRect 기준으로 그려진다.
-        dstRect.set(left, top, left + width, top + height)
-
-        this.width = width
-        this.height = height
-    }
 
     override val collisionRect: RectF
         get() = dstRect

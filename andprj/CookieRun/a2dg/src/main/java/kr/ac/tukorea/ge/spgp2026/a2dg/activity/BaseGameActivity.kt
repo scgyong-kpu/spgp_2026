@@ -67,6 +67,11 @@ abstract class BaseGameActivity : AppCompatActivity() {
         gameView.resumeGame()
     }
 
+    override fun onDestroy() {
+        gameView.destroyGame()
+        super.onDestroy()
+    }
+
     @Suppress("DEPRECATION")
     private fun setFullScreen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

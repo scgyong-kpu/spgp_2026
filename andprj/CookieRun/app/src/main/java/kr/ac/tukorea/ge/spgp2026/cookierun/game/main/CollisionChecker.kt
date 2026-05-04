@@ -12,6 +12,11 @@ class CollisionChecker(
     private val player: Player,
 ) : IGameObject {
     override fun update(gctx: GameContext) {
+        checkObstacleCollision()
+        checkItemCollision(gctx)
+    }
+
+    private fun checkItemCollision(gctx: GameContext) {
         // Player 는 한 명뿐이므로 바깥쪽은 한 번만 잡고,
         // 안쪽 Item 목록만 뒤에서 앞으로 돌면서 충돌을 검사한다.
         // Item 을 즉시 remove() 하더라도 역순 순회라 아직 보지 않은 앞쪽 객체에는 영향이 적다.
@@ -24,10 +29,24 @@ class CollisionChecker(
                 javaClass.simpleName,
                 "Collision !! Player - Item(index=${item.index}, x=${item.collisionRect.left}, y=${item.collisionRect.top})",
             )
+            gctx.res.sound.playEffect(item.soundResId)
             if (item.index == JellyItem.MAGNIFICATION_INDEX) {
                 player.magnify()
             }
             world.remove(item, MainScene.Layer.ITEM)
+        }
+    }
+
+    private fun checkObstacleCollision() {
+        // 장애물은 부딪혔다고 바로 지우지 않는다.
+        // 이번 단계에서는 Player.hurt() 로 충돌 처리를 넘기고,
+        // hurt() 안에서 로그만 찍어 충돌 흐름이 연결됐는지 확인한다.
+        world.forEachReversedAt(MainScene.Layer.OBSTACLE) { obstacleObject ->
+            val obstacle = obstacleObject as? Obstacle ?: return@forEachReversedAt
+
+            if (!player.collidesWith(obstacle)) return@forEachReversedAt
+
+            player.hurt(obstacle)
         }
     }
 

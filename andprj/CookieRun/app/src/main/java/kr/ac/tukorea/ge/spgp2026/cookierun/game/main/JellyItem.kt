@@ -8,7 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 class JellyItem private constructor(
     gctx: GameContext,
-): MapObject(gctx, R.mipmap.jelly, 0f, 0f, DST_SIZE, DST_SIZE) {
+): MapObject(gctx, R.mipmap.jelly) {
     // JellyItem 은 아이템 레이어에만 놓인다.
     // layer 를 계산 프로퍼티로 두면, JellyItem 마다 레이어 필드를 따로 저장하지 않아도 된다.
     override val layer get() = MainScene.Layer.ITEM
@@ -31,6 +31,8 @@ class JellyItem private constructor(
             val top = y * (SRC_SIZE + SRC_BORDER) + SRC_BORDER
             srcRect?.set(left, top, left + SRC_SIZE, top + SRC_SIZE)
         }
+    val soundResId: Int
+        get() = SOUND_IDS[index % SOUND_IDS.size]
 
     init {
         // index setter 에서 srcRect 를 계산하므로, 생성 시에도 setter 를 한 번 거쳐야 한다.
@@ -69,6 +71,14 @@ class JellyItem private constructor(
         const val MAGNIFICATION_INDEX = 26
 
         const val DST_SIZE = 100f
+        private val SOUND_IDS = intArrayOf(
+            R.raw.jelly,
+            R.raw.jelly_alphabet,
+            R.raw.jelly_item,
+            R.raw.jelly_gold,
+            R.raw.jelly_coin,
+            R.raw.jelly_big_coin,
+        )
 
         fun get(gctx: GameContext, index: Int, left: Float, top: Float): JellyItem {
             val world = (gctx.scene as MainScene).world
