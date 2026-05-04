@@ -1,13 +1,15 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
-import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-// Obstacle 은 stage 파일의 'X' 문자에서 생성되는 가장 기본 장애물이다.
-// Floor, JellyItem 과 마찬가지로 MapObject 를 상속하므로
-// 공통 스크롤 속도, 화면 밖 제거, 재활용 구조를 그대로 사용한다.
-class Obstacle(gctx: GameContext) : MapObject(gctx, R.mipmap.epn01_tm01_jp1a, 0f, 0f, WIDTH, WIDTH) {
-
+// Obstacle 은 CookieRun 장애물들의 공통 부모이다.
+// stage 문자 'X' 는 SimpleObstacle, 'Y'/'Z' 는 AnimObstacle 처럼
+// 실제 생성되는 하위 클래스는 MapObjectCatalog 가 결정한다.
+//
+// 여기에는 모든 장애물이 공유하는 레이어와 위치 계산만 둔다.
+// 이렇게 해 두면 정적 장애물, 애니메이션 장애물, 낙하 장애물이
+// 서로 다른 이미지/동작을 가지더라도 같은 배치 기준을 사용할 수 있다.
+abstract class Obstacle(gctx: GameContext, resId: Int) : MapObject(gctx, resId) {
     // 장애물은 OBSTACLE 레이어에 올라간다.
     // MapLoader 는 생성된 MapObject 의 layer 를 보고 world.add() 하므로,
     // 각 MapObject 하위 클래스가 자기 레이어를 알려 주는 구조가 된다.
@@ -16,13 +18,18 @@ class Obstacle(gctx: GameContext) : MapObject(gctx, R.mipmap.epn01_tm01_jp1a, 0f
     // stage 파일의 문자 하나는 100x100 게임 좌표 한 칸을 뜻한다.
     // left/top 은 그 칸의 왼쪽 위 좌표이고,
     // 장애물은 그 칸의 가로 중앙과 아래쪽 바닥에 맞춰 세운다.
-    fun init(left: Float, top: Float) {
+    //
+    // width 는 하위 클래스가 결정한다.
+    // SimpleObstacle 은 고정 폭을 쓰고,
+    // AnimObstacle 은 type 에 따라 서로 다른 폭을 넘긴다.
+    open fun init(left: Float, top: Float, width: Float) {
         val b_w = bitmap.width
         val b_h = bitmap.height
-        // WIDTH 는 게임 좌표계에서 장애물을 어느 정도 폭으로 보이게 할지 정한 값이다.
-        // height 는 원본 bitmap 의 가로/세로 비율을 유지하도록 계산한다.
-        width = WIDTH
-        height = WIDTH / b_w * b_h
+        // height 는 현재 bitmap 의 가로/세로 비율을 유지하도록 계산한다.
+        // AnimObstacle 은 init() 전에 bitmap 을 해당 type 의 첫 프레임으로 바꾼 뒤
+        // 이 공통 init() 을 호출해야 올바른 높이를 얻을 수 있다.
+        this.width = width
+        height = width / b_w * b_h
         // 장애물의 기준점은 tile 의 아래쪽 가운데이다.
         // left + 50f 는 100 너비 tile 의 중앙이고, top + 100f 는 tile 의 바닥이다.
         val right = left + 50f + width / 2
@@ -30,17 +37,15 @@ class Obstacle(gctx: GameContext) : MapObject(gctx, R.mipmap.epn01_tm01_jp1a, 0f
         this.dstRect.set(right - width, bottom - height, right, bottom)
     }
 
-    companion object {
-        // MapObjectCatalog 에 등록된 생성 규칙은 이 get() 을 통해 Obstacle 을 얻는다.
-        // World 에 재활용 가능한 객체가 있으면 새로 만들지 않고 다시 초기화해서 사용한다.
-        fun get(gctx: GameContext, left: Float, top: Float): Obstacle {
-            val world = (gctx.scene as MainScene).world
-            // World 에서 재활용 가능한 Obstacle 이 있는지 찾아본다.
-            val obs = world.obtain(Obstacle::class.java) ?: Obstacle(gctx)
-            obs.init(left, top)
-            return obs
-        }
-        // stage tile 하나가 100f 폭이므로, 장애물은 그보다 조금 좁은 80f 폭으로 표시한다.
-        private const val WIDTH = 80f
+    // 실제 RectF backing field 와 inset ratio 는 줄인 판정이 필요한 하위 클래스가 직접 가진다.
+    // 이 helper 는 "dstRect 에서 비율만큼 안쪽으로 줄인 collisionRect 를 계산한다"는
+    // 공통 수식만 제공한다.
+    protected fun updateCollisionRect(insets: FloatArray) {
+        collisionRect.set(
+            dstRect.left + width * insets[0],
+            dstRect.top + height * insets[1],
+            dstRect.right - width * insets[2],
+            dstRect.bottom - height * insets[3],
+        )
     }
 }

@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
 
-import android.view.MotionEvent
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.HorzScrollBackground
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
@@ -8,13 +9,21 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
+    companion object {
+        private const val BUTTON_WIDTH = 200f
+        private const val BUTTON_HEIGHT = 75f
+        private const val PAUSE_BUTTON_SIZE = 100f
+    }
+
     // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
     // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
     enum class Layer {
         // OBSTACLE 은 FLOOR/ITEM 보다 앞에, PLAYER 보다 뒤에 둔다.
         // 이렇게 하면 장애물이 바닥과 아이템 위에 보이면서도,
         // 플레이어가 장애물에 가려지지 않아 충돌 상황을 확인하기 쉽다.
-        BG, FLOOR, ITEM, OBSTACLE, PLAYER, CONTROLLER
+        // TOUCH 는 화면에 그려지는 버튼을 담는 레이어이다.
+        // World 는 이 레이어를 draw 하고, Scene 은 같은 레이어를 touch dispatch 대상으로도 사용한다.
+        BG, FLOOR, ITEM, OBSTACLE, PLAYER, TOUCH, CONTROLLER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
@@ -57,24 +66,64 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
         add(player, Layer.PLAYER)
+
+        // 버튼도 화면에 그려져야 하므로 World 의 TOUCH layer 에 넣는다.
+        // 동시에 MainScene.touchObjects() 가 같은 layer 를 Scene touch dispatch 대상으로 돌려준다.
+        add(Button(gctx, R.mipmap.btn_slide_n, 150f, 800f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
+            player.slide(pressed)
+            true
+        }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_jump_n, 1450f, 770f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
+            if (pressed) {
+                player.jump()
+            }
+            false
+        }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_fall_n, 1450f, 850f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
+            if (pressed) {
+                player.fall()
+            }
+            false
+        }, Layer.TOUCH)
+        add(Button(gctx, R.mipmap.btn_pause, 1500f, 100f, PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE) { pressed ->
+            if (pressed) {
+                PauseScene(gctx).push()
+            }
+            false
+        }, Layer.TOUCH)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        // 버튼 UI 가 아직 없으므로 화면 절반을 기준으로 동작을 분기시킨다.
-        // 화면 오른쪽 절반을 누르면 jump
-        // 화면 왼쪽 절반에 누르면 slide(true), 떼면 slide(false)
-        val screenCenter = gctx.view.width / 2
-        if (event.x > screenCenter) {
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                player.jump()
-                return true
-            }
-        } else {
-            if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_UP) {
-                player.slide(event.action == MotionEvent.ACTION_DOWN)
-                return true
-            }
-        }
-        return super.onTouchEvent(event)
+    override fun touchObjects(): List<IGameObject> {
+        return world.objectsAt(Layer.TOUCH)
+    }
+
+    override fun onEnter() {
+        // MainScene 이 game stack 에 올라오면 배경음을 시작한다.
+        // 효과음은 각 오브젝트가 필요한 순간 직접 재생하지만,
+        // 배경음은 Scene 전체에 속한 상태라 Scene lifecycle 에 맞춰 다룬다.
+        gctx.res.sound.playMusic(R.raw.main)
+    }
+
+    override fun onExit() {
+        // MainScene 이 끝나면 MediaPlayer 도 정리한다.
+        // stopMusic() 은 내부 MediaPlayer 를 release 하므로,
+        // Scene 이 사라진 뒤에도 음악 리소스가 남아 있지 않게 한다.
+        gctx.res.sound.stopMusic()
+    }
+
+    override fun onPause() {
+        // Activity 가 background 로 가거나 PauseScene 이 올라오는 경우,
+        // 배경음은 현재 위치를 유지한 채 잠시 멈춘다.
+        gctx.res.sound.pauseMusic()
+    }
+
+    override fun onResume() {
+        // pauseMusic() 으로 멈춘 배경음을 이어서 재생한다.
+        gctx.res.sound.resumeMusic()
+    }
+
+    override fun onBackPressed(): Boolean {
+        PauseScene(gctx).push()
+        return true
     }
 }

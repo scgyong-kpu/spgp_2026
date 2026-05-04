@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">CookieRun</string>
     <string name="title_stage_fmt">Stage %1$d</string>
+    <string name="empty_string" />
+    <string name="attribution_label_name">Attribution</string>
 </resources>
