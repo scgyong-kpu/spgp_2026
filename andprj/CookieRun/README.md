@@ -59,7 +59,7 @@
 - [x] `MainScene` 생성 및 root scene push
 - [x] debug build 일 때만 debug 정보가 보이게 설정
 - [x] debug build 에서 Grid 표시
-- [ ] `PauseScene` transparent scene 처리(`isTransparent` / `popAll` 포함)
+- [x] `PauseScene` transparent scene 처리(`isTransparent` / `popAll` 포함)
 
 ## MainScene 배경 및 화면 좌표계 설정
 - [x] 가상좌표계 가로방향으로 설정
@@ -121,6 +121,7 @@
   - [x] 통과 가능한 바닥에서만 `Fall` 입력이 동작하도록 처리
 - [x] `PausedScene` push/pop 으로 일시정지 UI 구성
   - [x] transparent Scene 처리
+  - [x] Exit 버튼에서 Scene stack 전체 종료 처리
 
 ## 이펙트 / 마무리
 

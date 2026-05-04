@@ -49,15 +49,14 @@ class PauseScene(gctx: GameContext) : Scene(gctx) {
         }, Layer.TOUCH)
         add(Button(gctx, R.mipmap.btn_exit_n, gctx.metrics.width / 2f, 550f, 267f, 100f) { pressed ->
             if (pressed) {
-                // 현재 stack 이 MainScene -> PauseScene 두 단계라고 알고 있으므로,
-                // pop() 을 두 번 호출하면 PauseScene 과 MainScene 이 차례로 빠진다.
-                // 하지만 이 코드는 "게임 종료"라는 의도가 드러나지 않고,
-                // stack 구조가 바뀌면 쉽게 깨지는 임시 구현이다.
-                // 다음 단계에서는 SceneStack.popAll() 같은 명시적인 함수로 바꿀 예정이다.
-                pop()
-                pop()
+                // Exit 는 단순히 PauseScene 하나를 닫는 것이 아니라 게임 Scene stack 전체를 끝내는 동작이다.
+                // popAll() 의 기본값은 finishesActivity=true 이므로, GameView 에 등록된 empty-stack callback 을 통해
+                // Activity finish 로 이어진다. Activity lifecycle 정리에서는 popAll(false) 를 써서 이 동작을 막는다.
+                // 따라서 이 호출 뒤에 onDestroy() 에서 popAll(false) 가 다시 불릴 수 있지만,
+                // 그때는 이미 stack 이 비어 있으므로 추가 onExit() 나 finish 요청 없이 안전하게 지나간다.
+                gctx.sceneStack.popAll()
             }
-            false
+            true
         }, Layer.TOUCH)
     }
 

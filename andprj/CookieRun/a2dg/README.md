@@ -70,7 +70,8 @@
 
 - [ ] Scene lifecycle
   - [x] Scene 이 transparent 하게 위에 올라가는 경우
-  - [ ] 마지막 Scene 이 pop 되는 경우 처리
+  - [x] 앱 내부 요청으로 Scene stack 전체가 종료되는 경우 처리
+  - [x] `popAll(finishesActivity)` 로 앱 내부 종료와 Activity lifecycle 정리를 구별
 
 - [ ] Scene structure
   - [x] Scene 이 하위 Scene 이 지정한 World layer 를 touch 대상 목록으로 사용하도록 정리

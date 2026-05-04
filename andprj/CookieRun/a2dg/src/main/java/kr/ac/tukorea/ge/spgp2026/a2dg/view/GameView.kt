@@ -50,6 +50,13 @@ class GameView @JvmOverloads constructor(
     }
 
     init {
+        // SceneStack 은 Activity 를 직접 모르므로, stack 이 비었을 때의 바깥 처리는 GameView 가 연결한다.
+        // 게임 UI 에서 popAll() 을 호출하면 이 callback 을 통해 Activity.finish() 로 이어진다.
+        // Activity.finish() 이후 onDestroy() 가 다시 호출되더라도, 그쪽은 destroyGame() 에서 popAll(false) 를 쓰므로
+        // Scene 정리와 Activity 종료 요청이 서로 무한히 되먹임되지 않는다.
+        gctx.sceneStack.onEmptyStack = {
+            activity?.finish()
+        }
         Choreographer.getInstance().postFrameCallback(this)
     }
 
@@ -81,6 +88,14 @@ class GameView @JvmOverloads constructor(
         gctx.currentTimeNanos = 0L
         Choreographer.getInstance().postFrameCallback(this)
         gctx.sceneStack.top?.onResume()
+    }
+
+    fun destroyGame() {
+        // Activity.onDestroy() 는 이미 Activity 가 끝나는 중인 lifecycle 정리이다.
+        // 이 경우에는 Scene 들의 onExit() 만 실행하고, onEmptyStack callback 으로 finish() 를 다시 요청하지 않는다.
+        // 앱 내부 Exit 로 먼저 popAll(true) 가 실행된 뒤라면 stack 은 이미 비어 있을 수 있는데,
+        // 그 경우에도 popAll(false) 는 빈 stack 을 정리하려는 안전한 no-op 으로 끝난다.
+        gctx.sceneStack.popAll(finishesActivity = false)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -134,7 +149,8 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return (gctx.sceneStack.top?.onTouchEvent(event) ?: false) || super.onTouchEvent(event)
+        val handled = gctx.sceneStack.top?.onTouchEvent(event) ?: false
+        return handled || super.onTouchEvent(event)
     }
 
     fun onBackPressed(): Boolean {
@@ -156,9 +172,9 @@ class GameView @JvmOverloads constructor(
             update()
 
             // Scene 의 update 나 touch 처리 도중 마지막 Scene 이 pop() 되어
-            // stack 이 비었다면 더 이상 그릴 것이 없으므로 Activity 를 종료한다.
+            // stack 이 비었다면 onEmptyStack callback 이 Activity 종료를 맡는다.
+            // 여기서는 더 이상 그릴 것이 없으므로 다음 draw 예약 없이 빠져나간다.
             if (gctx.sceneStack.top == null) {
-                activity?.finish()
                 return
             }
 
