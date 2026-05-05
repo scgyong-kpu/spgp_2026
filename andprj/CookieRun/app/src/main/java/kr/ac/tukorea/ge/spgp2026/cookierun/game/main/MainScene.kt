@@ -115,11 +115,29 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
         // Activity 가 background 로 가거나 PauseScene 이 올라오는 경우,
         // 배경음은 현재 위치를 유지한 채 잠시 멈춘다.
         gctx.res.sound.pauseMusic()
+        // ValueAnimator 처럼 World.update() 와 별도로 움직이는 객체는
+        // IPausable 역할을 통해 Scene pause/resume 에 맞춰 직접 멈춘다.
+        pausePausableObjects()
     }
 
     override fun onResume() {
         // pauseMusic() 으로 멈춘 배경음을 이어서 재생한다.
         gctx.res.sound.resumeMusic()
+        // PauseScene 이 pop 되거나 Activity 가 foreground 로 돌아오면,
+        // pause 해 둔 외부 작업도 같은 위치에서 이어서 재생한다.
+        resumePausableObjects()
+    }
+
+    private fun pausePausableObjects() {
+        world.forEachReversedAt(Layer.OBSTACLE) { obj ->
+            (obj as? IPausable)?.pause()
+        }
+    }
+
+    private fun resumePausableObjects() {
+        world.forEachReversedAt(Layer.OBSTACLE) { obj ->
+            (obj as? IPausable)?.resume()
+        }
     }
 
     override fun onBackPressed(): Boolean {

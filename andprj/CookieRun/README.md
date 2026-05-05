@@ -113,7 +113,9 @@
 
 ## Game Loop / 상태 전환
 
-- [ ] 일시정지/재개 처리
+- [x] 일시정지/재개 처리
+  - [x] PauseScene 진입/복귀 시 배경음 pause/resume
+  - [x] `IPausable` 로 `FallingObstacle` 의 `ValueAnimator` pause/resume
 - [x] `Back` 버튼 처리
 - [x] `Pause` 버튼 추가 및 입력 처리
 - [x] `Jump` / `Slide` 버튼 추가 (`Slide` pressed/released 처리)

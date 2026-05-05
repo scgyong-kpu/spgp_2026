@@ -12,7 +12,7 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 // SimpleObstacle 과 마찬가지로 이미지 한 장을 쓰지만,
 // 별도 클래스로 분리해 두면 나중에 낙하 애니메이션, 충돌 박스 보정,
 // pause/resume 처리 등을 다른 장애물과 섞지 않고 추가할 수 있다.
-class FallingObstacle(gctx: GameContext): Obstacle(gctx, R.mipmap.epn01_tm01_sda) {
+class FallingObstacle(gctx: GameContext): Obstacle(gctx, R.mipmap.epn01_tm01_sda), IPausable {
     private var animator: ValueAnimator? = null
 
     override fun init(left: Float, top: Float, width: Float) {
@@ -55,6 +55,22 @@ class FallingObstacle(gctx: GameContext): Obstacle(gctx, R.mipmap.epn01_tm01_sda
         animator.cancel()
         animator.setFloatValues(startTop, endTop)
         animator.start()
+    }
+
+    override fun pause() {
+        // ValueAnimator 는 World.update() 와 별개로 Android framework 가 시간에 맞춰 실행한다.
+        // 그래서 PauseScene 이 올라와 MainScene.update() 가 멈춰도, animator 를 직접 pause 하지 않으면
+        // 낙하 애니메이션만 계속 진행될 수 있다.
+        animator?.pause()
+    }
+
+    override fun resume() {
+        val animator = animator ?: return
+        // resume() 은 pause 된 animator 를 이어서 재생할 때만 호출한다.
+        // 이미 끝났거나 cancel 된 animator 를 억지로 다시 시작하지 않기 위해 isPaused 를 확인한다.
+        if (animator.isPaused) {
+            animator.resume()
+        }
     }
 
     override fun onRecycle() {
