@@ -1,0 +1,32 @@
+[
+  {
+    "id": 107566,
+    "name": "Brave Cookie !",
+    "jumpPower": 900,
+    "scoreRate": 1.0
+  },
+  {
+    "id": 107567,
+    "name": "Bright Cookie !!",
+    "jumpPower": 800,
+    "scoreRate": 1.2
+  },
+  {
+    "id": 107568,
+    "name": "<Strawberry> Cookie",
+    "jumpPower": 700,
+    "scoreRate": 1.0
+  },
+  {
+    "id": 107571,
+    "name": "Buttercream Choco",
+    "jumpPower": 1200,
+    "scoreRate": 1.0
+  },
+  {
+    "id": 107583,
+    "name": "!!Ch17!! Cookie",
+    "jumpPower": 1500,
+    "scoreRate": 1.0
+  }
+]
