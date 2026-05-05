@@ -19,5 +19,6 @@ class CookieRunActivity : BaseGameActivity() {
 
     companion object {
         const val KEY_STAGE = "stage"
+        const val KEY_COOKIE_ID = "cookieId"
     }
 }

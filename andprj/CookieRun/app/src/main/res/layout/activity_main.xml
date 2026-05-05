@@ -20,7 +20,7 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:background="#8fff"
+        android:background="@drawable/pause_panel"
         android:padding="40dp"
         >
         <ImageView
@@ -30,7 +30,58 @@
             />
         <Space
             android:layout_width="wrap_content"
-            android:layout_height="40dp" />
+            android:layout_height="10dp" />
+
+        <FrameLayout
+            android:layout_width="240dp"
+            android:layout_height="140dp">
+
+            <ImageView
+                android:id="@+id/cookieImageView"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                tools:src="@mipmap/cookie_player" />
+
+            <Button
+                android:id="@+id/prevCookieButton"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="@android:color/transparent"
+                android:gravity="start|center_vertical"
+                android:minWidth="0dp"
+                android:onClick="onBtnPreviousCookie"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="&lt;"
+                android:textSize="28sp" />
+
+            <Button
+                android:id="@+id/nextCookieButton"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:gravity="end|center_vertical"
+                android:minWidth="0dp"
+                android:onClick="onBtnNextCookie"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:text="&gt;"
+                android:textSize="28sp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/cookieNameTextView"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            tools:text="Brave Cookie" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +115,7 @@
 
         <Space
             android:layout_width="wrap_content"
-            android:layout_height="24dp" />
+            android:layout_height="10dp" />
 
         <Button
             android:id="@+id/button"
