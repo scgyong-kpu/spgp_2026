@@ -44,7 +44,8 @@
 - [ ] 선택한 `cookieId` / `stage` 를 Intent extra 로 전달
   - [x] 선택한 `stage` 를 Intent extra 로 전달
   - [ ] 선택한 `cookieId` 를 Intent extra 로 전달
-- [ ] 게임 Activity 를 landscape mode 로 고정
+- [x] 게임 Activity 를 landscape mode 로 고정
+  - [x] Android 16/API 36 큰 화면 정책에 맞춰 `appCategory="game"` 예외 명시
 
 ## a2dg 연결
 
