@@ -8,7 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
-class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
+class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scene(gctx) {
     companion object {
         private const val BUTTON_WIDTH = 200f
         private const val BUTTON_HEIGHT = 75f
@@ -38,7 +38,7 @@ class MainScene(gctx: GameContext, private val stage: Int) : Scene(gctx) {
 
     // 플레이어를 멤버로 분리해 두면,
     // 이후 입력 처리나 카메라 추적에서 MainScene 이 직접 접근하기 쉽다.
-    val player = Player(gctx)
+    val player = Player(gctx, cookieId)
 
     // World 는 레이어 순서대로 그려진다.
     // 여기서는 BG -> FLOOR -> PLAYER 순서이므로

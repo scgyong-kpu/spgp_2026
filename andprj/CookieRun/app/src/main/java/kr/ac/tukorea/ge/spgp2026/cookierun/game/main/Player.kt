@@ -11,21 +11,17 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 // 플레이어는 상태마다 다른 프레임 Rect 집합을 쓰므로 SheetSprite 를 상속한다.
 // RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
-class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f), IBoxCollidable {
+class Player(gctx: GameContext, cookieId: Int = DEFAULT_COOKIE_ID) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f), IBoxCollidable {
     enum class State {
         // 지금은 RUN, JUMP, FALL, DOUBLE_JUMP 네 상태만 두고 시작한다.
         // 이후 Slide, Hurt 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
         RUN, JUMP, FALL, DOUBLE_JUMP, SLIDE, HURT,
     }
 
-    private val stateRects = mapOf(
-        State.RUN to RUN_RECTS,
-        State.JUMP to JUMP_RECTS,
-        State.FALL to FALL_RECTS,
-        State.DOUBLE_JUMP to DOUBLE_JUMP_RECTS,
-        State.SLIDE to SLIDE_RECTS,
-        State.HURT to HURT_RECTS,
-    )
+    private val cookieInfo = CookieCatalog.get(gctx.view.context, cookieId)
+    private val stateRects = State.entries.associateWith { state ->
+        cookieInfo.stateRects[state.ordinal]
+    }
     private val stateInsets = mapOf(
         State.RUN to INSETS_RUN,
         State.JUMP to INSETS_JUMP,
@@ -68,6 +64,8 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
     init {
         // 처음에는 이동 로직 없이, 화면에 보이는 플레이어 위치와 크기만 잡아 둔다.
         // 이후 Jump, Slide, 상태 애니메이션을 Player 클래스 안에서 계속 확장할 수 있다.
+        // Activity 사이에는 cookieId 만 전달하고, 실제 bitmap/stateRects 는 CookieCatalog 가 assets 에서 읽는다.
+        bitmap = CookieCatalog.getBitmap(gctx.view.context, cookieInfo.id, "sheet")
         width = Player.WIDTH
         height = Player.HEIGHT
         setCenter(INIT_X, INIT_Y)
@@ -163,7 +161,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         // 이렇게 하면 확대 애니메이션 도중에도 현재 크기에 맞는 중간 점프력이 자연스럽게 적용된다.
         val scaleProgress = (magnificationScale - SCALE_NORMAL) / (SCALE_MAGNIFIED - SCALE_NORMAL)
         val powerRatio = 1.0f + scaleProgress * (MAGNIFIED_JUMP_POWER_RATIO - 1.0f)
-        return JUMP_POWER * powerRatio
+        return cookieInfo.jumpPower * powerRatio
     }
 
     override fun update(gctx: GameContext) {
@@ -301,6 +299,7 @@ class Player(gctx: GameContext) : SheetSprite(gctx, R.mipmap.cookie_player_sheet
         const val SCALE_MAGNIFIED = 2.0f
         const val MAGNIFICATION_SPEED = 1.0f
         const val MAGNIFIED_JUMP_POWER_RATIO = 1.2f
+        const val DEFAULT_COOKIE_ID = 107566
         val RUN_RECTS = listOf(
             Rect(2, 274, 272, 544),
             Rect(274, 274, 544, 544),
