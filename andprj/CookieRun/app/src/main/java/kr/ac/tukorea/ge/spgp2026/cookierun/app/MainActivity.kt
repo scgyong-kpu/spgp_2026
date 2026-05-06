@@ -9,15 +9,21 @@ import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp2026.cookierun.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 import kr.ac.tukorea.ge.spgp2026.cookierun.databinding.ActivityMainBinding
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.CookieCatalog
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.CookieInfo
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private var stage = 1
+    private lateinit var cookies: List<CookieInfo>
+    private var cookieIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        cookies = CookieCatalog.all(this)
         setStage(1)
+        setCookieIndex(0)
 
         // 디버그 빌드일 때에는 1초 후 게임 화면으로 바로 넘어가게 한다
         if (BuildConfig.DEBUG) {
@@ -39,9 +45,18 @@ class MainActivity : AppCompatActivity() {
         setStage(stage + 1)
     }
 
+    fun onBtnPreviousCookie(view: View) {
+        setCookieIndex(cookieIndex - 1)
+    }
+
+    fun onBtnNextCookie(view: View) {
+        setCookieIndex(cookieIndex + 1)
+    }
+
     private fun startGameActivity() {
         val intent = Intent(this, CookieRunActivity::class.java)
         intent.putExtra(CookieRunActivity.KEY_STAGE, stage)
+        intent.putExtra(CookieRunActivity.KEY_COOKIE_ID, cookies[cookieIndex].id)
         startActivity(intent)
     }
 
@@ -50,6 +65,15 @@ class MainActivity : AppCompatActivity() {
         binding.stageTextView.text = getString(R.string.title_stage_fmt, this.stage)
         binding.prevStageButton.isEnabled = this.stage > 1
         binding.nextStageButton.isEnabled = this.stage < STAGE_COUNT
+    }
+
+    private fun setCookieIndex(index: Int) {
+        cookieIndex = index.coerceIn(cookies.indices)
+        val cookie = cookies[cookieIndex]
+        binding.cookieNameTextView.text = cookie.name
+        binding.cookieImageView.setImageBitmap(CookieCatalog.getBitmap(this, cookie.id, "icon"))
+        binding.prevCookieButton.isEnabled = cookieIndex > 0
+        binding.nextCookieButton.isEnabled = cookieIndex < cookies.lastIndex
     }
 
     companion object {
