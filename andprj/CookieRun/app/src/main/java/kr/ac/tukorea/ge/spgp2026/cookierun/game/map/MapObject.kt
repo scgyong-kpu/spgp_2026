@@ -1,10 +1,11 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.map
 
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 
 // MapObject 는 CookieRun 맵을 이루는 오브젝트들의 공통 부모다.
 // Floor, JellyItem, Obstacle 처럼 "맵 위에 놓이는 요소"를 한 가지 이름으로 묶어 두면

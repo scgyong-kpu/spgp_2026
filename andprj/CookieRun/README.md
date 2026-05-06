@@ -41,9 +41,9 @@
 - [x] 실제 게임 Activity(`CookieRunActivity`) 추가 (layout xml 없이)
 - [x] `MainActivity` 에서 `CookieRunActivity` 실행
   - [x] Debug Build 시 1초 후 자동실행
-- [ ] 선택한 `cookieId` / `stage` 를 Intent extra 로 전달
+- [x] 선택한 `cookieId` / `stage` 를 Intent extra 로 전달
   - [x] 선택한 `stage` 를 Intent extra 로 전달
-  - [ ] 선택한 `cookieId` 를 Intent extra 로 전달
+  - [x] 선택한 `cookieId` 를 Intent extra 로 전달
 - [x] 게임 Activity 를 landscape mode 로 고정
   - [x] Android 16/API 36 큰 화면 정책에 맞춰 `appCategory="game"` 예외 명시
 
@@ -81,8 +81,10 @@
 - [x] 점프/슬라이드 동작 세부 다듬기
 - [x] 중력/더블 점프 물리 세부 조정
 - [x] 낙하 중 플랫폼 착지 시 달리기 상태로 전환
-- [ ] 플레이어 쿠키 스킨 선택 기능
+- [x] 플레이어 쿠키 스킨 선택 기능
   - [x] `assets/cookies.json` 생성 및 쿠키별 `stateRects` 변환
+  - [x] 타이틀 화면에서 쿠키 icon/name 표시 및 이전/다음 선택
+  - [x] 선택한 쿠키의 sheet/stateRects/jumpPower 를 Player 에 적용
 - [x] Magnification/Scale 아이템 효과 적용
 - [x] Magnification scale 에 따라 Player 크기와 점프 파워 조정
 - [x] 플레이어 애니메이션 적용(run/jump/slide/fall)

@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.common
 
 // IPausable 은 Scene 이 pause/resume 될 때 함께 멈추거나 다시 시작해야 하는 객체가 구현한다.
 //

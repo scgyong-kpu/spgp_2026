@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.player
 
 import android.graphics.Rect
 import android.graphics.RectF
@@ -8,6 +8,9 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.Floor
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle.Obstacle
 
 // 플레이어는 상태마다 다른 프레임 Rect 집합을 쓰므로 SheetSprite 를 상속한다.
 // RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.

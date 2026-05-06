@@ -7,6 +7,11 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.common.IPausable
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapLoader
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapObjectCatalog
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.pause.PauseScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.player.Player
 
 class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scene(gctx) {
     companion object {

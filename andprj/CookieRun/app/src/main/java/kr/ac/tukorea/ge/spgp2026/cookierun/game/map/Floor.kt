@@ -1,8 +1,9 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.map
 
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 
 // Floor 는 MapObject 아래에서 동작하는 플레이어가 밟는 바닥 타일을 뜻한다.
 // 배경처럼 연속 스크롤하는 대상이 아니라, type 에 따라 서로 다른 크기/이미지의 타일을 배치하는 용도다.

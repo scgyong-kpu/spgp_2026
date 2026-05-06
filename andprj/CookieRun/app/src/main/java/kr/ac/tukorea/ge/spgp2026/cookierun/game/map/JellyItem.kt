@@ -1,10 +1,11 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.map
 
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 
 class JellyItem private constructor(
     gctx: GameContext,

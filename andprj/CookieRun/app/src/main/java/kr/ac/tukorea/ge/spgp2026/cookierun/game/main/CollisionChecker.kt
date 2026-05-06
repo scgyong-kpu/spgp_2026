@@ -6,6 +6,9 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.JellyItem
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle.Obstacle
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.player.Player
 
 class CollisionChecker(
     private val world: World<MainScene.Layer>,

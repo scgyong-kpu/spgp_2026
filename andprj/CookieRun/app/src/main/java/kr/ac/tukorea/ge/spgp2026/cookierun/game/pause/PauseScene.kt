@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.pause
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
