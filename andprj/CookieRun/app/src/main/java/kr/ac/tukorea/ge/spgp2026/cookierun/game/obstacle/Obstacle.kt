@@ -1,7 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapObject
 
 // Obstacle 은 CookieRun 장애물들의 공통 부모이다.
@@ -15,7 +15,7 @@ abstract class Obstacle(gctx: GameContext, resId: Int) : MapObject(gctx, resId) 
     // 장애물은 OBSTACLE 레이어에 올라간다.
     // MapLoader 는 생성된 MapObject 의 layer 를 보고 world.add() 하므로,
     // 각 MapObject 하위 클래스가 자기 레이어를 알려 주는 구조가 된다.
-    override val layer = MainScene.Layer.OBSTACLE
+    override val layer = MainLayer.OBSTACLE
 
     // stage 파일의 문자 하나는 100x100 게임 좌표 한 칸을 뜻한다.
     // left/top 은 그 칸의 왼쪽 위 좌표이고,

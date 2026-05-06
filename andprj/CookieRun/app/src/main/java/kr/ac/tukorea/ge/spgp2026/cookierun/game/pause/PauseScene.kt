@@ -12,6 +12,11 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 class PauseScene(gctx: GameContext) : Scene(gctx) {
+    // MainLayer 는 MainScene 밖의 MapObject/Obstacle/Player 도 함께 알아야 하므로
+    // game.layers package 로 분리했다.
+    // 반면 PauseScene 의 Layer 는 이 Scene 내부에서만 쓰이는 UI 구성 디테일이다.
+    // 다른 package 가 알 필요가 없으므로 PauseLayer 를 따로 만들지 않고
+    // PauseScene 안에 작은 enum 으로 둔다.
     enum class Layer {
         BG, TITLE, TOUCH
     }

@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 
 class JellyItem private constructor(
@@ -12,7 +13,7 @@ class JellyItem private constructor(
 ): MapObject(gctx, R.mipmap.jelly) {
     // JellyItem 은 아이템 레이어에만 놓인다.
     // layer 를 계산 프로퍼티로 두면, JellyItem 마다 레이어 필드를 따로 저장하지 않아도 된다.
-    override val layer get() = MainScene.Layer.ITEM
+    override val layer get() = MainLayer.ITEM
 
     // JellyItem 은 MapObject 아래에서 동작하는 수집 아이템이다.
     // index 는 jelly 스프라이트 시트에서 어느 칸을 보여줄지 고르는 번호다.

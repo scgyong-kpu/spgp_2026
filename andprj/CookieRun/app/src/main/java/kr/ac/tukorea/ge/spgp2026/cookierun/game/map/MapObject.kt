@@ -5,6 +5,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 
 // MapObject 는 CookieRun 맵을 이루는 오브젝트들의 공통 부모다.
@@ -24,7 +25,7 @@ abstract class MapObject(
 
     // 각 맵 오브젝트는 자기 타입이 속한 레이어를 알아야
     // 화면 밖으로 나갔을 때 World 에서 자기 자신을 제거할 수 있다.
-    abstract val layer: MainScene.Layer
+    abstract val layer: MainLayer
 
     override val collisionRect: RectF
         get() = dstRect

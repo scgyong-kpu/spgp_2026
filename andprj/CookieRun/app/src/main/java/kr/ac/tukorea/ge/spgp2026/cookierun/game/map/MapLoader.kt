@@ -6,7 +6,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene.Layer
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 
 // MapLoader 는 text 파일에 적힌 stage 정보를 읽어서,
 // 화면 오른쪽 바깥부터 필요한 MapObject 를 조금씩 만들어 내는 역할을 한다.
@@ -16,7 +16,7 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene.Layer
 //
 // 전체 stage 를 처음부터 모두 만들지 않고, 화면에 필요한 오른쪽 끝까지만 생성한다.
 // 이렇게 하면 긴 맵을 다루더라도 처음 시작할 때 모든 객체를 한 번에 만들 필요가 없다.
-class MapLoader(gctx: GameContext, val world: World<Layer>, private val stage: Int): IGameObject {
+class MapLoader(gctx: GameContext, val world: World<MainLayer>, private val stage: Int): IGameObject {
     // x 는 지금까지 맵 오브젝트를 만들어 둔 가장 오른쪽 화면 좌표다.
     // MapObject.SPEED 가 음수이므로, update() 때 x 도 함께 줄어든다.
     private var x = 0f

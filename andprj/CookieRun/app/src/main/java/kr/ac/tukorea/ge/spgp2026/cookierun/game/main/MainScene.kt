@@ -8,6 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.common.IPausable
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapLoader
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapObjectCatalog
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.pause.PauseScene
@@ -18,17 +19,6 @@ class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scen
         private const val BUTTON_WIDTH = 200f
         private const val BUTTON_HEIGHT = 75f
         private const val PAUSE_BUTTON_SIZE = 100f
-    }
-
-    // 예전처럼 0, 1 같은 Int 로 레이어를 구분할 수도 있지만,
-    // enum 을 쓰면 각 레이어의 의미가 이름으로 드러나서 읽기와 유지보수가 쉬워진다.
-    enum class Layer {
-        // OBSTACLE 은 FLOOR/ITEM 보다 앞에, PLAYER 보다 뒤에 둔다.
-        // 이렇게 하면 장애물이 바닥과 아이템 위에 보이면서도,
-        // 플레이어가 장애물에 가려지지 않아 충돌 상황을 확인하기 쉽다.
-        // TOUCH 는 화면에 그려지는 버튼을 담는 레이어이다.
-        // World 는 이 레이어를 draw 하고, Scene 은 같은 레이어를 touch dispatch 대상으로도 사용한다.
-        BG, FLOOR, ITEM, OBSTACLE, PLAYER, TOUCH, CONTROLLER
     }
 
     // Scene 경계 바깥은 그리지 않도록 잘라서(drawing clip) 불필요한 오버드로우를 줄인다.
@@ -48,7 +38,7 @@ class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scen
     // World 는 레이어 순서대로 그려진다.
     // 여기서는 BG -> FLOOR -> PLAYER 순서이므로
     // 배경 뒤에 바닥이 깔리고 그 위에 플레이어가 올라오는 구성이 된다.
-    override val world = World(Layer.entries.toTypedArray()).apply {
+    override val world = World(MainLayer.entries.toTypedArray()).apply {
         // (배경 리소스, 스크롤 속도) 쌍을 한 번에 선언해 반복 추가한다.
         // speed 가 음수면 오른쪽에서 왼쪽으로 이동한다.
         // 앞쪽 레이어일수록 절댓값을 크게 주면 parallax(원근감) 효과가 난다.
@@ -59,47 +49,47 @@ class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scen
         ).forEach { (resId, speed) ->
             // 같은 코드 패턴으로 배경을 추가하므로 유지보수가 쉽다.
             // 배경 장수를 늘릴 때는 위 리스트에 항목만 추가하면 된다.
-            add(HorzScrollBackground(gctx, resId, speed), Layer.BG)
+            add(HorzScrollBackground(gctx, resId, speed), MainLayer.BG)
         }
         // a to b 는 Pair(a, b) 와 같다. to 연산자 덕분에 가독성이 좋아진다.
 
         // CONTROLLER 레이어 안에서는 update() 를 역순으로 돌기 때문에,
         // CollisionChecker 를 먼저 추가하고 MapLoader 를 뒤에 추가해야
         // 매 프레임 item 생성이 먼저 일어나고, 그 다음 충돌 판정을 검사할 수 있다.
-        add(CollisionChecker(this, player), Layer.CONTROLLER)
-        add(MapLoader(gctx, this, stage), Layer.CONTROLLER)
+        add(CollisionChecker(this, player), MainLayer.CONTROLLER)
+        add(MapLoader(gctx, this, stage), MainLayer.CONTROLLER)
 
         // 플레이어는 배경보다 앞 레이어에 배치한다.
-        add(player, Layer.PLAYER)
+        add(player, MainLayer.PLAYER)
 
         // 버튼도 화면에 그려져야 하므로 World 의 TOUCH layer 에 넣는다.
         // 동시에 MainScene.touchObjects() 가 같은 layer 를 Scene touch dispatch 대상으로 돌려준다.
         add(Button(gctx, R.mipmap.btn_slide_n, 150f, 800f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
             player.slide(pressed)
             true
-        }, Layer.TOUCH)
+        }, MainLayer.TOUCH)
         add(Button(gctx, R.mipmap.btn_jump_n, 1450f, 770f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
             if (pressed) {
                 player.jump()
             }
             false
-        }, Layer.TOUCH)
+        }, MainLayer.TOUCH)
         add(Button(gctx, R.mipmap.btn_fall_n, 1450f, 850f, BUTTON_WIDTH, BUTTON_HEIGHT) { pressed ->
             if (pressed) {
                 player.fall()
             }
             false
-        }, Layer.TOUCH)
+        }, MainLayer.TOUCH)
         add(Button(gctx, R.mipmap.btn_pause, 1500f, 100f, PAUSE_BUTTON_SIZE, PAUSE_BUTTON_SIZE) { pressed ->
             if (pressed) {
                 PauseScene(gctx).push()
             }
             false
-        }, Layer.TOUCH)
+        }, MainLayer.TOUCH)
     }
 
     override fun touchObjects(): List<IGameObject> {
-        return world.objectsAt(Layer.TOUCH)
+        return world.objectsAt(MainLayer.TOUCH)
     }
 
     override fun onEnter() {
@@ -134,13 +124,13 @@ class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scen
     }
 
     private fun pausePausableObjects() {
-        world.forEachReversedAt(Layer.OBSTACLE) { obj ->
+        world.forEachReversedAt(MainLayer.OBSTACLE) { obj ->
             (obj as? IPausable)?.pause()
         }
     }
 
     private fun resumePausableObjects() {
-        world.forEachReversedAt(Layer.OBSTACLE) { obj ->
+        world.forEachReversedAt(MainLayer.OBSTACLE) { obj ->
             (obj as? IPausable)?.resume()
         }
     }

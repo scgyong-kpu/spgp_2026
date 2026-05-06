@@ -6,12 +6,13 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.JellyItem
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle.Obstacle
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.player.Player
 
 class CollisionChecker(
-    private val world: World<MainScene.Layer>,
+    private val world: World<MainLayer>,
     private val player: Player,
 ) : IGameObject {
     override fun update(gctx: GameContext) {
@@ -23,7 +24,7 @@ class CollisionChecker(
         // Player 는 한 명뿐이므로 바깥쪽은 한 번만 잡고,
         // 안쪽 Item 목록만 뒤에서 앞으로 돌면서 충돌을 검사한다.
         // Item 을 즉시 remove() 하더라도 역순 순회라 아직 보지 않은 앞쪽 객체에는 영향이 적다.
-        world.forEachReversedAt(MainScene.Layer.ITEM) { itemObject ->
+        world.forEachReversedAt(MainLayer.ITEM) { itemObject ->
             val item = itemObject as? JellyItem ?: return@forEachReversedAt
 
             if (!player.collidesWith(item)) return@forEachReversedAt
@@ -36,7 +37,7 @@ class CollisionChecker(
             if (item.index == JellyItem.MAGNIFICATION_INDEX) {
                 player.magnify()
             }
-            world.remove(item, MainScene.Layer.ITEM)
+            world.remove(item, MainLayer.ITEM)
         }
     }
 
@@ -44,7 +45,7 @@ class CollisionChecker(
         // 장애물은 부딪혔다고 바로 지우지 않는다.
         // 이번 단계에서는 Player.hurt() 로 충돌 처리를 넘기고,
         // hurt() 안에서 로그만 찍어 충돌 흐름이 연결됐는지 확인한다.
-        world.forEachReversedAt(MainScene.Layer.OBSTACLE) { obstacleObject ->
+        world.forEachReversedAt(MainLayer.OBSTACLE) { obstacleObject ->
             val obstacle = obstacleObject as? Obstacle ?: return@forEachReversedAt
 
             if (!player.collidesWith(obstacle)) return@forEachReversedAt

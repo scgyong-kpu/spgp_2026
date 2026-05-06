@@ -8,6 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.Floor
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle.Obstacle
@@ -266,7 +267,7 @@ class Player(gctx: GameContext, cookieId: Int = DEFAULT_COOKIE_ID) : SheetSprite
         // 3. 여러 floor 가 있으면, top 이 가장 작은(가장 가까운) floor 반환
         val playerFootY = collisionRect.bottom
         val scene = gctx.scene as? MainScene ?: return null
-        val floors = scene.world.objectsAt(MainScene.Layer.FLOOR)
+        val floors = scene.world.objectsAt(MainLayer.FLOOR)
         
         var nearest: Floor? = null
         var minTop = Float.MAX_VALUE

@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.spgp2026.cookierun.game.map
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
 
 // Floor 는 MapObject 아래에서 동작하는 플레이어가 밟는 바닥 타일을 뜻한다.
@@ -13,7 +14,7 @@ class Floor private constructor(
 ) : MapObject(gctx, type.resId) {
     // Floor 는 항상 바닥 레이어에만 놓이는 오브젝트다.
     // layer 를 멤버 변수로 저장하지 않고 getter 로만 돌려주면, 객체마다 추가 메모리를 쓰지 않는다.
-    override val layer get() = MainScene.Layer.FLOOR
+    override val layer get() = MainLayer.FLOOR
 
     init {
         dstRect.set(0f, 0f, type.width, type.height)
