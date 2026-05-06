@@ -1,0 +1,348 @@
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
+
+import android.graphics.Rect
+import android.graphics.RectF
+import android.util.Log
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IBoxCollidable
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
+import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.cookierun.R
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.scenes.MainScene
+// 플레이어는 상태마다 다른 프레임 Rect 집합을 쓰므로 SheetSprite 를 상속한다.
+// RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
+//
+// 생성자에는 1x1 투명 이미지를 placeholder 로 넘긴다.
+// 실제 쿠키 sheet 는 init 블록에서 cookieId 에 맞춰 assets 에서 읽어 교체한다.
+// SheetSprite 는 draw() 를 override 해서 frameRects 를 직접 사용하므로 이 placeholder 크기에 의존하지 않는다.
+// 단, 일반 AnimSprite 는 생성자 bitmap 크기로 frameWidth/frameHeight 를 계산하므로
+// 같은 방식으로 1x1 placeholder 를 쓰면 프레임 계산이 틀어질 수 있다.
+class Player(gctx: GameContext, cookieId: Int = DEFAULT_COOKIE_ID) : SheetSprite(gctx, R.mipmap.trans_00p, 10f), IBoxCollidable {
+    enum class State {
+        // 지금은 RUN, JUMP, FALL, DOUBLE_JUMP 네 상태만 두고 시작한다.
+        // 이후 Slide, Hurt 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
+        RUN, JUMP, FALL, DOUBLE_JUMP, SLIDE, HURT,
+    }
+
+    private val cookieInfo = CookieCatalog.get(gctx.view.context, cookieId)
+    private val stateRects = State.entries.associateWith { state ->
+        cookieInfo.stateRects[state.ordinal]
+    }
+    private val stateInsets = mapOf(
+        State.RUN to INSETS_RUN,
+        State.JUMP to INSETS_JUMP,
+        State.FALL to INSETS_FALL,
+        State.DOUBLE_JUMP to INSETS_DOUBLE_JUMP,
+        State.SLIDE to INSETS_SLIDE,
+        State.HURT to INSETS_HURT,
+    )
+    // stateRects 는 상태 이름과 프레임 Rect 목록을 연결해 둔 표다.
+    // 상태가 바뀔 때 이 표를 통해 SheetSprite 가 그릴 프레임 묶음을 갈아끼운다.
+    // stateInsets 는 상태별로 충돌 박스를 얼마나 안쪽으로 줄일지 기록해 둔 표다.
+
+    var state = State.RUN
+        set(value) {
+            field = value
+
+            // 상태가 바뀌면 그 상태에 맞는 Rect 목록을 SheetSprite 에 넘긴다.
+            // 이렇게 하면 상태 전환과 프레임 선택은 Player 가 담당하고,
+            // 실제 그리기 루프는 SheetSprite 가 공통 처리한다.
+            stateRects[value]?.let { frameRects = it }
+            updateCollisionRect()
+        }
+
+    // 점프 중에는 위로 향하는 속도를 들고 있다가, 매 프레임 중력으로 줄여 나간다.
+    var jumpSpeed = 0f
+    // jumpSpeed 는 y 방향 이동량의 기반 값이다.
+    // 음수면 위로 올라가고, 양수면 아래로 떨어지므로 점프 물리를 단순하게 표현할 수 있다.
+    private var magnificationScale = SCALE_NORMAL
+    private var magnificationSpeed = 0f
+    // magnificationScale 은 움직임 상태와 별도로 적용되는 효과 배율이다.
+    // RUN/JUMP/FALL 같은 상태 enum 에 넣지 않으면, "점프 중 확대" 같은 조합도 자연스럽게 처리할 수 있다.
+    private var obstacle: Obstacle? = null
+    // obstacle 은 최근에 충돌한 장애물을 기억한다.
+    // HURT 상태에서는 update() 에서 이 장애물과 더 이상 겹치지 않는지 확인해
+    // RUN 상태로 복귀시키는 데 사용할 예정이다.
+    // collisionRect 는 실제 스프라이트보다 조금 작은 사각형을 따로 둔다.
+    // 눈에 보이는 가장자리보다 안쪽에서 충돌해야 더 자연스럽게 느껴진다.
+    override val collisionRect = RectF()
+
+    init {
+        // 처음에는 이동 로직 없이, 화면에 보이는 플레이어 위치와 크기만 잡아 둔다.
+        // 이후 Jump, Slide, 상태 애니메이션을 Player 클래스 안에서 계속 확장할 수 있다.
+        // Activity 사이에는 cookieId 만 전달하고, 실제 bitmap/stateRects 는 CookieCatalog 가 assets 에서 읽는다.
+        bitmap = CookieCatalog.getBitmap(gctx.view.context, cookieInfo.id, "sheet")
+        width = Player.WIDTH
+        height = Player.HEIGHT
+        setCenter(INIT_X, INIT_Y)
+        state = State.RUN
+        updateCollisionRect()
+    }
+
+    fun jump() {
+        // jump() 는 현재 상태에 따라 서로 다른 점프를 만든다.
+        // RUN 에서는 첫 점프, JUMP 에서는 더블 점프, DOUBLE_JUMP 에서는 이미 점프를 한 번 더 쓴 상태다.
+        when (state) {
+            State.RUN -> {
+                // 달리는 상태에서 점프하면 JUMP 상태로 바뀌고, 점프 속도가 초기화된다.
+                state = State.JUMP
+                jumpSpeed = -currentJumpPower()
+                gctx.res.sound.playEffect(R.raw.jump1)
+            }
+            State.JUMP -> {
+                // 점프 상태에서 점프하면 DOUBLE_JUMP 상태로 바뀌고, 점프 속도를 초기화한다.
+                // 더블점프가 발에서 JUMP_POWER 만큼의 분사 로켓이라면 추가가 맞겠지만
+                // 게임적으로는 JUMP_POWER 로 초기화 되는 것이 더 자연스럽다.
+                state = State.DOUBLE_JUMP
+                jumpSpeed = -currentJumpPower()
+                gctx.res.sound.playEffect(R.raw.jump2)
+            }
+            else -> {
+                // 그 외 상태에서는 점프 입력을 받아도 추가로 상태를 바꾸지 않는다.
+                return
+            }
+        }
+    }
+
+    fun slide(sliding: Boolean) {
+        if (state == State.RUN) {
+            if (sliding) {
+                // 달리는 상태에서 슬라이드하면 SLIDE 상태로 바뀐다.
+                state = State.SLIDE
+            }
+        } else if (state == State.SLIDE) {
+            if (!sliding) {
+                // 슬라이드 상태에서 슬라이드 입력이 끝나면 RUN 상태로 바뀐다.
+                state = State.RUN
+            }
+        }
+    }
+
+    fun fall() {
+        if (state != State.RUN && state != State.SLIDE) {
+            return
+        }
+        val floor = findNearestFloor() ?: return
+        if (!floor.canPass()) {
+            return
+        }
+
+        // 현재 밟고 있는 floor 의 top 과 player foot 이 정확히 같으면,
+        // FALL 로 바꾼 다음 프레임에 같은 floor 를 다시 찾아 곧바로 RUN 으로 착지할 수 있다.
+        // 그래서 발을 아주 조금 아래로 내려 "현재 floor 를 통과하기 시작했다"는 상태를 만든다.
+        jumpSpeed = 0f
+        state = State.FALL
+        setPlayerFootY(collisionRect.bottom + 0.1f)
+    }
+
+    fun magnify() {
+        magnificationSpeed = if (magnificationScale == SCALE_NORMAL) {
+            MAGNIFICATION_SPEED
+        } else {
+            -MAGNIFICATION_SPEED
+        }
+        Log.d(javaClass.simpleName, "Scale=$magnificationScale speed=$magnificationSpeed")
+    }
+
+    fun hurt(obstacle: Obstacle) {
+        // 장애물과 충돌하면 HURT 상태로 들어간다.
+        // 이미 HURT 상태라면 아직 이전 충돌에서 벗어나지 못한 것이므로,
+        // 다른 장애물과 새로 겹치더라도 이번 호출은 무시한다.
+        // 이 obstacle 과 더 이상 겹치지 않으면 update() 에서 RUN 으로 돌아간다.
+        if (state == State.HURT) {
+            return
+        }
+
+        state = State.HURT
+        this.obstacle = obstacle
+        gctx.res.sound.playEffect(R.raw.hurt)
+        Log.d(
+            javaClass.simpleName,
+            "Hurt !! obstacle=${obstacle.javaClass.simpleName}, player=${collisionRect}, obstacleRect=${obstacle.collisionRect}",
+        )
+    }
+
+    private fun currentJumpPower(): Float {
+        // 확대 비율이 1.0 에서 2.0 으로 커질수록 점프력도 1.0 에서 1.2 배로 함께 커진다.
+        // 이렇게 하면 확대 애니메이션 도중에도 현재 크기에 맞는 중간 점프력이 자연스럽게 적용된다.
+        val scaleProgress = (magnificationScale - SCALE_NORMAL) / (SCALE_MAGNIFIED - SCALE_NORMAL)
+        val powerRatio = 1.0f + scaleProgress * (MAGNIFIED_JUMP_POWER_RATIO - 1.0f)
+        return cookieInfo.jumpPower * powerRatio
+    }
+
+    override fun update(gctx: GameContext) {
+        // 플레이어 발의 현재 y 좌표 저장 (매 프레임 업데이트 전 읽음)
+        var foot = collisionRect.bottom
+        when (state) {
+            State.RUN, State.SLIDE -> {
+                // 달리거나 슬라이드 중일 때, 발 아래 가장 가까운 floor 의 위치를 확인한다.
+                val floor = findNearestFloorTop()
+                // 발의 y 좌표가 floor 보다 위에 있으면 (floor 아래로 떨어져야 한다면) 낙하 상태로 전환
+                if (foot < floor) {
+                    jumpSpeed = 0f  // 자유낙하이므로 초기 속도는 0
+                    state = State.FALL
+                }
+            }
+            State.HURT -> {
+                // HURT 는 충돌이 시작된 뒤, 같은 장애물과 겹쳐 있는 동안 유지되는 상태다.
+                // 기억해 둔 obstacle 과 더 이상 충돌하지 않으면 피해 상태를 끝내고 RUN 으로 돌아간다.
+                val hitObstacle = obstacle
+                if (hitObstacle == null) {
+                    state = State.RUN
+                } else {
+                    // x 좌표 비교를 통해 플레이어가 장애물의 오른쪽으로 완전히 벗어났는지 확인한다.
+                    // State.HURT 상태에서는 collisionRect 가 달라질 수 있기 때문에 collidesWith() 대신 x 좌표로 직접 비교한다.
+                    val playerLeft = collisionRect.left
+                    val obstacleRight = hitObstacle.collisionRect.right
+                    if (playerLeft > obstacleRight) {
+                        this.obstacle = null
+                        state = State.RUN
+                    }
+                }
+            }
+            State.JUMP, State.FALL, State.DOUBLE_JUMP -> {
+                // 프레임 시간 동안 jumpSpeed 만큼 이동할 거리 계산
+                var dy = jumpSpeed * gctx.frameTime
+                // 중력을 적용하여 jumpSpeed 업데이트 (음수 → 양수로 변함, 점점 빠르게 떨어짐)
+                jumpSpeed += GRAVITY * gctx.frameTime
+
+                // 낙하 중일 때만 착지 판정 (jumpSpeed 가 양수 = 아래로 떨어지는 중)
+                if (jumpSpeed >= 0) {
+                    val floor = findNearestFloorTop()
+                    // 다음 프레임에서 발이 floor 를 뚫고 지나갈 위치까지 간다면, floor 위에 정확히 플레이어를 배치
+                    if (foot + dy >= floor) {
+                        dy = floor - foot  // dy 조정: 정확히 floor 에 닿는 거리로 수정
+                        jumpSpeed = 0f
+                        state = State.RUN  // 착지 → RUN 상태로 전환
+                    }
+                }
+                foot += dy  // 계산된 거리만큼 이동
+                setPlayerFootY(foot)  // dstRect 위치 업데이트
+            }
+        }
+
+        if (magnificationSpeed != 0f) {
+            // 크기가 바뀌어도 발은 같은 y 좌표에 붙어 있어야 한다.
+            // 그래서 현재 발 위치를 저장한 뒤, 크기를 바꾸고 다시 foot 기준으로 배치한다.
+            val footForScale = collisionRect.bottom
+            magnificationScale += gctx.frameTime * magnificationSpeed
+            if (magnificationSpeed < 0f && magnificationScale <= SCALE_NORMAL) {
+                magnificationScale = SCALE_NORMAL
+                magnificationSpeed = 0f
+            } else if (magnificationSpeed > 0f && magnificationScale >= SCALE_MAGNIFIED) {
+                magnificationScale = SCALE_MAGNIFIED
+                magnificationSpeed = 0f
+            }
+            width = WIDTH * magnificationScale
+            height = HEIGHT * magnificationScale
+            setPlayerFootY(footForScale)
+        }
+    }
+
+    fun setPlayerFootY(foot: Float) {
+        val halfWidth = width / 2f
+        dstRect.set(x - halfWidth, foot - height, x + halfWidth, foot)
+        updateCollisionRect()
+    }
+
+    private fun updateCollisionRect() {
+        val insets = stateInsets[state] ?: return
+        collisionRect.set(
+            dstRect.left + width * insets[0],
+            dstRect.top + height * insets[1],
+            dstRect.right - width * insets[2],
+            dstRect.bottom - height * insets[3],
+        )
+    }
+
+    private fun findNearestFloor(): Floor? {
+        // 플레이어 발의 y 좌표(collisionRect.bottom)에서 아래쪽으로 가장 가까운 floor 를 찾는다.
+        // floor 를 찾기 위해 다음 조건을 모두 만족하는 객체를 검색한다:
+        // 1. 플레이어의 x 좌표가 floor 의 좌우 범위 안에 있어야 함
+        // 2. floor 의 top 이 발보다 아래에 있어야 함 (발 위의 floor 는 제외)
+        // 3. 여러 floor 가 있으면, top 이 가장 작은(가장 가까운) floor 반환
+        val playerFootY = collisionRect.bottom
+        val scene = gctx.scene as? MainScene ?: return null
+        val floors = scene.world.objectsAt(MainLayer.FLOOR)
+        
+        var nearest: Floor? = null
+        var minTop = Float.MAX_VALUE
+        
+        for (i in floors.indices) {
+            val floor = floors[i] as? Floor ?: continue
+            val rect = floor.collisionRect
+            // 플레이어 x 좌표가 floor 의 좌우 범위에 포함되는지 확인
+            if (x < rect.left || x > rect.right) continue
+            // floor 가 발보다 위에 있으면 대상에서 제외 (발 위의 floor 무시)
+            if (rect.top < playerFootY) continue
+            // 지금까지 찾은 것보다 더 가까운(top 이 더 작은) floor 인지 확인
+            if (minTop > rect.top) {
+                minTop = rect.top
+                nearest = floor
+            }
+        }
+        return nearest
+    }
+
+    private fun findNearestFloorTop(): Float {
+        // 플레이어 발 아래에서 가장 가까운 floor 의 상단 y 좌표를 반환한다.
+        // floor 가 없으면 화면 아래쪽까지 계속 떨어질 수 있도록 가상 화면 높이를 반환한다.
+        return findNearestFloor()?.collisionRect?.top ?: gctx.metrics.height
+    }
+
+    companion object {
+        // 플레이어 크기는 일단 고정값으로 두고 시작한다.
+        // 나중에는 화면 비율이나 가상 좌표계 기준으로 다시 정리할 수 있다.
+        // INIT_X / INIT_Y 는 시작 위치, GRAVITY / JUMP_POWER 는 테스트용 점프 물리값이다.
+        // 즉 여기 숫자들은 "지금은 테스트용"이라는 뜻을 코드 옆에서 바로 읽게 해 준다.
+        const val WIDTH = 386f
+        const val HEIGHT = 386f
+        const val INIT_X = 200f
+        const val INIT_Y = 300f
+        const val GRAVITY = 1700f
+        const val JUMP_POWER = 900f
+        const val SCALE_NORMAL = 1.0f
+        const val SCALE_MAGNIFIED = 2.0f
+        const val MAGNIFICATION_SPEED = 1.0f
+        const val MAGNIFIED_JUMP_POWER_RATIO = 1.2f
+        const val DEFAULT_COOKIE_ID = 107566
+        val RUN_RECTS = listOf(
+            Rect(2, 274, 272, 544),
+            Rect(274, 274, 544, 544),
+            Rect(546, 274, 816, 544),
+            Rect(818, 274, 1088, 544),
+        )
+        val JUMP_RECTS = listOf(
+            Rect(1906, 2, 2176, 272),
+            Rect(2178, 2, 2448, 272),
+        )
+        val FALL_RECTS = listOf(
+            Rect(2, 2, 272, 272),  // makeRects(0)
+        )
+        // FALL 은 아직 전용 프레임이 없어서, 내려오는 모양도 점프 계열 프레임을 재사용한다.
+        val DOUBLE_JUMP_RECTS = listOf(
+            Rect(274, 2, 544, 272),
+            Rect(546, 2, 816, 272),
+            Rect(818, 2, 1088, 272),
+            Rect(1090, 2, 1360, 272),
+        )
+        val SLIDE_RECTS = listOf(
+            Rect(2450, 2, 2720, 272),
+            Rect(2722, 2, 2992, 272),
+        )
+        val HURT_RECTS = listOf(
+            // makeRects(503, 504): 503/504 번째 프레임을 현재 시트 좌표로 직접 풀어 쓴다.
+            Rect(818, 1362, 1088, 1632),
+            Rect(1090, 1362, 1360, 1632),
+        )
+        // 플레이어의 충돌 박스는 상태마다 조금씩 다르게 줄인다.
+        // 각 배열의 4개 값은 left, top, right, bottom 을 width/height 비율로 표현한 것이다.
+        val INSETS_RUN = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
+        val INSETS_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
+        val INSETS_DOUBLE_JUMP = arrayOf(0.3f, 0.6f, 0.3f, 0.0f)
+        val INSETS_SLIDE = arrayOf(0.2f, 0.75f, 0.2f, 0.0f)
+        val INSETS_FALL = arrayOf(0.3f, 0.5f, 0.3f, 0.0f)
+        val INSETS_HURT = arrayOf(0.3f, 0.50f, 0.4f, 0.0f)
+    }
+}
