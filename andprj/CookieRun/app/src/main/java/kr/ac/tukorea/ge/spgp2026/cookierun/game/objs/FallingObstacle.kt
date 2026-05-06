@@ -1,11 +1,10 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
 
 import android.animation.ValueAnimator
 import android.view.animation.BounceInterpolator
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.common.IPausable
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.scenes.MainScene
 
 // FallingObstacle 은 stage 파일의 'W' 문자로 생성되는 낙하형 장애물이다.
 // Obstacle 의 공통 배치 로직으로 최종 위치를 먼저 잡은 뒤,

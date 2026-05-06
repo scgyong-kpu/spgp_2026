@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
 
 import android.graphics.Canvas
 import android.util.Log
@@ -7,10 +7,6 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.collidesWith
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.JellyItem
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle.Obstacle
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.player.Player
-
 class CollisionChecker(
     private val world: World<MainLayer>,
     private val player: Player,

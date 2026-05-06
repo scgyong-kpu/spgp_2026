@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.player
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
 
 import android.content.Context
 import android.graphics.Bitmap

@@ -1,9 +1,9 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
 
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.scenes.MainScene
 
 // SimpleObstacle 은 stage 파일의 'X' 문자로 생성되는 정적 장애물이다.
 // 한 장의 bitmap 만 사용하고, 위치가 정해진 뒤에는 MapObject 의 공통 스크롤만 따른다.

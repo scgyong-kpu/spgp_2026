@@ -4,7 +4,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.activity.BaseGameActivity
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.BuildConfig
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.scenes.MainScene
 
 class CookieRunActivity : BaseGameActivity() {
     override val drawsDebugGrid: Boolean = BuildConfig.DEBUG

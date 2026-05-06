@@ -1,9 +1,9 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.obstacle
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
 
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.scenes.MainScene
 
 // AnimObstacle 은 stage 파일의 'Y', 'Z' 문자로 생성되는 애니메이션 장애물이다.
 // 화면 오른쪽 바깥에 미리 만들어 두었다가,

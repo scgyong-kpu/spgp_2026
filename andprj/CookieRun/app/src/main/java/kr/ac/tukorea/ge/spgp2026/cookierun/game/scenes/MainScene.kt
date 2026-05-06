@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.main
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.scenes
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
@@ -7,12 +7,12 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.common.IPausable
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapLoader
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.map.MapObjectCatalog
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.pause.PauseScene
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.player.Player
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.CollisionChecker
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.IPausable
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.MapLoader
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.MapObjectCatalog
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.Player
 
 class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scene(gctx) {
     companion object {
