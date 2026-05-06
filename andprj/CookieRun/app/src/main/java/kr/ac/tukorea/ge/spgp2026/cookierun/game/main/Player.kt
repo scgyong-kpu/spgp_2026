@@ -11,7 +11,13 @@ import kr.ac.tukorea.ge.spgp2026.cookierun.R
 
 // 플레이어는 상태마다 다른 프레임 Rect 집합을 쓰므로 SheetSprite 를 상속한다.
 // RUN, JUMP, DOUBLE_JUMP 를 같은 Player 안에서 다루되, 실제 프레임 선택과 그리기는 SheetSprite 에 맡긴다.
-class Player(gctx: GameContext, cookieId: Int = DEFAULT_COOKIE_ID) : SheetSprite(gctx, R.mipmap.cookie_player_sheet, 10f), IBoxCollidable {
+//
+// 생성자에는 1x1 투명 이미지를 placeholder 로 넘긴다.
+// 실제 쿠키 sheet 는 init 블록에서 cookieId 에 맞춰 assets 에서 읽어 교체한다.
+// SheetSprite 는 draw() 를 override 해서 frameRects 를 직접 사용하므로 이 placeholder 크기에 의존하지 않는다.
+// 단, 일반 AnimSprite 는 생성자 bitmap 크기로 frameWidth/frameHeight 를 계산하므로
+// 같은 방식으로 1x1 placeholder 를 쓰면 프레임 계산이 틀어질 수 있다.
+class Player(gctx: GameContext, cookieId: Int = DEFAULT_COOKIE_ID) : SheetSprite(gctx, R.mipmap.trans_00p, 10f), IBoxCollidable {
     enum class State {
         // 지금은 RUN, JUMP, FALL, DOUBLE_JUMP 네 상태만 두고 시작한다.
         // 이후 Slide, Hurt 같은 상태가 늘어나면 이 enum 에 계속 추가할 수 있다.
