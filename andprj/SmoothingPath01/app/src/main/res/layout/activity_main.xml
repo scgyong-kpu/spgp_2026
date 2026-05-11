@@ -13,11 +13,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
+        <CheckBox
+            android:id="@+id/closedCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Closed"
+            android:onClick="onCheckClosed"
+            />
         <TextView
             android:id="@+id/countTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/count_fmt"
             />
         <Button

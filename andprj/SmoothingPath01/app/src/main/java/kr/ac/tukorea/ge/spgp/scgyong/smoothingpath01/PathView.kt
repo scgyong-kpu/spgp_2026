@@ -21,6 +21,8 @@ class PathView @JvmOverloads constructor(
     interface Callback {
         fun onSizeChanged(size: Int)
     }
+
+    var closed: Boolean = false
     var callback: Callback? = null
     val points = arrayListOf<PointF>()
 
@@ -63,6 +65,9 @@ class PathView @JvmOverloads constructor(
         for (i in 1..<points.size) {
             val pt = points[i]
             path.lineTo(pt.x, pt.y)
+        }
+        if (closed) {
+            path.close()
         }
     }
 

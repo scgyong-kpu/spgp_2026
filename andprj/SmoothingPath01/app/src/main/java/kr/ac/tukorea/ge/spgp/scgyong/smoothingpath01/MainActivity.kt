@@ -36,4 +36,8 @@ class MainActivity : AppCompatActivity() {
     fun onBtnClear(view: View) {
         binding.pathView.clear()
     }
+
+    fun onCheckClosed(view: View) {
+        binding.pathView.closed = binding.closedCheckbox.isChecked
+    }
 }
