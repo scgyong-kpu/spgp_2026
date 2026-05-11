@@ -21,6 +21,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        binding.pathView.callback = object : PathView.Callback {
+            override fun onSizeChange(size: Int) {
+                val text = getString(R.string.count_fmt, size)
+                binding.countTextView.text = text
+            }
+        }
     }
 
     fun onBtnClear(view: View) {

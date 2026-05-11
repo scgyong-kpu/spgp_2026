@@ -16,6 +16,10 @@ class PathView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ): View(context, attrs, defStyleAttr) {
+    interface Callback {
+        fun onSizeChange(size: Int)
+    }
+    var callback: Callback? = null
     var points = arrayListOf<PointF>()
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action != MotionEvent.ACTION_DOWN) {
@@ -27,6 +31,7 @@ class PathView @JvmOverloads constructor(
         val pt = PointF(x, y)
         points.add(pt)
         buildPath()
+        callback?.onSizeChange(points.size)
         invalidate()
 
         return super.onTouchEvent(event)
@@ -65,6 +70,7 @@ class PathView @JvmOverloads constructor(
     fun clear() {
         points.clear()
         path.reset()
+        callback?.onSizeChange(points.size)
         invalidate()
     }
 
