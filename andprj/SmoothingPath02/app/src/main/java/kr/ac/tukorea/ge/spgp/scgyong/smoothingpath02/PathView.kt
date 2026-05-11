@@ -26,33 +26,37 @@ class PathView @JvmOverloads constructor(
         val y = event.y
         val pt = PointF(x, y)
         points.add(pt)
-        Log.d(javaClass.simpleName, "Points count=${points.size} $points")
+        buildPath()
         invalidate()
 
         return super.onTouchEvent(event)
     }
 
+    var path = Path()
     override fun onDraw(canvas: Canvas) {
+        canvas.drawPath(path, paint)
+
+        super.onDraw(canvas)
+    }
+
+    private fun buildPath() {
+        path.reset()
         if (points.size < 2) {
             return
         }
-        val path = Path()
 
         val first = points[0]
         path.moveTo(first.x, first.y)
 
-        for (i in 1..< points.size) {
+        for (i in 1..<points.size) {
             val pt = points[i]
             path.lineTo(pt.x, pt.y)
         }
+    }
 
-        val paint = Paint()
-        paint.style = Paint.Style.STROKE
-        paint.color = "#38a8ef".toColorInt()
-        paint.strokeWidth = 2.0f
-
-        canvas.drawPath(path, paint)
-
-        super.onDraw(canvas)
+    val paint = Paint().apply {
+        style = Paint.Style.STROKE
+        color = "#38a8ef".toColorInt()
+        strokeWidth = 2.0f
     }
 }
