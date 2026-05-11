@@ -23,10 +23,15 @@ class MainActivity : AppCompatActivity() {
         }
         binding.pathView.callback = object : PathView.Callback {
             override fun onSizeChange(size: Int) {
-                val text = getString(R.string.count_fmt, size)
-                binding.countTextView.text = text
+                updateCount(size)
             }
         }
+        updateCount(0)
+    }
+
+    private fun updateCount(size: Int) {
+        val text = getString(R.string.count_fmt, size)
+        binding.countTextView.text = text
     }
 
     fun onBtnClear(view: View) {
