@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.toColorInt
@@ -19,6 +18,8 @@ class PathView @JvmOverloads constructor(
     interface Callback {
         fun onSizeChange(size: Int)
     }
+
+    var closed: Boolean = false
     var callback: Callback? = null
     var points = arrayListOf<PointF>()
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -64,6 +65,10 @@ class PathView @JvmOverloads constructor(
         for (i in 1..<points.size) {
             val pt = points[i]
             path.lineTo(pt.x, pt.y)
+        }
+
+        if (closed) {
+            path.close()
         }
     }
 
