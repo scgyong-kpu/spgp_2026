@@ -25,6 +25,7 @@ class PathView @JvmOverloads constructor(
         val y = event.y
         val pt = PointF(x, y)
         points.add(pt)
+        invalidate()
 
         Log.d(javaClass.simpleName, "Count=${points.size} Points=$points")
 
