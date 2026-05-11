@@ -1,4 +1,8 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.map
+
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.obstacle.AnimObstacle
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.obstacle.FallingObstacle
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.obstacle.SimpleObstacle
 
 object MapObjectCatalog {
     // MapObjectCatalog 는 이 게임에서 등장하는 MapObject 생성 규칙을 한 번에 등록하는 곳이다.

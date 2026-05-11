@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.map
 
 import android.graphics.Rect
 import android.graphics.RectF

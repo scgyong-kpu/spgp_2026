@@ -1,7 +1,9 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.obstacle
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.map.MapObject
+
 // Obstacle 은 CookieRun 장애물들의 공통 부모이다.
 // stage 문자 'X' 는 SimpleObstacle, 'Y'/'Z' 는 AnimObstacle 처럼
 // 실제 생성되는 하위 클래스는 MapObjectCatalog 가 결정한다.

@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs
+package kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.map
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 

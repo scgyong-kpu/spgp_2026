@@ -8,11 +8,11 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 import kr.ac.tukorea.ge.spgp2026.cookierun.game.layers.MainLayer
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.CollisionChecker
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.IPausable
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.MapLoader
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.MapObjectCatalog
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.Player
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.common.IPausable
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.controller.CollisionChecker
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.map.MapLoader
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.map.MapObjectCatalog
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.player.Player
 
 class MainScene(gctx: GameContext, private val stage: Int, cookieId: Int) : Scene(gctx) {
     companion object {
