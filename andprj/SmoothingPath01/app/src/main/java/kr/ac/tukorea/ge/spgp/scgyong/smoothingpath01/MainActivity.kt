@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 updateSize(size)
             }
         }
-//        updateSize(0)
+        updateSize(0)
     }
     private fun updateSize(size: Int) {
         val text = getString(R.string.count_fmt, size)
