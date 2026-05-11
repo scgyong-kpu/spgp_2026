@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SmoothingPath02</string>
+    <string name="count_fmt">Count: %1$d</string>
 </resources>
