@@ -23,6 +23,11 @@ class PathView @JvmOverloads constructor(
     }
 
     var closed: Boolean = false
+        set(value) {
+            field = value
+            buildPath()
+            invalidate()
+        }
     var callback: Callback? = null
     val points = arrayListOf<PointF>()
 
