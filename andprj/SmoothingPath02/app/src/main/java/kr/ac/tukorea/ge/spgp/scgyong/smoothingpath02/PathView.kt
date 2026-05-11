@@ -20,6 +20,11 @@ class PathView @JvmOverloads constructor(
     }
 
     var closed: Boolean = false
+        set(value) {
+            field = value
+            buildPath()
+            invalidate()
+        }
     var callback: Callback? = null
     var points = arrayListOf<PointF>()
     override fun onTouchEvent(event: MotionEvent?): Boolean {
