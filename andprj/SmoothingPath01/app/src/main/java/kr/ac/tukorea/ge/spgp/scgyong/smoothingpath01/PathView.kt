@@ -59,6 +59,12 @@ class PathView @JvmOverloads constructor(
         }
     }
 
+    fun clear() {
+        points.clear()
+        buildPath()
+        invalidate()
+    }
+
     val paint = Paint().apply {
         style = Paint.Style.STROKE
         strokeWidth = 2f
