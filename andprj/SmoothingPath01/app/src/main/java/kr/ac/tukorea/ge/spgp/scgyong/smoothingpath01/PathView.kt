@@ -37,7 +37,12 @@ class PathView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
 
-        if (points.size < 2) return
+        if (points.isEmpty()) return
+        if (points.size == 1) {
+            val pt = points[0]
+            canvas.drawCircle(pt.x, pt.y, 5f, paint)
+            return
+        }
 
         canvas.drawPath(path, paint)
         super.onDraw(canvas)
