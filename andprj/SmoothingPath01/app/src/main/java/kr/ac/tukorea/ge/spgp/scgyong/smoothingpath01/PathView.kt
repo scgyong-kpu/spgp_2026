@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
+import android.telecom.Call
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -16,6 +17,11 @@ class PathView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ): View(context, attrs, defStyleAttr) {
+
+    interface Callback {
+        fun onSizeChanged(size: Int)
+    }
+    var callback: Callback? = null
     val points = arrayListOf<PointF>()
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -26,6 +32,7 @@ class PathView @JvmOverloads constructor(
         val pt = PointF(x, y)
         points.add(pt)
         buildPath()
+        callback?.onSizeChanged(points.size)
         invalidate()
 
         Log.d(javaClass.simpleName, "Count=${points.size} Points=$points")
@@ -62,6 +69,7 @@ class PathView @JvmOverloads constructor(
     fun clear() {
         points.clear()
         buildPath()
+        callback?.onSizeChanged(points.size)
         invalidate()
     }
 
