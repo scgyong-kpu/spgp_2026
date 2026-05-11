@@ -1,4 +1,7 @@
 package kr.ac.tukorea.ge.spgp.scgyong.smoothingpath02
 
-class PathView {
+import android.content.Context
+import android.view.View
+
+class PathView(context: Context): View(context) {
 }
