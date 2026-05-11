@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import kr.ac.tukorea.ge.spgp2026.cookierun.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.cookierun.R
 import kr.ac.tukorea.ge.spgp2026.cookierun.databinding.ActivityMainBinding
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.CookieCatalog
-import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.CookieInfo
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.player.CookieCatalog
+import kr.ac.tukorea.ge.spgp2026.cookierun.game.objs.player.CookieInfo
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
