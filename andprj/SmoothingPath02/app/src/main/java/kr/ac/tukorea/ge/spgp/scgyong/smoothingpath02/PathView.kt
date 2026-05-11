@@ -62,6 +62,12 @@ class PathView @JvmOverloads constructor(
         }
     }
 
+    fun clear() {
+        points.clear()
+        path.reset()
+        invalidate()
+    }
+
     val paint = Paint().apply {
         style = Paint.Style.STROKE
         color = "#38a8ef".toColorInt()
