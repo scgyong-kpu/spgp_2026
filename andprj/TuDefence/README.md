@@ -54,12 +54,28 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 
 - [ ] `assets/map/desert.tmj` 추가
 - [ ] tile image 추가
+- [ ] TMJ 파일을 `kotlinx.serialization` 으로 읽기
+- [ ] TMJ 전체 schema 를 만들지 않고 현재 필요한 필드만 `data class` 로 선언
 - [ ] `a2dg` 에 `TiledBackground` 추가
 - [ ] `TiledBackground` 로 배경 표시
 - [ ] 이번 게임 전용 `DesertMapBg` 로 상속 분리
 - [ ] touch 한 좌표의 tile index 를 debug log 로 확인
 - [ ] 설치 가능한 tile 판정 구현
 - [ ] 포탑이 차지하는 2 x 2 tile 영역 검사
+
+### Map Json 파싱 방법 선정
+
+Tiled 에서 저장한 `.tmj` 파일은 JSON 형식이다. 따라서 파일을 읽는 방법은 여러 가지가 있지만, 이번 프로젝트는 수업용 예제이므로 "빨리 읽는 것"뿐 아니라 "학생들이 구조를 이해할 수 있는가"도 함께 고려해야 한다.
+
+Android 기본 API 인 `org.json.JSONObject` 를 쓰면 별도 의존성을 추가하지 않아도 된다. 하지만 `getInt()`, `getString()`, `getJSONArray()` 같은 호출이 반복되어 코드가 길어지고, JSON 의 구조가 Kotlin type 으로 드러나지 않는다. 작은 실험 코드에는 편하지만, map data 를 계속 확장할 예정인 프로젝트에는 유지보수가 불편해진다.
+
+quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법도 있다. 이 방식은 처음 시작할 때 빠르고, 전체 JSON 구조를 빠짐없이 class 로 만들어 준다는 장점이 있다. 반면 Tiled 는 `wangsets`, `tiledversion`, `nextlayerid` 처럼 지금 단계에서 쓰지 않는 정보도 많이 저장한다. 자동 생성 class 를 그대로 사용하면 수업 초반부터 코드가 커지고, 정작 우리가 필요한 정보가 무엇인지 흐려질 수 있다.
+
+그래서 이번 프로젝트에서는 `kotlinx.serialization` 을 사용한다. TMJ 전체 schema 를 모두 옮기지 않고, 지금 필요한 필드만 `@Serializable data class` 로 선언한다. 예를 들어 현재 단계에서는 `width`, `height`, `tilewidth`, `tileheight`, `layers.data`, `tilesets.image` 정도가 핵심이다.
+
+`Json { ignoreUnknownKeys = true }` 옵션을 사용하면 data class 에 선언하지 않은 필드는 자동으로 무시된다. 덕분에 Tiled 가 저장한 부가 정보는 그대로 파일에 남겨 두면서도, Kotlin 코드에서는 현재 필요한 구조만 작게 다룰 수 있다.
+
+이 방식은 JSON 구조를 Kotlin 의 `data class` 로 설명할 수 있고, 이후 필요한 필드가 생길 때마다 class 에 property 를 하나씩 추가해 나갈 수 있다. 즉, quicktype 의 "타입으로 읽는다"는 장점은 유지하면서도, 수업 단계에 맞게 코드 크기를 조절할 수 있다.
 
 ## Map Selection
 
