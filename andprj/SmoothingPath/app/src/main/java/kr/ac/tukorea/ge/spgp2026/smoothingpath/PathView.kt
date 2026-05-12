@@ -20,7 +20,7 @@ class PathView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-): View(context, attrs, defStyleAttr) {
+): View(context, attrs, defStyleAttr), ValueAnimator.AnimatorUpdateListener {
 
     val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.plane_240)
 
@@ -96,12 +96,17 @@ class PathView @JvmOverloads constructor(
     val animator: ValueAnimator by lazy {
         ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 2000L
-            addUpdateListener {
-                val value = it.animatedValue as Float
-                Log.d(javaClass.simpleName, "Anim value=$value")
-            }
+            // PathView 가 AnimatorUpdateListener 를 직접 구현하므로,
+            // 람다 대신 바깥 PathView 인스턴스(this@PathView)를 listener 로 넘길 수 있다.
+            addUpdateListener(this@PathView)
         }
     }
+
+    override fun onAnimationUpdate(animation: ValueAnimator) {
+        val value = animation.animatedValue as Float
+        Log.d(javaClass.simpleName, "Anim value=$value")
+    }
+
     fun startPathAnimation() {
         val pathLength = PathMeasure(path, false).length
         animator.setFloatValues(0f, pathLength)
