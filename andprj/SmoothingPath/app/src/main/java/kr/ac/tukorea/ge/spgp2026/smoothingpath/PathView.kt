@@ -106,7 +106,6 @@ class PathView @JvmOverloads constructor(
 
     val animator: ValueAnimator by lazy {
         ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = 2000L
             // PathView 가 AnimatorUpdateListener 를 직접 구현하므로,
             // 람다 대신 바깥 PathView 인스턴스(this@PathView)를 listener 로 넘길 수 있다.
             addUpdateListener(this@PathView)
@@ -123,6 +122,7 @@ class PathView @JvmOverloads constructor(
     fun startPathAnimation() {
         val pathLength = pathMeasure.length
         animator.setFloatValues(0f, pathLength)
+        animator.duration = pathLength.toLong() // 애니메이션의 길이를 Path 의 길이에 비례하도록 조절한다.
         animator.start()
     }
 
