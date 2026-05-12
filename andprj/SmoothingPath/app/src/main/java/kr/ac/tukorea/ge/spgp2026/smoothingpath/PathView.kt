@@ -40,7 +40,9 @@ class PathView @JvmOverloads constructor(
     val points = arrayListOf<PointF>()
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action != MotionEvent.ACTION_DOWN) return false
+        val action = event?.action
+        if (action != MotionEvent.ACTION_DOWN &&
+            action != MotionEvent.ACTION_MOVE) return false
 
         val x = event.x
         val y = event.y
@@ -61,7 +63,7 @@ class PathView @JvmOverloads constructor(
 
         Log.d(javaClass.simpleName, "Count=${points.size} Points=$points")
 
-        return super.onTouchEvent(event)
+        return true
     }
 
     val path = Path()
