@@ -104,7 +104,9 @@ class PathView @JvmOverloads constructor(
 
     override fun onAnimationUpdate(animation: ValueAnimator) {
         val value = animation.animatedValue as Float
-        Log.d(javaClass.simpleName, "Anim value=$value")
+        val pos = FloatArray(2)
+        PathMeasure(path, false).getPosTan(value, pos, null)
+        Log.d(javaClass.simpleName, "Anim value=$value pos=(${pos[0]}, ${pos[1]})")
     }
 
     fun startPathAnimation() {
