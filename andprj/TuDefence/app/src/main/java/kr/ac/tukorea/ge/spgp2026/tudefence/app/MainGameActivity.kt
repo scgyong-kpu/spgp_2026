@@ -8,9 +8,13 @@ import androidx.core.view.WindowInsetsCompat
 import kr.ac.tukorea.ge.spgp2026.a2dg.activity.BaseGameActivity
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 
 class MainGameActivity : BaseGameActivity() {
+    override val drawsDebugGrid: Boolean = BuildConfig.DEBUG
+    override val drawsDebugInfo: Boolean = BuildConfig.DEBUG
+    override val drawsFpsGraph: Boolean = BuildConfig.DEBUG
     override fun createRootScene(gctx: GameContext): Scene {
         return object:Scene(gctx) {}
     }
