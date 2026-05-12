@@ -7,6 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 
 class MainScene(gctx: GameContext): Scene(gctx) {
+    override val clipsRect: Boolean = true
     enum class Layer {
         BG,
     }
