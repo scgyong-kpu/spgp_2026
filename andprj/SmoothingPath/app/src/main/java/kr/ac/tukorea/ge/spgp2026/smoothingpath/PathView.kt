@@ -48,6 +48,12 @@ class PathView @JvmOverloads constructor(
         points.add(pt)
         if (points.size == 1) {
             planePosition.set(pt)
+            planeAngle = 0f
+        } else if (points.size == 2) {
+            val dx = x - planePosition.x
+            val dy = y - planePosition.y
+            val angleRadian = atan2(dy, dx)
+            planeAngle = Math.toDegrees(angleRadian.toDouble()).toFloat() + 90f
         }
         buildPath()
         callback?.onSizeChanged(points.size)
@@ -104,6 +110,8 @@ class PathView @JvmOverloads constructor(
     }
 
     fun clear() {
+        planeAngle = 0f
+        animator.cancel()
         points.clear()
         buildPath()
         callback?.onSizeChanged(points.size)
