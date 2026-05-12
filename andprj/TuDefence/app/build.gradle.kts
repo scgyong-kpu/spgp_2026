@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    implementation(":a2dg")
+    implementation(project(":a2dg"))
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
