@@ -54,6 +54,11 @@ class PathView @JvmOverloads constructor(
     }
 
     val path = Path()
+    // PathMeasure 는 Path 위의 거리(length)를 실제 좌표로 바꿔 주는 도구다.
+    // 애니메이션 중에는 매 프레임 쓰이므로 매번 새로 만들지 않고 멤버로 재사용한다.
+    val pathMeasure = PathMeasure()
+    // getPosTan() 은 결과 좌표를 FloatArray 에 채워 주므로, 이 배열도 함께 재사용한다.
+    val pathPosition = FloatArray(2)
 
     override fun onDraw(canvas: Canvas) {
 
@@ -84,6 +89,8 @@ class PathView @JvmOverloads constructor(
         if (closed) {
             path.close()
         }
+        // Path 내용을 다시 만들었으므로, PathMeasure 도 같은 Path 를 바라보도록 갱신한다.
+        pathMeasure.setPath(path, false)
     }
 
     fun clear() {
@@ -104,13 +111,12 @@ class PathView @JvmOverloads constructor(
 
     override fun onAnimationUpdate(animation: ValueAnimator) {
         val value = animation.animatedValue as Float
-        val pos = FloatArray(2)
-        PathMeasure(path, false).getPosTan(value, pos, null)
-        Log.d(javaClass.simpleName, "Anim value=$value pos=(${pos[0]}, ${pos[1]})")
+        pathMeasure.getPosTan(value, pathPosition, null)
+        Log.d(javaClass.simpleName, "Anim value=$value pos=(${pathPosition[0]}, ${pathPosition[1]})")
     }
 
     fun startPathAnimation() {
-        val pathLength = PathMeasure(path, false).length
+        val pathLength = pathMeasure.length
         animator.setFloatValues(0f, pathLength)
         animator.start()
     }
