@@ -36,6 +36,12 @@ class PathView @JvmOverloads constructor(
             buildPath()
             invalidate()
         }
+    var curved: Boolean = false
+        set(value) {
+            field = value
+            buildPath()
+            invalidate()
+        }
     var callback: Callback? = null
     val points = arrayListOf<PointF>()
 
@@ -96,6 +102,7 @@ class PathView @JvmOverloads constructor(
     }
 
     private fun buildPath() {
+        Log.d(javaClass.simpleName, "buildPath: closed=$closed curved=$curved")
         path.reset()
         if (points.size < 2) return
         val pt = points[0]

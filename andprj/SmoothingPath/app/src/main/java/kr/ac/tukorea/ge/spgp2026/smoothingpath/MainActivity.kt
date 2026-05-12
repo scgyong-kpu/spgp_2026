@@ -41,6 +41,11 @@ class MainActivity : AppCompatActivity() {
         binding.pathView.closed = binding.closedCheckbox.isChecked
     }
 
+
+    fun onCheckCurved(view: View) {
+        binding.pathView.curved = binding.curvedCheckbox.isChecked
+    }
+
     fun onBtnStartAnimation(view: View) {
         binding.pathView.startPathAnimation()
     }

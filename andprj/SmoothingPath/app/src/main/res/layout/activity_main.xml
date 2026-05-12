@@ -19,13 +19,6 @@
             android:text="Start"
             android:onClick="onBtnStartAnimation"
             />
-        <CheckBox
-            android:id="@+id/closedCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Closed"
-            android:onClick="onCheckClosed"
-            />
         <TextView
             android:id="@+id/countTextView"
             android:layout_width="0dp"
@@ -39,6 +32,31 @@
             android:layout_height="wrap_content"
             android:text="Clear"
             android:onClick="onBtnClear"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+        <CheckBox
+            android:id="@+id/closedCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Closed"
+            android:onClick="onCheckClosed"
+            />
+        <View
+            android:layout_width="20dp"
+            android:layout_height="1dp"
+            />
+        <CheckBox
+            android:id="@+id/curvedCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Curved"
+            android:onClick="onCheckCurved"
             />
     </LinearLayout>
 
