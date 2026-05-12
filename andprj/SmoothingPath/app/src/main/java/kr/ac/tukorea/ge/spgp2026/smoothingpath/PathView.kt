@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp.scgyong.smoothingpath01
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -91,8 +92,17 @@ class PathView @JvmOverloads constructor(
         invalidate()
     }
 
+    val animator: ValueAnimator by lazy {
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 2000L
+            addUpdateListener {
+                val value = it.animatedValue as Float
+                Log.d(javaClass.simpleName, "Anim value=$value")
+            }
+        }
+    }
     fun startPathAnimation() {
-        Log.d(javaClass.simpleName, "startPathAnimation: not implemented")
+        animator.start()
     }
 
     val paint = Paint().apply {
