@@ -105,17 +105,52 @@ class PathView @JvmOverloads constructor(
         Log.d(javaClass.simpleName, "buildPath: closed=$closed curved=$curved")
         path.reset()
         if (points.size < 2) return
-        val pt = points[0]
-        path.moveTo(pt.x, pt.y)
-        for (i in 1..<points.size) {
-            val pt = points[i]
-            path.lineTo(pt.x, pt.y)
+        if (curved) {
+            buildCurvedPath()
+        } else {
+            buildStraightPath()
         }
         if (closed) {
             path.close()
         }
         // Path 내용을 다시 만들었으므로, PathMeasure 도 같은 Path 를 바라보도록 갱신한다.
         pathMeasure.setPath(path, false)
+    }
+
+    private fun buildStraightPath() {
+        val pt = points[0]
+        path.moveTo(pt.x, pt.y)
+        for (i in 1..<points.size) {
+            val pt = points[i]
+            path.lineTo(pt.x, pt.y)
+        }
+    }
+
+    private fun buildCurvedPath() {
+        // Catmull-Rom 방식으로 입력 점을 지나가는 부드러운 곡선을 만든다.
+        // Android Path 는 cubicTo() 에 control point 2개와 도착점을 넘겨야 하므로,
+        // 주변 점들을 참고해 각 구간의 control point 를 자동으로 계산한다.
+        val first = points[0]
+        path.moveTo(first.x, first.y)
+
+        for (i in 0 until points.size - 1) {
+            // p1 -> p2 구간을 그리기 위해 앞쪽 점 p0, 뒤쪽 점 p3 을 함께 본다.
+            // 양 끝에서는 더 앞/뒤의 점이 없으므로 현재 끝점을 한 번 더 사용한다.
+            val p0 = points.getOrElse(i - 1) { points[i] }
+            val p1 = points[i]
+            val p2 = points[i + 1]
+            val p3 = points.getOrElse(i + 2) { points[i + 1] }
+
+            // 1/6 은 Catmull-Rom spline 을 cubic Bezier 로 바꿀 때 쓰는 기본 계수다.
+            // p0->p2 방향은 p1 에서 출발하는 기울기를 만들고,
+            // p1->p3 방향은 p2 로 들어오는 기울기를 만든다.
+            val cp1x = p1.x + (p2.x - p0.x) / 6f
+            val cp1y = p1.y + (p2.y - p0.y) / 6f
+            val cp2x = p2.x - (p3.x - p1.x) / 6f
+            val cp2y = p2.y - (p3.y - p1.y) / 6f
+
+            path.cubicTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y)
+        }
     }
 
     fun clear() {
