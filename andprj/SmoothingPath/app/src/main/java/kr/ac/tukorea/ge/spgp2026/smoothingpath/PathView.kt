@@ -14,7 +14,9 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.toColorInt
+import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.smoothingpath.R
+import kotlin.math.atan2
 
 class PathView @JvmOverloads constructor(
     context: Context,
@@ -62,16 +64,20 @@ class PathView @JvmOverloads constructor(
     val pathMeasure = PathMeasure()
     // getPosTan() 은 결과 좌표를 FloatArray 에 채워 주므로, 이 배열도 함께 재사용한다.
     val pathPosition = FloatArray(2)
+    val pathTangent = FloatArray(2)
     val planePosition = PointF()
+    var planeAngle = 0f
 
     override fun onDraw(canvas: Canvas) {
 
         if (points.isEmpty()) return
 
         val first = points[0]
-        canvas.drawBitmap(bitmap,
-            planePosition.x - bitmap.width / 2,
-            planePosition.y - bitmap.height / 2, null)
+        canvas.withRotation(planeAngle, planePosition.x, planePosition.y) {
+            drawBitmap(bitmap,
+                planePosition.x - bitmap.width / 2,
+                planePosition.y - bitmap.height / 2, null)
+        }
         if (points.size == 1) {
             canvas.drawCircle(first.x, first.y, 5f, paint)
             return
@@ -114,8 +120,9 @@ class PathView @JvmOverloads constructor(
 
     override fun onAnimationUpdate(animation: ValueAnimator) {
         val value = animation.animatedValue as Float
-        pathMeasure.getPosTan(value, pathPosition, null)
+        pathMeasure.getPosTan(value, pathPosition, pathTangent)
         planePosition.set(pathPosition[0], pathPosition[1])
+        planeAngle = Math.toDegrees(atan2(pathTangent[1], pathTangent[0]).toDouble()).toFloat() + 90f
         invalidate()
     }
 
