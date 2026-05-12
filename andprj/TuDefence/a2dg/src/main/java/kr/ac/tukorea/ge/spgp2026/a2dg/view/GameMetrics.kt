@@ -32,6 +32,8 @@ class GameMetrics {
     // mapPoints() 는 배열을 받는 API 이므로 입력 좌표 변환에 쓸 작은 버퍼를 미리 만들어 재사용한다.
     private val touchPoint = floatArrayOf(0f, 0f)
     // fromScreen(), toScreen() 이 PointF 를 매번 새로 만들지 않도록 반환용 객체도 하나만 재사용한다.
+    // 단, 이 객체는 다음 좌표 변환 때 값이 바뀌므로 오래 보관하면 안 된다.
+    // 두 점 이상을 동시에 보관해야 한다면 fromScreen(x, y, to) 처럼 호출자가 넘긴 PointF 에 결과를 담는다.
     private val sharedPointForReturn = PointF()
 
     fun setSize(width: Float, height: Float) {
@@ -62,20 +64,22 @@ class GameMetrics {
     }
 
     // 실제 화면 좌표를 가상 좌표계 좌표로 되돌린다.
-    fun fromScreen(x: Float, y: Float): PointF {
+    fun fromScreen(x: Float, y: Float, to: PointF? = null): PointF {
         touchPoint[0] = x
         touchPoint[1] = y
         inverseTransformMatrix.mapPoints(touchPoint)
-        sharedPointForReturn.set(touchPoint[0], touchPoint[1])
-        return sharedPointForReturn
+        val point = to ?: sharedPointForReturn
+        point.set(touchPoint[0], touchPoint[1])
+        return point
     }
 
     // 가상 좌표계 좌표를 실제 화면 좌표로 바꾼다.
-    fun toScreen(x: Float, y: Float): PointF {
+    fun toScreen(x: Float, y: Float, to: PointF? = null): PointF {
         touchPoint[0] = x
         touchPoint[1] = y
         transformMatrix.mapPoints(touchPoint)
-        sharedPointForReturn.set(touchPoint[0], touchPoint[1])
-        return sharedPointForReturn
+        val point = to ?: sharedPointForReturn
+        point.set(touchPoint[0], touchPoint[1])
+        return point
     }
 }
