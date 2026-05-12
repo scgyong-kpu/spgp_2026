@@ -44,6 +44,9 @@ class PathView @JvmOverloads constructor(
         val y = event.y
         val pt = PointF(x, y)
         points.add(pt)
+        if (points.size == 1) {
+            planePosition.set(pt)
+        }
         buildPath()
         callback?.onSizeChanged(points.size)
         invalidate()
@@ -59,6 +62,7 @@ class PathView @JvmOverloads constructor(
     val pathMeasure = PathMeasure()
     // getPosTan() 은 결과 좌표를 FloatArray 에 채워 주므로, 이 배열도 함께 재사용한다.
     val pathPosition = FloatArray(2)
+    val planePosition = PointF()
 
     override fun onDraw(canvas: Canvas) {
 
@@ -66,8 +70,8 @@ class PathView @JvmOverloads constructor(
 
         val first = points[0]
         canvas.drawBitmap(bitmap,
-            first.x - bitmap.width / 2,
-            first.y - bitmap.height / 2, null)
+            planePosition.x - bitmap.width / 2,
+            planePosition.y - bitmap.height / 2, null)
         if (points.size == 1) {
             canvas.drawCircle(first.x, first.y, 5f, paint)
             return
@@ -112,7 +116,8 @@ class PathView @JvmOverloads constructor(
     override fun onAnimationUpdate(animation: ValueAnimator) {
         val value = animation.animatedValue as Float
         pathMeasure.getPosTan(value, pathPosition, null)
-        Log.d(javaClass.simpleName, "Anim value=$value pos=(${pathPosition[0]}, ${pathPosition[1]})")
+        planePosition.set(pathPosition[0], pathPosition[1])
+        invalidate()
     }
 
     fun startPathAnimation() {
