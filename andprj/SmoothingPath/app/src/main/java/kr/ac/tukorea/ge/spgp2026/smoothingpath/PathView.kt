@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp.scgyong.smoothingpath01
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -11,12 +12,15 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.toColorInt
+import kr.ac.tukorea.ge.spgp2026.smoothingpath.R
 
 class PathView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ): View(context, attrs, defStyleAttr) {
+
+    val bitmap = BitmapFactory.decodeResource(resources, R.mipmap.plane_240)
 
     interface Callback {
         fun onSizeChanged(size: Int)
@@ -52,9 +56,13 @@ class PathView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
 
         if (points.isEmpty()) return
+
+        val first = points[0]
+        canvas.drawBitmap(bitmap,
+            first.x - bitmap.width / 2,
+            first.y - bitmap.height / 2, null)
         if (points.size == 1) {
-            val pt = points[0]
-            canvas.drawCircle(pt.x, pt.y, 5f, paint)
+            canvas.drawCircle(first.x, first.y, 5f, paint)
             return
         }
 
