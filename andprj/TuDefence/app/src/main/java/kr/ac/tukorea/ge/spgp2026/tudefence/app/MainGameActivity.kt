@@ -16,6 +16,8 @@ class MainGameActivity : BaseGameActivity() {
     override val drawsDebugInfo: Boolean = BuildConfig.DEBUG
     override val drawsFpsGraph: Boolean = BuildConfig.DEBUG
     override fun createRootScene(gctx: GameContext): Scene {
+        // 게임의 가로 세로 크기를 3200x1800으로 설정. 타일을 32개x18개로 배치할 수 있다.
+        gctx.metrics.setSize(3200f, 1800f)
         return object:Scene(gctx) {}
     }
 }
