@@ -60,9 +60,17 @@ class TiledBackground(
 
     // 외부에서 scroll 위치를 직접 지정할 수 있게 해 둔다.
     // 지금 단계에서는 0,0 이지만, 나중에 카메라 이동이나 스크롤 map 을 실험할 때 사용할 수 있다.
+    // 단, 고정 map 에서는 배경 바깥이 보이면 안 되므로 대입 직후 clampScroll() 로 범위를 제한한다.
     fun scrollTo(x: Float, y: Float) {
         scrollX = x
         scrollY = y
+        clampScroll()
+    }
+
+    // drag gesture 처럼 현재 위치에서 상대적으로 움직일 때 사용하는 helper 이다.
+    // 실제 제한은 scrollTo() 안에서 처리하므로, 호출자는 범위 계산을 몰라도 된다.
+    fun scrollBy(dx: Float, dy: Float) {
+        scrollTo(scrollX + dx, scrollY + dy)
     }
 
     // TMJ 에 여러 layer 가 있을 때 그릴 layer 를 고른다.
@@ -85,12 +93,56 @@ class TiledBackground(
         tileHeight = height
     }
 
+    fun setUniformTileSize(size: Float, focusX: Float, focusY: Float) {
+        // focusX/focusY 는 화면 안에서 손가락이 가리키는 게임 좌표이다.
+        // 확대/축소 후에도 그 지점이 같은 map 위치를 가리키게 하려면
+        // scroll 도 같은 비율로 같이 조정해야 한다.
+        //
+        // 예를 들어 focusX 가 500 이고 scrollX 가 100 이면, 손가락 아래에는 map 의 x=600 지점이 보인다.
+        // tile 크기를 2배로 키우면 map 좌표도 2배 멀어지므로, 새 scrollX 는 600*2 - 500 이 되어야
+        // 손가락 아래에 같은 지점이 남는다.
+        val ratio = size / tileWidth
+        scrollX = (scrollX + focusX) * ratio - focusX
+        scrollY = (scrollY + focusY) * ratio - focusY
+        setTileSize(size, size)
+
+        // 확대/축소는 map 전체 크기 자체를 바꾼다.
+        // 특히 축소하면 이전에는 유효했던 scroll 위치가 새 map 크기에서는 너무 클 수 있으므로,
+        // tile 크기를 바꾼 뒤에도 반드시 다시 clamp 해야 배경 바깥이 드러나지 않는다.
+        clampScroll()
+    }
+
     fun fullWidth(): Float {
         return map.width * tileWidth
     }
 
     fun fullHeight(): Float {
         return map.height * tileHeight
+    }
+
+    private fun clampScroll() {
+        if (wraps) return
+
+        // scroll 은 "map 안에서 화면 왼쪽 위가 가리키는 위치"이다.
+        // 따라서 최솟값은 0, 최댓값은 map 전체 크기에서 화면 크기를 뺀 값이다.
+        // 이 범위를 벗어나면 배경 밖 빈 영역이 보이고, 그 뒤의 debug grid 도 드러난다.
+        //
+        // wraps == true 인 무한 반복 배경에서는 바깥이라는 개념이 없으므로 clamp 하지 않는다.
+        // 하지만 타워 디펜스의 고정 지도는 실제 맵 가장자리 너머를 보여주면 안 되므로 false 일 때만 제한한다.
+        scrollX = scrollX.coerceIn(0f, maxScrollX())
+        scrollY = scrollY.coerceIn(0f, maxScrollY())
+    }
+
+    private fun maxScrollX(): Float {
+        // map 이 화면보다 넓으면 오른쪽 끝까지 볼 수 있도록 fullWidth - screenWidth 만큼 움직일 수 있다.
+        // 반대로 map 이 화면보다 작거나 같으면 움직일 여지가 없으므로 최대 scroll 은 0 이다.
+        return maxOf(0f, fullWidth() - gctx.metrics.width)
+    }
+
+    private fun maxScrollY(): Float {
+        // 세로 방향도 같은 원리이다.
+        // 축소해서 fullHeight 가 화면 높이보다 작아진 경우에는 0 으로 고정되어 위/아래 빈 공간이 생기지 않는다.
+        return maxOf(0f, fullHeight() - gctx.metrics.height)
     }
 
     override fun update(gctx: GameContext) {
