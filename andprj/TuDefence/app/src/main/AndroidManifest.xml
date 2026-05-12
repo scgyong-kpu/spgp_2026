@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TuDefence">
         <activity
-            android:name=".MainActivity"
+            android:name=".app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
