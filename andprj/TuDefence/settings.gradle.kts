@@ -24,4 +24,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "TuDefence"
 include(":app")
+include(":a2dg")
+
  
