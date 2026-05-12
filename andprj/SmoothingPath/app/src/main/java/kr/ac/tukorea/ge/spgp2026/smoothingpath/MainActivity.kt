@@ -40,4 +40,8 @@ class MainActivity : AppCompatActivity() {
     fun onCheckClosed(view: View) {
         binding.pathView.closed = binding.closedCheckbox.isChecked
     }
+
+    fun onBtnStartAnimation(view: View) {
+        binding.pathView.startPathAnimation()
+    }
 }

@@ -91,6 +91,10 @@ class PathView @JvmOverloads constructor(
         invalidate()
     }
 
+    fun startPathAnimation() {
+        Log.d(javaClass.simpleName, "startPathAnimation: not implemented")
+    }
+
     val paint = Paint().apply {
         style = Paint.Style.STROKE
         strokeWidth = 2f
