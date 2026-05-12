@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PathMeasure
 import android.graphics.PointF
 import android.telecom.Call
 import android.util.AttributeSet
@@ -102,6 +103,8 @@ class PathView @JvmOverloads constructor(
         }
     }
     fun startPathAnimation() {
+        val pathLength = PathMeasure(path, false).length
+        animator.setFloatValues(0f, pathLength)
         animator.start()
     }
 
