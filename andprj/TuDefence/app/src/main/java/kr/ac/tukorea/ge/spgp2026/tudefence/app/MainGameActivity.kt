@@ -10,6 +10,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 
 class MainGameActivity : BaseGameActivity() {
     override val drawsDebugGrid: Boolean = BuildConfig.DEBUG
@@ -18,6 +19,6 @@ class MainGameActivity : BaseGameActivity() {
     override fun createRootScene(gctx: GameContext): Scene {
         // 게임의 가로 세로 크기를 3200x1800으로 설정. 타일을 32개x18개로 배치할 수 있다.
         gctx.metrics.setSize(3200f, 1800f)
-        return object:Scene(gctx) {}
+        return MainScene(gctx)
     }
 }
