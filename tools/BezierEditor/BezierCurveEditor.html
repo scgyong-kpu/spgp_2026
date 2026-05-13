@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)https://math.hws.edu/eck/cs424/notes2013/canvas/bezier.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Bezier Curve Edit</title>
+<script type="text/javascript">
+
+"use strict";
+
+var cubicCanvas;
+var cubicGraphics;
+var cubicPoints;
+var cubicHideSelect;
+var lockSelect;
+
+var mapImg;
+
+function Point2D(x,y) {
+    this.x = x;
+    this.y = y;
+}
+
+function cubicDraw() {
+    var i;
+    cubicGraphics.fillStyle = "white";
+    cubicGraphics.fillRect(0,0,cubicCanvas.width, cubicCanvas.height);
+    if (mapImg && mapImg.width > 0) {
+      cubicGraphics.drawImage(mapImg, 100, 100, mapImg.width, mapImg.height);
+    } else {
+      cubicGraphics.strokeStyle = 'green'
+      cubicGraphics.strokeRect(100, 100, cubicCanvas.width - 200, cubicCanvas.height - 200)
+    }
+    //console.log(mapImg);
+
+    cubicGraphics.lineWidth = 1;
+    if (lockSelect.checked) {
+        cubicGraphics.strokeStyle = "#880000";   
+    }
+    else {
+        cubicGraphics.strokeStyle = "#888888";
+    }
+    for (i = 0; i < cubicPoints.length - 1; i++) {
+        if (i % 3 != 1) {
+            cubicGraphics.beginPath();
+            cubicGraphics.moveTo( cubicPoints[i].x + .5, cubicPoints[i].y + .5 );
+            cubicGraphics.lineTo( cubicPoints[i+1].x + .5, cubicPoints[i+1].y + .5 );
+            cubicGraphics.stroke();
+        }
+    }
+    for (i = 0; i < cubicPoints.length; i++) {
+        if ( i % 3 == 0 ) {
+            cubicGraphics.fillStyle="black";
+            disk(cubicGraphics, cubicPoints[i].x, cubicPoints[i].y, 5);
+        }
+        else {
+            cubicGraphics.fillStyle= "blue";
+            cubicGraphics.fillRect(cubicPoints[i].x - 5, cubicPoints[i].y - 5, 10, 10);
+            
+        }
+    }
+    cubicGraphics.beginPath();
+    cubicGraphics.moveTo(cubicPoints[0].x,cubicPoints[0].y);
+    for (i = 1; i < cubicPoints.length; i += 3) {
+        cubicGraphics.bezierCurveTo(cubicPoints[i].x,cubicPoints[i].y,
+                              cubicPoints[i+1].x,cubicPoints[i+1].y,
+                              cubicPoints[i+2].x,cubicPoints[i+2].y);
+    }
+    cubicGraphics.lineWidth = 2;
+    cubicGraphics.strokeStyle = "black";
+    cubicGraphics.stroke();
+}
+
+
+
+function disk( graphics, x, y, radius ) {
+    graphics.beginPath();
+    graphics.arc(x,y,radius,0,Math.PI*2);
+    graphics.fill();
+    
+}
+
+function doLock() {
+  if (lockSelect.checked) {
+    for (let i = 3; i < cubicPoints.length - 1; i += 3) {
+      cubicPoints[i+1].x = 2*cubicPoints[i].x - cubicPoints[i-1].x;
+      cubicPoints[i+1].y = 2*cubicPoints[i].y - cubicPoints[i-1].y;
+    }
+  }
+  cubicDraw();
+}
+
+
+var draggingCubic = false;
+var dragPointIndex;
+
+function doMouseUp(evt) {
+    draggingCubic = false;
+}
+
+function doCubicMouseDown(evt) {
+    if (draggingCubic) {
+        return;
+    }
+    var r = cubicCanvas.getBoundingClientRect();
+    var x = Math.round(evt.clientX - r.left);
+    var y = Math.round(evt.clientY - r.top);
+    for (var i = cubicPoints.length - 1; i >= 0; i--) {
+        var p = cubicPoints[i];
+        if (Math.abs(p.x - x) <= 5 && Math.abs(p.y - y) <= 5) {
+            draggingCubic = true;
+            dragPointIndex = i;
+            return;
+        }
+    }
+}
+
+function doCubicMouseMove(evt) {
+    if (!draggingCubic) {
+        return;
+    }
+    var r = cubicCanvas.getBoundingClientRect();
+    var x = Math.round(evt.clientX - r.left);
+    var y = Math.round(evt.clientY - r.top);
+    var offsetX = x - cubicPoints[dragPointIndex].x;
+    var offsetY = y - cubicPoints[dragPointIndex].y;
+    cubicPoints[dragPointIndex].x = x;
+    cubicPoints[dragPointIndex].y = y;
+    if ( dragPointIndex % 3 == 0) {
+        if (dragPointIndex > 0) {
+            cubicPoints[dragPointIndex - 1].x += offsetX;
+            cubicPoints[dragPointIndex - 1].y += offsetY;
+        }
+        if (dragPointIndex < cubicPoints.length - 1) {
+            cubicPoints[dragPointIndex + 1].x += offsetX;
+            cubicPoints[dragPointIndex + 1].y += offsetY;
+        }
+    }
+    else if (lockSelect.checked) {
+      moveOtherPoint()
+    }
+    cubicDraw();
+    printOutput()
+}
+
+function moveOtherPoint() {
+  if (dragPointIndex <= 1) return;
+  if (dragPointIndex >= cubicPoints.length - 2) return;
+  if (dragPointIndex % 3 == 0) return;
+
+  let centerPt, otherPt;
+  if (dragPointIndex % 3 == 1) {
+    centerPt = cubicPoints[dragPointIndex - 1]
+    otherPt = cubicPoints[dragPointIndex - 2]
+  } else {
+    centerPt = cubicPoints[dragPointIndex + 1]
+    otherPt = cubicPoints[dragPointIndex + 2]
+  }
+  const dragPt = cubicPoints[dragPointIndex]
+  otherPt.x = 2*centerPt.x - dragPt.x;
+  otherPt.y = 2*centerPt.y - dragPt.y;
+}
+
+function init() {
+    try {
+        cubicCanvas = document.getElementById("cubic");
+        cubicGraphics = cubicCanvas.getContext("2d");
+    }
+    catch (e) {
+        var message = document.getElementById("message");
+        message.innerHTML = "Oops... Sorry, your browser doesn't support the canvas element.";
+        return;
+    }
+    lockSelect = document.getElementById("lock");
+    lockSelect.checked = false;
+    lockSelect.onclick = doLock;
+    cubicPoints = [
+      {"x":60,"y":168},{"x":162,"y":158},{"x":220,"y":87},
+      {"x":220,"y":220}
+    ]
+    mapImg = new Image();
+    // mapImg.src = "map.png"
+    cubicDraw();
+    showCount()
+    document.addEventListener("mouseup", doMouseUp, false);
+    cubicCanvas.addEventListener("mousedown", doCubicMouseDown, false);
+    cubicCanvas.addEventListener("mousemove", doCubicMouseMove, false);
+
+    const img_file = document.getElementById('img_file');
+    img_file.onchange = ()=>{
+      const file = img_file.files[0]
+      if (!file) return;
+      const reader = new FileReader()
+      reader.onload = (e)=>{
+        console.log(e)
+        mapImg = new Image()
+        mapImg.onload = ()=>{
+          console.log({width:mapImg.width, height:mapImg.height})
+          cubicCanvas.width = mapImg.width + 200;
+          cubicCanvas.height = mapImg.height + 200;
+          document.getElementById('filename').innerText = `${mapImg.width}x${mapImg.height}`
+          cubicDraw()
+        }
+        mapImg.src = e.target.result
+      }
+      reader.readAsDataURL(file)
+    }
+    const width = document.getElementById('width');
+    width.onblur = ()=>{
+      printOutput()
+    }
+};
+function showCount() {
+  const pcnt = document.getElementById('pointsCount')
+  pcnt.innerText = cubicPoints.length
+}
+function printPoints() {
+  let str = "[\n  ";
+  for (let i = 0; i < cubicPoints.length; i++) {
+    str += JSON.stringify(cubicPoints[i]);
+    if (i < cubicPoints.length - 1) str += ",";
+    if (i % 3 == 2) str += "\n  ";
+  }
+  str += "\n]";
+  document.getElementById("out").value = str;
+}
+class JavaPrinter {
+  constructor(pt) {
+    this.str = "Path path = new Path();\n";
+    this.str += `path.moveTo(${pt.x}f, ${pt.y}f);\n`;
+  }
+  cubicTo(pts, i) {
+    this.str += `path.cubicTo(${pts[i].x}f, ${pts[i].y}f, ${pts[i+1].x}f, ${pts[i+1].y}f, ${pts[i+2].x}f, ${pts[i+2].y}f);\n`;
+  }
+  finish() {
+  }
+}
+class KotlinPrinter {
+  constructor(pt) {
+    this.str = "val path = Path().apply {\n";
+    this.str += `  moveTo(${pt.x}f, ${pt.y}f)\n`;
+  }
+  cubicTo(pts, i) {
+    this.str += `  cubicTo(${pts[i].x}f, ${pts[i].y}f, ${pts[i+1].x}f, ${pts[i+1].y}f, ${pts[i+2].x}f, ${pts[i+2].y}f)\n`;
+  }
+  finish() {
+    this.str += "}\n";
+  }
+}
+class SvgPrinter {
+  constructor(pt) {
+    this.str = `M ${pt.x},${pt.y}\n`;
+  }
+  cubicTo(pts, i) {
+    this.str += `C ${pts[i].x},${pts[i].y} ${pts[i+1].x},${pts[i+1].y} ${pts[i+2].x},${pts[i+2].y}\n`;
+  }
+  finish() {
+  }
+}
+function printOutput() {
+  let scale = Number(document.getElementById('width').value)
+  if (scale && mapImg && mapImg.width > 0) {
+    scale = scale / mapImg.width
+  } else {
+    scale = scale / (cubicCanvas.width - 200)
+  }
+  function conv(v) {
+    return Math.round((v-100)*scale*10000)/10000
+  }
+  const pts = cubicPoints.map((p)=>{ return { x:conv(p.x), y:conv(p.y)}; });
+  const lang = img.outLanguage.value
+  const clazz = lang == 'java' ? JavaPrinter : lang == 'kotlin' ? KotlinPrinter : SvgPrinter
+  const printer = new clazz(pts[0])
+
+  for (let i = 1; i < cubicPoints.length; i += 3) {
+    printer.cubicTo(pts, i)
+  }
+  printer.finish()
+  document.getElementById("out").value = printer.str;
+}
+function onAddCurve() {
+  const last = cubicPoints[cubicPoints.length-1]
+  let x = last.x
+  let dy = [20, -20, 0]
+  for (let i = 0; i < 3; i++) {
+    x += 10
+    cubicPoints.push(new Point2D(x, last.y + dy[i]))
+  }
+  cubicDraw()
+  showCount()
+  printOutput()
+}
+function onRemoveCurve() {
+  if (cubicPoints.length < 7) return;
+  cubicPoints.pop();
+  cubicPoints.pop();
+  cubicPoints.pop();
+  cubicDraw();
+  showCount()
+  printOutput()
+}
+
+const regexPathApi = /(moveTo\(|cubicTo\()([-f,\.\d\s]+)\)/
+function parsePathApiPoints(line, scale) {
+  const m = line.match(regexPathApi)
+  if (!m) return [];
+  let pts = []
+  let numbers = m[2].split(',').map(s=>Number(s.replace('f','')))
+  while (numbers.length >= 2) {
+    let x = numbers.shift() * scale + 100
+    let y = numbers.shift() * scale + 100
+    pts.push(new Point2D(x, y))
+  }
+  return pts
+}
+const regexSvg = /[MC][^MC]*/g
+function parseSvgPoints(line, scale) {
+  const commands = line.match(regexSvg)
+  if (!commands) return [];
+  let pts = []
+  const numbers = commands.join(' ')
+    .replace(/[MC]/g, ' ')
+    .match(/-?\d+(?:\.\d+)?/g)
+    ?.map(Number) ?? []
+  for (let i = 0; i + 1 < numbers.length; i += 2) {
+    let x = numbers[i] * scale + 100
+    let y = numbers[i + 1] * scale + 100
+    pts.push(new Point2D(x, y))
+  }
+  return pts
+}
+function loadFromText() {
+  let scale = Number(document.getElementById('width').value)
+  if (scale && mapImg && mapImg.width > 0) {
+    scale = mapImg.width / scale
+  } else {
+    scale = (cubicCanvas.width - 200) / scale
+  }
+  const parsers = [ parsePathApiPoints, parseSvgPoints ]
+  try {
+    const text = document.getElementById("out").value
+    let points = []
+    let pts;
+    for (const line of text.split('\n')) {
+      for (const parser of parsers) {
+        pts = parser(line, scale)
+        if (!pts || !pts.length) continue;
+        points = points.concat(pts)
+      }
+    }
+    if (!points.length) return;
+    cubicPoints = points;
+    cubicDraw()
+    showCount()
+  } catch (e) { console.error(e)}
+}
+</script>
+</head>
+<body onload="init()" style="background-color: #CCC">
+
+<noscript><p style="color:red">Sorry, this page requires JavaScript to run.</p></noscript>
+
+<!--[if lt IE 9]>
+<hr>
+<p style="color:red">Sorry, this page uses HTML canvas.<br>
+Canvas is not supported in Internet Explorer 8 or earlier.<br>
+Please use a newer version or a different browser.</p>
+<hr>
+<![endif]-->
+
+   
+<h1>Bezier Curve Editor</h1>
+  <form name="img" id="imgForm" onSubmit="onEditMember();return false">
+    <B>Load BG Image</B>
+    <input type="file" name="img_file" id="img_file" accept="image/*" /> 
+    <span>Image Size:</span><span id="filename"></span>
+    <span>Points:</span><span id="pointsCount"></span>
+    <br/>
+    <p style="font-weight: bold">
+      <input type="checkbox" id="lock">
+      <label for="lock" style="margin-right:1cm">Lock Control Point Pairs</label>
+    </p>
+    <div>
+      <button onclick="onAddCurve();return false;">Add Curve</button>
+      <button onclick="onRemoveCurve();return false;">Remove Curve</button>
+      <span>Width:</span>
+      <input type="number" id="width" size="5" value="1600"/>
+    </div>
+    <canvas width="1000" height="650" id="cubic" style="background-color: white; border: thin solid black"></canvas>
+    <br />
+    <div style="display:flex; flex-direction: row;">
+      <textarea id="out" cols="80" rows="10"></textarea>
+      <button onclick="loadFromText();return false;">Load from output</button>
+      <div>
+        <label><input type="radio" name="outLanguage" onchange="printOutput()" value="java" checked>Java</input></label>
+        <label><input type="radio" name="outLanguage" onchange="printOutput()" value="kotlin">Kotlin</input></label>
+        <label><input type="radio" name="outLanguage" onchange="printOutput()" value="svg">SVG</input></label>
+      </div>
+    </div>
+
+  </form>
+
+
+
+</body></html>

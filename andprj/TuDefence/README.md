@@ -182,8 +182,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 - [x] `WaveGen` 구현
 - [x] 일정 간격으로 enemy 생성
-- [x] enemy 생성 y 좌표를 랜덤으로 결정
-- [x] y 좌표가 특정 구간이면 boss enemy 생성
+- [x] 10% 확률로 boss enemy 생성
 - [ ] enemy 생성 시 boss 여부와 speed ratio 전달
 - [ ] 시간이 지날수록 생성 간격 감소
 - [ ] 최소 생성 간격 제한
