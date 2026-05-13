@@ -1,8 +1,8 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
-import android.graphics.Path
 import android.graphics.PathMeasure
 import android.graphics.Rect
+import androidx.core.graphics.PathParser
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -104,20 +104,9 @@ class Fly private constructor(gctx: GameContext):
             listOf(Rect(560, 0, 630, 70), Rect(630, 0, 700, 70)),
         )
 
-        val path = Path().apply {
-            moveTo(0f, 900f)
-            lineTo(250f, 650f)
-            lineTo(50f, 250f)
-            lineTo(350f, 0f)
-            lineTo(650f, 250f)
-            lineTo(450f, 650f)
-            lineTo(800f, 900f)
-            lineTo(1150f, 650f)
-            lineTo(950f, 250f)
-            lineTo(1250f, 0f)
-            lineTo(1550f, 250f)
-            lineTo(1350f, 650f)
-            lineTo(1600f, 900f)        }
+        val path = PathParser.createPathFromPathData(
+            "M0,900 L250,650 50,250 350,0 650,250 450,650 800,900 1150,650 950,250 1250,0 1550,250 1350,650 1600,900"
+        )!!
 
         val pathMeasure = PathMeasure(path, false)
         val pathLength = pathMeasure.length
