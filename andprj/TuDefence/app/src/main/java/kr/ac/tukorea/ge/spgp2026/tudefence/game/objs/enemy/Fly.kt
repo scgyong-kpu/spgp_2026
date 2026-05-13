@@ -48,12 +48,12 @@ class Fly private constructor(gctx: GameContext):
         private set
     private var speed = MIN_SPEED
 
-    private fun init(type: Type): Fly {
+    private fun init(type: Type, sizeRatio: Float): Fly {
         frameRects = rectsArray[type.ordinal]
         life = type.health
         maxLife = life
         speed = Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED
-        val size = Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE
+        val size = (Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE) * sizeRatio
         setSize(size, size)
         return this
     }
@@ -74,13 +74,13 @@ class Fly private constructor(gctx: GameContext):
         }
 
         fun boss(gctx: GameContext): Fly {
-            return obtain(gctx, Type.BOSS)
+            return obtain(gctx, Type.BOSS, sizeRatio = BOSS_SIZE_SCALE)
         }
 
-        private fun obtain(gctx: GameContext, type: Type): Fly {
+        private fun obtain(gctx: GameContext, type: Type, sizeRatio: Float = 1.0f): Fly {
             val world = (gctx.scene as MainScene).world
             val fly = world.obtain(Fly::class.java) ?: Fly(gctx)
-            return fly.init(type)
+            return fly.init(type, sizeRatio)
         }
 
         // galaga_flies.png 는 700x70 고정 이미지이고, type 별로 70x70 frame 이 2장씩 이어져 있다.
@@ -95,6 +95,7 @@ class Fly private constructor(gctx: GameContext):
 
         private const val MIN_SIZE = 75f
         private const val MAX_SIZE = 125f
+        private const val BOSS_SIZE_SCALE = 1.5f
         private const val MIN_SPEED = 25f
         private const val MAX_SPEED = 60f
     }
