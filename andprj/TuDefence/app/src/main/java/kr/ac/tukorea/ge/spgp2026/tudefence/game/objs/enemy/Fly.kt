@@ -1,13 +1,16 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
+import android.graphics.Canvas
 import android.graphics.PathMeasure
 import android.graphics.Rect
 import androidx.core.graphics.PathParser
+import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
+import kotlin.math.atan2
 import kotlin.random.Random
 
 class Fly private constructor(gctx: GameContext):
@@ -50,7 +53,9 @@ class Fly private constructor(gctx: GameContext):
     var maxLife = 0f
         private set
     private var speed = MIN_SPEED
+    private var angle = 0f
     private val position = FloatArray(2)
+    private val tangent = FloatArray(2)
 
     private fun init(type: Type, sizeRatio: Float): Fly {
         frameRects = rectsArray[type.ordinal]
@@ -73,8 +78,20 @@ class Fly private constructor(gctx: GameContext):
     }
 
     private fun updatePosition() {
-        pathMeasure.getPosTan(distance, position, null)
+        pathMeasure.getPosTan(distance, position, tangent)
         setCenter(position[0], position[1])
+        angle = Math.toDegrees(atan2(tangent[1], tangent[0]).toDouble()).toFloat()
+    }
+
+    override fun draw(canvas: Canvas) {
+        // withRotation 은 아래 save/rotate/restore 패턴을 보기 좋게 감싼 AndroidX KTX helper 이다.
+        // canvas.save()
+        // canvas.rotate(angle, x, y)
+        // super.draw(canvas)
+        // canvas.restore()
+        canvas.withRotation(angle, x, y) {
+            super.draw(canvas)
+        }
     }
 
     override fun onRecycle() {}

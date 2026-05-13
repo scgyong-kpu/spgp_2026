@@ -152,7 +152,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] `PathMeasure` 로 path 길이와 현재 위치 계산
 - [x] `PathParser.createPathFromPathData()` 로 SVG path data 사용
 - [ ] Bezier editor 로 만든 경로를 코드에 적용
-- [ ] 이동 방향에 따라 회전
+- [x] 이동 방향에 따라 회전
 - [ ] 경로 이동 중 흔들림 적용
 - [ ] life gauge 표시
 - [ ] life gauge 가 실제 life 를 따라가며 애니메이션되도록 표시값 분리
