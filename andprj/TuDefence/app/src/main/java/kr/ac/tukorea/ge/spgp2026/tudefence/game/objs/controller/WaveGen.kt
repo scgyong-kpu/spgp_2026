@@ -26,16 +26,10 @@ class WaveGen(
     }
 
     private fun spawn() {
-        val type = randomType()
         val y = Random.nextFloat() * gctx.metrics.height
-        val fly = Fly.get(gctx, type)
+        val fly = Fly.get(gctx)
         fly.setCenter(0f, y)
         world.add(fly, MainScene.Layer.ENEMY)
-    }
-
-    private fun randomType(): Fly.Type {
-        val types = Fly.Type.entries
-        return types[Random.nextInt(types.size)]
     }
 
     companion object {

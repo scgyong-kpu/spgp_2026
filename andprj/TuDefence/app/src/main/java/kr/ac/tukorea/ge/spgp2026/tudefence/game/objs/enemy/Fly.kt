@@ -20,6 +20,30 @@ class Fly private constructor(gctx: GameContext):
         BLUE(30f, 20),
         CYAN(20f, 30),
         DRAGON(10f, 40),
+
+        ;
+
+        companion object {
+            private val totalSpawnRate = entries.sumOf { it.spawnRate }
+
+            fun random(): Type {
+                var selectedRate = Random.nextInt(totalSpawnRate)
+
+                // Type 이 자기 spawnRate 규칙을 직접 가진다.
+                // spawnRate 를 차례로 빼다가 음수가 되는 지점이 선택된 type 이다.
+                // spawnRate 가 0 인 BOSS 는 기본 랜덤 생성에서는 선택되지 않는다.
+                // for-in 은 iterator 객체 생성 가능성이 있으므로, 게임 중 자주 불릴 수 있는 곳에서는 index loop 를 쓴다.
+                for (i in 0 ..< entries.size) {
+                    val type = entries[i]
+                    selectedRate -= type.spawnRate
+                    if (selectedRate < 0) {
+                        return type
+                    }
+                }
+
+                return DRAGON
+            }
+        }
     }
 
     init {
@@ -53,10 +77,10 @@ class Fly private constructor(gctx: GameContext):
     override fun onRecycle() {}
 
     companion object {
-        fun get(gctx: GameContext, type: Type): Fly {
+        fun get(gctx: GameContext): Fly {
             val world = (gctx.scene as MainScene).world
             val fly = world.obtain(Fly::class.java) ?: Fly(gctx)
-            return fly.init(type)
+            return fly.init(Type.random())
         }
 
         // galaga_flies.png 는 700x70 고정 이미지이고, type 별로 70x70 frame 이 2장씩 이어져 있다.
