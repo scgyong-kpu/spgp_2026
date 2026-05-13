@@ -13,35 +13,27 @@ class Fly private constructor(gctx: GameContext):
 {
     enum class Type(
         val health: Float,
-        val spawnRate: Int,
     ) {
-        BOSS(150f, 0),
-        RED(50f, 10),
-        BLUE(30f, 20),
-        CYAN(20f, 30),
-        DRAGON(10f, 40),
+        BOSS(150f),
+        RED(50f),
+        BLUE(30f),
+        CYAN(20f),
+        DRAGON(10f),
 
         ;
 
         companion object {
-            private val totalSpawnRate = entries.sumOf { it.spawnRate }
-
             fun random(): Type {
-                var selectedRate = Random.nextInt(totalSpawnRate)
+                val value = Random.nextInt(100)
 
-                // Type 이 자기 spawnRate 규칙을 직접 가진다.
-                // spawnRate 를 차례로 빼다가 음수가 되는 지점이 선택된 type 이다.
-                // spawnRate 가 0 인 BOSS 는 기본 랜덤 생성에서는 선택되지 않는다.
-                // for-in 은 iterator 객체 생성 가능성이 있으므로, 게임 중 자주 불릴 수 있는 곳에서는 index loop 를 쓴다.
-                for (i in 0 ..< entries.size) {
-                    val type = entries[i]
-                    selectedRate -= type.spawnRate
-                    if (selectedRate < 0) {
-                        return type
-                    }
+                // 0~9: RED 10%, 10~29: BLUE 20%, 30~59: CYAN 30%, 60~99: DRAGON 40%.
+                // BOSS 는 일반 wave 에서 랜덤 생성하지 않고, 나중에 boss wave 전용 규칙으로 다룬다.
+                return when {
+                    value < 10 -> RED
+                    value < 30 -> BLUE
+                    value < 60 -> CYAN
+                    else -> DRAGON
                 }
-
-                return DRAGON
             }
         }
     }
