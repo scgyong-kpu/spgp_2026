@@ -87,7 +87,7 @@ class TiledBackground(
     }
 
     // 원본 TMJ tile 크기와 별개로 게임 좌표계에서 보이는 tile 크기를 바꾼다.
-    // TuDefence 는 32x18 map 을 3200x1800 좌표계에 맞추기 위해 100x100 으로 그린다.
+    // TuDefence 는 32x18 map 을 1600x900 좌표계에 맞추기 위해 50x50 으로 그린다.
     fun setTileSize(width: Float, height: Float) {
         tileWidth = width
         tileHeight = height
@@ -150,7 +150,7 @@ class TiledBackground(
 
     override fun draw(canvas: Canvas) {
         // wraps 가 켜져 있으면 scroll 값을 map 전체 크기 안으로 접어 넣는다.
-        // 예를 들어 fullWidth 가 3200 일 때 scrollX=3300 은 scrollX=100 과 같은 화면을 만든다.
+        // 예를 들어 fullWidth 가 1600 일 때 scrollX=1650 은 scrollX=50 과 같은 화면을 만든다.
         val fullWidth = fullWidth()
         val fullHeight = fullHeight()
         val effectiveScrollX = if (wraps) wrapped(scrollX, fullWidth) else scrollX

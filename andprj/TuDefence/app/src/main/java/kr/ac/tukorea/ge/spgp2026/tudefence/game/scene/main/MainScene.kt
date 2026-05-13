@@ -18,7 +18,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     override val world = World(Layer.entries.toTypedArray())
-    private val background = TiledBackground(gctx, "map/desert.tmj", tileWidth = 100f, tileHeight = 100f)
+    private val background = TiledBackground(gctx, "map/desert.tmj", tileWidth = 50f, tileHeight = 50f)
     private var tileSize = MIN_TILE_SIZE
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -27,8 +27,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private val touchPoint1 = PointF()
 
     init {
-        // GameActivity 에서 기준 좌표계를 3200x1800 으로 잡았고,
-        // desert.tmj 는 32x18 tile map 이므로 tile 하나를 100x100 으로 그리면 화면을 정확히 채운다.
+        // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
+        // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
         world.add(background, Layer.BG)
         world.add(WaveGen(gctx, world), Layer.CONTROLLER)
     }
@@ -133,7 +133,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     companion object {
-        private const val MIN_TILE_SIZE = 100f
+        private const val MIN_TILE_SIZE = 50f
         private const val MAX_TILE_SIZE = MIN_TILE_SIZE * 3f
     }
 }

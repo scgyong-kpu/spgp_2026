@@ -71,7 +71,7 @@ class Fly private constructor(gctx: GameContext):
         // 첫 Fly 인스턴스 생성 시 prepareFrameRects() 에서 채운다.
         private val rectsArray = mutableListOf<ArrayList<Rect>>()
 
-        const val SIZE = 200f
+        const val SIZE = 100f
         private const val FRAME_COUNT = 2
     }
 }
