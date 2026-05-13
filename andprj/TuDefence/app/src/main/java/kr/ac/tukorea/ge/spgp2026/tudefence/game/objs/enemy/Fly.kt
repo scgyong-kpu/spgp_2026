@@ -70,9 +70,17 @@ class Fly private constructor(gctx: GameContext):
 
     companion object {
         fun get(gctx: GameContext): Fly {
+            return obtain(gctx, Type.random())
+        }
+
+        fun boss(gctx: GameContext): Fly {
+            return obtain(gctx, Type.BOSS)
+        }
+
+        private fun obtain(gctx: GameContext, type: Type): Fly {
             val world = (gctx.scene as MainScene).world
             val fly = world.obtain(Fly::class.java) ?: Fly(gctx)
-            return fly.init(Type.random())
+            return fly.init(type)
         }
 
         // galaga_flies.png 는 700x70 고정 이미지이고, type 별로 70x70 frame 이 2장씩 이어져 있다.
