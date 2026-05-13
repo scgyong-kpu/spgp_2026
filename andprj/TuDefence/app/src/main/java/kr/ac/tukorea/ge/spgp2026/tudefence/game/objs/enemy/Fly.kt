@@ -6,6 +6,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
+import kotlin.random.Random
 
 class Fly private constructor(gctx: GameContext):
     SheetSprite(gctx, R.mipmap.galaga_flies, 2f), IRecyclable
@@ -23,20 +24,22 @@ class Fly private constructor(gctx: GameContext):
 
     init {
         prepareFrameRects()
-        setSize(SIZE, SIZE)
+        setSize(MIN_SIZE, MIN_SIZE)
     }
 
     var life = 0f
         private set
     var maxLife = 0f
         private set
-    private var speed = DEFAULT_SPEED
+    private var speed = MIN_SPEED
 
     private fun init(type: Type): Fly {
         frameRects = rectsArray[type.ordinal]
         life = type.health
         maxLife = life
-        speed = DEFAULT_SPEED
+        speed = Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED
+        val size = Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE
+        setSize(size, size)
         return this
     }
 
@@ -82,8 +85,10 @@ class Fly private constructor(gctx: GameContext):
         // 첫 Fly 인스턴스 생성 시 prepareFrameRects() 에서 채운다.
         private val rectsArray = mutableListOf<ArrayList<Rect>>()
 
-        const val SIZE = 100f
-        private const val DEFAULT_SPEED = 100f
+        private const val MIN_SIZE = 75f
+        private const val MAX_SIZE = 125f
+        private const val MIN_SPEED = 25f
+        private const val MAX_SPEED = 60f
         private const val FRAME_COUNT = 2
     }
 }
