@@ -23,7 +23,6 @@ class Fly private constructor(gctx: GameContext):
     }
 
     init {
-        prepareFrameRects()
         setSize(MIN_SIZE, MIN_SIZE)
     }
 
@@ -53,26 +52,6 @@ class Fly private constructor(gctx: GameContext):
 
     override fun onRecycle() {}
 
-    private fun prepareFrameRects() {
-        // galaga_flies 이미지는 type 별 frame 들이 한 줄로 이어진 sprite sheet 이다.
-        // Rect 목록은 모든 Fly 인스턴스가 공유해도 되는 읽기 전용 정보이므로 companion cache 에 한 번만 만든다.
-        if (rectsArray.isNotEmpty()) return
-
-        // frame 크기는 bitmap.height 를 기준으로 계산한다.
-        // bitmap 은 SheetSprite/Sprite 생성이 끝난 뒤에 준비되므로,
-        // companion object 초기화 시점이 아니라 첫 Fly 인스턴스 init 시점에 cache 를 채운다.
-        val frameSize = bitmap.height
-        var x = 0
-        for (i in 0 until Type.entries.size) {
-            val rects = ArrayList<Rect>()
-            for (j in 0 until FRAME_COUNT) {
-                rects.add(Rect(x, 0, x + frameSize, frameSize))
-                x += frameSize
-            }
-            rectsArray.add(rects)
-        }
-    }
-
     companion object {
         fun get(gctx: GameContext, type: Type): Fly {
             val world = (gctx.scene as MainScene).world
@@ -80,15 +59,19 @@ class Fly private constructor(gctx: GameContext):
             return fly.init(type)
         }
 
-        // type 별 animation frame rect 목록이다.
-        // 생성 후에는 수정하지 않는 cache 이지만, bitmap.height 를 알아야 만들 수 있어
-        // 첫 Fly 인스턴스 생성 시 prepareFrameRects() 에서 채운다.
-        private val rectsArray = mutableListOf<ArrayList<Rect>>()
+        // galaga_flies.png 는 700x70 고정 이미지이고, type 별로 70x70 frame 이 2장씩 이어져 있다.
+        // 이미지 규격이 바뀔 일이 없는 asset 이므로 런타임 계산 대신 상수 Rect 목록으로 둔다.
+        private val rectsArray = listOf(
+            listOf(Rect(0, 0, 70, 70), Rect(70, 0, 140, 70)),
+            listOf(Rect(140, 0, 210, 70), Rect(210, 0, 280, 70)),
+            listOf(Rect(280, 0, 350, 70), Rect(350, 0, 420, 70)),
+            listOf(Rect(420, 0, 490, 70), Rect(490, 0, 560, 70)),
+            listOf(Rect(560, 0, 630, 70), Rect(630, 0, 700, 70)),
+        )
 
         private const val MIN_SIZE = 75f
         private const val MAX_SIZE = 125f
         private const val MIN_SPEED = 25f
         private const val MAX_SPEED = 60f
-        private const val FRAME_COUNT = 2
     }
 }
