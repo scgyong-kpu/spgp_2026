@@ -8,58 +8,65 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 
 - [x] Android 프로젝트 생성
 - [x] 기본 `MainActivity` 생성
-- [ ] 게임 Activity 분리
-- [ ] `a2dg` 모듈 연결
-- [ ] 게임 화면 좌표계 설정
+- [x] 게임 Activity 분리
+- [x] `a2dg` 모듈 연결
+- [x] 게임 화면 좌표계 설정
+- [x] Tiled map 배경 표시
+- [x] 임시 enemy wave 생성
 
 ## Project Setup
 
-- [ ] 앱 패키지와 이름 정리
-- [ ] `buildFeatures` 에 `viewBinding` / `buildConfig` 활성화
-- [ ] `MainActivity` 를 시작 화면으로 사용
-- [ ] `MainGameActivity` 추가
-- [ ] `MainGameActivity` 는 layout xml 없이 게임 Activity 로 구성
-- [ ] Debug build 에서 게임 화면 자동 실행 지원
-- [ ] Landscape mode 고정
-- [ ] 게임 리소스 복사 및 정리
+- [x] 앱 패키지와 이름 정리
+- [x] `buildFeatures` 에 `viewBinding` / `buildConfig` 활성화
+- [x] `MainActivity` 를 시작 화면으로 사용
+- [x] `MainGameActivity` 추가
+- [x] `MainGameActivity` 는 layout xml 없이 게임 Activity 로 구성
+- [x] Debug build 에서 게임 화면 자동 실행 지원
+- [x] Landscape mode 고정
+- [x] 게임 리소스 복사 및 정리
 
 ## a2dg Integration
 
-- [ ] `a2dg` library module 추가
-- [ ] `settings.gradle.kts` 에 `:a2dg` module 등록
-- [ ] `app` module 이 `a2dg` module 을 dependency 로 사용하도록 설정
-- [ ] `BaseGameActivity` 기반 게임 Activity 구성
-- [ ] `Scene` / `World` / `Layer` 구조 적용
-- [ ] 게임 좌표계를 1600 x 900 기준으로 설정
-- [ ] Debug grid / FPS / debug info 표시 확인
+- [x] `a2dg` library module 추가
+- [x] `settings.gradle.kts` 에 `:a2dg` module 등록
+- [x] `app` module 이 `a2dg` module 을 dependency 로 사용하도록 설정
+- [x] `BaseGameActivity` 기반 게임 Activity 구성
+- [x] `Scene` / `World` / `Layer` 구조 적용
+- [x] 게임 좌표계를 1600 x 900 기준으로 설정
+- [x] Debug grid / FPS / debug info 표시 확인
 
 ## Main Scene
 
-- [ ] 빈 Scene 을 먼저 push 하여 GameActivity 동작 확인
-- [ ] `MainScene` 생성
-- [ ] Layer enum 정의
-  - [ ] `BG`
-  - [ ] `ENEMY`
+- [x] 빈 Scene 을 먼저 push 하여 GameActivity 동작 확인
+- [x] `MainScene` 생성
+- [x] 현재 단계용 Layer enum 정의
+  - [x] `BG`
+  - [x] `ENEMY`
+  - [x] `CONTROLLER`
+- [ ] 이후 단계용 Layer 확장
   - [ ] `CANNON`
   - [ ] `SHELL`
   - [ ] `EXPLOSION`
   - [ ] `SCORE`
   - [ ] `SELECTION`
-  - [ ] `CONTROLLER`
 - [ ] Back key 로 `PauseScene` 진입
-- [ ] Touch event 를 게임 좌표계로 변환
-- [ ] Scene 별 package 분리
+- [x] Touch event 를 게임 좌표계로 변환
+- [x] Scene 별 package 분리
 
 ## Tiled Map
 
-- [ ] `assets/map/desert.tmj` 추가
-- [ ] tile image 추가
-- [ ] TMJ 파일을 `kotlinx.serialization` 으로 읽기
-- [ ] TMJ 전체 schema 를 만들지 않고 현재 필요한 필드만 `data class` 로 선언
-- [ ] `a2dg` 에 `TiledBackground` 추가
-- [ ] `TiledBackground` 로 배경 표시
+- [x] `assets/map/desert.tmj` 추가
+- [x] tile image 추가
+- [x] TMJ 파일을 `kotlinx.serialization` 으로 읽기
+- [x] TMJ 전체 schema 를 만들지 않고 현재 필요한 필드만 `data class` 로 선언
+- [x] app module 에 `TiledBackground` 추가
+- [x] `TiledBackground` 로 배경 표시
 - [ ] 이번 게임 전용 `DesertMapBg` 로 상속 분리
 - [ ] touch 한 좌표의 tile index 를 debug log 로 확인
+- [x] multi-touch pinch 로 tile 확대/축소
+- [x] drag 로 map scroll
+- [x] scroll 범위를 제한해 map 바깥이 보이지 않도록 처리
+- [x] 화면에 보이는 tile 범위만 그리도록 draw loop 구성
 - [ ] 설치 가능한 tile 판정 구현
 - [ ] 포탑이 차지하는 2 x 2 tile 영역 검사
 
@@ -124,20 +131,23 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Enemy
 
-- [ ] `Fly` 구현
-- [ ] sprite sheet animation 적용
-- [ ] type 별 source rect 미리 생성
-- [ ] enemy type 정의
-- [ ] type 별 life 설정
-- [ ] type 별 등장 확률 설정
-- [ ] 확률 가중치를 누적합으로 처리
-- [ ] boss type 은 일반 random 생성에서 제외
-- [ ] random size 적용
-- [ ] random speed 적용
-- [ ] factory 함수에서 type/size/speed 초기화
-- [ ] recycle 된 객체의 상태 초기화
-- [ ] 임시로 여러 마리를 생성해 표시
-- [ ] `WaveGen` 으로 일정 간격 생성
+- [x] `Fly` 구현
+- [x] sprite sheet animation 적용
+- [x] type 별 source rect 를 상수 Rect 목록으로 정의
+- [x] enemy type 정의
+- [x] type 별 life 설정
+- [x] type 별 등장 확률을 `Random.nextInt(100)` 과 `when` 구간으로 표현
+- [x] boss type 은 일반 random 생성에서 제외
+- [x] boss 생성 전용 `Fly.boss()` 추가
+- [x] boss 는 일반 Fly 보다 크게 생성
+- [x] random size 적용
+- [x] random speed 적용
+- [x] factory 함수에서 type/size/speed 초기화
+- [x] recycle 된 객체의 상태 초기화
+- [x] 임시로 여러 마리를 생성해 표시
+- [x] `WaveGen` 으로 일정 간격 생성
+- [x] 왼쪽에서 생성해 오른쪽으로 이동
+- [x] 화면 오른쪽 밖으로 나가면 제거
 - [ ] `Path` 를 만들고 임시로 화면에 그림
 - [ ] `PathMeasure` 로 path 길이와 현재 위치 계산
 - [ ] `PathParser.createPathFromPathData()` 로 SVG path data 사용
@@ -146,7 +156,6 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] 경로 이동 중 흔들림 적용
 - [ ] life gauge 표시
 - [ ] life gauge 가 실제 life 를 따라가며 애니메이션되도록 표시값 분리
-- [ ] 화면 끝에 도착하면 제거
 - [ ] recycle bin 재사용 적용
 
 ## Shell And Collision
@@ -171,8 +180,10 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Wave
 
-- [ ] `WaveGen` 구현
-- [ ] 일정 간격으로 enemy 생성
+- [x] `WaveGen` 구현
+- [x] 일정 간격으로 enemy 생성
+- [x] enemy 생성 y 좌표를 랜덤으로 결정
+- [x] y 좌표가 특정 구간이면 boss enemy 생성
 - [ ] enemy 생성 시 boss 여부와 speed ratio 전달
 - [ ] 시간이 지날수록 생성 간격 감소
 - [ ] 최소 생성 간격 제한
