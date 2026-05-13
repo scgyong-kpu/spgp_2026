@@ -40,19 +40,15 @@ class WaveGen(
     }
 
     private fun spawn() {
-        val y = Random.nextFloat() * gctx.metrics.height
-        val fly = if (y in BOSS_Y_MIN..BOSS_Y_MAX) {
+        val fly = if (Random.nextInt(10) == 0) {
             Fly.boss(gctx)
         } else {
             Fly.get(gctx)
         }
-        fly.setCenter(0f, y)
         world.add(fly, MainScene.Layer.ENEMY)
     }
 
     companion object {
         private const val SPAWN_INTERVAL = 1.1f
-        private const val BOSS_Y_MIN = 400f
-        private const val BOSS_Y_MAX = 500f
     }
 }

@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
 import android.graphics.Path
+import android.graphics.PathMeasure
 import android.graphics.Rect
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
@@ -43,11 +44,13 @@ class Fly private constructor(gctx: GameContext):
         setSize(MIN_SIZE, MIN_SIZE)
     }
 
+    var distance = 0f
     var life = 0f
         private set
     var maxLife = 0f
         private set
     private var speed = MIN_SPEED
+    private val position = FloatArray(2)
 
     private fun init(type: Type, sizeRatio: Float): Fly {
         frameRects = rectsArray[type.ordinal]
@@ -56,15 +59,22 @@ class Fly private constructor(gctx: GameContext):
         speed = Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED
         val size = (Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE) * sizeRatio
         setSize(size, size)
+        distance = 0f
+        updatePosition()
         return this
     }
 
     override fun update(gctx: GameContext) {
-        x += speed * gctx.frameTime
-        setCenter(x, y)
-        if (x - width / 2f > gctx.metrics.width) {
+        distance += speed * gctx.frameTime
+        updatePosition()
+        if (distance > pathLength) {
             (gctx.scene as MainScene).world.remove(this, MainScene.Layer.ENEMY)
         }
+    }
+
+    private fun updatePosition() {
+        pathMeasure.getPosTan(distance, position, null)
+        setCenter(position[0], position[1])
     }
 
     override fun onRecycle() {}
@@ -101,6 +111,9 @@ class Fly private constructor(gctx: GameContext):
             lineTo(1250f, 0f)
             lineTo(1600f, 900f)
         }
+
+        val pathMeasure = PathMeasure(path, false)
+        val pathLength = pathMeasure.length
 
         private const val MIN_SIZE = 75f
         private const val MAX_SIZE = 125f
