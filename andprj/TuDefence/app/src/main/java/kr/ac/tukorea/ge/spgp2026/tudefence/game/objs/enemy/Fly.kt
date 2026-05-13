@@ -30,11 +30,22 @@ class Fly private constructor(gctx: GameContext):
         private set
     var maxLife = 0f
         private set
+    private var speed = DEFAULT_SPEED
+
     private fun init(type: Type): Fly {
         frameRects = rectsArray[type.ordinal]
         life = type.health
         maxLife = life
+        speed = DEFAULT_SPEED
         return this
+    }
+
+    override fun update(gctx: GameContext) {
+        x += speed * gctx.frameTime
+        setCenter(x, y)
+        if (x - width / 2f > gctx.metrics.width) {
+            (gctx.scene as MainScene).world.remove(this, MainScene.Layer.ENEMY)
+        }
     }
 
     override fun onRecycle() {}
@@ -72,6 +83,7 @@ class Fly private constructor(gctx: GameContext):
         private val rectsArray = mutableListOf<ArrayList<Rect>>()
 
         const val SIZE = 100f
+        private const val DEFAULT_SPEED = 100f
         private const val FRAME_COUNT = 2
     }
 }
