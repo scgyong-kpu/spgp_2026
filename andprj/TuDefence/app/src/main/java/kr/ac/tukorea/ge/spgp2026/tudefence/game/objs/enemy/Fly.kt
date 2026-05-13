@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
+import android.graphics.Path
 import android.graphics.Rect
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
@@ -92,6 +93,14 @@ class Fly private constructor(gctx: GameContext):
             listOf(Rect(420, 0, 490, 70), Rect(490, 0, 560, 70)),
             listOf(Rect(560, 0, 630, 70), Rect(630, 0, 700, 70)),
         )
+
+        val path = Path().apply {
+            moveTo(0f, 900f)
+            lineTo(350f, 0f)
+            lineTo(800f, 900f)
+            lineTo(1250f, 0f)
+            lineTo(1600f, 900f)
+        }
 
         private const val MIN_SIZE = 75f
         private const val MAX_SIZE = 125f

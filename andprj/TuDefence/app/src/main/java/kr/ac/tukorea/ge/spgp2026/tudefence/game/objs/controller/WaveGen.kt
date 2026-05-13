@@ -1,9 +1,12 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller
 
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.random.Random
@@ -23,6 +26,17 @@ class WaveGen(
     }
 
     override fun draw(canvas: Canvas) {
+        if (BuildConfig.DEBUG) {
+            canvas.drawPath(Fly.path, paint)
+        }
+    }
+
+    private val paint by lazy {
+        Paint().apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 5f
+            color = Color.MAGENTA
+        }
     }
 
     private fun spawn() {
