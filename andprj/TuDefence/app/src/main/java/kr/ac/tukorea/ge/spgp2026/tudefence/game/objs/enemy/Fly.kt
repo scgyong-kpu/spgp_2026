@@ -106,11 +106,18 @@ class Fly private constructor(gctx: GameContext):
 
         val path = Path().apply {
             moveTo(0f, 900f)
+            lineTo(250f, 650f)
+            lineTo(50f, 250f)
             lineTo(350f, 0f)
+            lineTo(650f, 250f)
+            lineTo(450f, 650f)
             lineTo(800f, 900f)
+            lineTo(1150f, 650f)
+            lineTo(950f, 250f)
             lineTo(1250f, 0f)
-            lineTo(1600f, 900f)
-        }
+            lineTo(1550f, 250f)
+            lineTo(1350f, 650f)
+            lineTo(1600f, 900f)        }
 
         val pathMeasure = PathMeasure(path, false)
         val pathLength = pathMeasure.length
