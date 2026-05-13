@@ -6,7 +6,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
 import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
@@ -14,6 +14,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     enum class Layer {
         BG,
         ENEMY,
+        CONTROLLER,
     }
 
     override val world = World(Layer.entries.toTypedArray())
@@ -24,29 +25,12 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private var lastSpan = 0f
     private val touchPoint0 = PointF()
     private val touchPoint1 = PointF()
-    private var testFliesAdded = false
 
     init {
         // GameActivity 에서 기준 좌표계를 3200x1800 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 100x100 으로 그리면 화면을 정확히 채운다.
         world.add(background, Layer.BG)
-    }
-
-    override fun onEnter() {
-        if (testFliesAdded) return
-        testFliesAdded = true
-        addTestFlies()
-    }
-
-    private fun addTestFlies() {
-        // Fly sprite sheet 가 type 별 frame rect 로 제대로 나뉘는지 확인하기 위한 임시 배치이다.
-        // 이후 WaveGen 이 생기면 이 코드는 enemy 생성 로직으로 대체된다.
-        val types = Fly.Type.entries
-        for (i in types.indices) {
-            val fly = Fly.get(gctx, types[i])
-            fly.setCenter(500f + i * 350f, 500f)
-            world.add(fly, Layer.ENEMY)
-        }
+        world.add(WaveGen(gctx, world), Layer.CONTROLLER)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
