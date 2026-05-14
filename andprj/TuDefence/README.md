@@ -71,6 +71,7 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] scroll 범위를 제한해 map 바깥이 보이지 않도록 처리
 - [x] 화면에 보이는 tile 범위만 그리도록 draw loop 구성
 - [x] `MapCamera` 로 map 확대/이동 matrix 분리
+- [x] `MapCamera.visibleMapRect` 기준으로 필요한 tile 만 선택해 그림
 - [ ] 설치 가능한 tile 판정 구현
 - [ ] 포탑이 차지하는 2 x 2 tile 영역 검사
 

@@ -7,10 +7,13 @@ import android.graphics.Rect
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMap
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledTileset
+import kotlin.math.ceil
+import kotlin.math.floor
 
 // TiledBackground 는 Tiled 가 만든 .tmj map 과 tileset image 를 읽어 배경 tile 을 그린다.
 // 아직 a2dg 공통 class 로 올리지 않고 app/game.objs.bg 에 두는 이유는,
@@ -25,6 +28,11 @@ class TiledBackground(
 
     // assets/ 아래의 TMJ 파일 경로이다. 예: "map/desert.tmj"
     mapAssetPath: String,
+
+    // 확대/이동은 TiledBackground 가 직접 처리하지 않고 MapCamera 가 담당한다.
+    // 이 객체는 camera 가 알려주는 visibleMapRect 를 보고 필요한 tile 만 고른 뒤,
+    // destination rect 는 map 좌표로 설정한다. 실제 화면 변환은 CameraBegin 의 canvas matrix 가 처리한다.
+    private val mapCamera: MapCamera,
 
     // 게임 좌표계에서 tile 하나를 몇 x 몇 크기로 그릴지 나타낸다.
     // TMJ 원본 tile 크기(tilewidth/tileheight)와 화면에 그릴 크기는 다를 수 있다.
@@ -49,30 +57,6 @@ class TiledBackground(
     private val srcRect = Rect()
     private val dstRect = RectF()
 
-    // scrollX/Y 는 "map 의 어느 좌표부터 화면 왼쪽 위에 보이게 할 것인가"를 뜻한다.
-    // 예를 들어 scrollX 가 tileWidth 만큼 증가하면 화면은 오른쪽으로 한 tile 이동한 위치를 보게 된다.
-    private var scrollX = 0f
-    private var scrollY = 0f
-
-    // wraps 가 true 이면 map 끝을 넘어가도 처음으로 이어서 그린다.
-    // 무한 반복 배경에는 유용하지만, 타워 디펜스 map 처럼 고정된 판에는 보통 false 로 둔다.
-    var wraps = false
-
-    // 외부에서 scroll 위치를 직접 지정할 수 있게 해 둔다.
-    // 지금 단계에서는 0,0 이지만, 나중에 카메라 이동이나 스크롤 map 을 실험할 때 사용할 수 있다.
-    // 단, 고정 map 에서는 배경 바깥이 보이면 안 되므로 대입 직후 clampScroll() 로 범위를 제한한다.
-    fun scrollTo(x: Float, y: Float) {
-        scrollX = x
-        scrollY = y
-        clampScroll()
-    }
-
-    // drag gesture 처럼 현재 위치에서 상대적으로 움직일 때 사용하는 helper 이다.
-    // 실제 제한은 scrollTo() 안에서 처리하므로, 호출자는 범위 계산을 몰라도 된다.
-    fun scrollBy(dx: Float, dy: Float) {
-        scrollTo(scrollX + dx, scrollY + dy)
-    }
-
     // TMJ 에 여러 layer 가 있을 때 그릴 layer 를 고른다.
     // 아직은 첫 layer 만 쓰지만, path/debug/object layer 를 분리할 때 확장 가능하다.
     fun setActiveLayer(index: Int) {
@@ -93,25 +77,6 @@ class TiledBackground(
         tileHeight = height
     }
 
-    fun setUniformTileSize(size: Float, focusX: Float, focusY: Float) {
-        // focusX/focusY 는 화면 안에서 손가락이 가리키는 게임 좌표이다.
-        // 확대/축소 후에도 그 지점이 같은 map 위치를 가리키게 하려면
-        // scroll 도 같은 비율로 같이 조정해야 한다.
-        //
-        // 예를 들어 focusX 가 500 이고 scrollX 가 100 이면, 손가락 아래에는 map 의 x=600 지점이 보인다.
-        // tile 크기를 2배로 키우면 map 좌표도 2배 멀어지므로, 새 scrollX 는 600*2 - 500 이 되어야
-        // 손가락 아래에 같은 지점이 남는다.
-        val ratio = size / tileWidth
-        scrollX = (scrollX + focusX) * ratio - focusX
-        scrollY = (scrollY + focusY) * ratio - focusY
-        setTileSize(size, size)
-
-        // 확대/축소는 map 전체 크기 자체를 바꾼다.
-        // 특히 축소하면 이전에는 유효했던 scroll 위치가 새 map 크기에서는 너무 클 수 있으므로,
-        // tile 크기를 바꾼 뒤에도 반드시 다시 clamp 해야 배경 바깥이 드러나지 않는다.
-        clampScroll()
-    }
-
     fun fullWidth(): Float {
         return map.width * tileWidth
     }
@@ -120,93 +85,51 @@ class TiledBackground(
         return map.height * tileHeight
     }
 
-    private fun clampScroll() {
-        if (wraps) return
-
-        // scroll 은 "map 안에서 화면 왼쪽 위가 가리키는 위치"이다.
-        // 따라서 최솟값은 0, 최댓값은 map 전체 크기에서 화면 크기를 뺀 값이다.
-        // 이 범위를 벗어나면 배경 밖 빈 영역이 보이고, 그 뒤의 debug grid 도 드러난다.
-        //
-        // wraps == true 인 무한 반복 배경에서는 바깥이라는 개념이 없으므로 clamp 하지 않는다.
-        // 하지만 타워 디펜스의 고정 지도는 실제 맵 가장자리 너머를 보여주면 안 되므로 false 일 때만 제한한다.
-        scrollX = scrollX.coerceIn(0f, maxScrollX())
-        scrollY = scrollY.coerceIn(0f, maxScrollY())
-    }
-
-    private fun maxScrollX(): Float {
-        // map 이 화면보다 넓으면 오른쪽 끝까지 볼 수 있도록 fullWidth - screenWidth 만큼 움직일 수 있다.
-        // 반대로 map 이 화면보다 작거나 같으면 움직일 여지가 없으므로 최대 scroll 은 0 이다.
-        return maxOf(0f, fullWidth() - gctx.metrics.width)
-    }
-
-    private fun maxScrollY(): Float {
-        // 세로 방향도 같은 원리이다.
-        // 축소해서 fullHeight 가 화면 높이보다 작아진 경우에는 0 으로 고정되어 위/아래 빈 공간이 생기지 않는다.
-        return maxOf(0f, fullHeight() - gctx.metrics.height)
-    }
-
     override fun update(gctx: GameContext) {
     }
 
     override fun draw(canvas: Canvas) {
-        // wraps 가 켜져 있으면 scroll 값을 map 전체 크기 안으로 접어 넣는다.
-        // 예를 들어 fullWidth 가 1600 일 때 scrollX=1650 은 scrollX=50 과 같은 화면을 만든다.
-        val fullWidth = fullWidth()
-        val fullHeight = fullHeight()
-        val effectiveScrollX = if (wraps) wrapped(scrollX, fullWidth) else scrollX
-        val effectiveScrollY = if (wraps) wrapped(scrollY, fullHeight) else scrollY
+        val visibleRect = mapCamera.visibleMapRect
+        val startTileX = floor(visibleRect.left / tileWidth).toInt().coerceAtLeast(0)
+        val startTileY = floor(visibleRect.top / tileHeight).toInt().coerceAtLeast(0)
+        val endTileX = ceil(visibleRect.right / tileWidth).toInt().coerceAtMost(layer.width)
+        val endTileY = ceil(visibleRect.bottom / tileHeight).toInt().coerceAtMost(layer.height)
 
-        // 화면 왼쪽 위가 map tile 의 중간부터 시작할 수도 있다.
-        // 그래서 첫 tile 은 음수 위치에서 일부만 보일 수 있고,
-        // startDx/startDy 는 그 "잘려서 보이는 첫 tile 의 화면 위치"가 된다.
-        val startDx = -(effectiveScrollX % tileWidth)
-        val startDy = -(effectiveScrollY % tileHeight)
-
-        // scroll 위치가 map 의 몇 번째 tile 에 해당하는지 계산한다.
-        // 이후 오른쪽/아래로 진행하며 tile index 를 하나씩 증가시킨다.
-        val startTileX = (effectiveScrollX / tileWidth).toInt()
-        val startTileY = (effectiveScrollY / tileHeight).toInt()
-
-        // 화면 높이를 채울 때까지 한 줄씩 그린다.
+        // visibleMapRect 는 "현재 화면에 보이는 map 좌표 범위"이다.
+        // 따라서 이 범위와 겹치는 tile index 만 순회하면 화면 밖 tile 은 drawBitmap() 호출 자체를 하지 않는다.
+        // destination rect 는 map 좌표로 설정하고, 화면으로의 확대/이동 변환은 CameraBegin 의 matrix 에 맡긴다.
+        //
         // for-each 대신 while 을 쓰는 이유는 draw() 가 매 프레임 호출되는 hot path 이기 때문이다.
-        // iterator 객체 생성을 피하고, dx/dy/tileX/tileY 를 직접 증가시키는 편이 의도가 분명하다.
-        var dy = startDy
+        // iterator 객체 생성을 피하고, tileX/tileY 를 직접 증가시키는 편이 의도가 분명하다.
         var tileY = startTileY
-        while (dy < gctx.metrics.height) {
-            drawRow(canvas, startDx, dy, startTileX, tileY)
-            dy += tileHeight
+        while (tileY < endTileY) {
+            drawRow(canvas, startTileX, endTileX, tileY)
             tileY++
         }
     }
 
-    private fun drawRow(canvas: Canvas, startDx: Float, dy: Float, startTileX: Int, tileY: Int) {
-        // 한 줄 안에서는 화면 너비를 채울 때까지 왼쪽에서 오른쪽으로 tile 을 그린다.
-        // dx 는 화면에 그릴 위치이고, tileX 는 layer.data 에서 읽을 map tile 좌표이다.
-        var dx = startDx
+    private fun drawRow(canvas: Canvas, startTileX: Int, endTileX: Int, tileY: Int) {
+        // 한 줄 안에서는 visibleMapRect 와 겹치는 tile 만 왼쪽에서 오른쪽으로 그린다.
         var tileX = startTileX
-        while (dx < gctx.metrics.width) {
-            drawTile(canvas, tileX, tileY, dx, dy)
-            dx += tileWidth
+        while (tileX < endTileX) {
+            drawTile(canvas, tileX, tileY)
             tileX++
         }
     }
 
-    private fun drawTile(canvas: Canvas, tileX: Int, tileY: Int, dx: Float, dy: Float) {
-        // wraps 가 true 이면 tile 좌표도 layer 크기 안으로 접어 넣는다.
-        // wraps 가 false 이면 map 바깥 좌표는 그리지 않는다.
-        val wrappedTileX = if (wraps) wrapped(tileX, layer.width) else tileX
-        val wrappedTileY = if (wraps) wrapped(tileY, layer.height) else tileY
-        if (wrappedTileX !in 0 until layer.width || wrappedTileY !in 0 until layer.height) return
-
+    private fun drawTile(canvas: Canvas, tileX: Int, tileY: Int) {
         // gid 는 Tiled layer.data 에 저장된 tile 번호이다.
         // Tiled 에서 gid == 0 은 "빈 칸"을 의미하므로 drawBitmap() 을 호출하지 않는다.
-        val gid = layer.tileAt(wrappedTileX, wrappedTileY)
+        val gid = layer.tileAt(tileX, tileY)
         if (gid == 0) return
 
         // source rect 는 tileset bitmap 안에서 잘라낼 위치이고,
-        // destination rect 는 게임 화면 좌표계에서 그려질 위치이다.
+        // destination rect 는 map 좌표계에서 그려질 위치이다.
+        // 이미 canvas 에 mapCamera.matrix 가 concat 되어 있으므로 drawBitmap() 결과는 화면 좌표로 변환된다.
         setSourceRect(gid)
-        dstRect.set(dx, dy, dx + tileWidth, dy + tileHeight)
+        val left = tileX * tileWidth
+        val top = tileY * tileHeight
+        dstRect.set(left, top, left + tileWidth, top + tileHeight)
         canvas.drawBitmap(bitmap, srcRect, dstRect, null)
     }
 
@@ -231,18 +154,6 @@ class TiledBackground(
         private fun directoryOf(assetPath: String): String {
             val slash = assetPath.lastIndexOf('/')
             return if (slash < 0) "" else assetPath.substring(0, slash + 1)
-        }
-
-        // Kotlin 의 % 는 음수 입력에 대해 음수 remainder 를 돌려줄 수 있다.
-        // scroll 이 음수가 될 수도 있는 일반 구현에서는 항상 0 <= result < size 가 되도록 보정한다.
-        private fun wrapped(value: Float, size: Float): Float {
-            val remainder = value % size
-            return if (remainder < 0f) remainder + size else remainder
-        }
-
-        private fun wrapped(value: Int, size: Int): Int {
-            val remainder = value % size
-            return if (remainder < 0) remainder + size else remainder
         }
     }
 }

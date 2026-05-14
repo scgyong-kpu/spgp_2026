@@ -24,7 +24,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
     override val world = World(Layer.entries.toTypedArray())
     private val mapCamera = MapCamera(gctx, MAP_WIDTH, MAP_HEIGHT)
-    private val background = TiledBackground(gctx, "map/desert.tmj", tileWidth = 50f, tileHeight = 50f)
+    private val background = TiledBackground(gctx, "map/desert.tmj", mapCamera, tileWidth = 50f, tileHeight = 50f)
     private var cameraScale = MIN_CAMERA_SCALE
     private var lastTouchX = 0f
     private var lastTouchY = 0f

@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.map
 
 import android.graphics.Matrix
+import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 // MapCamera 는 map 좌표계를 game 화면 좌표계로 변환하는 상태를 가진다.
@@ -12,6 +13,11 @@ class MapCamera(
     private val mapHeight: Float,
 ) {
     val matrix = Matrix()
+
+    // 현재 화면에 보이는 영역을 map 좌표계로 보관한다.
+    // TiledBackground 는 이 RectF 를 이용해 "전체 map 중 어느 tile 을 그릴지" 결정한다.
+    // 화면 좌표계라면 항상 0..screenWidth/Height 에 가까워서 tile 선택에는 도움이 되지 않는다.
+    val visibleMapRect = RectF()
 
     private var scrollX = 0f
     private var scrollY = 0f
@@ -49,5 +55,12 @@ class MapCamera(
         matrix.reset()
         matrix.setScale(scale, scale)
         matrix.postTranslate(-scrollX * scale, -scrollY * scale)
+
+        visibleMapRect.set(
+            scrollX,
+            scrollY,
+            scrollX + gctx.metrics.width / scale,
+            scrollY + gctx.metrics.height / scale,
+        )
     }
 }
