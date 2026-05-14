@@ -40,9 +40,12 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] 빈 Scene 을 먼저 push 하여 GameActivity 동작 확인
 - [x] `MainScene` 생성
 - [x] 현재 단계용 Layer enum 정의
+  - [x] `CAMERA_BEGIN`
   - [x] `BG`
   - [x] `ENEMY`
+  - [x] `CAMERA_END`
   - [x] `CONTROLLER`
+- [x] `CAMERA_BEGIN` / `CAMERA_END` marker 로 map transform 적용 범위 실험
 - [ ] 이후 단계용 Layer 확장
   - [ ] `CANNON`
   - [ ] `SHELL`
@@ -67,6 +70,7 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] drag 로 map scroll
 - [x] scroll 범위를 제한해 map 바깥이 보이지 않도록 처리
 - [x] 화면에 보이는 tile 범위만 그리도록 draw loop 구성
+- [x] `MapCamera` 로 map 확대/이동 matrix 분리
 - [ ] 설치 가능한 tile 판정 구현
 - [ ] 포탑이 차지하는 2 x 2 tile 영역 검사
 

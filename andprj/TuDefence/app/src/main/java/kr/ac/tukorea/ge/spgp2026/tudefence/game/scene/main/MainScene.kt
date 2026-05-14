@@ -5,21 +5,27 @@ import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CameraBegin
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CameraEnd
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
 import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
     override val clipsRect: Boolean = true
     enum class Layer {
+        CAMERA_BEGIN,
         BG,
         ENEMY,
+        CAMERA_END,
         CONTROLLER,
     }
 
     override val world = World(Layer.entries.toTypedArray())
+    private val mapCamera = MapCamera(gctx, MAP_WIDTH, MAP_HEIGHT)
     private val background = TiledBackground(gctx, "map/desert.tmj", tileWidth = 50f, tileHeight = 50f)
-    private var tileSize = MIN_TILE_SIZE
+    private var cameraScale = MIN_CAMERA_SCALE
     private var lastTouchX = 0f
     private var lastTouchY = 0f
     private var lastSpan = 0f
@@ -29,7 +35,11 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
+        // CAMERA_BEGIN / CAMERA_END 는 이번 단계에서 transform 범위를 layer 로 보여주기 위한 임시 marker 이다.
+        // begin 이 save/concat 하고 end 가 restore 하므로, 두 layer 사이의 객체만 map camera 영향을 받는다.
+        world.add(CameraBegin(mapCamera), Layer.CAMERA_BEGIN)
         world.add(background, Layer.BG)
+        world.add(CameraEnd(), Layer.CAMERA_END)
         world.add(WaveGen(gctx, world), Layer.CONTROLLER)
     }
 
@@ -71,7 +81,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         pointFromEvent(event, 0, touchPoint0)
         val dx = touchPoint0.x - lastTouchX
         val dy = touchPoint0.y - lastTouchY
-        background.scrollBy(-dx, -dy)
+        mapCamera.scrollBy(-dx, -dy)
     }
 
     private fun pinchZoom(event: MotionEvent) {
@@ -80,8 +90,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
         val focusX = focusX(event)
         val focusY = focusY(event)
-        tileSize = (tileSize * span / lastSpan).coerceIn(MIN_TILE_SIZE, MAX_TILE_SIZE)
-        background.setUniformTileSize(tileSize, focusX, focusY)
+        cameraScale = (cameraScale * span / lastSpan).coerceIn(MIN_CAMERA_SCALE, MAX_CAMERA_SCALE)
+        mapCamera.setScale(cameraScale, focusX, focusY)
     }
 
     private fun saveTouchState(event: MotionEvent) {
@@ -133,7 +143,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     companion object {
-        private const val MIN_TILE_SIZE = 50f
-        private const val MAX_TILE_SIZE = MIN_TILE_SIZE * 3f
+        private const val MAP_WIDTH = 1600f
+        private const val MAP_HEIGHT = 900f
+        private const val MIN_CAMERA_SCALE = 1f
+        private const val MAX_CAMERA_SCALE = 3f
     }
 }
