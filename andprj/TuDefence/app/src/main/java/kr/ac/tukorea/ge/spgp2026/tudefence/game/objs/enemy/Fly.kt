@@ -11,6 +11,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.atan2
+import kotlin.math.hypot
 import kotlin.random.Random
 
 class Fly private constructor(gctx: GameContext):
@@ -54,6 +55,7 @@ class Fly private constructor(gctx: GameContext):
         private set
     private var speed = MIN_SPEED
     private var angle = 0f
+    private var pathOffset = 0f
     private val position = FloatArray(2)
     private val tangent = FloatArray(2)
 
@@ -65,21 +67,33 @@ class Fly private constructor(gctx: GameContext):
         val size = (Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE) * sizeRatio
         setSize(size, size)
         distance = 0f
+        val maxOffset = width / 5f
+        pathOffset = (Random.nextFloat() * 2f - 1f) * maxOffset
         updatePosition()
         return this
     }
 
     override fun update(gctx: GameContext) {
         distance += speed * gctx.frameTime
+        updateOffset(gctx)
         updatePosition()
         if (distance > pathLength) {
             (gctx.scene as MainScene).world.remove(this, MainScene.Layer.ENEMY)
         }
     }
 
+    private fun updateOffset(gctx: GameContext) {
+        val maxOffset = width / 5f
+        val offsetDelta = (Random.nextFloat() * 2f - 1f) * maxOffset * gctx.frameTime
+        pathOffset = (pathOffset + offsetDelta).coerceIn(-maxOffset, maxOffset)
+    }
+
     private fun updatePosition() {
         pathMeasure.getPosTan(distance, position, tangent)
-        setCenter(position[0], position[1])
+        val tangentLength = hypot(tangent[0], tangent[1])
+        val normalX = -tangent[1] / tangentLength
+        val normalY = tangent[0] / tangentLength
+        setCenter(position[0] + normalX * pathOffset, position[1] + normalY * pathOffset)
         angle = Math.toDegrees(atan2(tangent[1], tangent[0]).toDouble()).toFloat()
     }
 
