@@ -48,7 +48,7 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] `CameraBegin` / `CameraEnd` marker 객체 제거
 - [ ] 이후 단계용 Layer 확장
   - [ ] `CANNON`
-  - [ ] `SHELL`
+  - [x] `SHELL`
   - [ ] `EXPLOSION`
   - [ ] `SCORE`
   - [ ] `SELECTION`
@@ -129,7 +129,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] x/y 축 거리만으로 빠른 범위 초과 판단
 - [x] 포신 회전
 - [ ] barrel 원본 방향을 기준으로 초기 각도 보정
-- [ ] 발사 간격 적용
+- [x] 발사 간격 적용
 - [ ] 업그레이드 / 철거 처리
 - [ ] 최대 level 이후 동작 정리
 - [ ] 철거 중 Scene remove 로 발생할 수 있는 문제 점검
@@ -165,12 +165,12 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Shell And Collision
 
-- [ ] `Shell` 구현
+- [x] `Shell` 구현
 - [ ] 포탑 level 에 따라 shell 이미지 선택
-- [ ] 포탑 각도에 맞춰 shell 속도 계산
+- [x] 포탑 각도에 맞춰 shell 속도 계산
 - [ ] shell power 를 level 에 따라 `10 * 1.2^(level - 1)` 로 계산
 - [ ] shell radius 를 level 에 따라 조정
-- [ ] 화면 밖으로 나가면 제거
+- [x] 화면 밖으로 나가면 제거
 - [ ] `a2dg` 에 radius collision helper 추가
 - [ ] shell 과 enemy 충돌 검사
 - [ ] enemy life 감소
@@ -181,7 +181,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] `Explosion` 표시
 - [ ] `Explosion` 은 recycle 가능한 객체로 생성
 - [ ] `Explosion` 은 일정 시간 animation 후 스스로 제거
-- [ ] recycle bin 재사용 적용
+- [x] recycle bin 재사용 적용
 
 ## Wave
 

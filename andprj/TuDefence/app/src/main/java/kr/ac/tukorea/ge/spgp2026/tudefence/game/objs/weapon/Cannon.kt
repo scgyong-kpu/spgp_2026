@@ -9,19 +9,27 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
     private val barrelRect = RectF()
     private val barrelBitmap = gctx.res.getBitmap(R.mipmap.barrel_512)
     private var angle = 0f
+    private var fireCooldown = 0f
 
     init {
         setSize(BASE_SIZE, BASE_SIZE)
     }
 
     override fun update(gctx: GameContext) {
+        fireCooldown -= gctx.frameTime
         val target = findNearestEnemy(gctx) ?: return
         angle = Math.toDegrees(atan2((target.y - y).toDouble(), (target.x - x).toDouble())).toFloat()
+        if (fireCooldown <= 0f) {
+            fire(gctx)
+            fireCooldown = FIRE_INTERVAL
+        }
     }
 
     private fun findNearestEnemy(gctx: GameContext): Fly? {
@@ -49,12 +57,20 @@ class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
         return nearest
     }
 
+    private fun fire(gctx: GameContext) {
+        val radians = Math.toRadians(angle.toDouble())
+        val startX = x + cos(radians).toFloat() * BARREL_MUZZLE_OFFSET
+        val startY = y + sin(radians).toFloat() * BARREL_MUZZLE_OFFSET
+        val shell = Shell.get(gctx, startX, startY, angle)
+        (gctx.scene as MainScene).world.add(shell, MainScene.Layer.SHELL)
+    }
+
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
         // 포탑 몸체는 Sprite 의 dstRect 에 맞춰 그리고,
         // 포신은 같은 중심을 기준으로 별도 bitmap 을 얹는다.
-        // 다음 단계에서 이 중심을 기준으로 barrel 만 회전시킬 예정이다.
+        // barrel 이미지는 오른쪽을 보는 상태로 만들어 두고, 현재 angle 만큼 회전해 적을 바라보게 한다.
         barrelRect.set(
             x - BARREL_SIZE / 2f,
             y - BARREL_SIZE / 2f,
@@ -69,5 +85,7 @@ class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
     companion object {
         private const val BASE_SIZE = 100f
         private const val BARREL_SIZE = 110f
+        private const val BARREL_MUZZLE_OFFSET = 42f
+        private const val FIRE_INTERVAL = 0.75f
     }
 }

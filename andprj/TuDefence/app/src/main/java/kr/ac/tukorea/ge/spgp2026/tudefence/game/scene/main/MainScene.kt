@@ -16,6 +16,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         BG,
         WEAPON,
         ENEMY,
+        SHELL,
         CONTROLLER,
     }
 
@@ -153,8 +154,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     companion object {
-        private const val MAP_WIDTH = 1600f
-        private const val MAP_HEIGHT = 900f
+        const val MAP_WIDTH = 1600f
+        const val MAP_HEIGHT = 900f
         private const val MIN_CAMERA_SCALE = 1f
         private const val MAX_CAMERA_SCALE = 3f
     }
