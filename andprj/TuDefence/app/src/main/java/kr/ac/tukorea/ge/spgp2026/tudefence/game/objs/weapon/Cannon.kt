@@ -18,6 +18,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
     private var level = 1
     private var barrelSize = MIN_BARREL_SIZE
     private var fireInterval = MAX_FIRE_INTERVAL
+    private var range = MIN_RANGE
     private var angle = 0f
     private var fireCooldown = 0f
 
@@ -33,6 +34,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         val levelRatio = (this.level - MIN_LEVEL) / (MAX_LEVEL - MIN_LEVEL).toFloat()
         barrelSize = MIN_BARREL_SIZE + (MAX_BARREL_SIZE - MIN_BARREL_SIZE) * levelRatio
         fireInterval = MAX_FIRE_INTERVAL - FIRE_INTERVAL_STEP * (this.level - MIN_LEVEL)
+        range = BASE_RANGE + RANGE_PER_LEVEL * this.level
         fireCooldown = fireInterval
         return this
     }
@@ -51,17 +53,31 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         val world = (gctx.scene as MainScene).world
         val enemies = world.objectsAt(MainScene.Layer.ENEMY)
         var nearest: Fly? = null
-        var nearestDistanceSq = Float.MAX_VALUE
+        var nearestDistanceSq = range * range
 
         // update() 에서 매 프레임 도는 탐색이므로 for-each 대신 index 기반 while 을 쓴다.
-        // 지금은 사거리 제한 없이 가장 가까운 Fly 를 바라보는 단계이다.
+        // Cannon 은 level 별 사거리 안에 들어온 Fly 만 바라보고 공격한다.
+        // 실제 거리를 구하려고 sqrt() 를 호출하지 않고 거리 제곱끼리 비교하면
+        // 매 프레임 반복되는 target 탐색에서 불필요한 계산을 줄일 수 있다.
         var index = 0
         while (index < enemies.size) {
             val enemy = enemies[index] as? Fly
             if (enemy != null) {
                 val dx = enemy.x - x
+                val dxSq = dx * dx
+                if (dxSq > nearestDistanceSq) {
+                    index++
+                    continue
+                }
+
                 val dy = enemy.y - y
-                val distanceSq = dx * dx + dy * dy
+                val dySq = dy * dy
+                if (dySq > nearestDistanceSq) {
+                    index++
+                    continue
+                }
+
+                val distanceSq = dxSq + dySq
                 if (distanceSq < nearestDistanceSq) {
                     nearestDistanceSq = distanceSq
                     nearest = enemy
@@ -111,5 +127,8 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         private const val BARREL_MUZZLE_OFFSET_RATIO = 0.38f
         private const val MAX_FIRE_INTERVAL = 5.0f
         private const val FIRE_INTERVAL_STEP = 0.4f
+        private const val BASE_RANGE = 200f
+        private const val RANGE_PER_LEVEL = 200f
+        private const val MIN_RANGE = BASE_RANGE + RANGE_PER_LEVEL * MIN_LEVEL
     }
 }
