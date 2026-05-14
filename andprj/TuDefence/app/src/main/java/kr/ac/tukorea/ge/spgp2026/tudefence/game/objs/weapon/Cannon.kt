@@ -1,7 +1,10 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon
 
 import android.graphics.Canvas
+import android.graphics.DashPathEffect
+import android.graphics.Paint
 import android.graphics.RectF
+import androidx.core.graphics.toColorInt
 import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -98,6 +101,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
     }
 
     override fun draw(canvas: Canvas) {
+        drawRange(canvas)
         super.draw(canvas)
 
         // 포탑 몸체는 Sprite 의 dstRect 에 맞춰 그리고,
@@ -114,6 +118,10 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         }
     }
 
+    fun drawRange(canvas: Canvas) {
+        canvas.drawCircle(x, y, range, rangePaint)
+    }
+
     companion object {
         fun get(gctx: GameContext, level: Int): Cannon {
             return Cannon(gctx).init(level)
@@ -127,8 +135,14 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         private const val BARREL_MUZZLE_OFFSET_RATIO = 0.38f
         private const val MAX_FIRE_INTERVAL = 5.0f
         private const val FIRE_INTERVAL_STEP = 0.4f
-        private const val BASE_RANGE = 200f
-        private const val RANGE_PER_LEVEL = 200f
+        private const val BASE_RANGE = 100f
+        private const val RANGE_PER_LEVEL = 100f
         private const val MIN_RANGE = BASE_RANGE + RANGE_PER_LEVEL * MIN_LEVEL
+        private val rangePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 10f
+            pathEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f)
+            color = "#7F7F0000".toColorInt()
+        }
     }
 }
