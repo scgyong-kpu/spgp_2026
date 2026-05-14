@@ -52,7 +52,7 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
   - [ ] `EXPLOSION`
   - [ ] `SCORE`
   - [ ] `SELECTION`
-- [ ] Back key 로 `PauseScene` 진입
+- [x] Back key 로 `PauseScene` 진입
 - [x] Touch event 를 게임 좌표계로 변환
 - [x] Scene 별 package 분리
 
@@ -212,9 +212,10 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Pause Scene
 
-- [ ] Back key 로 빈 Scene 을 push 하여 pause 흐름 먼저 확인
-- [ ] `PauseScene` 생성
-- [ ] 투명 overlay scene 적용
+- [x] Back key 로 빈 Scene 을 push 하여 pause 흐름 먼저 확인
+- [x] `PauseScene` 생성
+- [x] 투명 overlay scene 적용
+- [x] `DrawableSprite` 로 speech box 표시
 - [ ] 반투명 배경 객체 추가
 - [ ] Resume 버튼 추가
 - [ ] Exit 버튼 추가

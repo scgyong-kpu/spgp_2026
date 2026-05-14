@@ -8,6 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
 import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
@@ -53,6 +54,11 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
     private fun addCannon(gctx: GameContext, x: Float, y: Float, level: Int) {
         world.add(Cannon.get(gctx, level).apply { setCenter(x, y) }, Layer.WEAPON)
+    }
+
+    override fun onBackPressed(): Boolean {
+        gctx.sceneStack.push(PauseScene(gctx))
+        return true
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
