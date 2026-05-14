@@ -112,7 +112,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 ## Cannon
 
 - [ ] `Cannon` 구현
-- [ ] 포탑 body 와 barrel 이미지를 따로 그림
+- [x] 포탑 body 와 barrel 이미지를 따로 그림
 - [ ] level 별 포탑 이미지 적용
 - [ ] level 은 1-based index 로 사용
 - [ ] `setLevel()` 로 이미지, 사거리, 발사 간격, barrel 크기 갱신

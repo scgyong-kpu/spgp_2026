@@ -7,12 +7,14 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
     override val clipsRect: Boolean = true
     enum class Layer {
         BG,
+        WEAPON,
         ENEMY,
         CONTROLLER,
     }
@@ -32,6 +34,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
         world.add(background, Layer.BG)
         world.add(WaveGen(gctx, world), Layer.CONTROLLER)
+
+        world.add(Cannon(gctx).apply { setCenter(300f, 300f) }, Layer.WEAPON)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
