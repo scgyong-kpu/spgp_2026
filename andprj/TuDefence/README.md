@@ -40,12 +40,12 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] 빈 Scene 을 먼저 push 하여 GameActivity 동작 확인
 - [x] `MainScene` 생성
 - [x] 현재 단계용 Layer enum 정의
-  - [x] `CAMERA_BEGIN`
   - [x] `BG`
   - [x] `ENEMY`
-  - [x] `CAMERA_END`
   - [x] `CONTROLLER`
 - [x] `CAMERA_BEGIN` / `CAMERA_END` marker 로 map transform 적용 범위 실험
+- [x] `MainWorld` 에서 camera 적용 layer 를 같은 draw scope 안에서 처리
+- [x] `CameraBegin` / `CameraEnd` marker 객체 제거
 - [ ] 이후 단계용 Layer 확장
   - [ ] `CANNON`
   - [ ] `SHELL`

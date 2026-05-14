@@ -31,7 +31,7 @@ class TiledBackground(
 
     // 확대/이동은 TiledBackground 가 직접 처리하지 않고 MapCamera 가 담당한다.
     // 이 객체는 camera 가 알려주는 visibleMapRect 를 보고 필요한 tile 만 고른 뒤,
-    // destination rect 는 map 좌표로 설정한다. 실제 화면 변환은 CameraBegin 의 canvas matrix 가 처리한다.
+    // destination rect 는 map 좌표로 설정한다. 실제 화면 변환은 MainWorld 의 canvas matrix 가 처리한다.
     private val mapCamera: MapCamera,
 
     // 게임 좌표계에서 tile 하나를 몇 x 몇 크기로 그릴지 나타낸다.
@@ -97,7 +97,7 @@ class TiledBackground(
 
         // visibleMapRect 는 "현재 화면에 보이는 map 좌표 범위"이다.
         // 따라서 이 범위와 겹치는 tile index 만 순회하면 화면 밖 tile 은 drawBitmap() 호출 자체를 하지 않는다.
-        // destination rect 는 map 좌표로 설정하고, 화면으로의 확대/이동 변환은 CameraBegin 의 matrix 에 맡긴다.
+        // destination rect 는 map 좌표로 설정하고, 화면으로의 확대/이동 변환은 MainWorld 의 matrix 에 맡긴다.
         //
         // for-each 대신 while 을 쓰는 이유는 draw() 가 매 프레임 호출되는 hot path 이기 때문이다.
         // iterator 객체 생성을 피하고, tileX/tileY 를 직접 증가시키는 편이 의도가 분명하다.
