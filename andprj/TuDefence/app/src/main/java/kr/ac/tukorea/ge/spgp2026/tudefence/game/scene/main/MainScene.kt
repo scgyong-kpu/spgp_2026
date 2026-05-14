@@ -48,6 +48,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         addCannon(gctx, 900f, 575f, level = 4)
         addCannon(gctx, 1225f, 275f, level = 5)
         addCannon(gctx, 1275f, 800f, level = 6)
+        addCannon(gctx, 800f, 125f, level = 10)
     }
 
     private fun addCannon(gctx: GameContext, x: Float, y: Float, level: Int) {

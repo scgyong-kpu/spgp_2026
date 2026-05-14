@@ -77,7 +77,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         val muzzleOffset = barrelSize * BARREL_MUZZLE_OFFSET_RATIO
         val startX = x + cos(radians).toFloat() * muzzleOffset
         val startY = y + sin(radians).toFloat() * muzzleOffset
-        val shell = Shell.get(gctx, startX, startY, angle)
+        val shell = Shell.get(gctx, startX, startY, angle, level)
         (gctx.scene as MainScene).world.add(shell, MainScene.Layer.SHELL)
     }
 
