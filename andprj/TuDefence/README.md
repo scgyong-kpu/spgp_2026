@@ -216,11 +216,12 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] `PauseScene` 생성
 - [x] 투명 overlay scene 적용
 - [x] `DrawableSprite` 로 speech box 표시
+- [x] 1초 전후로 바뀌는 pause 안내 메시지 표시
 - [ ] 반투명 배경 객체 추가
 - [ ] Resume 버튼 추가
 - [ ] Exit 버튼 추가
-- [ ] Back key 동작 정리
-- [ ] 빠른 Back key 두 번 입력 시 전체 종료 검토
+- [x] Back key 동작 정리
+- [x] 빠른 Back key 두 번 입력 시 전체 종료 검토
 - [ ] Scene stack 종료 흐름 정리
 - [ ] Scene pause 시 Animator 등 외부 작업 pause/resume 구조 검토
 
