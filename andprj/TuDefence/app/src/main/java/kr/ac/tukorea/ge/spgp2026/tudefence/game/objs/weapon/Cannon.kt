@@ -12,14 +12,29 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
+class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
     private val barrelRect = RectF()
     private val barrelBitmap = gctx.res.getBitmap(R.mipmap.barrel_512)
+    private var level = 1
+    private var barrelSize = MIN_BARREL_SIZE
+    private var fireInterval = MAX_FIRE_INTERVAL
     private var angle = 0f
     private var fireCooldown = 0f
 
     init {
         setSize(BASE_SIZE, BASE_SIZE)
+    }
+
+    private fun init(level: Int): Cannon {
+        // Cannon level 은 학생들이 보기 쉽게 1-based index 로 사용한다.
+        // level 1 은 가장 작은 포신, level 10 은 가장 큰 포신이며,
+        // 범위를 벗어난 값은 안전하게 1..10 안으로 보정한다.
+        this.level = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
+        val levelRatio = (this.level - MIN_LEVEL) / (MAX_LEVEL - MIN_LEVEL).toFloat()
+        barrelSize = MIN_BARREL_SIZE + (MAX_BARREL_SIZE - MIN_BARREL_SIZE) * levelRatio
+        fireInterval = MAX_FIRE_INTERVAL - FIRE_INTERVAL_STEP * (this.level - MIN_LEVEL)
+        fireCooldown = fireInterval
+        return this
     }
 
     override fun update(gctx: GameContext) {
@@ -28,7 +43,7 @@ class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
         angle = Math.toDegrees(atan2((target.y - y).toDouble(), (target.x - x).toDouble())).toFloat()
         if (fireCooldown <= 0f) {
             fire(gctx)
-            fireCooldown = FIRE_INTERVAL
+            fireCooldown = fireInterval
         }
     }
 
@@ -59,8 +74,9 @@ class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
 
     private fun fire(gctx: GameContext) {
         val radians = Math.toRadians(angle.toDouble())
-        val startX = x + cos(radians).toFloat() * BARREL_MUZZLE_OFFSET
-        val startY = y + sin(radians).toFloat() * BARREL_MUZZLE_OFFSET
+        val muzzleOffset = barrelSize * BARREL_MUZZLE_OFFSET_RATIO
+        val startX = x + cos(radians).toFloat() * muzzleOffset
+        val startY = y + sin(radians).toFloat() * muzzleOffset
         val shell = Shell.get(gctx, startX, startY, angle)
         (gctx.scene as MainScene).world.add(shell, MainScene.Layer.SHELL)
     }
@@ -72,10 +88,10 @@ class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
         // 포신은 같은 중심을 기준으로 별도 bitmap 을 얹는다.
         // barrel 이미지는 오른쪽을 보는 상태로 만들어 두고, 현재 angle 만큼 회전해 적을 바라보게 한다.
         barrelRect.set(
-            x - BARREL_SIZE / 2f,
-            y - BARREL_SIZE / 2f,
-            x + BARREL_SIZE / 2f,
-            y + BARREL_SIZE / 2f,
+            x - barrelSize / 2f,
+            y - barrelSize / 2f,
+            x + barrelSize / 2f,
+            y + barrelSize / 2f,
         )
         canvas.withRotation(angle, x, y) {
             canvas.drawBitmap(barrelBitmap, null, barrelRect, null)
@@ -83,9 +99,17 @@ class Cannon(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
     }
 
     companion object {
+        fun get(gctx: GameContext, level: Int): Cannon {
+            return Cannon(gctx).init(level)
+        }
+
+        private const val MIN_LEVEL = 1
+        private const val MAX_LEVEL = 10
         private const val BASE_SIZE = 100f
-        private const val BARREL_SIZE = 110f
-        private const val BARREL_MUZZLE_OFFSET = 42f
-        private const val FIRE_INTERVAL = 0.75f
+        private const val MIN_BARREL_SIZE = 110f
+        private const val MAX_BARREL_SIZE = 200f
+        private const val BARREL_MUZZLE_OFFSET_RATIO = 0.38f
+        private const val MAX_FIRE_INTERVAL = 5.0f
+        private const val FIRE_INTERVAL_STEP = 0.4f
     }
 }

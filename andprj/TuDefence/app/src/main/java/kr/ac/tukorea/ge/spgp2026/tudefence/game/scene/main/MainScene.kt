@@ -42,16 +42,16 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private fun addTestCannons(gctx: GameContext) {
         // Fly path 를 눈으로 피하고, 벽돌 tile 위에 올라가도록 고른 임시 배치이다.
         // 지금은 Cannon 의 body/barrel 분리 표시와 camera transform 동작을 확인하기 위한 테스트용이다.
-        addCannon(gctx, 325f, 275f)
-        addCannon(gctx, 425f, 375f)
-        addCannon(gctx, 800f, 325f)
-        addCannon(gctx, 900f, 575f)
-        addCannon(gctx, 1225f, 275f)
-        addCannon(gctx, 1275f, 800f)
+        addCannon(gctx, 325f, 275f, level = 1)
+        addCannon(gctx, 425f, 375f, level = 2)
+        addCannon(gctx, 800f, 325f, level = 3)
+        addCannon(gctx, 900f, 575f, level = 4)
+        addCannon(gctx, 1225f, 275f, level = 5)
+        addCannon(gctx, 1275f, 800f, level = 6)
     }
 
-    private fun addCannon(gctx: GameContext, x: Float, y: Float) {
-        world.add(Cannon(gctx).apply { setCenter(x, y) }, Layer.WEAPON)
+    private fun addCannon(gctx: GameContext, x: Float, y: Float, level: Int) {
+        world.add(Cannon.get(gctx, level).apply { setCenter(x, y) }, Layer.WEAPON)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

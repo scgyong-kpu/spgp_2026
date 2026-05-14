@@ -58,7 +58,7 @@ class Shell private constructor(gctx: GameContext):
             return shell.init(x, y, angle)
         }
 
-        private const val SIZE = 36f
+        private const val SIZE = 20f
         private const val SPEED = 600f
     }
 }
