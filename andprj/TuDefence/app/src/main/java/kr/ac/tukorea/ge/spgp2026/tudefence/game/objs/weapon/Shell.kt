@@ -10,6 +10,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
 
 class Shell private constructor(gctx: GameContext):
@@ -19,6 +20,8 @@ class Shell private constructor(gctx: GameContext):
     private var dx = 0f
     private var dy = 0f
     private var angle = 0f
+    var power = 0f
+        private set
 
     init {
         setSize(SIZE, SIZE)
@@ -31,6 +34,7 @@ class Shell private constructor(gctx: GameContext):
         setCenter(x, y)
         this.angle = angle
         this.level = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
+        power = BASE_POWER * POWER_RATIO.pow(this.level - MIN_LEVEL)
         val rect = shellRects[this.level - 1]
         val size = rect.width().toFloat() * SRC_TO_DST_RATIO
         setSize(size, size)
@@ -91,5 +95,7 @@ class Shell private constructor(gctx: GameContext):
         private const val SIZE = 20f
         private const val SPEED = 600f
         private const val SRC_TO_DST_RATIO = 0.48f
+        private const val BASE_POWER = 10f
+        private const val POWER_RATIO = 1.2f
     }
 }

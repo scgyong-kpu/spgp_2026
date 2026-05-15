@@ -32,7 +32,7 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
                 val fly = flies[fi] as? Fly ?: continue
                 if (shell.collides(fly)) {
                     Log.d(javaClass.simpleName, "Collision! $shell $fly")
-                    fly.decreaseLife(SHELL_DAMAGE)
+                    fly.decreaseLife(shell.power)
                     world.remove(shell, MainScene.Layer.SHELL)
                     if (fly.isDead()) {
                         world.remove(fly, MainScene.Layer.ENEMY)
@@ -46,9 +46,5 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
     }
 
     override fun draw(canvas: Canvas) {
-    }
-
-    companion object {
-        private const val SHELL_DAMAGE = 10f
     }
 }
