@@ -7,13 +7,15 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.cos
 import kotlin.math.sin
 
 class Shell private constructor(gctx: GameContext):
-    Sprite(gctx, R.mipmap.shells), IRecyclable
+    Sprite(gctx, R.mipmap.shells), IRecyclable, IRadiusCollidable
 {
+    private var level = 0
     private var dx = 0f
     private var dy = 0f
     private var angle = 0f
@@ -22,11 +24,14 @@ class Shell private constructor(gctx: GameContext):
         setSize(SIZE, SIZE)
     }
 
+    override val radius: Float
+        get() = width / 2f
+
     private fun init(x: Float, y: Float, angle: Float, level: Int): Shell {
         setCenter(x, y)
         this.angle = angle
-        val shellLevel = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
-        val rect = shellRects[shellLevel - 1]
+        this.level = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
+        val rect = shellRects[this.level - 1]
         val size = rect.width().toFloat() * SRC_TO_DST_RATIO
         setSize(size, size)
         srcRect = rect
@@ -55,6 +60,10 @@ class Shell private constructor(gctx: GameContext):
     }
 
     override fun onRecycle() {
+    }
+
+    override fun toString(): String {
+        return "Shell($level/${x.toInt()},${y.toInt()})"
     }
 
     companion object {

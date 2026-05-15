@@ -171,8 +171,8 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] shell power 를 level 에 따라 `10 * 1.2^(level - 1)` 로 계산
 - [ ] shell radius 를 level 에 따라 조정
 - [x] 화면 밖으로 나가면 제거
-- [ ] `a2dg` 에 radius collision helper 추가
-- [ ] shell 과 enemy 충돌 검사
+- [x] app 공통 코드에 radius collision helper 추가
+- [x] shell 과 enemy 충돌 검사
 - [ ] enemy life 감소
 - [ ] enemy 사망 시 score 증가
 - [ ] 높은 level shell 에 splash damage 적용

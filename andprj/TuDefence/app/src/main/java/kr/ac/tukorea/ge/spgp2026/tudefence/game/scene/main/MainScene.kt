@@ -37,6 +37,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         world.add(background, Layer.BG)
         world.add(WaveGen(gctx, world), Layer.CONTROLLER)
 
+        world.add(CollisionChecker(gctx, world), Layer.CONTROLLER)
         addTestCannons(gctx)
     }
 

@@ -9,13 +9,14 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.random.Random
 
 class Fly private constructor(gctx: GameContext):
-    SheetSprite(gctx, R.mipmap.galaga_flies, 2f), IRecyclable
+    SheetSprite(gctx, R.mipmap.galaga_flies, 2f), IRecyclable, IRadiusCollidable
 {
     enum class Type(
         val health: Float,
@@ -48,6 +49,10 @@ class Fly private constructor(gctx: GameContext):
         setSize(MIN_SIZE, MIN_SIZE)
     }
 
+    override val radius: Float
+        get() = width / 2f
+
+    var type = Type.DRAGON
     var distance = 0f
     var life = 0f
         private set
@@ -60,6 +65,7 @@ class Fly private constructor(gctx: GameContext):
     private val tangent = FloatArray(2)
 
     private fun init(type: Type, sizeRatio: Float): Fly {
+        this.type = type
         frameRects = rectsArray[type.ordinal]
         life = type.health
         maxLife = life
@@ -110,6 +116,9 @@ class Fly private constructor(gctx: GameContext):
 
     override fun onRecycle() {}
 
+    override fun toString(): String {
+        return "Fly($type/${x.toInt()},${y.toInt()})"
+    }
     companion object {
         fun get(gctx: GameContext): Fly {
             return obtain(gctx, Type.random())
