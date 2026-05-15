@@ -32,8 +32,11 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
                 val fly = flies[fi] as? Fly ?: continue
                 if (shell.collides(fly)) {
                     Log.d(javaClass.simpleName, "Collision! $shell $fly")
+                    fly.decreaseLife(SHELL_DAMAGE)
                     world.remove(shell, MainScene.Layer.SHELL)
-                    world.remove(fly, MainScene.Layer.ENEMY)
+                    if (fly.isDead()) {
+                        world.remove(fly, MainScene.Layer.ENEMY)
+                    }
                     // 이 break 는 안쪽 Fly loop 만 끝낸다.
                     // 바깥 Shell loop 는 계속 진행하므로, 한 프레임 안에서도 다음 Shell 의 충돌은 계속 검사한다.
                     break
@@ -43,5 +46,9 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
     }
 
     override fun draw(canvas: Canvas) {
+    }
+
+    companion object {
+        private const val SHELL_DAMAGE = 10f
     }
 }

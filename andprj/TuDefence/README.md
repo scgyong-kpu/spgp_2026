@@ -173,7 +173,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 화면 밖으로 나가면 제거
 - [x] app 공통 코드에 radius collision helper 추가
 - [x] shell 과 enemy 충돌 검사
-- [ ] enemy life 감소
+- [x] enemy life 감소
 - [ ] enemy 사망 시 score 증가
 - [ ] 높은 level shell 에 splash damage 적용
 - [ ] splash radius 를 power 에 비례하여 계산

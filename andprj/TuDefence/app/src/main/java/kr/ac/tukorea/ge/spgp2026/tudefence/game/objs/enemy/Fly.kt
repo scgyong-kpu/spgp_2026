@@ -103,6 +103,14 @@ class Fly private constructor(gctx: GameContext):
         angle = Math.toDegrees(atan2(tangent[1], tangent[0]).toDouble()).toFloat()
     }
 
+    fun decreaseLife(amount: Float) {
+        life -= amount
+    }
+
+    fun isDead(): Boolean {
+        return life <= 0f
+    }
+
     override fun draw(canvas: Canvas) {
         // withRotation 은 아래 save/rotate/restore 패턴을 보기 좋게 감싼 AndroidX KTX helper 이다.
         // canvas.save()
