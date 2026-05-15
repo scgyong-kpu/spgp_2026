@@ -159,7 +159,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] Bezier curve 로 부드러운 경로 적용
 - [x] 이동 방향에 따라 회전
 - [x] 경로 이동 중 흔들림 적용
-- [ ] life gauge 표시
+- [x] life gauge 표시
 - [ ] life gauge 가 실제 life 를 따라가며 애니메이션되도록 표시값 분리
 - [ ] recycle bin 재사용 적용
 

@@ -4,9 +4,11 @@ import android.graphics.Canvas
 import android.graphics.PathMeasure
 import android.graphics.Rect
 import androidx.core.graphics.PathParser
+import androidx.core.graphics.toColorInt
 import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
@@ -120,6 +122,18 @@ class Fly private constructor(gctx: GameContext):
         canvas.withRotation(angle, x, y) {
             super.draw(canvas)
         }
+
+        // Gauge 는 색/두께만 가진 stateless drawing helper 이다.
+        // Fly 마다 Gauge 를 만들면 적이 생성될 때마다 Paint 객체도 같이 생기므로,
+        // companion object 의 lifeGauge 하나를 모든 Fly 가 공유하고 progress 만 넘긴다.
+        val barSize = width * LIFE_GAUGE_WIDTH_RATIO
+        lifeGauge.draw(
+            canvas,
+            x - barSize / 2f,
+            y + barSize / 2f,
+            barSize,
+            life / maxLife,
+        )
     }
 
     override fun onRecycle() {}
@@ -176,5 +190,12 @@ class Fly private constructor(gctx: GameContext):
         private const val BOSS_SIZE_SCALE = 1.5f
         private const val MIN_SPEED = 25f
         private const val MAX_SPEED = 60f
+        private const val LIFE_GAUGE_THICKNESS = 0.2f
+        private const val LIFE_GAUGE_WIDTH_RATIO = 2f / 3f
+        private val lifeGauge = Gauge(
+            thickness = LIFE_GAUGE_THICKNESS,
+            fgColor = "#C9786400".toColorInt(),
+            bgColor = "#B5FFD7D5".toColorInt(),
+        )
     }
 }
