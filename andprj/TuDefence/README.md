@@ -160,7 +160,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 이동 방향에 따라 회전
 - [x] 경로 이동 중 흔들림 적용
 - [x] life gauge 표시
-- [ ] life gauge 가 실제 life 를 따라가며 애니메이션되도록 표시값 분리
+- [x] life gauge 가 실제 life 를 따라가며 애니메이션되도록 표시값 분리
 - [ ] recycle bin 재사용 적용
 
 ## Shell And Collision
@@ -169,7 +169,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 포탑 level 에 따라 shell 이미지 선택
 - [x] 포탑 각도에 맞춰 shell 속도 계산
 - [x] shell power 를 level 에 따라 `10 * 1.2^(level - 1)` 로 계산
-- [ ] shell radius 를 level 에 따라 조정
+- [x] shell radius 를 level 에 따라 조정
 - [x] 화면 밖으로 나가면 제거
 - [x] app 공통 코드에 radius collision helper 추가
 - [x] shell 과 enemy 충돌 검사

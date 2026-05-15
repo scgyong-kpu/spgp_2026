@@ -60,6 +60,7 @@ class Fly private constructor(gctx: GameContext):
         private set
     var maxLife = 0f
         private set
+    private var displayLife = 0f
     private var speed = MIN_SPEED
     private var angle = 0f
     private var pathOffset = 0f
@@ -71,6 +72,7 @@ class Fly private constructor(gctx: GameContext):
         frameRects = rectsArray[type.ordinal]
         life = type.health
         maxLife = life
+        displayLife = life
         speed = Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED
         val size = (Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE) * sizeRatio
         setSize(size, size)
@@ -82,11 +84,24 @@ class Fly private constructor(gctx: GameContext):
     }
 
     override fun update(gctx: GameContext) {
+        updateDisplayLife()
         distance += speed * gctx.frameTime
         updateOffset(gctx)
         updatePosition()
         if (distance > pathLength) {
             (gctx.scene as MainScene).world.remove(this, MainScene.Layer.ENEMY)
+        }
+    }
+
+    private fun updateDisplayLife() {
+        if (life == displayLife) return
+
+        val step = maxLife / LIFE_GAUGE_ANIMATION_STEP_COUNT
+        val diff = life - displayLife
+        displayLife += when {
+            diff < -step -> -step
+            diff > step -> step
+            else -> diff
         }
     }
 
@@ -132,7 +147,7 @@ class Fly private constructor(gctx: GameContext):
             x - barSize / 2f,
             y + barSize / 2f,
             barSize,
-            life / maxLife,
+            displayLife / maxLife,
         )
     }
 
@@ -192,6 +207,7 @@ class Fly private constructor(gctx: GameContext):
         private const val MAX_SPEED = 60f
         private const val LIFE_GAUGE_THICKNESS = 0.2f
         private const val LIFE_GAUGE_WIDTH_RATIO = 2f / 3f
+        private const val LIFE_GAUGE_ANIMATION_STEP_COUNT = 50f
         private val lifeGauge = Gauge(
             thickness = LIFE_GAUGE_THICKNESS,
             fgColor = "#C9786400".toColorInt(),
