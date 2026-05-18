@@ -125,6 +125,7 @@ TUKorea Dept. of Game Engineering. Smartphone Game Programming Lecture Reources
   * Path close 여부를 `Checkbox` 로 지정
   * Start `Button` 을 누르면 비행기가 Path 를 따라 진행. 위치 및 각도 적용
   * Bezier Curve (Cubic) 적용
+  * `tools/BezierEditor/BezierCurveEditor.html` 로 Bezier path 편집
   * <img src="sshots/Screenshot_SmoothingPath_20260304_084936.png" width="25%">
 * Tiled MapEditor
   * DragonFlight rework
