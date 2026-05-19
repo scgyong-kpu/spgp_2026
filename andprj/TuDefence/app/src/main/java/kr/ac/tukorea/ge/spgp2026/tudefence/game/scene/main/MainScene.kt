@@ -2,9 +2,11 @@ package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 
 import android.graphics.PointF
 import android.graphics.RectF
+import android.util.Log
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
@@ -55,6 +57,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
+        cannonMenu.onMenuListener = CannonMenu.OnMenuListener { resId ->
+            handleMenuSelection(resId)
+        }
         world.add(background, MainLayer.BG)
         world.add(selection, MainLayer.SELECTOR)
         world.add(cannonMenu, MainLayer.UI)
@@ -91,9 +96,13 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             -> {
                 wasMultiTouch = false
                 isDragging = false
-                cannonMenu.hide()
                 downTime = event.eventTime
                 saveTouchState(event)
+                pointFromEvent(event, 0, touchPoint0)
+                if (cannonMenu.onTouch(touchPoint0.x, touchPoint0.y)) {
+                    return true
+                }
+                cannonMenu.hide()
                 downTouchX = lastTouchX
                 downTouchY = lastTouchY
                 updateSelection(event)
@@ -190,6 +199,35 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         selection.sceneRect(mapCamera, selectionSceneRect)
         cannonMenu.showInstallMenuAt(selectionSceneRect)
         return true
+    }
+
+    private fun handleMenuSelection(resId: Int) {
+        when (resId) {
+            R.mipmap.f_01_01 -> selection.selectCannon(installCannon(level = 1))
+            R.mipmap.f_01_02 -> selection.selectCannon(installCannon(level = 2))
+            R.mipmap.f_01_03 -> selection.selectCannon(installCannon(level = 3))
+            R.mipmap.upgrade -> {
+                // 다음 단계에서 selectedCannon 의 upgrade 를 연결한다.
+                Log.d(javaClass.simpleName, "Menu Selected: Upgrade")
+                selection.hide()
+            }
+            R.mipmap.uninstall -> {
+                // 다음 단계에서 selectedCannon 의 uninstall 을 연결한다.
+                Log.d(javaClass.simpleName, "Menu Selected: Uninstall")
+                selection.hide()
+            }
+        }
+    }
+
+    private fun installCannon(level: Int): Cannon {
+        selection.mapRect(selectionSceneRect)
+        return Cannon.get(gctx, level).also { cannon ->
+            cannon.setCenter(selectionSceneRect.centerX(), selectionSceneRect.centerY())
+            world.add(
+                cannon,
+                MainLayer.WEAPON,
+            )
+        }
     }
 
     private fun findCannonAt(mapX: Float, mapY: Float): Cannon? {

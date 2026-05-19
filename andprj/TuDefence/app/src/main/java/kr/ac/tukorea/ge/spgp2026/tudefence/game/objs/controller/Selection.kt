@@ -48,6 +48,11 @@ class Selection(gctx: GameContext, private val width: Float, private val height:
         return out
     }
 
+    fun mapRect(out: RectF = RectF()): RectF {
+        out.set(dstRect)
+        return out
+    }
+
     override fun update(gctx: GameContext) {}
 
     override fun draw(canvas: Canvas) {

@@ -4,11 +4,11 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.withScale
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.DrawableSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
-import androidx.core.graphics.withScale
 
 // CannonMenu 는 터치한 위치에 캐넌을 바로 설치하지 않고,
 // 설치 / 업그레이드 / 삭제 같은 선택지를 보여 주는 임시 메뉴이다.
@@ -17,6 +17,10 @@ import androidx.core.graphics.withScale
 // 설치할 때는 3개짜리 배열, 선택 상태에서는 2개짜리 배열을 넣어
 // draw() 가 같은 루프로 메뉴를 그리게 한다.
 class CannonMenu(gctx: GameContext) : IGameObject {
+    fun interface OnMenuListener {
+        fun onMenu(resId: Int)
+    }
+
     private val gctx = gctx
     private val menuBgDrawable = gctx.res.getDrawable(R.mipmap.menu_bg)
     private val background = DrawableSprite(menuBgDrawable)
@@ -32,6 +36,7 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     private var bgLeft = 0f
     private var bgTop = 0f
     private var flipBackgroundX = false
+    var onMenuListener: OnMenuListener? = null
 
     fun showInstallMenuAt(selectionRect: RectF) {
         menuItems = INSTALL_MENU_ITEMS
@@ -50,6 +55,24 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     fun hide() {
         visible = false
         menuItems = BLANK_MENU_ITEMS
+    }
+
+    fun onTouch(x: Float, y: Float): Boolean {
+        if (!visible || menuItems.isEmpty()) return false
+
+        val itemTop = bgTop + bgPadding.top
+        val itemBottom = itemTop + itemSize
+        var itemLeft = bgLeft + if (flipBackgroundX) bgPadding.right else bgPadding.left
+        for (menuItem in menuItems) {
+            val itemRight = itemLeft + itemSize
+            if (x >= itemLeft && x <= itemRight && y >= itemTop && y <= itemBottom) {
+                onMenuListener?.onMenu(menuItem)
+                hide()
+                return true
+            }
+            itemLeft += itemSize
+        }
+        return false
     }
 
     override fun update(gctx: GameContext) {
