@@ -48,6 +48,6 @@ class MainWorld(
         // 이 layer 부터는 map camera matrix 를 적용하지 않는다.
         // 예를 들어 CONTROLLER, UI, debug overlay 는 화면 좌표계에 고정되어야 하므로
         // enum 에서 이 값 이후에 배치한다.
-        private val SCREEN_LAYER_START = MainLayer.CONTROLLER
+        private val SCREEN_LAYER_START = MainLayer.UI
     }
 }

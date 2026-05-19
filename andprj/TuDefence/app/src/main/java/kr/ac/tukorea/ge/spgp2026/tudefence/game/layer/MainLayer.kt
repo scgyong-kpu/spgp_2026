@@ -10,6 +10,7 @@ enum class MainLayer {
     ENEMY,
     SHELL,
     EXPLOSION,
+    UI,
     CONTROLLER,
 }
 

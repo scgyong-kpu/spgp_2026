@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 
 class Selection(gctx: GameContext, private val width: Float, private val height: Float) : IGameObject {
@@ -22,6 +23,12 @@ class Selection(gctx: GameContext, private val width: Float, private val height:
 
     fun hide() {
         visible = false
+    }
+
+    fun sceneRect(mapCamera: MapCamera, out: RectF = RectF()): RectF {
+        out.set(dstRect)
+        mapCamera.matrix.mapRect(out)
+        return out
     }
 
     override fun update(gctx: GameContext) {}

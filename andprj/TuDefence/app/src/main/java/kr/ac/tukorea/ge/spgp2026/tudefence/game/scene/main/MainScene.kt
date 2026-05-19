@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 
 import android.graphics.PointF
+import android.graphics.RectF
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -8,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CannonMenu
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.Selection
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
@@ -35,6 +37,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     )
     private val markerLayer = tiledMap.tileLayer(MARKER_LAYER_NAME)
     private val selection = Selection(gctx, Cannon.SIZE, Cannon.SIZE)
+    private val cannonMenu = CannonMenu(gctx)
     private var cameraScale = MIN_CAMERA_SCALE
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -47,12 +50,14 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private val touchPoint0 = PointF()
     private val touchPoint1 = PointF()
     private val mapPoint = PointF()
+    private val selectionSceneRect = RectF()
 
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
         world.add(background, MainLayer.BG)
         world.add(selection, MainLayer.SELECTOR)
+        world.add(cannonMenu, MainLayer.UI)
         world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
 
         world.add(CollisionChecker(gctx, world), MainLayer.CONTROLLER)
@@ -62,12 +67,12 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private fun addTestCannons(gctx: GameContext) {
         // Fly path 를 눈으로 피하고, 벽돌 tile 위에 올라가도록 고른 임시 배치이다.
         // 지금은 Cannon 의 body/barrel 분리 표시와 camera transform 동작을 확인하기 위한 테스트용이다.
-        addCannon(gctx, 250f, 275f, level = 1)
+        addCannon(gctx, 225f, 275f, level = 1)
         addCannon(gctx, 425f, 375f, level = 2)
-        addCannon(gctx, 800f, 325f, level = 6)
-        addCannon(gctx, 900f, 575f, level = 4)
+        addCannon(gctx, 825f, 325f, level = 6)
+        addCannon(gctx, 925f, 575f, level = 4)
         addCannon(gctx, 1225f, 275f, level = 5)
-        addCannon(gctx, 1275f, 800f, level = 6)
+        addCannon(gctx, 1275f, 775f, level = 6)
         //addCannon(gctx, 800f, 125f, level = 10)
     }
 
@@ -86,6 +91,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             -> {
                 wasMultiTouch = false
                 isDragging = false
+                cannonMenu.hide()
                 downTime = event.eventTime
                 saveTouchState(event)
                 downTouchX = lastTouchX
@@ -99,6 +105,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
                 wasMultiTouch = true
                 isDragging = true
                 selection.hide()
+                cannonMenu.hide()
                 saveTouchState(event)
                 return true
             }
@@ -112,6 +119,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
                 if (event.pointerCount >= 2) {
                     wasMultiTouch = true
                     isDragging = true
+                    selection.hide()
+                    cannonMenu.hide()
                     pinchZoom(event)
                 } else {
                     dragScrollIfNeeded(event)
@@ -122,8 +131,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             }
 
             MotionEvent.ACTION_UP -> {
-                installCannonIfTap(gctx, event)
-                selection.hide()
+                if (!showCannonMenuIfTap(event)) {
+                    selection.hide()
+                }
                 resetTouchState()
                 return true
             }
@@ -139,7 +149,6 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
     private fun updateSelection(event: MotionEvent) {
         if (wasMultiTouch || isDragging) {
-            selection.hide()
             return
         }
         pointFromEvent(event, 0, touchPoint0)
@@ -149,17 +158,28 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         selection.moveTo(cx, cy, canInstallAt(cx, cy) && !hasOverlappingCannon(cx, cy))
     }
 
-    private fun installCannonIfTap(gctx: GameContext, event: MotionEvent) {
-        if (wasMultiTouch || isDragging) return
+    private fun showCannonMenuIfTap(event: MotionEvent): Boolean {
+        if (wasMultiTouch || isDragging) {
+            cannonMenu.hide()
+            return false
+        }
 
         pointFromEvent(event, 0, touchPoint0)
         mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
         val cannonX = tileCenterX(mapPoint.x)
         val cannonY = tileCenterY(mapPoint.y)
-        if (!canInstallAt(cannonX, cannonY)) return
-        if (hasOverlappingCannon(cannonX, cannonY)) return
+        if (!canInstallAt(cannonX, cannonY)) {
+            cannonMenu.hide()
+            return false
+        }
+        if (hasOverlappingCannon(cannonX, cannonY)) {
+            cannonMenu.hide()
+            return false
+        }
 
-        addCannon(gctx, cannonX, cannonY, level = 1)
+        selection.sceneRect(mapCamera, selectionSceneRect)
+        cannonMenu.showInstallMenuAt(selectionSceneRect.right, selectionSceneRect.centerY())
+        return true
     }
 
     private fun tileCenterX(mapX: Float): Float {
@@ -204,6 +224,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             val withinDragWindow = event.eventTime - downTime < TAP_TIMEOUT_MS
             val canScroll = cameraScale > MIN_CAMERA_SCALE
             isDragging = movedFar && withinDragWindow && canScroll
+            if (isDragging) {
+                selection.hide()
+            }
         }
         if (isDragging) {
             dragScroll(event)
