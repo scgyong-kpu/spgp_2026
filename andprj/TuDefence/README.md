@@ -175,9 +175,9 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] shell 과 enemy 충돌 검사
 - [x] enemy life 감소
 - [ ] enemy 사망 시 score 증가
-- [ ] 높은 level shell 에 splash damage 적용
-- [ ] splash radius 를 power 에 비례하여 계산
-- [ ] splash damage 는 거리 제곱 비율에 따라 감소
+- [x] 높은 level shell 에 splash damage 적용
+- [x] splash radius 를 power 에 비례하여 계산
+- [x] splash damage 는 거리 제곱 비율에 따라 감소
 - [x] `Explosion` 표시
 - [x] `Explosion` 은 recycle 가능한 객체로 생성
 - [x] `Explosion` 은 일정 시간 animation 후 스스로 제거

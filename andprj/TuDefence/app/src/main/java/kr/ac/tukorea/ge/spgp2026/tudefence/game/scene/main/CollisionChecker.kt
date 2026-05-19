@@ -33,20 +33,42 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
                 val fly = flies[fi] as? Fly ?: continue
                 if (shell.collides(fly)) {
                     Log.d(javaClass.simpleName, "Collision! $shell $fly")
+                    hit(fly, shell.power)
                     if (shell.splashes) {
-                        val explosion = Explosion.get(gctx, fly.x, fly.y, shell.explosionRadius)
-                        world.add(explosion, MainScene.Layer.EXPLOSION)
+                        explode(gctx, shell, fly, flies)
                     }
-                    fly.decreaseLife(shell.power)
                     world.remove(shell, MainScene.Layer.SHELL)
-                    if (fly.isDead()) {
-                        world.remove(fly, MainScene.Layer.ENEMY)
-                    }
                     // 이 break 는 안쪽 Fly loop 만 끝낸다.
                     // 바깥 Shell loop 는 계속 진행하므로, 한 프레임 안에서도 다음 Shell 의 충돌은 계속 검사한다.
                     break
                 }
             }
+        }
+    }
+
+    private fun hit(fly: Fly, damage: Float) {
+        fly.decreaseLife(damage)
+        if (fly.isDead()) {
+            world.remove(fly, MainScene.Layer.ENEMY)
+        }
+    }
+
+    private fun explode(gctx: GameContext, shell: Shell, flyHit: Fly, flies: List<IGameObject>) {
+        val explosion = Explosion.get(gctx, flyHit.x, flyHit.y, shell.explosionRadius)
+        world.add(explosion, MainScene.Layer.EXPLOSION)
+
+        val explosionRadiusSq = shell.explosionRadius * shell.explosionRadius
+        for (fi in flies.lastIndex downTo 0) {
+            val fly = flies[fi] as? Fly ?: continue
+            if (fly == flyHit) continue
+
+            val dx = flyHit.x - fly.x
+            val dy = flyHit.y - fly.y
+            val distanceSq = dx * dx + dy * dy
+            if (distanceSq >= explosionRadiusSq) continue
+
+            val damageRatio = 1f - distanceSq / explosionRadiusSq
+            hit(fly, shell.power * damageRatio)
         }
     }
 
