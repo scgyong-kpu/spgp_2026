@@ -4,6 +4,7 @@ import android.graphics.PointF
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
@@ -14,14 +15,6 @@ import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
     override val clipsRect: Boolean = true
-    enum class Layer {
-        BG,
-        WEAPON,
-        ENEMY,
-        SHELL,
-        EXPLOSION,
-        CONTROLLER,
-    }
 
     private val mapCamera = MapCamera(gctx, MAP_WIDTH, MAP_HEIGHT)
     override val world = MainWorld(mapCamera)
@@ -36,10 +29,10 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
-        world.add(background, Layer.BG)
-        world.add(WaveGen(gctx, world), Layer.CONTROLLER)
+        world.add(background, MainLayer.BG)
+        world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
 
-        world.add(CollisionChecker(gctx, world), Layer.CONTROLLER)
+        world.add(CollisionChecker(gctx, world), MainLayer.CONTROLLER)
         addTestCannons(gctx)
     }
 
@@ -56,7 +49,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     private fun addCannon(gctx: GameContext, x: Float, y: Float, level: Int) {
-        world.add(Cannon.get(gctx, level).apply { setCenter(x, y) }, Layer.WEAPON)
+        world.add(Cannon.get(gctx, level).apply { setCenter(x, y) }, MainLayer.WEAPON)
     }
 
     override fun onBackPressed(): Boolean {

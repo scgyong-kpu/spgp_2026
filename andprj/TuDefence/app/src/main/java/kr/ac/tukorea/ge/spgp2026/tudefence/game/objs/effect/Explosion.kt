@@ -5,6 +5,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 
 class Explosion private constructor(gctx: GameContext):
@@ -27,7 +28,7 @@ class Explosion private constructor(gctx: GameContext):
     override fun update(gctx: GameContext) {
         elapsedTime += gctx.frameTime
         if (elapsedTime >= DURATION) {
-            (gctx.scene as MainScene).world.remove(this, MainScene.Layer.EXPLOSION)
+            (gctx.scene as MainScene).world.remove(this, MainLayer.EXPLOSION)
             return
         }
         updateFrame()

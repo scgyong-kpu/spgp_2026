@@ -4,13 +4,13 @@ import android.graphics.Canvas
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.random.Random
 
 class WaveGen(
     private val gctx: GameContext,
-    private val world: World<MainScene.Layer>,
+    private val world: World<MainLayer>,
 ) : IGameObject {
     private var elapsedTime = 0f
 
@@ -42,7 +42,7 @@ class WaveGen(
         } else {
             Fly.get(gctx)
         }
-        world.add(fly, MainScene.Layer.ENEMY)
+        world.add(fly, MainLayer.ENEMY)
     }
 
     companion object {

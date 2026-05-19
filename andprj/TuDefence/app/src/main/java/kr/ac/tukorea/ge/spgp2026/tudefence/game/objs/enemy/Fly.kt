@@ -12,6 +12,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -89,7 +90,7 @@ class Fly private constructor(gctx: GameContext):
         updateOffset(gctx)
         updatePosition()
         if (distance > pathLength) {
-            (gctx.scene as MainScene).world.remove(this, MainScene.Layer.ENEMY)
+            (gctx.scene as MainScene).world.remove(this, MainLayer.ENEMY)
         }
     }
 

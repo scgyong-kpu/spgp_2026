@@ -6,15 +6,15 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.collides
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.effect.Explosion
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Shell
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 
-class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IGameObject {
+class CollisionChecker(gctx: GameContext, val world: World<MainLayer>): IGameObject {
     override fun update(gctx: GameContext) {
-        val shells = world.objectsAt(MainScene.Layer.SHELL)
-        val flies = world.objectsAt(MainScene.Layer.ENEMY)
+        val shells = world.objectsAt(MainLayer.SHELL)
+        val flies = world.objectsAt(MainLayer.ENEMY)
 
         // 충돌 검사는 Shell 을 기준으로 진행한다.
         // Shell 하나가 Fly 하나와 충돌하면 그 Shell 은 사라지므로,
@@ -38,7 +38,7 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
                     if (shell.splashes) {
                         explode(gctx, shell, fly, flies)
                     }
-                    world.remove(shell, MainScene.Layer.SHELL)
+                    world.remove(shell, MainLayer.SHELL)
                     // 이 break 는 안쪽 Fly loop 만 끝낸다.
                     // 바깥 Shell loop 는 계속 진행하므로, 한 프레임 안에서도 다음 Shell 의 충돌은 계속 검사한다.
                     break
@@ -50,13 +50,13 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
     private fun hit(fly: Fly, damage: Float) {
         fly.decreaseLife(damage)
         if (fly.isDead()) {
-            world.remove(fly, MainScene.Layer.ENEMY)
+            world.remove(fly, MainLayer.ENEMY)
         }
     }
 
     private fun explode(gctx: GameContext, shell: Shell, flyHit: Fly, flies: List<IGameObject>) {
         val explosion = Explosion.get(gctx, flyHit.x, flyHit.y, shell.explosionRadius)
-        world.add(explosion, MainScene.Layer.EXPLOSION)
+        world.add(explosion, MainLayer.EXPLOSION)
 
         val explosionRadiusSq = shell.explosionRadius * shell.explosionRadius
         for (fi in flies.lastIndex downTo 0) {

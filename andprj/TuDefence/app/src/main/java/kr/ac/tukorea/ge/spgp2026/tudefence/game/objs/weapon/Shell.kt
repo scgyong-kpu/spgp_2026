@@ -8,6 +8,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.cos
 import kotlin.math.pow
@@ -52,7 +53,7 @@ class Shell private constructor(gctx: GameContext):
     override fun update(gctx: GameContext) {
         setCenter(x + dx * gctx.frameTime, y + dy * gctx.frameTime)
         if (isOutOfWorld()) {
-            (gctx.scene as MainScene).world.remove(this, MainScene.Layer.SHELL)
+            (gctx.scene as MainScene).world.remove(this, MainLayer.SHELL)
         }
     }
 
