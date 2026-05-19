@@ -16,10 +16,25 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
+class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_1_256) {
     private val barrelRect = RectF()
     private val barrelBitmap = gctx.res.getBitmap(R.mipmap.barrel_512)
     private var level = 1
+        set(value) {
+            // Cannon level 은 학생들이 보기 쉽게 1-based index 로 사용한다.
+            // setter 안에서 this.level = ... 을 다시 쓰면 setter 가 재귀 호출된다.
+            // 그래서 Kotlin property setter 에서는 backing field 인 field 에 직접 대입한다.
+            field = value.coerceIn(MIN_LEVEL, MAX_LEVEL)
+            val levelRatio = (field - MIN_LEVEL) / (MAX_LEVEL - MIN_LEVEL).toFloat()
+            barrelSize = MIN_BARREL_SIZE + (MAX_BARREL_SIZE - MIN_BARREL_SIZE) * levelRatio
+            fireInterval = MAX_FIRE_INTERVAL - FIRE_INTERVAL_STEP * (field - MIN_LEVEL)
+            range = BASE_RANGE + RANGE_PER_LEVEL * field
+            bitmap = gctx.res.getBitmap(if (field >= UPGRADED_IMAGE_MIN_LEVEL) {
+                R.mipmap.cannon_bg_6_256
+            } else {
+                R.mipmap.cannon_bg_1_256
+            })
+        }
     private var barrelSize = MIN_BARREL_SIZE
     private var fireInterval = MAX_FIRE_INTERVAL
     private var range = MIN_RANGE
@@ -31,25 +46,9 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
     }
 
     private fun init(level: Int): Cannon {
-        setLevel(level)
+        this.level = level
         fireCooldown = fireInterval
         return this
-    }
-
-    private fun setLevel(level: Int) {
-        // Cannon level 은 학생들이 보기 쉽게 1-based index 로 사용한다.
-        // level 1 은 가장 작은 포신, level 10 은 가장 큰 포신이며,
-        // 범위를 벗어난 값은 안전하게 1..10 안으로 보정한다.
-        this.level = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
-        val levelRatio = (this.level - MIN_LEVEL) / (MAX_LEVEL - MIN_LEVEL).toFloat()
-        barrelSize = MIN_BARREL_SIZE + (MAX_BARREL_SIZE - MIN_BARREL_SIZE) * levelRatio
-        fireInterval = MAX_FIRE_INTERVAL - FIRE_INTERVAL_STEP * (this.level - MIN_LEVEL)
-        range = BASE_RANGE + RANGE_PER_LEVEL * this.level
-        bitmap = gctx.res.getBitmap(if (this.level >= UPGRADED_IMAGE_MIN_LEVEL) {
-            R.mipmap.cannon_bg_6_256
-        } else {
-            R.mipmap.cannon_bg_256
-        })
     }
 
     override fun update(gctx: GameContext) {
