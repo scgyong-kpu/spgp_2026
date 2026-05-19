@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.Selection
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
@@ -33,6 +34,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         tileHeight = TILE_HEIGHT,
     )
     private val markerLayer = tiledMap.tileLayer(MARKER_LAYER_NAME)
+    private val selection = Selection(gctx, Cannon.SIZE, Cannon.SIZE)
     private var cameraScale = MIN_CAMERA_SCALE
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -50,6 +52,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
         world.add(background, MainLayer.BG)
+        world.add(selection, MainLayer.SELECTOR)
         world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
 
         world.add(CollisionChecker(gctx, world), MainLayer.CONTROLLER)
@@ -87,6 +90,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
                 saveTouchState(event)
                 downTouchX = lastTouchX
                 downTouchY = lastTouchY
+                updateSelection(event)
                 return true
             }
 
@@ -94,6 +98,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             -> {
                 wasMultiTouch = true
                 isDragging = true
+                selection.hide()
                 saveTouchState(event)
                 return true
             }
@@ -111,22 +116,37 @@ class MainScene(gctx: GameContext): Scene(gctx) {
                 } else {
                     dragScrollIfNeeded(event)
                 }
+                updateSelection(event)
                 saveTouchState(event)
                 return true
             }
 
             MotionEvent.ACTION_UP -> {
                 installCannonIfTap(gctx, event)
+                selection.hide()
                 resetTouchState()
                 return true
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                selection.hide()
                 resetTouchState()
                 return true
             }
         }
         return true
+    }
+
+    private fun updateSelection(event: MotionEvent) {
+        if (wasMultiTouch || isDragging) {
+            selection.hide()
+            return
+        }
+        pointFromEvent(event, 0, touchPoint0)
+        mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
+        val cx = tileCenterX(mapPoint.x)
+        val cy = tileCenterY(mapPoint.y)
+        selection.moveTo(cx, cy, canInstallAt(cx, cy))
     }
 
     private fun installCannonIfTap(gctx: GameContext, event: MotionEvent) {

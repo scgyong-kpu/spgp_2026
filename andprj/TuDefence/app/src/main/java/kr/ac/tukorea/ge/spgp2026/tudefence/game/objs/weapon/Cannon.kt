@@ -147,7 +147,8 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
         private const val MIN_LEVEL = 1
         private const val MAX_LEVEL = 10
         private const val UPGRADED_IMAGE_MIN_LEVEL = 6
-        private const val BASE_SIZE = 100f
+        const val SIZE = 100f
+        private const val BASE_SIZE = SIZE
         private const val MIN_BARREL_SIZE = 110f
         private const val MAX_BARREL_SIZE = 200f
         private const val BARREL_MUZZLE_OFFSET_RATIO = 0.38f
