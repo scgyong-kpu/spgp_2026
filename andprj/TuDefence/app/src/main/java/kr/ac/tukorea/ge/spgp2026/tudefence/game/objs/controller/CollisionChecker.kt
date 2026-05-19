@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
+package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller
 
 import android.graphics.Canvas
 import android.util.Log
@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.collides
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.effect.Explosion
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Shell
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 
 class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IGameObject {
     override fun update(gctx: GameContext) {
