@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.map
 
 import android.graphics.Matrix
+import android.graphics.PointF
 import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
@@ -41,6 +42,14 @@ class MapCamera(
         val focusMapY = scrollY + focusY / oldScale
         scale = newScale
         scrollTo(focusMapX - focusX / scale, focusMapY - focusY / scale)
+    }
+
+    fun gameToMap(gameX: Float, gameY: Float, out: PointF): PointF {
+        // touch event 는 먼저 GameView metrics 를 통해 game 좌표로 변환된다.
+        // mapCamera.matrix 는 map 좌표를 game 좌표로 바꾸므로,
+        // 사용자가 누른 위치에 Cannon 을 설치하려면 그 반대 변환을 직접 적용한다.
+        out.set(scrollX + gameX / scale, scrollY + gameY / scale)
+        return out
     }
 
     private fun scrollTo(x: Float, y: Float) {

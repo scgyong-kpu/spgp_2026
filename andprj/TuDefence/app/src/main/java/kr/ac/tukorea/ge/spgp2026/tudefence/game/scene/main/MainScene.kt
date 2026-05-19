@@ -36,8 +36,14 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private var lastTouchX = 0f
     private var lastTouchY = 0f
     private var lastSpan = 0f
+    private var downTouchX = 0f
+    private var downTouchY = 0f
+    private var downTime = 0L
+    private var isDragging = false
+    private var wasMultiTouch = false
     private val touchPoint0 = PointF()
     private val touchPoint1 = PointF()
+    private val mapPoint = PointF()
 
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
@@ -73,8 +79,20 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN,
+            -> {
+                wasMultiTouch = false
+                isDragging = false
+                downTime = event.eventTime
+                saveTouchState(event)
+                downTouchX = lastTouchX
+                downTouchY = lastTouchY
+                return true
+            }
+
             MotionEvent.ACTION_POINTER_DOWN,
             -> {
+                wasMultiTouch = true
+                isDragging = true
                 saveTouchState(event)
                 return true
             }
@@ -86,22 +104,60 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount >= 2) {
+                    wasMultiTouch = true
+                    isDragging = true
                     pinchZoom(event)
                 } else {
-                    dragScroll(event)
+                    dragScrollIfNeeded(event)
                 }
                 saveTouchState(event)
                 return true
             }
 
-            MotionEvent.ACTION_UP,
-            MotionEvent.ACTION_CANCEL,
-            -> {
-                lastSpan = 0f
+            MotionEvent.ACTION_UP -> {
+                installCannonIfTap(gctx, event)
+                resetTouchState()
+                return true
+            }
+
+            MotionEvent.ACTION_CANCEL -> {
+                resetTouchState()
                 return true
             }
         }
         return true
+    }
+
+    private fun installCannonIfTap(gctx: GameContext, event: MotionEvent) {
+        // Cannon 설치는 "짧게 누르고 거의 움직이지 않은 한 손 터치"에만 반응한다.
+        // 한 번이라도 두 손 터치가 들어왔거나, TAP_SLOP 보다 많이 움직였으면 pinch/drag 의도로 본다.
+        pointFromEvent(event, 0, touchPoint0)
+        val dx = touchPoint0.x - downTouchX
+        val dy = touchPoint0.y - downTouchY
+        val duration = event.eventTime - downTime
+        val movedTooFar = dx * dx + dy * dy > TAP_SLOP * TAP_SLOP
+        if (wasMultiTouch || isDragging || movedTooFar || duration > TAP_TIMEOUT_MS) return
+
+        mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
+        addCannon(gctx, mapPoint.x, mapPoint.y, level = 1)
+    }
+
+    private fun resetTouchState() {
+        lastSpan = 0f
+        isDragging = false
+        wasMultiTouch = false
+    }
+
+    private fun dragScrollIfNeeded(event: MotionEvent) {
+        pointFromEvent(event, 0, touchPoint0)
+        val dxFromDown = touchPoint0.x - downTouchX
+        val dyFromDown = touchPoint0.y - downTouchY
+        if (!isDragging) {
+            isDragging = dxFromDown * dxFromDown + dyFromDown * dyFromDown > TAP_SLOP * TAP_SLOP
+        }
+        if (isDragging) {
+            dragScroll(event)
+        }
     }
 
     private fun dragScroll(event: MotionEvent) {
@@ -175,5 +231,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         private const val TILE_HEIGHT = 50f
         private const val MIN_CAMERA_SCALE = 1f
         private const val MAX_CAMERA_SCALE = 3f
+        private const val TAP_SLOP = 16f
+        private const val TAP_TIMEOUT_MS = 250L
     }
 }

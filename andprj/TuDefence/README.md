@@ -93,13 +93,15 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 - [ ] `MapSelector` 구현
 - [ ] MainScene 의 touch 처리 책임을 `MapSelector` 로 이동
-- [ ] 터치 위치를 tile 좌표로 변환
+- [x] 터치 위치를 map 좌표로 변환
+- [x] tap / drag / pinch 입력 구분
 - [ ] 선택 표시를 tile grid 에 snap
 - [ ] 선택 표시를 화면 밖 좌표로 옮겨 숨기는 방식 적용
 - [ ] 설치 가능 위치와 불가능 위치를 서로 다른 이미지로 표시
 - [ ] 기존 포탑과 겹치는 위치에는 설치 불가 처리
 - [ ] 기존 포탑을 터치하면 해당 포탑 선택
 - [ ] 선택 메뉴 배경 표시
+- [x] tap 위치에 1 level `Cannon` 즉시 설치
 - [ ] 설치 위치 선택 시 설치 메뉴 표시
 - [ ] 기존 포탑 선택 시 업그레이드 / 철거 메뉴 표시
 - [ ] vararg 호출로 배열 객체가 매번 생기지 않도록 메뉴 배열 상수화
@@ -111,9 +113,9 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Cannon
 
-- [ ] `Cannon` 구현
+- [x] `Cannon` 구현
 - [x] 포탑 body 와 barrel 이미지를 따로 그림
-- [ ] level 별 포탑 이미지 적용
+- [x] level 별 포탑 이미지 적용
 - [x] level 은 1-based index 로 사용
 - [x] level 로 발사 간격과 barrel 크기 갱신
 - [ ] 설치 비용 계산
