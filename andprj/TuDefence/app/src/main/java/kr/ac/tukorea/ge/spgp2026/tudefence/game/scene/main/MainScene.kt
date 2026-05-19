@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 
 import android.graphics.PointF
+import android.graphics.RectF
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -44,6 +45,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private val touchPoint0 = PointF()
     private val touchPoint1 = PointF()
     private val mapPoint = PointF()
+    private val cannonInstallRect = RectF()
+    private val existingCannonRect = RectF()
 
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
@@ -139,7 +142,44 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         if (wasMultiTouch || isDragging || movedTooFar || duration > TAP_TIMEOUT_MS) return
 
         mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
-        addCannon(gctx, mapPoint.x, mapPoint.y, level = 1)
+        val cannonX = tileCenterX(mapPoint.x)
+        val cannonY = tileCenterY(mapPoint.y)
+        if (hasOverlappingCannon(cannonX, cannonY)) return
+
+        addCannon(gctx, cannonX, cannonY, level = 1)
+    }
+
+    private fun tileCenterX(mapX: Float): Float {
+        return (mapX / TILE_WIDTH).toInt() * TILE_WIDTH + TILE_WIDTH / 2f
+    }
+
+    private fun tileCenterY(mapY: Float): Float {
+        return (mapY / TILE_HEIGHT).toInt() * TILE_HEIGHT + TILE_HEIGHT / 2f
+    }
+
+    private fun hasOverlappingCannon(x: Float, y: Float): Boolean {
+        cannonInstallRect.set(
+            x - CANNON_INSTALL_SIZE / 2f,
+            y - CANNON_INSTALL_SIZE / 2f,
+            x + CANNON_INSTALL_SIZE / 2f,
+            y + CANNON_INSTALL_SIZE / 2f,
+        )
+        val cannons = world.objectsAt(MainLayer.WEAPON)
+        var index = 0
+        while (index < cannons.size) {
+            val cannon = cannons[index] as? Cannon
+            if (cannon != null) {
+                existingCannonRect.set(
+                    cannon.x - cannon.width / 2f,
+                    cannon.y - cannon.height / 2f,
+                    cannon.x + cannon.width / 2f,
+                    cannon.y + cannon.height / 2f,
+                )
+                if (RectF.intersects(cannonInstallRect, existingCannonRect)) return true
+            }
+            index++
+        }
+        return false
     }
 
     private fun resetTouchState() {
@@ -231,6 +271,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         private const val TILE_HEIGHT = 50f
         private const val MIN_CAMERA_SCALE = 1f
         private const val MAX_CAMERA_SCALE = 3f
+        private const val CANNON_INSTALL_SIZE = 100f
         private const val TAP_SLOP = 16f
         private const val TAP_TIMEOUT_MS = 250L
     }
