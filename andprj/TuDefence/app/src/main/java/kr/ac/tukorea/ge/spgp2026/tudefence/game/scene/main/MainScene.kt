@@ -150,15 +150,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     private fun installCannonIfTap(gctx: GameContext, event: MotionEvent) {
-        // Cannon 설치는 "짧게 누르고 거의 움직이지 않은 한 손 터치"에만 반응한다.
-        // 한 번이라도 두 손 터치가 들어왔거나, TAP_SLOP 보다 많이 움직였으면 pinch/drag 의도로 본다.
-        pointFromEvent(event, 0, touchPoint0)
-        val dx = touchPoint0.x - downTouchX
-        val dy = touchPoint0.y - downTouchY
-        val duration = event.eventTime - downTime
-        val movedTooFar = dx * dx + dy * dy > TAP_SLOP * TAP_SLOP
-        if (wasMultiTouch || isDragging || movedTooFar || duration > TAP_TIMEOUT_MS) return
+        if (wasMultiTouch || isDragging) return
 
+        pointFromEvent(event, 0, touchPoint0)
         mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
         val cannonX = tileCenterX(mapPoint.x)
         val cannonY = tileCenterY(mapPoint.y)
@@ -206,7 +200,10 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         val dxFromDown = touchPoint0.x - downTouchX
         val dyFromDown = touchPoint0.y - downTouchY
         if (!isDragging) {
-            isDragging = dxFromDown * dxFromDown + dyFromDown * dyFromDown > TAP_SLOP * TAP_SLOP
+            val movedFar = dxFromDown * dxFromDown + dyFromDown * dyFromDown > TAP_SLOP * TAP_SLOP
+            val withinDragWindow = event.eventTime - downTime < TAP_TIMEOUT_MS
+            val canScroll = cameraScale > MIN_CAMERA_SCALE
+            isDragging = movedFar && withinDragWindow && canScroll
         }
         if (isDragging) {
             dragScroll(event)

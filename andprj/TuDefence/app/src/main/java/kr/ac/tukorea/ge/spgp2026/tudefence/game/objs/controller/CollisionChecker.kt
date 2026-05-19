@@ -1,14 +1,13 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller
 
 import android.graphics.Canvas
-import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.collides
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.effect.Explosion
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Shell
 
 class CollisionChecker(gctx: GameContext, val world: World<MainLayer>): IGameObject {
@@ -33,7 +32,7 @@ class CollisionChecker(gctx: GameContext, val world: World<MainLayer>): IGameObj
             for (fi in flies.lastIndex downTo 0) {
                 val fly = flies[fi] as? Fly ?: continue
                 if (shell.collides(fly)) {
-                    Log.d(javaClass.simpleName, "Collision! $shell $fly")
+                    // Log.d(javaClass.simpleName, "Collision! $shell $fly")
                     hit(fly, shell.power)
                     if (shell.splashes) {
                         explode(gctx, shell, fly, flies)
