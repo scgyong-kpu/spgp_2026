@@ -153,6 +153,10 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         }
         pointFromEvent(event, 0, touchPoint0)
         mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
+        findCannonAt(mapPoint.x, mapPoint.y)?.let { cannon ->
+            selection.selectCannon(cannon)
+            return
+        }
         val cx = tileCenterX(mapPoint.x)
         val cy = tileCenterY(mapPoint.y)
         selection.moveTo(cx, cy, canInstallAt(cx, cy) && !hasOverlappingCannon(cx, cy))
@@ -162,6 +166,12 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         if (wasMultiTouch || isDragging) {
             cannonMenu.hide()
             return false
+        }
+
+        if (selection.selectedCannon != null) {
+            selection.sceneRect(mapCamera, selectionSceneRect)
+            cannonMenu.showManageMenuAt(selectionSceneRect)
+            return true
         }
 
         pointFromEvent(event, 0, touchPoint0)
@@ -180,6 +190,26 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         selection.sceneRect(mapCamera, selectionSceneRect)
         cannonMenu.showInstallMenuAt(selectionSceneRect)
         return true
+    }
+
+    private fun findCannonAt(mapX: Float, mapY: Float): Cannon? {
+        val cannons = world.objectsAt(MainLayer.WEAPON)
+        var index = 0
+        while (index < cannons.size) {
+            val cannon = cannons[index] as? Cannon
+            if (cannon != null && containsPoint(cannon, mapX, mapY)) {
+                return cannon
+            }
+            index++
+        }
+        return null
+    }
+
+    private fun containsPoint(cannon: Cannon, mapX: Float, mapY: Float): Boolean {
+        return mapX >= cannon.x - cannon.width / 2f &&
+            mapX <= cannon.x + cannon.width / 2f &&
+            mapY >= cannon.y - cannon.height / 2f &&
+            mapY <= cannon.y + cannon.height / 2f
     }
 
     private fun tileCenterX(mapX: Float): Float {

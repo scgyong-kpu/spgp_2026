@@ -111,7 +111,6 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
     }
 
     override fun draw(canvas: Canvas) {
-        drawRange(canvas)
         super.draw(canvas)
 
         // 포탑 몸체는 Sprite 의 dstRect 에 맞춰 그리고,
