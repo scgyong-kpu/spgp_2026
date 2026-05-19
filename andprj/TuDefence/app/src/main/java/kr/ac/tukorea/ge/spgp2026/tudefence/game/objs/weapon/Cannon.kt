@@ -16,7 +16,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
+class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_256) {
     private val barrelRect = RectF()
     private val barrelBitmap = gctx.res.getBitmap(R.mipmap.barrel_512)
     private var level = 1
@@ -31,6 +31,12 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
     }
 
     private fun init(level: Int): Cannon {
+        setLevel(level)
+        fireCooldown = fireInterval
+        return this
+    }
+
+    private fun setLevel(level: Int) {
         // Cannon level 은 학생들이 보기 쉽게 1-based index 로 사용한다.
         // level 1 은 가장 작은 포신, level 10 은 가장 큰 포신이며,
         // 범위를 벗어난 값은 안전하게 1..10 안으로 보정한다.
@@ -39,8 +45,11 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         barrelSize = MIN_BARREL_SIZE + (MAX_BARREL_SIZE - MIN_BARREL_SIZE) * levelRatio
         fireInterval = MAX_FIRE_INTERVAL - FIRE_INTERVAL_STEP * (this.level - MIN_LEVEL)
         range = BASE_RANGE + RANGE_PER_LEVEL * this.level
-        fireCooldown = fireInterval
-        return this
+        bitmap = gctx.res.getBitmap(if (this.level >= UPGRADED_IMAGE_MIN_LEVEL) {
+            R.mipmap.cannon_bg_6_256
+        } else {
+            R.mipmap.cannon_bg_256
+        })
     }
 
     override fun update(gctx: GameContext) {
@@ -130,6 +139,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
 
         private const val MIN_LEVEL = 1
         private const val MAX_LEVEL = 10
+        private const val UPGRADED_IMAGE_MIN_LEVEL = 6
         private const val BASE_SIZE = 100f
         private const val MIN_BARREL_SIZE = 110f
         private const val MAX_BARREL_SIZE = 200f
