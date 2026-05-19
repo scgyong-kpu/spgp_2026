@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 
 import android.graphics.PointF
-import android.graphics.RectF
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -13,6 +12,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
+import kotlin.math.abs
 import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
@@ -45,8 +45,6 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private val touchPoint0 = PointF()
     private val touchPoint1 = PointF()
     private val mapPoint = PointF()
-    private val cannonInstallRect = RectF()
-    private val existingCannonRect = RectF()
 
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
@@ -158,24 +156,16 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     private fun hasOverlappingCannon(x: Float, y: Float): Boolean {
-        cannonInstallRect.set(
-            x - CANNON_INSTALL_SIZE / 2f,
-            y - CANNON_INSTALL_SIZE / 2f,
-            x + CANNON_INSTALL_SIZE / 2f,
-            y + CANNON_INSTALL_SIZE / 2f,
-        )
         val cannons = world.objectsAt(MainLayer.WEAPON)
         var index = 0
         while (index < cannons.size) {
             val cannon = cannons[index] as? Cannon
             if (cannon != null) {
-                existingCannonRect.set(
-                    cannon.x - cannon.width / 2f,
-                    cannon.y - cannon.height / 2f,
-                    cannon.x + cannon.width / 2f,
-                    cannon.y + cannon.height / 2f,
-                )
-                if (RectF.intersects(cannonInstallRect, existingCannonRect)) return true
+                // Cannon 설치 위치는 tile 중심으로 snap 되므로, 사각형을 매번 만들 필요가 없다.
+                // 중심점의 x/y 차이가 둘 다 Cannon 크기보다 작으면 두 100x100 영역은 서로 겹친다.
+                if (abs(cannon.x - x) < CANNON_INSTALL_SIZE &&
+                    abs(cannon.y - y) < CANNON_INSTALL_SIZE
+                ) return true
             }
             index++
         }
