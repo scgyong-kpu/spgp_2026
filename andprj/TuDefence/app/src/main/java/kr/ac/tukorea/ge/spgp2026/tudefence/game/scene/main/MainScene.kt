@@ -2,7 +2,6 @@ package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 
 import android.graphics.PointF
 import android.graphics.RectF
-import android.util.Log
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -202,18 +201,14 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     private fun handleMenuSelection(resId: Int) {
+        val selectedCannon = selection.selectedCannon
         when (resId) {
             R.mipmap.f_01_01 -> selection.selectCannon(installCannon(level = 1))
             R.mipmap.f_01_02 -> selection.selectCannon(installCannon(level = 2))
             R.mipmap.f_01_03 -> selection.selectCannon(installCannon(level = 3))
-            R.mipmap.upgrade -> {
-                // 다음 단계에서 selectedCannon 의 upgrade 를 연결한다.
-                Log.d(javaClass.simpleName, "Menu Selected: Upgrade")
-                selection.hide()
-            }
+            R.mipmap.upgrade -> selectedCannon?.upgrade()
             R.mipmap.uninstall -> {
-                // 다음 단계에서 selectedCannon 의 uninstall 을 연결한다.
-                Log.d(javaClass.simpleName, "Menu Selected: Uninstall")
+                selectedCannon?.uninstall()
                 selection.hide()
             }
         }

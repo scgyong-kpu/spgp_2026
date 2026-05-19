@@ -131,6 +131,19 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
         canvas.drawCircle(x, y, range, rangePaint)
     }
 
+    fun upgrade() {
+        // 메뉴에서 upgrade 를 눌렀을 때 호출하는 진입점이다.
+        // level setter 가 사거리, 발사 간격, barrel 크기, body bitmap 을 함께 갱신한다.
+        level++
+    }
+
+    fun uninstall() {
+        // Cannon 는 자기 자신이 어느 layer 에 들어있는지 알고 있지 않으므로,
+        // GameContext 를 통해 현재 main world 에서 WEAPON layer 로부터 제거한다.
+        // remove() 가 끝나면 world 는 이 Cannon 을 더 이상 update/draw 하지 않는다.
+        gctx.mainWorld().remove(this, MainLayer.WEAPON)
+    }
+
     fun intersectsIfInstalledAt(x: Float, y: Float): Boolean {
         // 설치 위치는 MainScene 에서 tile 중심으로 snap 된 값만 들어온다.
         // 새 Cannon 과 기존 Cannon 의 중심 차이가 x/y 양쪽 모두 BASE_SIZE 보다 작으면
