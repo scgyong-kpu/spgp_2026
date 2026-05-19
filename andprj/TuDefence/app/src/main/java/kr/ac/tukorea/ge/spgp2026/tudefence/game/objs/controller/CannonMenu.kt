@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -22,9 +23,25 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     }
 
     private val gctx = gctx
-    private val menuBgDrawable = gctx.res.getDrawable(R.mipmap.menu_bg)
+    // Drawable 은 리소스 로더가 내부 캐시를 공유할 수 있으므로,
+    // 여기서는 메뉴 배경을 이 객체 전용으로만 쓰도록 mutate() 한다.
+    // 그렇지 않으면 alpha 같은 상태를 바꾸는 순간 다른 화면 요소에도
+    // 같은 변경이 번질 수 있다.
+    //
+    // alpha 는 draw() 때마다 바꾸지 않고 생성 시점에 한 번만 고정한다.
+    // 메뉴는 항상 같은 반투명도면 충분하므로, 매 프레임 상태를 바꾸는 것보다
+    // 로드 후 바로 세팅해 두는 편이 더 단순하고 안전하다.
+    private val menuBgDrawable = gctx.res.getDrawable(R.mipmap.menu_bg).mutate().apply {
+        alpha = MENU_ALPHA
+    }
     private val background = DrawableSprite(menuBgDrawable)
     private val bgPadding = Rect().also { menuBgDrawable.getPadding(it) }
+    // 메뉴 아이콘도 매 draw 마다 Paint 를 새로 만들지 않고 하나만 재사용한다.
+    // alpha 를 고정하면 배경과 아이템이 같은 투명도로 보여서
+    // 메뉴 전체가 "위에 얹힌 UI"처럼 자연스럽게 보인다.
+    private val itemPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        alpha = MENU_ALPHA
+    }
     private val screenWidth = gctx.metrics.width
     private val screenHeight = gctx.metrics.height
 
@@ -91,7 +108,7 @@ class CannonMenu(gctx: GameContext) : IGameObject {
                 gctx.res.getBitmap(menuItem),
                 null,
                 RectF(x, itemTop, x + itemSize, itemTop + itemSize),
-                null,
+                itemPaint,
             )
             x += itemSize
         }
@@ -114,6 +131,8 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         width: Float,
         height: Float,
     ) {
+        // bounds 는 현재 draw 한 번에만 필요한 위치 정보이므로,
+        // 여기서만 설정하고 바로 그린다.
         drawable.setBounds(
             left.toInt(),
             top.toInt(),
@@ -187,5 +206,6 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         private const val INSTALL_CONTENT_HEIGHT = 100f
         private const val MANAGE_CONTENT_WIDTH = 200f
         private const val MANAGE_CONTENT_HEIGHT = 100f
+        private const val MENU_ALPHA = 0xA0
     }
 }
