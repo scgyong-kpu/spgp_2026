@@ -10,8 +10,8 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -54,7 +54,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
     }
 
     private fun findNearestEnemy(gctx: GameContext): Fly? {
-        val world = (gctx.scene as MainScene).world
+        val world = gctx.mainWorld()
         val enemies = world.objectsAt(MainLayer.ENEMY)
         var nearest: Fly? = null
         var nearestDistanceSq = range * range
@@ -98,7 +98,7 @@ class Cannon private constructor(gctx: GameContext): Sprite(gctx, R.mipmap.canno
         val startX = x + cos(radians).toFloat() * muzzleOffset
         val startY = y + sin(radians).toFloat() * muzzleOffset
         val shell = Shell.get(gctx, startX, startY, angle, level)
-        (gctx.scene as MainScene).world.add(shell, MainLayer.SHELL)
+        gctx.mainWorld().add(shell, MainLayer.SHELL)
     }
 
     override fun draw(canvas: Canvas) {

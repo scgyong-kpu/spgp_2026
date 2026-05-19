@@ -6,7 +6,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
 
 class Explosion private constructor(gctx: GameContext):
     Sprite(gctx, R.mipmap.explosion), IRecyclable
@@ -28,7 +28,7 @@ class Explosion private constructor(gctx: GameContext):
     override fun update(gctx: GameContext) {
         elapsedTime += gctx.frameTime
         if (elapsedTime >= DURATION) {
-            (gctx.scene as MainScene).world.remove(this, MainLayer.EXPLOSION)
+            gctx.mainWorld().remove(this, MainLayer.EXPLOSION)
             return
         }
         updateFrame()
@@ -51,7 +51,7 @@ class Explosion private constructor(gctx: GameContext):
 
     companion object {
         fun get(gctx: GameContext, x: Float, y: Float, radius: Float): Explosion {
-            val world = (gctx.scene as MainScene).world
+            val world = gctx.mainWorld()
             val explosion = world.obtain(Explosion::class.java) ?: Explosion(gctx)
             return explosion.init(x, y, radius)
         }

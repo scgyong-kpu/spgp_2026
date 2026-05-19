@@ -13,7 +13,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.random.Random
@@ -90,7 +90,7 @@ class Fly private constructor(gctx: GameContext):
         updateOffset(gctx)
         updatePosition()
         if (distance > pathLength) {
-            (gctx.scene as MainScene).world.remove(this, MainLayer.ENEMY)
+            gctx.mainWorld().remove(this, MainLayer.ENEMY)
         }
     }
 
@@ -167,7 +167,7 @@ class Fly private constructor(gctx: GameContext):
         }
 
         private fun obtain(gctx: GameContext, type: Type, sizeRatio: Float = 1.0f): Fly {
-            val world = (gctx.scene as MainScene).world
+            val world = gctx.mainWorld()
             val fly = world.obtain(Fly::class.java) ?: Fly(gctx)
             return fly.init(type, sizeRatio)
         }
