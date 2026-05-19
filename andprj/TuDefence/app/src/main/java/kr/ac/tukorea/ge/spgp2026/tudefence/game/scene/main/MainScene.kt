@@ -146,7 +146,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
         val cx = tileCenterX(mapPoint.x)
         val cy = tileCenterY(mapPoint.y)
-        selection.moveTo(cx, cy, canInstallAt(cx, cy))
+        selection.moveTo(cx, cy, canInstallAt(cx, cy) && !hasOverlappingCannon(cx, cy))
     }
 
     private fun installCannonIfTap(gctx: GameContext, event: MotionEvent) {
