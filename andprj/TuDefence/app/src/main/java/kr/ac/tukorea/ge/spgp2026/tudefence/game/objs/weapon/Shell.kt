@@ -22,6 +22,10 @@ class Shell private constructor(gctx: GameContext):
     private var angle = 0f
     var power = 0f
         private set
+    val splashes: Boolean
+        get() = level >= SPLASH_MIN_LEVEL
+    val explosionRadius: Float
+        get() = BASE_EXPLOSION_RADIUS + EXPLOSION_RADIUS_POWER_RATIO * power
 
     init {
         setSize(SIZE, SIZE)
@@ -97,5 +101,8 @@ class Shell private constructor(gctx: GameContext):
         private const val SRC_TO_DST_RATIO = 0.48f
         private const val BASE_POWER = 10f
         private const val POWER_RATIO = 1.2f
+        private const val SPLASH_MIN_LEVEL = 6
+        private const val BASE_EXPLOSION_RADIUS = 60f
+        private const val EXPLOSION_RADIUS_POWER_RATIO = 3f
     }
 }

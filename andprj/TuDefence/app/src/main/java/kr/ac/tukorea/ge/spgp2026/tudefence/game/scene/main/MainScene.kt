@@ -18,6 +18,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         WEAPON,
         ENEMY,
         SHELL,
+        EXPLOSION,
         CONTROLLER,
     }
 
@@ -46,7 +47,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         // 지금은 Cannon 의 body/barrel 분리 표시와 camera transform 동작을 확인하기 위한 테스트용이다.
         addCannon(gctx, 250f, 275f, level = 1)
         addCannon(gctx, 425f, 375f, level = 2)
-        addCannon(gctx, 800f, 325f, level = 3)
+        addCannon(gctx, 800f, 325f, level = 6)
         addCannon(gctx, 900f, 575f, level = 4)
         addCannon(gctx, 1225f, 275f, level = 5)
         addCannon(gctx, 1275f, 800f, level = 6)

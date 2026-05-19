@@ -7,6 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.collides
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.effect.Explosion
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Shell
 
 class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IGameObject {
@@ -32,6 +33,10 @@ class CollisionChecker(gctx: GameContext, val world: World<MainScene.Layer>): IG
                 val fly = flies[fi] as? Fly ?: continue
                 if (shell.collides(fly)) {
                     Log.d(javaClass.simpleName, "Collision! $shell $fly")
+                    if (shell.splashes) {
+                        val explosion = Explosion.get(gctx, fly.x, fly.y, shell.explosionRadius)
+                        world.add(explosion, MainScene.Layer.EXPLOSION)
+                    }
                     fly.decreaseLife(shell.power)
                     world.remove(shell, MainScene.Layer.SHELL)
                     if (fly.isDead()) {
