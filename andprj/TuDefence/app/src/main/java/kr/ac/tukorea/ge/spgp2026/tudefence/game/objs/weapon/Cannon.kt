@@ -13,6 +13,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kotlin.math.atan2
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -129,6 +130,13 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
 
     fun drawRange(canvas: Canvas) {
         canvas.drawCircle(x, y, range, rangePaint)
+    }
+
+    fun intersectsIfInstalledAt(x: Float, y: Float): Boolean {
+        // 설치 위치는 MainScene 에서 tile 중심으로 snap 된 값만 들어온다.
+        // 새 Cannon 과 기존 Cannon 의 중심 차이가 x/y 양쪽 모두 BASE_SIZE 보다 작으면
+        // 두 100x100 설치 영역이 서로 겹친다고 판단할 수 있다.
+        return abs(this.x - x) < BASE_SIZE && abs(this.y - y) < BASE_SIZE
     }
 
     companion object {

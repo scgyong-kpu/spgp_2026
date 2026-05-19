@@ -12,7 +12,6 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
-import kotlin.math.abs
 import kotlin.math.hypot
 
 class MainScene(gctx: GameContext): Scene(gctx) {
@@ -160,13 +159,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         var index = 0
         while (index < cannons.size) {
             val cannon = cannons[index] as? Cannon
-            if (cannon != null) {
-                // Cannon 설치 위치는 tile 중심으로 snap 되므로, 사각형을 매번 만들 필요가 없다.
-                // 중심점의 x/y 차이가 둘 다 Cannon 크기보다 작으면 두 100x100 영역은 서로 겹친다.
-                if (abs(cannon.x - x) < CANNON_INSTALL_SIZE &&
-                    abs(cannon.y - y) < CANNON_INSTALL_SIZE
-                ) return true
-            }
+            if (cannon != null && cannon.intersectsIfInstalledAt(x, y)) return true
             index++
         }
         return false
@@ -261,7 +254,6 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         private const val TILE_HEIGHT = 50f
         private const val MIN_CAMERA_SCALE = 1f
         private const val MAX_CAMERA_SCALE = 3f
-        private const val CANNON_INSTALL_SIZE = 100f
         private const val TAP_SLOP = 16f
         private const val TAP_TIMEOUT_MS = 250L
     }
