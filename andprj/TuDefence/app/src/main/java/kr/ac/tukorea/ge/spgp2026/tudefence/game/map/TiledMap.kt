@@ -31,6 +31,10 @@ data class TiledMap(
     fun firstTileLayer(): TiledLayer {
         return layers.first { it.type == "tilelayer" }
     }
+
+    fun tileLayer(name: String): TiledLayer {
+        return layers.first { it.type == "tilelayer" && it.name == name }
+    }
 }
 
 // Tiled 의 layer 중 type == "tilelayer" 인 항목을 위한 class 이다.
@@ -48,9 +52,12 @@ data class TiledLayer(
 
     // 각 칸에 들어갈 tile gid 목록이다.
     // gid == 0 이면 빈 tile 이고, 1 이상이면 tileset 의 firstgid 를 기준으로 tile 을 찾는다.
+    // 범위 밖 좌표는 실제 tile 이 아니므로 -1 을 돌려준다.
+    // 이렇게 해 두면 호출부는 contains() 를 따로 부르지 않고 gid 값만 비교할 수 있다.
     val data: List<Int>,
 ) {
     fun tileAt(x: Int, y: Int): Int {
+        if (x !in 0 until width || y !in 0 until height) return -1
         return data[y * width + x]
     }
 }

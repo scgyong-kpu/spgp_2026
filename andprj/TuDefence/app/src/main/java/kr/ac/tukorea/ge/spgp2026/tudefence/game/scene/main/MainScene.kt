@@ -32,6 +32,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         tileWidth = TILE_WIDTH,
         tileHeight = TILE_HEIGHT,
     )
+    private val markerLayer = tiledMap.tileLayer(MARKER_LAYER_NAME)
     private var cameraScale = MIN_CAMERA_SCALE
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -141,6 +142,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
         val cannonX = tileCenterX(mapPoint.x)
         val cannonY = tileCenterY(mapPoint.y)
+        if (!canInstallAt(cannonX, cannonY)) return
         if (hasOverlappingCannon(cannonX, cannonY)) return
 
         addCannon(gctx, cannonX, cannonY, level = 1)
@@ -152,6 +154,14 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
     private fun tileCenterY(mapY: Float): Float {
         return (mapY / TILE_HEIGHT).toInt() * TILE_HEIGHT + TILE_HEIGHT / 2f
+    }
+
+    private fun canInstallAt(x: Float, y: Float): Boolean {
+        // 올해 버전에서는 Cannon 이 차지하는 2x2 영역을 검사하지 않고,
+        // snap 된 중심점이 속한 tile 하나만 Marker layer 에서 확인한다.
+        val tileX = (x / TILE_WIDTH).toInt()
+        val tileY = (y / TILE_HEIGHT).toInt()
+        return markerLayer.tileAt(tileX, tileY) == INSTALLABLE_TILE_GID
     }
 
     private fun hasOverlappingCannon(x: Float, y: Float): Boolean {
@@ -250,6 +260,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
     companion object {
         private const val MAP_ASSET_PATH = "map/desert.tmj"
+        private const val MARKER_LAYER_NAME = "Marker"
+        private const val INSTALLABLE_TILE_GID = 10
         private const val TILE_WIDTH = 50f
         private const val TILE_HEIGHT = 50f
         private const val MIN_CAMERA_SCALE = 1f

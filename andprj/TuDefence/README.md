@@ -72,7 +72,7 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] 화면에 보이는 tile 범위만 그리도록 draw loop 구성
 - [x] `MapCamera` 로 map 확대/이동 matrix 분리
 - [x] `MapCamera.visibleMapRect` 기준으로 필요한 tile 만 선택해 그림
-- [ ] 설치 가능한 tile 판정 구현
+- [x] 설치 가능한 tile 판정 구현
 - [ ] 포탑이 차지하는 2 x 2 tile 영역 검사
 
 ### Map Json 파싱 방법 선정
@@ -95,10 +95,11 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] MainScene 의 touch 처리 책임을 `MapSelector` 로 이동
 - [x] 터치 위치를 map 좌표로 변환
 - [x] tap / drag / pinch 입력 구분
+- [x] 설치 위치를 tile 중심으로 snap
 - [ ] 선택 표시를 tile grid 에 snap
 - [ ] 선택 표시를 화면 밖 좌표로 옮겨 숨기는 방식 적용
 - [ ] 설치 가능 위치와 불가능 위치를 서로 다른 이미지로 표시
-- [ ] 기존 포탑과 겹치는 위치에는 설치 불가 처리
+- [x] 기존 포탑과 겹치는 위치에는 설치 불가 처리
 - [ ] 기존 포탑을 터치하면 해당 포탑 선택
 - [ ] 선택 메뉴 배경 표시
 - [x] tap 위치에 1 level `Cannon` 즉시 설치
