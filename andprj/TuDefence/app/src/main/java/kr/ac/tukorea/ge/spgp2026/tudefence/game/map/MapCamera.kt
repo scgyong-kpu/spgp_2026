@@ -9,8 +9,8 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 // 배경, 적, 포탑 같은 map 위 객체들이 같은 matrix 를 공유하면 확대/이동이 함께 적용된다.
 class MapCamera(
     private val gctx: GameContext,
-    private val mapWidth: Float,
-    private val mapHeight: Float,
+    val mapWidth: Float,
+    val mapHeight: Float,
 ) {
     val matrix = Matrix()
 

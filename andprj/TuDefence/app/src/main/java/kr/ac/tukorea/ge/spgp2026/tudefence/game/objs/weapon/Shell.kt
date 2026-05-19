@@ -10,7 +10,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main.MainScene
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.mapBounds
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -53,14 +53,15 @@ class Shell private constructor(gctx: GameContext):
 
     override fun update(gctx: GameContext) {
         setCenter(x + dx * gctx.frameTime, y + dy * gctx.frameTime)
-        if (isOutOfWorld()) {
+        if (isOutOfWorld(gctx)) {
             gctx.mainWorld().remove(this, MainLayer.SHELL)
         }
     }
 
-    private fun isOutOfWorld(): Boolean {
-        return x < -SIZE || x > MainScene.MAP_WIDTH + SIZE ||
-            y < -SIZE || y > MainScene.MAP_HEIGHT + SIZE
+    private fun isOutOfWorld(gctx: GameContext): Boolean {
+        val bounds = gctx.mapBounds()
+        return x < -SIZE || x > bounds.mapWidth + SIZE ||
+            y < -SIZE || y > bounds.mapHeight + SIZE
     }
 
     override fun draw(canvas: Canvas) {

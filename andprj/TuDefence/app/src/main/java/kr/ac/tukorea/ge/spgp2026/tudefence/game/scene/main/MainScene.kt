@@ -6,6 +6,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
@@ -16,9 +17,21 @@ import kotlin.math.hypot
 class MainScene(gctx: GameContext): Scene(gctx) {
     override val clipsRect: Boolean = true
 
-    private val mapCamera = MapCamera(gctx, MAP_WIDTH, MAP_HEIGHT)
+    private val tiledMap = TiledMapLoader.load(gctx.view.context.assets, MAP_ASSET_PATH)
+    private val mapCamera = MapCamera(
+        gctx,
+        tiledMap.width * TILE_WIDTH,
+        tiledMap.height * TILE_HEIGHT,
+    )
     override val world = MainWorld(mapCamera)
-    private val background = TiledBackground(gctx, "map/desert.tmj", mapCamera, tileWidth = 50f, tileHeight = 50f)
+    private val background = TiledBackground(
+        gctx,
+        MAP_ASSET_PATH,
+        tiledMap,
+        mapCamera,
+        tileWidth = TILE_WIDTH,
+        tileHeight = TILE_HEIGHT,
+    )
     private var cameraScale = MIN_CAMERA_SCALE
     private var lastTouchX = 0f
     private var lastTouchY = 0f
@@ -157,8 +170,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     }
 
     companion object {
-        const val MAP_WIDTH = 1600f
-        const val MAP_HEIGHT = 900f
+        private const val MAP_ASSET_PATH = "map/desert.tmj"
+        private const val TILE_WIDTH = 50f
+        private const val TILE_HEIGHT = 50f
         private const val MIN_CAMERA_SCALE = 1f
         private const val MAX_CAMERA_SCALE = 3f
     }

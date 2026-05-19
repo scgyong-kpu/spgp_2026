@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 import android.graphics.Canvas
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapBounds
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 
 // MainWorld 는 MainScene 의 layer draw 정책을 담는 World 이다.
@@ -16,7 +17,12 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 // 그 layer 부터는 입력/관리/UI 처럼 화면 좌표계에 그대로 남는다.
 class MainWorld(
     private val mapCamera: MapCamera,
-) : World<MainLayer>(MainLayer.entries.toTypedArray()) {
+) : World<MainLayer>(MainLayer.entries.toTypedArray()), MapBounds {
+    override val mapWidth: Float
+        get() = mapCamera.mapWidth
+    override val mapHeight: Float
+        get() = mapCamera.mapHeight
+
     override fun draw(canvas: Canvas) {
         canvas.save()
         canvas.concat(mapCamera.matrix)

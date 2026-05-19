@@ -10,7 +10,6 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMap
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledTileset
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -29,6 +28,10 @@ class TiledBackground(
     // assets/ 아래의 TMJ 파일 경로이다. 예: "map/desert.tmj"
     mapAssetPath: String,
 
+    // MainScene 이 먼저 로딩한 TMJ 정보이다.
+    // MapCamera 도 같은 map 으로 크기를 계산하므로, TiledBackground 가 파일을 다시 읽지 않는다.
+    private val map: TiledMap,
+
     // 확대/이동은 TiledBackground 가 직접 처리하지 않고 MapCamera 가 담당한다.
     // 이 객체는 camera 가 알려주는 visibleMapRect 를 보고 필요한 tile 만 고른 뒤,
     // destination rect 는 map 좌표로 설정한다. 실제 화면 변환은 MainWorld 의 canvas matrix 가 처리한다.
@@ -39,10 +42,6 @@ class TiledBackground(
     private var tileWidth: Float,
     private var tileHeight: Float,
 ) : IGameObject {
-    // TMJ 파일을 읽어 Kotlin data class 로 변환한다.
-    // 이 객체에는 map 크기, layer data, tileset image 이름 같은 정보가 들어 있다.
-    private val map: TiledMap = TiledMapLoader.load(gctx.view.context.assets, mapAssetPath)
-
     // TMJ 안의 image 경로는 보통 TMJ 파일 위치를 기준으로 상대 경로로 저장된다.
     // "map/desert.tmj" 에서 directory 를 구해 두면 "map/" + "tmw_desert_spacing.png" 로 image 를 찾을 수 있다.
     private val assetDirectory = directoryOf(mapAssetPath)
