@@ -178,7 +178,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         }
 
         selection.sceneRect(mapCamera, selectionSceneRect)
-        cannonMenu.showInstallMenuAt(selectionSceneRect.right, selectionSceneRect.centerY())
+        cannonMenu.showInstallMenuAt(selectionSceneRect)
         return true
     }
 

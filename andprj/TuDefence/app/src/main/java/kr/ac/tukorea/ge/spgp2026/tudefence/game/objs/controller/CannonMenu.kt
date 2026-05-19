@@ -3,10 +3,12 @@ package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.DrawableSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import androidx.core.graphics.withScale
 
 // CannonMenu 는 터치한 위치에 캐넌을 바로 설치하지 않고,
 // 설치 / 업그레이드 / 삭제 같은 선택지를 보여 주는 임시 메뉴이다.
@@ -19,6 +21,8 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     private val menuBgDrawable = gctx.res.getDrawable(R.mipmap.menu_bg)
     private val background = DrawableSprite(menuBgDrawable)
     private val bgPadding = Rect().also { menuBgDrawable.getPadding(it) }
+    private val screenWidth = gctx.metrics.width
+    private val screenHeight = gctx.metrics.height
 
     private var visible = false
     private var menuItems: IntArray = BLANK_MENU_ITEMS
@@ -27,18 +31,19 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     private var bgHeight = 0f
     private var bgLeft = 0f
     private var bgTop = 0f
+    private var flipBackgroundX = false
 
-    fun showInstallMenuAt(anchorX: Float, anchorY: Float) {
+    fun showInstallMenuAt(selectionRect: RectF) {
         menuItems = INSTALL_MENU_ITEMS
         itemSize = INSTALL_ITEM_SIZE
-        applyLayout(anchorX, anchorY, INSTALL_CONTENT_WIDTH, INSTALL_CONTENT_HEIGHT)
+        applyLayout(selectionRect, INSTALL_CONTENT_WIDTH, INSTALL_CONTENT_HEIGHT)
         visible = true
     }
 
-    fun showManageMenuAt(anchorX: Float, anchorY: Float) {
+    fun showManageMenuAt(selectionRect: RectF) {
         menuItems = MANAGE_MENU_ITEMS
         itemSize = MANAGE_ITEM_SIZE
-        applyLayout(anchorX, anchorY, MANAGE_CONTENT_WIDTH, MANAGE_CONTENT_HEIGHT)
+        applyLayout(selectionRect, MANAGE_CONTENT_WIDTH, MANAGE_CONTENT_HEIGHT)
         visible = true
     }
 
@@ -53,9 +58,9 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     override fun draw(canvas: Canvas) {
         if (!visible || menuItems.isEmpty()) return
 
-        background.draw(canvas)
+        drawBackground(canvas)
 
-        val itemLeft = bgLeft + bgPadding.left
+        val itemLeft = bgLeft + if (flipBackgroundX) bgPadding.right else bgPadding.left
         val itemTop = bgTop + bgPadding.top
         var x = itemLeft
         for (menuItem in menuItems) {
@@ -69,14 +74,72 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         }
     }
 
-    private fun applyLayout(anchorX: Float, anchorY: Float, contentWidth: Float, contentHeight: Float) {
+    private fun drawBackground(canvas: Canvas) {
+        val drawable = background.drawable
+        if (flipBackgroundX) {
+            drawDrawableFlippedX(canvas, drawable, bgLeft, bgTop, bgWidth, bgHeight)
+            return
+        }
+        drawDrawable(canvas, drawable, bgLeft, bgTop, bgWidth, bgHeight)
+    }
+
+    private fun drawDrawable(
+        canvas: Canvas,
+        drawable: Drawable,
+        left: Float,
+        top: Float,
+        width: Float,
+        height: Float,
+    ) {
+        drawable.setBounds(
+            left.toInt(),
+            top.toInt(),
+            (left + width).toInt(),
+            (top + height).toInt(),
+        )
+        drawable.draw(canvas)
+    }
+
+    private fun drawDrawableFlippedX(
+        canvas: Canvas,
+        drawable: Drawable,
+        left: Float,
+        top: Float,
+        width: Float,
+        height: Float,
+    ) {
+        canvas.withScale(-1f, 1f, left + width / 2f, top + height / 2f) {
+            drawDrawable(this, drawable, left, top, width, height)
+        }
+    }
+
+    private fun canFitRight(anchorX: Float, contentWidth: Float): Boolean {
+        val fullWidth = contentWidth + bgPadding.left + bgPadding.right
+        return anchorX + fullWidth <= screenWidth
+    }
+
+    private fun applyLayout(selectionRect: RectF, contentWidth: Float, contentHeight: Float) {
         bgWidth = contentWidth + bgPadding.left + bgPadding.right
         bgHeight = contentHeight + bgPadding.top + bgPadding.bottom
 
-        // 선택 사각형의 오른쪽 중심이 메뉴 9-patch 의 시작점(꼭지점)으로 오도록 붙인다.
-        // 그래서 메뉴는 선택 표시와 간격이 거의 없이 바로 오른쪽에서 열리는 것처럼 보인다.
-        bgLeft = anchorX
-        bgTop = anchorY - bgHeight / 2f
+        // 메뉴가 화면 아래/위로 잘리지 않도록 세로 위치를 clamp 한다.
+        val anchorY = selectionRect.centerY()
+        val wantedTop = anchorY - bgHeight / 2f
+        bgTop = wantedTop.coerceIn(0f, (screenHeight - bgHeight).coerceAtLeast(0f))
+
+        // 오른쪽이 남으면 selection 의 오른쪽 중심을 앵커로 쓰고,
+        // 아니면 selection 의 왼쪽 중심을 앵커로 써서 왼쪽으로 붙인다.
+        val rightAnchorX = selectionRect.right
+        val leftAnchorX = selectionRect.left
+        val fitsRight = canFitRight(rightAnchorX, contentWidth)
+        bgLeft = if (fitsRight) {
+            flipBackgroundX = false
+            rightAnchorX
+        } else {
+            flipBackgroundX = true
+            val wantedLeft = leftAnchorX - bgWidth
+            wantedLeft.coerceAtLeast(0f)
+        }
 
         background.setSize(bgWidth, bgHeight)
         background.setCenter(bgLeft + bgWidth / 2f, bgTop + bgHeight / 2f)
