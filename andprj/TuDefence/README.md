@@ -84,6 +84,18 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 이 방식은 JSON 구조를 Kotlin 의 `data class` 로 설명할 수 있고, 이후 필요한 필드가 생길 때마다 class 에 property 를 하나씩 추가해 나갈 수 있다. 즉, quicktype 의 "타입으로 읽는다"는 장점은 유지하면서도, 수업 단계에 맞게 코드 크기를 조절할 수 있다.
 
+## Path Finding
+
+- [x] Marker layer 에서 start / end / walkable tile 스캔
+- [ ] Marker layer 의 walkable / start / end tile 을 화면에 표시
+- [ ] A* 를 update 마다 한 단계씩 진행
+- [ ] 선택한 tile 의 A* 상태를 숫자로 표시하고 step 일시정지
+- [ ] raw path 를 tile 영역으로 표시
+- [ ] 같은 방향 path 를 축약해 표시
+- [ ] randomized waypoint 를 표시
+- [ ] cubic path 를 생성해 표시
+- [ ] `Fly` 가 계산된 path 를 따라 이동
+
 ## Map Selection
 
 - [x] 터치 위치를 map 좌표로 변환

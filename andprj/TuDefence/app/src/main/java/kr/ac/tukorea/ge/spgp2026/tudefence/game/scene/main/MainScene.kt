@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.PathFinder
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.TiledMapLoader
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.bg.TiledBackground
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CannonMenu
@@ -60,6 +61,7 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
+        PathFinder.setTiledLayer(markerLayer, TILE_WIDTH)
         cannonMenu.onMenuListener = this
         world.add(background, MainLayer.BG)
         world.add(score, MainLayer.UI)
