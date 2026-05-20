@@ -112,6 +112,32 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] 설치 불가 / 업그레이드 불가 메뉴에 금지 표시 overlay
 - [ ] 메뉴 표시 alpha animation 적용
 
+### Touch Policy Summary
+
+- `touch down / move` 에서는 selection 이 보이고, 설치 가능 여부를 즉시 표시한다.
+- `touch up` 에서는 설치 가능 타일이면 install menu 를, cannon 이 선택되어 있으면 manage menu 를 보여 준다.
+- 설치/업그레이드가 실패하면 selection/menu 는 그대로 유지한다.
+- uninstall 이 성공하면 selection/menu 모두 사라진다.
+- 메뉴가 보이는 동안 메뉴 밖을 누르면 메뉴만 닫고, 같은 위치 기준으로 selection 을 다시 보여 준다.
+- 첫 `move` 가 빠르면 drag 로 처리하고, 늦거나 drag 불가면 selection 을 갱신한다.
+- multi-touch 가 시작되면 selection/menu 모두 사라진다.
+
+| Situation | Selection | Menu | Note |
+|---|---|---|---|
+| `touch down / move` | show | hidden or same | tile 의 가능 / 불가능 상태를 즉시 보여 준다 |
+| `touch up` + 설치 가능 타일 | keep | install menu | cannon 이 선택돼 있으면 manage menu |
+| `touch up` + 불가능 타일 | hide | hide | selection 이 사라진다 |
+| install success | keep | switch to manage menu | install 실패 시 selection/menu 그대로 유지 |
+| install fail | keep | keep | 골드 부족 등으로 설치하지 못하면 아무 것도 닫지 않는다 |
+| `touch up` + cannon selected | keep | upgrade / uninstall menu | cannon 위 터치 상태를 관리 메뉴로 바꾼다 |
+| upgrade success | keep | keep manage menu | upgrade 실패 시 selection/menu 그대로 유지 |
+| upgrade fail | keep | keep | 골드 부족 등으로 업그레이드하지 못하면 아무 것도 닫지 않는다 |
+| uninstall success | hide | hide | selection/menu 모두 사라진다 |
+| menu visible + outside `touch down / move` | show again | hide | 메뉴를 닫고 바로 selection 을 다시 보여 준다 |
+| first `move` within drag window | drag | hide or keep | drag 가능하면 map drag, 아니면 selection update |
+| multi-touch start / move | hide | hide | pinch 우선 |
+| menu item touch start | same gesture consumed | same gesture consumed | 같은 제스처의 move / up 에서는 상태를 바꾸지 않는다 |
+
 ## Cannon
 
 - [x] `Cannon` 구현

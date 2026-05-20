@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.withScale
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.DrawableSprite
@@ -19,7 +20,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.R
 // draw() 가 같은 루프로 메뉴를 그리게 한다.
 class CannonMenu(gctx: GameContext) : IGameObject {
     fun interface OnMenuListener {
-        fun onMenu(resId: Int): Boolean
+        fun onMenu(resId: Int)
     }
 
     private val gctx = gctx
@@ -42,11 +43,20 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     private val itemPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         alpha = MENU_ALPHA
     }
+    // 관리 메뉴에서는 왼쪽에 현재 레벨을 숫자로 표시한다.
+    // 이 글자용 Paint 도 매번 새로 만들지 않고 한 번만 재사용한다.
+    private val levelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = 0xFF202020.toInt()
+        textAlign = Paint.Align.CENTER
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+    }
     private val screenWidth = gctx.metrics.width
     private val screenHeight = gctx.metrics.height
 
     private var visible = false
     private var menuItems: IntArray = BLANK_MENU_ITEMS
+    private var menuLevel = 0
+    private var menuLeadingSpace = 0f
     private var itemSize = 0f
     private var bgWidth = 0f
     private var bgHeight = 0f
@@ -54,17 +64,23 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     private var bgTop = 0f
     private var flipBackgroundX = false
     var onMenuListener: OnMenuListener? = null
+    val isVisible: Boolean
+        get() = visible
 
     fun showInstallMenuAt(selectionRect: RectF) {
         menuItems = INSTALL_MENU_ITEMS
         itemSize = INSTALL_ITEM_SIZE
+        menuLevel = 0
+        menuLeadingSpace = 0f
         applyLayout(selectionRect, INSTALL_CONTENT_WIDTH, INSTALL_CONTENT_HEIGHT)
         visible = true
     }
 
-    fun showManageMenuAt(selectionRect: RectF) {
+    fun showManageMenuAt(selectionRect: RectF, level: Int) {
         menuItems = MANAGE_MENU_ITEMS
         itemSize = MANAGE_ITEM_SIZE
+        menuLevel = level
+        menuLeadingSpace = MANAGE_LEVEL_WIDTH
         applyLayout(selectionRect, MANAGE_CONTENT_WIDTH, MANAGE_CONTENT_HEIGHT)
         visible = true
     }
@@ -74,21 +90,22 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         menuItems = BLANK_MENU_ITEMS
     }
 
+    fun contains(x: Float, y: Float): Boolean {
+        if (!visible || menuItems.isEmpty()) return false
+        return x >= bgLeft && x <= bgLeft + bgWidth && y >= bgTop && y <= bgTop + bgHeight
+    }
+
     fun onTouch(x: Float, y: Float): Boolean {
         if (!visible || menuItems.isEmpty()) return false
 
         val itemTop = bgTop + bgPadding.top
         val itemBottom = itemTop + itemSize
-        var itemLeft = bgLeft + if (flipBackgroundX) bgPadding.right else bgPadding.left
+        var itemLeft = contentLeft() + menuLeadingSpace
         for (menuItem in menuItems) {
             val itemRight = itemLeft + itemSize
             if (x >= itemLeft && x <= itemRight && y >= itemTop && y <= itemBottom) {
-                val handled = onMenuListener?.onMenu(menuItem) ?: false
-                if (handled) {
-                    hide()
-                    return true
-                }
-                return false
+                onMenuListener?.onMenu(menuItem)
+                return true
             }
             itemLeft += itemSize
         }
@@ -103,8 +120,9 @@ class CannonMenu(gctx: GameContext) : IGameObject {
 
         drawBackground(canvas)
 
-        val itemLeft = bgLeft + if (flipBackgroundX) bgPadding.right else bgPadding.left
+        val itemLeft = contentLeft() + menuLeadingSpace
         val itemTop = bgTop + bgPadding.top
+        drawLevelText(canvas, contentLeft(), itemTop)
         var x = itemLeft
         for (menuItem in menuItems) {
             canvas.drawBitmap(
@@ -158,6 +176,19 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         }
     }
 
+    private fun drawLevelText(canvas: Canvas, itemLeft: Float, itemTop: Float) {
+        if (menuLevel <= 0) return
+        if (menuLeadingSpace <= 0f) return
+        levelPaint.textSize = MANAGE_LEVEL_TEXT_SIZE
+        val textX = itemLeft + menuLeadingSpace / 2f
+        val textY = itemTop + MANAGE_CONTENT_HEIGHT / 2f - (levelPaint.descent() + levelPaint.ascent()) / 2f
+        canvas.drawText(menuLevel.toString(), textX, textY, levelPaint)
+    }
+
+    private fun contentLeft(): Float {
+        return bgLeft + if (flipBackgroundX) bgPadding.right else bgPadding.left
+    }
+
     private fun canFitRight(anchorX: Float, contentWidth: Float): Boolean {
         val fullWidth = contentWidth + bgPadding.left + bgPadding.right
         return anchorX + fullWidth <= screenWidth
@@ -207,7 +238,9 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         private const val MANAGE_ITEM_SIZE = 100f
         private const val INSTALL_CONTENT_WIDTH = 300f
         private const val INSTALL_CONTENT_HEIGHT = 100f
-        private const val MANAGE_CONTENT_WIDTH = 200f
+        private const val MANAGE_LEVEL_WIDTH = 50f
+        private const val MANAGE_LEVEL_TEXT_SIZE = 40f
+        private const val MANAGE_CONTENT_WIDTH = MANAGE_LEVEL_WIDTH + MANAGE_ITEM_SIZE * 2f
         private const val MANAGE_CONTENT_HEIGHT = 100f
         private const val MENU_ALPHA = 0xA0
     }

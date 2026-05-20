@@ -50,6 +50,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     private var downTime = 0L
     private var isDragging = false
     private var wasMultiTouch = false
+    private var menuGestureConsumed = false
     private val touchPoint0 = PointF()
     private val touchPoint1 = PointF()
     private val mapPoint = PointF()
@@ -80,7 +81,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         addCannon(gctx, 925f, 575f, level = 4)
         addCannon(gctx, 1225f, 275f, level = 5)
         addCannon(gctx, 1275f, 775f, level = 6)
-        //addCannon(gctx, 800f, 125f, level = 10)
+        addCannon(gctx, 800f, 125f, level = 10)
     }
 
     private fun addCannon(gctx: GameContext, x: Float, y: Float, level: Int) {
@@ -92,19 +93,42 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         return true
     }
 
+    /*
+     * Touch policy summary
+     *
+     * | Situation | Selection | Menu | Note |
+     * |---|---|---|---|
+     * | DOWN / MOVE | show | hidden or same | tile 의 가능/불가 상태를 즉시 보여 준다 |
+     * | UP on installable tile | keep | install menu | cannon 이 선택돼 있으면 manage menu |
+     * | UP on non-installable tile | hide | hide | selection 이 사라진다 |
+     * | menu item success (install) | keep | switch to manage menu | install 실패 시 그대로 유지 |
+     * | menu item success (upgrade) | keep | keep manage menu | upgrade 실패 시 그대로 유지 |
+     * | menu item success (uninstall) | hide | hide | both disappear |
+     * | menu visible + outside DOWN / MOVE | show again | hide | menu 를 닫고 바로 selection 을 다시 보여 준다 |
+     * | first MOVE within drag window | drag | hide or keep | drag 가능하면 map drag, 아니면 selection update |
+     * | multi-touch start / move | hide | hide | pinch 우선 |
+     *
+     * 이 표는 selection/menu 상태 전이를 한 곳에서 읽기 쉽게 정리한 것이다.
+     * 실제 구현은 ACTION_DOWN / MOVE / UP / POINTER_DOWN 분기에서 이 규칙을 따른다.
+     */
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN,
             -> {
                 wasMultiTouch = false
                 isDragging = false
+                menuGestureConsumed = false
                 downTime = event.eventTime
                 saveTouchState(event)
                 pointFromEvent(event, 0, touchPoint0)
-                if (cannonMenu.onTouch(touchPoint0.x, touchPoint0.y)) {
+                if (cannonMenu.contains(touchPoint0.x, touchPoint0.y)) {
+                    menuGestureConsumed = true
+                    cannonMenu.onTouch(touchPoint0.x, touchPoint0.y)
                     return true
                 }
-                cannonMenu.hide()
+                if (cannonMenu.isVisible) {
+                    cannonMenu.hide()
+                }
                 downTouchX = lastTouchX
                 downTouchY = lastTouchY
                 updateSelection(event)
@@ -127,6 +151,9 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (menuGestureConsumed) {
+                    return true
+                }
                 if (event.pointerCount >= 2) {
                     wasMultiTouch = true
                     isDragging = true
@@ -142,6 +169,10 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             }
 
             MotionEvent.ACTION_UP -> {
+                if (menuGestureConsumed) {
+                    resetTouchState()
+                    return true
+                }
                 if (!showCannonMenuIfTap(event)) {
                     selection.hide()
                 }
@@ -181,7 +212,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
 
         if (selection.selectedCannon != null) {
             selection.sceneRect(mapCamera, selectionSceneRect)
-            cannonMenu.showManageMenuAt(selectionSceneRect)
+            cannonMenu.showManageMenuAt(selectionSceneRect, selection.selectedCannon!!.level)
             return true
         }
 
@@ -203,19 +234,18 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         return true
     }
 
-    private fun handleMenuSelection(resId: Int): Boolean {
+    private fun handleMenuSelection(resId: Int) {
         val selectedCannon = selection.selectedCannon
         when (resId) {
-            R.mipmap.f_01_01 -> return installCannon(level = 1)
-            R.mipmap.f_01_02 -> return installCannon(level = 2)
-            R.mipmap.f_01_03 -> return installCannon(level = 3)
-            R.mipmap.upgrade -> return upgradeCannon(selectedCannon)
+            R.mipmap.f_01_01 -> installCannon(level = 1)
+            R.mipmap.f_01_02 -> installCannon(level = 2)
+            R.mipmap.f_01_03 -> installCannon(level = 3)
+            R.mipmap.upgrade -> upgradeCannon(selectedCannon)
             R.mipmap.uninstall -> {
                 selectedCannon?.uninstall()
                 selection.hide()
-                return true
+                cannonMenu.hide()
             }
-            else -> return false
         }
     }
 
@@ -234,6 +264,8 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             )
         }
         selection.selectCannon(cannon)
+        selection.sceneRect(mapCamera, selectionSceneRect)
+        cannonMenu.showManageMenuAt(selectionSceneRect, cannon.level)
         return true
     }
 
@@ -247,6 +279,10 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             return false
         }
         score.add(-cost)
+        // 업그레이드 후에도 manage menu 는 유지하고,
+        // 왼쪽의 레벨 숫자만 새 값으로 다시 그리도록 메뉴를 갱신한다.
+        selection.sceneRect(mapCamera, selectionSceneRect)
+        cannonMenu.showManageMenuAt(selectionSceneRect, selectedCannon.level)
         return true
     }
 
