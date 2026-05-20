@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.main
 
 import android.graphics.PointF
 import android.graphics.RectF
+import android.util.Log
 import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -221,6 +222,7 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
     }
 
     override fun onMenuSelected(resId: Int) {
+        Log.d(javaClass.simpleName, "resId: $resId")
         val selectedCannon = selection.selectedCannon
         when (resId) {
             R.mipmap.f_01_01 -> installCannon(level = 1)
