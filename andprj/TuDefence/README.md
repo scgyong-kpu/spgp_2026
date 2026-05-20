@@ -87,7 +87,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 ## Path Finding
 
 - [x] Marker layer 에서 start / end / walkable tile 스캔
-- [ ] Marker layer 의 walkable / start / end tile 을 화면에 표시
+- [x] Marker layer 의 walkable / start / end tile 을 화면에 표시
 - [ ] A* 를 update 마다 한 단계씩 진행
 - [ ] 선택한 tile 의 A* 상태를 숫자로 표시하고 step 일시정지
 - [ ] raw path 를 tile 영역으로 표시
