@@ -23,29 +23,14 @@ object PathFinder {
     }
 
     private fun scanMarkerLayer(layer: TiledLayer) {
-        start = null
-        end = null
-        walkableCount = 0
+        val startIndex = layer.data.indexOf(START_TILE)
+        val endIndex = layer.data.indexOf(END_TILE)
+        check(startIndex >= 0) { "Marker layer must contain start tile gid=$START_TILE" }
+        check(endIndex >= 0) { "Marker layer must contain end tile gid=$END_TILE" }
 
-        var y = 0
-        while (y < layer.height) {
-            var x = 0
-            while (x < layer.width) {
-                val gid = layer.tileAt(x, y)
-                if (isWalkable(gid)) {
-                    walkableCount++
-                }
-                when (gid) {
-                    START_TILE -> start = Point(x, y)
-                    END_TILE -> end = Point(x, y)
-                }
-                x++
-            }
-            y++
-        }
-
-        checkNotNull(start) { "Marker layer must contain start tile gid=$START_TILE" }
-        checkNotNull(end) { "Marker layer must contain end tile gid=$END_TILE" }
+        start = Point(startIndex % layer.width, startIndex / layer.width)
+        end = Point(endIndex % layer.width, endIndex / layer.width)
+        walkableCount = layer.data.count { isWalkable(it) }
     }
 
     private fun isWalkable(gid: Int): Boolean {
