@@ -30,6 +30,7 @@ object PathFinder {
     private val openNodes = ArrayList<Node>()
     private val rawPath = ArrayList<Node>()
     private val simplifiedPath = ArrayList<Node>()
+    private val waypoints = ArrayList<Waypoint>()
     private var currentNode: Node? = null
     private var elapsedTime = 0f
     private var searchFinished = false
@@ -64,6 +65,7 @@ object PathFinder {
         drawSearchTiles(canvas)
         drawRawPath(canvas)
         drawSimplifiedPath(canvas)
+        drawWaypoints(canvas)
         drawStartEndTiles(canvas)
         drawSelectedTileInfo(canvas, layer)
     }
@@ -104,6 +106,7 @@ object PathFinder {
         openNodes.clear()
         rawPath.clear()
         simplifiedPath.clear()
+        waypoints.clear()
         currentNode = null
         elapsedTime = 0f
         searchFinished = false
@@ -148,7 +151,12 @@ object PathFinder {
             searchFinished = true
             buildRawPath(current)
             buildSimplifiedPath()
-            Log.d(TAG, "A* finished: g=${current.g}, rawPath=${rawPath.size}, simplifiedPath=${simplifiedPath.size}")
+            buildCenteredWaypoints(layer)
+            Log.d(
+                TAG,
+                "A* finished: g=${current.g}, rawPath=${rawPath.size}, " +
+                    "simplifiedPath=${simplifiedPath.size}, waypoints=${waypoints.size}",
+            )
             return
         }
 
@@ -231,6 +239,31 @@ object PathFinder {
         if (rawPath.size > 1) {
             simplifiedPath.add(rawPath.last())
         }
+    }
+
+    private fun buildCenteredWaypoints(layer: TiledLayer) {
+        waypoints.clear()
+        if (simplifiedPath.isEmpty()) return
+
+        // tile 좌표 (x, y) 자체는 tile 의 좌상단이다.
+        // 첫 단계에서는 각 tile 의 중앙점이 waypoint 가 되도록 +0.5 offset 을 더한다.
+        // 이후 단계에서 이 0.5 를 +0.0~+1.0 random offset 으로 바꾸면 Fly 마다 조금씩 다른 경로가 된다.
+        var i = 0
+        while (i < simplifiedPath.size) {
+            val node = simplifiedPath[i]
+            waypoints.add(
+                Waypoint(
+                    node.x + 0.5f,
+                    node.y + 0.5f,
+                )
+            )
+            i++
+        }
+
+        val firstY = waypoints.first().y
+        val lastY = waypoints.last().y
+        waypoints.add(0, Waypoint(-0.5f, firstY))
+        waypoints.add(Waypoint(layer.width + 0.5f, lastY))
     }
 
     private fun isWalkable(gid: Int): Boolean {
@@ -325,6 +358,23 @@ object PathFinder {
         while (i < simplifiedPath.size) {
             val node = simplifiedPath[i]
             drawTile(canvas, node.x, node.y, simplifiedPathPaint)
+            i++
+        }
+    }
+
+    private fun drawWaypoints(canvas: Canvas) {
+        if (waypoints.isEmpty()) return
+
+        var i = 0
+        while (i < waypoints.size) {
+            val point = waypoints[i]
+            val x = point.x * tileSize
+            val y = point.y * tileSize
+            if (i > 0) {
+                val previous = waypoints[i - 1]
+                canvas.drawLine(previous.x * tileSize, previous.y * tileSize, x, y, waypointLinePaint)
+            }
+            canvas.drawCircle(x, y, WAYPOINT_RADIUS, waypointPointPaint)
             i++
         }
     }
@@ -492,6 +542,8 @@ object PathFinder {
         fun parentText(): String = parent?.let { "(${it.x},${it.y})" } ?: "-"
     }
 
+    private class Waypoint(val x: Float, val y: Float)
+
     private fun clearSelectedTile() {
         selectedTileX = INVALID_TILE
         selectedTileY = INVALID_TILE
@@ -526,6 +578,15 @@ object PathFinder {
         style = Paint.Style.STROKE
         strokeWidth = 6f
         color = 0xFF00FFFF.toInt() // cyan
+    }
+    private val waypointLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 4f
+        color = 0xFF40FF40.toInt() // bright green
+    }
+    private val waypointPointPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xFF40FF40.toInt() // bright green
     }
     private val selectedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -578,5 +639,6 @@ object PathFinder {
     private const val MAX_OPEN_BAR_RATIO = 0.8f
     private const val STRAIGHT_ARROW_LENGTH = 18f
     private const val DIAGONAL_ARROW_LENGTH = 25f
+    private const val WAYPOINT_RADIUS = 8f
     private const val INVALID_TILE = -1
 }
