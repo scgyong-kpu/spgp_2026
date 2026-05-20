@@ -203,29 +203,51 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         return true
     }
 
-    private fun handleMenuSelection(resId: Int) {
+    private fun handleMenuSelection(resId: Int): Boolean {
         val selectedCannon = selection.selectedCannon
         when (resId) {
-            R.mipmap.f_01_01 -> selection.selectCannon(installCannon(level = 1))
-            R.mipmap.f_01_02 -> selection.selectCannon(installCannon(level = 2))
-            R.mipmap.f_01_03 -> selection.selectCannon(installCannon(level = 3))
-            R.mipmap.upgrade -> selectedCannon?.upgrade()
+            R.mipmap.f_01_01 -> return installCannon(level = 1)
+            R.mipmap.f_01_02 -> return installCannon(level = 2)
+            R.mipmap.f_01_03 -> return installCannon(level = 3)
+            R.mipmap.upgrade -> return upgradeCannon(selectedCannon)
             R.mipmap.uninstall -> {
                 selectedCannon?.uninstall()
                 selection.hide()
+                return true
             }
+            else -> return false
         }
     }
 
-    private fun installCannon(level: Int): Cannon {
+    private fun installCannon(level: Int): Boolean {
+        val cost = Cannon.installationCost(level)
+        if (score.value < cost) {
+            return false
+        }
+        score.add(-cost)
         selection.mapRect(selectionSceneRect)
-        return Cannon.get(gctx, level).also { cannon ->
+        val cannon = Cannon.get(gctx, level).also { cannon ->
             cannon.setCenter(selectionSceneRect.centerX(), selectionSceneRect.centerY())
             world.add(
                 cannon,
                 MainLayer.WEAPON,
             )
         }
+        selection.selectCannon(cannon)
+        return true
+    }
+
+    private fun upgradeCannon(selectedCannon: Cannon?): Boolean {
+        if (selectedCannon == null) return false
+        val cost = Cannon.upgradeCost(selectedCannon.level)
+        if (cost == Int.MAX_VALUE || score.value < cost) {
+            return false
+        }
+        if (!selectedCannon.upgrade()) {
+            return false
+        }
+        score.add(-cost)
+        return true
     }
 
     private fun findCannonAt(mapX: Float, mapY: Float): Cannon? {

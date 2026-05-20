@@ -41,8 +41,8 @@ class Score(gctx: GameContext) : IGameObject {
     }
 
     companion object {
-        private const val RIGHT_MARGIN = 50f
-        private const val TOP_MARGIN = 50f
-        private const val DIGIT_WIDTH = 100f
+        private const val RIGHT_MARGIN = 30f
+        private const val TOP_MARGIN = 30f
+        private const val DIGIT_WIDTH = 50f
     }
 }

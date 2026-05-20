@@ -16,14 +16,15 @@ import kotlin.math.atan2
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.roundToInt
 
 class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.mipmap.cannon_bg_1_256) {
     private val barrelRect = RectF()
     private val barrelBitmap = gctx.res.getBitmap(R.mipmap.barrel_512)
-    private var level = 1
+    private var currentLevel = 1
         set(value) {
             // Cannon level 은 학생들이 보기 쉽게 1-based index 로 사용한다.
-            // setter 안에서 this.level = ... 을 다시 쓰면 setter 가 재귀 호출된다.
+            // setter 안에서 this.currentLevel = ... 을 다시 쓰면 setter 가 재귀 호출된다.
             // 그래서 Kotlin property setter 에서는 backing field 인 field 에 직접 대입한다.
             field = value.coerceIn(MIN_LEVEL, MAX_LEVEL)
             val levelRatio = (field - MIN_LEVEL) / (MAX_LEVEL - MIN_LEVEL).toFloat()
@@ -42,12 +43,15 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
     private var angle = 0f
     private var fireCooldown = 0f
 
+    val level: Int
+        get() = currentLevel
+
     init {
         setSize(BASE_SIZE, BASE_SIZE)
     }
 
     private fun init(level: Int): Cannon {
-        this.level = level
+        this.currentLevel = level
         fireCooldown = fireInterval
         return this
     }
@@ -131,10 +135,12 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
         canvas.drawCircle(x, y, range, rangePaint)
     }
 
-    fun upgrade() {
+    fun upgrade(): Boolean {
         // 메뉴에서 upgrade 를 눌렀을 때 호출하는 진입점이다.
         // level setter 가 사거리, 발사 간격, barrel 크기, body bitmap 을 함께 갱신한다.
-        level++
+        if (currentLevel >= MAX_LEVEL) return false
+        currentLevel++
+        return true
     }
 
     fun uninstall() {
@@ -156,9 +162,21 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
             return Cannon(gctx).init(level)
         }
 
+        fun installationCost(toLevel: Int): Int {
+            return COSTS[toLevel - 1]
+        }
+
+        fun upgradeCost(fromLevel: Int): Int {
+            if (fromLevel >= MAX_LEVEL) return Int.MAX_VALUE
+            return ((COSTS[fromLevel] - COSTS[fromLevel - 1]) * 1.1f).roundToInt()
+        }
+
         private const val MIN_LEVEL = 1
         private const val MAX_LEVEL = 10
         private const val UPGRADED_IMAGE_MIN_LEVEL = 6
+        private val COSTS = intArrayOf(
+            10, 100, 300, 700, 1500, 3000, 7000, 15000, 40000, 100000, 100000000
+        )
         const val SIZE = 100f
         private const val BASE_SIZE = SIZE
         private const val MIN_BARREL_SIZE = 110f

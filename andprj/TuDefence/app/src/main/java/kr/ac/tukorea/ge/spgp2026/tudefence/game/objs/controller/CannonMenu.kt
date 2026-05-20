@@ -19,7 +19,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.R
 // draw() 가 같은 루프로 메뉴를 그리게 한다.
 class CannonMenu(gctx: GameContext) : IGameObject {
     fun interface OnMenuListener {
-        fun onMenu(resId: Int)
+        fun onMenu(resId: Int): Boolean
     }
 
     private val gctx = gctx
@@ -83,9 +83,12 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         for (menuItem in menuItems) {
             val itemRight = itemLeft + itemSize
             if (x >= itemLeft && x <= itemRight && y >= itemTop && y <= itemBottom) {
-                onMenuListener?.onMenu(menuItem)
-                hide()
-                return true
+                val handled = onMenuListener?.onMenu(menuItem) ?: false
+                if (handled) {
+                    hide()
+                    return true
+                }
+                return false
             }
             itemLeft += itemSize
         }
