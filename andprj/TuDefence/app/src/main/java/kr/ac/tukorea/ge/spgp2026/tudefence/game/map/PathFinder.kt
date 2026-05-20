@@ -269,6 +269,7 @@ object PathFinder {
                 }
                 if (paint != null) {
                     drawTile(canvas, node.x, node.y, paint)
+                    drawParentArrowForClosedNode(canvas, node)
                     drawCostBarForOpenNode(canvas, node, minOpenF, maxOpenF)
                     drawCostsForOpenNode(canvas, node)
                 }
@@ -333,6 +334,25 @@ object PathFinder {
 
     private fun drawInfoLine(canvas: Canvas, text: String, x: Float, y: Float) {
         canvas.drawText(text, x, y, infoTextPaint)
+    }
+
+    private fun drawParentArrowForClosedNode(canvas: Canvas, node: Node) {
+        val parent = node.parent ?: return
+        if (!node.closed) return
+
+        // closed node 는 이미 A* 가 확정적으로 꺼내 본 node 이다.
+        // 화살표는 이 node 가 어느 parent 에서 왔는지 보여 주기 위해 parent 방향을 가리킨다.
+        val centerX = (node.x + 0.5f) * tileSize
+        val centerY = (node.y + 0.5f) * tileSize
+        val dx = parent.x - node.x
+        val dy = parent.y - node.y
+        val length = if (dx != 0 && dy != 0) DIAGONAL_ARROW_LENGTH else STRAIGHT_ARROW_LENGTH
+        val directionScale = length / if (dx != 0 && dy != 0) DIAGONAL_COST else STRAIGHT_COST
+        val tipX = centerX + dx * directionScale * STRAIGHT_COST
+        val tipY = centerY + dy * directionScale * STRAIGHT_COST
+
+        canvas.drawLine(centerX, centerY, tipX, tipY, parentArrowPaint)
+        canvas.drawCircle(tipX, tipY, tileSize * 0.06f, parentArrowPaint)
     }
 
     private fun minOpenF(): Int {
@@ -456,6 +476,11 @@ object PathFinder {
         style = Paint.Style.FILL
         color = 0xC0FFFF00.toInt() // semi-transparent yellow
     }
+    private val parentArrowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL_AND_STROKE
+        strokeWidth = 4f
+        color = 0xFFFFFFFF.toInt() // white
+    }
     private val rawPathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = 0x80FF00FF.toInt() // semi-transparent magenta
@@ -509,5 +534,7 @@ object PathFinder {
     )
     private const val MIN_OPEN_BAR_RATIO = 0.1f
     private const val MAX_OPEN_BAR_RATIO = 0.8f
+    private const val STRAIGHT_ARROW_LENGTH = 18f
+    private const val DIAGONAL_ARROW_LENGTH = 25f
     private const val INVALID_TILE = -1
 }
