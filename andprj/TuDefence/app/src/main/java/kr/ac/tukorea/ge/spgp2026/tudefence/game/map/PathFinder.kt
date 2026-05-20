@@ -14,7 +14,7 @@ object PathFinder {
     private const val PATH_TILE = 30
     private const val START_TILE = 31
     private const val END_TILE = 46
-    private const val STEP_INTERVAL = 0.3f
+    private const val STEP_INTERVAL = 0.05f
     private const val STRAIGHT_COST = 10
     private const val DIAGONAL_COST = 14
 
@@ -28,6 +28,7 @@ object PathFinder {
     private val costBarRect = RectF()
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
+    private val rawPath = ArrayList<Node>()
     private var currentNode: Node? = null
     private var elapsedTime = 0f
     private var searchFinished = false
@@ -60,6 +61,7 @@ object PathFinder {
         val layer = layer ?: return
         drawMarkerTiles(canvas, layer)
         drawSearchTiles(canvas)
+        drawRawPath(canvas)
         drawStartEndTiles(canvas)
         drawSelectedTileInfo(canvas, layer)
     }
@@ -98,6 +100,7 @@ object PathFinder {
     private fun resetSearch(layer: TiledLayer) {
         nodes = arrayOfNulls(layer.width * layer.height)
         openNodes.clear()
+        rawPath.clear()
         currentNode = null
         elapsedTime = 0f
         searchFinished = false
@@ -140,7 +143,8 @@ object PathFinder {
 
         if (current.x == end.x && current.y == end.y) {
             searchFinished = true
-            Log.d(TAG, "A* finished: g=${current.g}")
+            buildRawPath(current)
+            Log.d(TAG, "A* finished: g=${current.g}, rawPath=${rawPath.size}")
             return
         }
 
@@ -188,6 +192,17 @@ object PathFinder {
             neighbor.opened = true
             openNodes.add(neighbor)
         }
+    }
+
+    private fun buildRawPath(endNode: Node) {
+        rawPath.clear()
+        var node: Node? = endNode
+        while (node != null) {
+            rawPath.add(node)
+            node = node.parent
+        }
+        // parent 를 따라가면 end -> start 순서가 되므로, 이후 단계에서 쓰기 쉽게 start -> end 로 뒤집어 둔다.
+        rawPath.reverse()
     }
 
     private fun isWalkable(gid: Int): Boolean {
@@ -265,6 +280,15 @@ object PathFinder {
     private fun drawStartEndTiles(canvas: Canvas) {
         start?.let { drawTile(canvas, it.x, it.y, startPaint) }
         end?.let { drawTile(canvas, it.x, it.y, endPaint) }
+    }
+
+    private fun drawRawPath(canvas: Canvas) {
+        var i = 0
+        while (i < rawPath.size) {
+            val node = rawPath[i]
+            drawTile(canvas, node.x, node.y, rawPathPaint)
+            i++
+        }
     }
 
     private fun drawSelectedTileInfo(canvas: Canvas, layer: TiledLayer) {
@@ -431,6 +455,10 @@ object PathFinder {
     private val currentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = 0xC0FFFF00.toInt() // semi-transparent yellow
+    }
+    private val rawPathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0x80FF00FF.toInt() // semi-transparent magenta
     }
     private val selectedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
