@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
 import android.graphics.Canvas
+import android.graphics.Path
 import android.graphics.PathMeasure
 import android.graphics.Rect
 import androidx.core.graphics.PathParser
@@ -198,7 +199,7 @@ class Fly private constructor(gctx: GameContext):
             listOf(Rect(560, 0, 630, 70), Rect(630, 0, 700, 70)),
         )
 
-        val path = PathParser.createPathFromPathData(
+        var path: Path = PathParser.createPathFromPathData(
             "M -72,896\n" +
             "C 64,896 192,792 192,656\n" +
             "C 192,520 48,472 48,336\n" +
@@ -215,7 +216,14 @@ class Fly private constructor(gctx: GameContext):
         )!!
 
         val pathMeasure = PathMeasure(path, false)
-        val pathLength = pathMeasure.length
+        var pathLength = pathMeasure.length
+            private set
+
+        fun replacePath(newPath: Path) {
+            path = Path(newPath)
+            pathMeasure.setPath(path, false)
+            pathLength = pathMeasure.length
+        }
 
         private const val MIN_SIZE = 75f
         private const val MAX_SIZE = 125f

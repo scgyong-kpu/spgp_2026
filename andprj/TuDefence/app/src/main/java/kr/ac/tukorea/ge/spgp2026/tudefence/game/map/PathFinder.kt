@@ -2,9 +2,11 @@ package kr.ac.tukorea.ge.spgp2026.tudefence.game.map
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.Point
 import android.graphics.RectF
 import android.util.Log
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
@@ -26,6 +28,7 @@ object PathFinder {
     private val tileRect = RectF()
     private val infoRect = RectF()
     private val costBarRect = RectF()
+    private val generatedPath = Path()
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
     private val rawPath = ArrayList<Node>()
@@ -152,6 +155,7 @@ object PathFinder {
             buildRawPath(current)
             buildSimplifiedPath()
             buildCenteredWaypoints(layer)
+            buildFlyPath()
             Log.d(
                 TAG,
                 "A* finished: g=${current.g}, rawPath=${rawPath.size}, " +
@@ -264,6 +268,25 @@ object PathFinder {
         val lastY = waypoints.last().y
         waypoints.add(0, Waypoint(-0.5f, firstY))
         waypoints.add(Waypoint(layer.width + 0.5f, lastY))
+    }
+
+    private fun buildFlyPath() {
+        if (waypoints.isEmpty()) return
+
+        generatedPath.reset()
+        val first = waypoints.first()
+        generatedPath.moveTo(first.x * tileSize, first.y * tileSize)
+
+        var i = 1
+        while (i < waypoints.size) {
+            val point = waypoints[i]
+            generatedPath.lineTo(point.x * tileSize, point.y * tileSize)
+            i++
+        }
+
+        // PathFinder 가 계산한 map 경로를 실제 적 이동 경로로 넘긴다.
+        // 지금 단계에서는 lineTo 로 이어진 꺾은선이고, 이후 cubic path 단계에서 같은 함수 안을 곡선으로 바꾸게 된다.
+        Fly.replacePath(generatedPath)
     }
 
     private fun isWalkable(gid: Int): Boolean {
