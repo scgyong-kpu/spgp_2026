@@ -233,7 +233,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 ## Score
 
 - [x] 숫자 이미지 기반 score 표시
-- [ ] 초기 자금 설정
+- [x] 초기 자금 설정
 - [x] 포탑 설치 시 score 감소
 - [x] 포탑 업그레이드 시 score 감소
 - [ ] 포탑 철거 시 score 일부 반환

@@ -65,6 +65,7 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
         world.add(selection, MainLayer.SELECTOR)
         world.add(cannonMenu, MainLayer.UI)
         world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
+        score.setScore(30)
 
         world.add(CollisionChecker(gctx, world, score), MainLayer.CONTROLLER)
     }
