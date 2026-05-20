@@ -25,6 +25,7 @@ object PathFinder {
     private var walkableCount = 0
     private val tileRect = RectF()
     private val infoRect = RectF()
+    private val costBarRect = RectF()
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
     private var currentNode: Node? = null
@@ -239,6 +240,8 @@ object PathFinder {
     }
 
     private fun drawSearchTiles(canvas: Canvas) {
+        val minOpenF = minOpenF()
+        val maxOpenF = maxOpenF()
         var i = 0
         while (i < nodes.size) {
             val node = nodes[i]
@@ -251,6 +254,8 @@ object PathFinder {
                 }
                 if (paint != null) {
                     drawTile(canvas, node.x, node.y, paint)
+                    drawCostBarForOpenNode(canvas, node, minOpenF, maxOpenF)
+                    drawCostsForOpenNode(canvas, node)
                 }
             }
             i++
@@ -304,6 +309,81 @@ object PathFinder {
 
     private fun drawInfoLine(canvas: Canvas, text: String, x: Float, y: Float) {
         canvas.drawText(text, x, y, infoTextPaint)
+    }
+
+    private fun minOpenF(): Int {
+        var minF = Int.MAX_VALUE
+        var i = 0
+        while (i < openNodes.size) {
+            val node = openNodes[i]
+            if (node.f < minF) {
+                minF = node.f
+            }
+            i++
+        }
+        return minF
+    }
+
+    private fun maxOpenF(): Int {
+        var maxF = 0
+        var i = 0
+        while (i < openNodes.size) {
+            val node = openNodes[i]
+            if (node.f > maxF) {
+                maxF = node.f
+            }
+            i++
+        }
+        return maxF
+    }
+
+    private fun drawCostBarForOpenNode(canvas: Canvas, node: Node, minOpenF: Int, maxOpenF: Int) {
+        if (!node.opened || node.closed || node.g == Int.MAX_VALUE || node.f <= 0 || maxOpenF <= 0) return
+
+        // A* 는 f = g + h 가 가장 작은 후보를 먼저 고른다.
+        // 그래서 막대는 아직 선택 후보인 open node 에만 그린다.
+        // open set 안에서 가장 작은 f 는 10%, 가장 큰 f 는 80% 길이로 정규화해
+        // "짧은 막대가 다음에 선택될 가능성이 높다"는 점을 강조한다.
+        val left = node.x * tileSize + tileSize * 0.78f
+        val top = node.y * tileSize + tileSize * 0.15f
+        val right = node.x * tileSize + tileSize * 0.92f
+        val bottom = node.y * tileSize + tileSize * 0.85f
+        val fullHeight = bottom - top
+        val ratio = if (minOpenF == maxOpenF) {
+            MIN_OPEN_BAR_RATIO
+        } else {
+            MIN_OPEN_BAR_RATIO +
+                (MAX_OPEN_BAR_RATIO - MIN_OPEN_BAR_RATIO) * (node.f - minOpenF) / (maxOpenF - minOpenF)
+        }
+        val barHeight = fullHeight * ratio
+        val barTop = bottom - barHeight
+        val gHeight = barHeight * node.g / node.f
+        val splitY = bottom - gHeight
+
+        costBarRect.set(left, barTop, right, bottom)
+        canvas.drawRect(costBarRect, costBarBackgroundPaint)
+        costBarRect.set(left, splitY, right, bottom)
+        canvas.drawRect(costBarRect, gCostPaint)
+        costBarRect.set(left, barTop, right, splitY)
+        canvas.drawRect(costBarRect, hCostPaint)
+    }
+
+    private fun drawCostsForOpenNode(canvas: Canvas, node: Node) {
+        if (!node.opened || node.closed || node.g == Int.MAX_VALUE) return
+
+        costTextPaint.textSize = tileSize / 5f
+        val left = node.x * tileSize
+        val top = node.y * tileSize
+        val right = left + tileSize
+        val bottom = top + tileSize
+        val padding = tileSize * 0.06f
+
+        costTextPaint.textAlign = Paint.Align.LEFT
+        canvas.drawText(node.g.toString(), left + padding, top + costTextPaint.textSize, costTextPaint)
+        canvas.drawText(node.f.toString(), left + padding, bottom - padding, costTextPaint)
+
+        costTextPaint.textAlign = Paint.Align.RIGHT
+        canvas.drawText(node.h.toString(), right - padding, top + costTextPaint.textSize, costTextPaint)
     }
 
     private fun drawTile(canvas: Canvas, x: Int, y: Int, paint: Paint) {
@@ -366,6 +446,23 @@ object PathFinder {
         textSize = 18f
         color = 0xFFFFFFFF.toInt() // white
     }
+    private val costBarBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+        color = 0xCCFFFFFF.toInt() // semi-transparent white
+    }
+    private val gCostPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xCCFF4040.toInt() // semi-transparent red
+    }
+    private val hCostPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xCCFFD040.toInt() // semi-transparent yellow orange
+    }
+    private val costTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xFFFFFFFF.toInt() // white
+    }
     private val startPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = 0x8000FF00.toInt() // semi-transparent green
@@ -382,5 +479,7 @@ object PathFinder {
         STRAIGHT_COST, STRAIGHT_COST,
         DIAGONAL_COST, STRAIGHT_COST, DIAGONAL_COST,
     )
+    private const val MIN_OPEN_BAR_RATIO = 0.1f
+    private const val MAX_OPEN_BAR_RATIO = 0.8f
     private const val INVALID_TILE = -1
 }
