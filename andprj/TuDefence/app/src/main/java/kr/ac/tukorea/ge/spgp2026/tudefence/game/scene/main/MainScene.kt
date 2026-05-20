@@ -67,19 +67,6 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
         world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
 
         world.add(CollisionChecker(gctx, world, score), MainLayer.CONTROLLER)
-        addTestCannons(gctx)
-    }
-
-    private fun addTestCannons(gctx: GameContext) {
-        // Fly path 를 눈으로 피하고, 벽돌 tile 위에 올라가도록 고른 임시 배치이다.
-        // 지금은 Cannon 의 body/barrel 분리 표시와 camera transform 동작을 확인하기 위한 테스트용이다.
-        addCannon(gctx, 225f, 275f, level = 1)
-        addCannon(gctx, 425f, 375f, level = 2)
-        addCannon(gctx, 825f, 325f, level = 6)
-        addCannon(gctx, 925f, 575f, level = 4)
-        addCannon(gctx, 1225f, 275f, level = 5)
-        addCannon(gctx, 1275f, 775f, level = 6)
-        addCannon(gctx, 800f, 125f, level = 10)
     }
 
     private fun addCannon(gctx: GameContext, x: Float, y: Float, level: Int) {

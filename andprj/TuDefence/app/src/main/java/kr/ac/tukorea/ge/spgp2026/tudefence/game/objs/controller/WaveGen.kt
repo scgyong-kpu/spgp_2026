@@ -6,20 +6,44 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
-import kotlin.random.Random
 
 class WaveGen(
     private val gctx: GameContext,
     private val world: World<MainLayer>,
 ) : IGameObject {
-    private var elapsedTime = 0f
+    private var time = 0f
+    private var waveTime = 0f
+    private var interval = INTERVAL_INIT
+    private var wave = 0
+    private var bossPhase = false
+    private var flySpeedRatio = 1.0f
 
     override fun update(gctx: GameContext) {
-        elapsedTime += gctx.frameTime
-        if (elapsedTime < SPAWN_INTERVAL) return
+        waveTime += gctx.frameTime
+        if (bossPhase) {
+            if (waveTime > WAVE_INTERVAL || world.objectsAt(MainLayer.ENEMY).isEmpty()) {
+                waveTime = 0f
+                bossPhase = false
+                wave++
+                flySpeedRatio *= 1.0f
+            }
+            return
+        }
 
-        elapsedTime -= SPAWN_INTERVAL
-        spawn()
+        time += gctx.frameTime
+        if (time > interval) {
+            spawn()
+            time -= interval
+            interval *= INTERVAL_DECAY
+            if (interval < INTERVAL_MIN) {
+                interval = INTERVAL_MIN
+            }
+        }
+        if (waveTime > WAVE_INTERVAL) {
+            bossPhase = true
+            spawn()
+            waveTime = 0f
+        }
     }
 
     override fun draw(canvas: Canvas) {
@@ -37,15 +61,14 @@ class WaveGen(
 //    }
 
     private fun spawn() {
-        val fly = if (Random.nextInt(10) == 0) {
-            Fly.boss(gctx)
-        } else {
-            Fly.get(gctx)
-        }
+        val fly = Fly.get(gctx, bossPhase, flySpeedRatio)
         world.add(fly, MainLayer.ENEMY)
     }
 
     companion object {
-        private const val SPAWN_INTERVAL = 1.1f
+        private const val INTERVAL_INIT = 2.0f
+        private const val INTERVAL_MIN = 0.1f
+        private const val INTERVAL_DECAY = 0.995f
+        private const val WAVE_INTERVAL = 30.0f
     }
 }

@@ -68,13 +68,13 @@ class Fly private constructor(gctx: GameContext):
     private val position = FloatArray(2)
     private val tangent = FloatArray(2)
 
-    private fun init(type: Type, sizeRatio: Float): Fly {
+    private fun init(type: Type, sizeRatio: Float, speedRatio: Float): Fly {
         this.type = type
         frameRects = rectsArray[type.ordinal]
         life = type.health
         maxLife = life
         displayLife = life
-        speed = Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED
+        speed = (Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED) * speedRatio
         val size = (Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE) * sizeRatio
         setSize(size, size)
         distance = 0f
@@ -166,17 +166,26 @@ class Fly private constructor(gctx: GameContext):
     }
     companion object {
         fun get(gctx: GameContext): Fly {
-            return obtain(gctx, Type.random())
+            return get(gctx, bossPhase = false, flySpeedRatio = 1.0f)
         }
 
         fun boss(gctx: GameContext): Fly {
-            return obtain(gctx, Type.BOSS, sizeRatio = BOSS_SIZE_SCALE)
+            return get(gctx, bossPhase = true, flySpeedRatio = 1.0f)
         }
 
-        private fun obtain(gctx: GameContext, type: Type, sizeRatio: Float = 1.0f): Fly {
+        fun get(gctx: GameContext, bossPhase: Boolean, flySpeedRatio: Float): Fly {
+            return obtain(
+                gctx,
+                type = if (bossPhase) Type.BOSS else Type.random(),
+                sizeRatio = if (bossPhase) BOSS_SIZE_SCALE else 1.0f,
+                speedRatio = flySpeedRatio,
+            )
+        }
+
+        private fun obtain(gctx: GameContext, type: Type, sizeRatio: Float = 1.0f, speedRatio: Float = 1.0f): Fly {
             val world = gctx.mainWorld()
             val fly = world.obtain(Fly::class.java) ?: Fly(gctx)
-            return fly.init(type, sizeRatio)
+            return fly.init(type, sizeRatio, speedRatio)
         }
 
         // galaga_flies.png 는 700x70 고정 이미지이고, type 별로 70x70 frame 이 2장씩 이어져 있다.
