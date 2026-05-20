@@ -29,6 +29,7 @@ object PathFinder {
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
     private val rawPath = ArrayList<Node>()
+    private val simplifiedPath = ArrayList<Node>()
     private var currentNode: Node? = null
     private var elapsedTime = 0f
     private var searchFinished = false
@@ -62,6 +63,7 @@ object PathFinder {
         drawMarkerTiles(canvas, layer)
         drawSearchTiles(canvas)
         drawRawPath(canvas)
+        drawSimplifiedPath(canvas)
         drawStartEndTiles(canvas)
         drawSelectedTileInfo(canvas, layer)
     }
@@ -101,6 +103,7 @@ object PathFinder {
         nodes = arrayOfNulls(layer.width * layer.height)
         openNodes.clear()
         rawPath.clear()
+        simplifiedPath.clear()
         currentNode = null
         elapsedTime = 0f
         searchFinished = false
@@ -144,7 +147,8 @@ object PathFinder {
         if (current.x == end.x && current.y == end.y) {
             searchFinished = true
             buildRawPath(current)
-            Log.d(TAG, "A* finished: g=${current.g}, rawPath=${rawPath.size}")
+            buildSimplifiedPath()
+            Log.d(TAG, "A* finished: g=${current.g}, rawPath=${rawPath.size}, simplifiedPath=${simplifiedPath.size}")
             return
         }
 
@@ -203,6 +207,30 @@ object PathFinder {
         }
         // parent 를 따라가면 end -> start 순서가 되므로, 이후 단계에서 쓰기 쉽게 start -> end 로 뒤집어 둔다.
         rawPath.reverse()
+    }
+
+    private fun buildSimplifiedPath() {
+        simplifiedPath.clear()
+        if (rawPath.isEmpty()) return
+
+        simplifiedPath.add(rawPath.first())
+        var i = 1
+        while (i < rawPath.size - 1) {
+            val previous = rawPath[i - 1]
+            val current = rawPath[i]
+            val next = rawPath[i + 1]
+            val dx1 = current.x - previous.x
+            val dy1 = current.y - previous.y
+            val dx2 = next.x - current.x
+            val dy2 = next.y - current.y
+            if (dx1 != dx2 || dy1 != dy2) {
+                simplifiedPath.add(current)
+            }
+            i++
+        }
+        if (rawPath.size > 1) {
+            simplifiedPath.add(rawPath.last())
+        }
     }
 
     private fun isWalkable(gid: Int): Boolean {
@@ -288,6 +316,15 @@ object PathFinder {
         while (i < rawPath.size) {
             val node = rawPath[i]
             drawTile(canvas, node.x, node.y, rawPathPaint)
+            i++
+        }
+    }
+
+    private fun drawSimplifiedPath(canvas: Canvas) {
+        var i = 0
+        while (i < simplifiedPath.size) {
+            val node = simplifiedPath[i]
+            drawTile(canvas, node.x, node.y, simplifiedPathPaint)
             i++
         }
     }
@@ -484,6 +521,11 @@ object PathFinder {
     private val rawPathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = 0x80FF00FF.toInt() // semi-transparent magenta
+    }
+    private val simplifiedPathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 6f
+        color = 0xFF00FFFF.toInt() // cyan
     }
     private val selectedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
