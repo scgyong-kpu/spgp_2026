@@ -222,7 +222,8 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
     }
 
     override fun onMenuSelected(resId: Int) {
-        Log.d(javaClass.simpleName, "resId: $resId")
+        val resName = gctx.view.context.resources.getResourceEntryName(resId)
+        Log.d(javaClass.simpleName, "resId: $resName")
         val selectedCannon = selection.selectedCannon
         when (resId) {
             R.mipmap.f_01_01 -> installCannon(level = 1)
