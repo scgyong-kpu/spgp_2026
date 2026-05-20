@@ -54,7 +54,9 @@ class Selection(gctx: GameContext, private val width: Float, private val height:
         return out
     }
 
-    override fun update(gctx: GameContext) {}
+    override fun update(gctx: GameContext) {
+        PathFinder.update(gctx.frameTime)
+    }
 
     override fun draw(canvas: Canvas) {
         PathFinder.draw(canvas)
