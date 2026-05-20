@@ -6,6 +6,7 @@ import android.graphics.Point
 import android.graphics.RectF
 import android.util.Log
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.math.min
 
 object PathFinder {
@@ -23,12 +24,15 @@ object PathFinder {
     private var end: Point? = null
     private var walkableCount = 0
     private val tileRect = RectF()
+    private val infoRect = RectF()
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
     private var currentNode: Node? = null
     private var elapsedTime = 0f
     private var searchFinished = false
     private var searchFailed = false
+    private var selectedTileX = INVALID_TILE
+    private var selectedTileY = INVALID_TILE
 
     fun setTiledLayer(layer: TiledLayer, tileSize: Float) {
         this.layer = layer
@@ -40,6 +44,8 @@ object PathFinder {
 
     fun update(frameTime: Float) {
         if (searchFinished || searchFailed) return
+        // 선택된 tile 의 g/h/f 값을 설명하는 동안은 A* step 을 잠시 멈춘다.
+        if (selectedTileX != INVALID_TILE) return
 
         elapsedTime += frameTime
         if (elapsedTime < STEP_INTERVAL) return
@@ -54,6 +60,27 @@ object PathFinder {
         drawMarkerTiles(canvas, layer)
         drawSearchTiles(canvas)
         drawStartEndTiles(canvas)
+        drawSelectedTileInfo(canvas, layer)
+    }
+
+    fun selectTile(mapX: Float, mapY: Float): Boolean {
+        val layer = layer ?: return false
+        // Float.toInt() 는 0 쪽으로 버림하므로, 음수 좌표가 0번 tile 로 잘못 들어갈 수 있다.
+        // tile index 로 바꿀 때에는 수학적인 floor 를 사용해야 map 밖 터치를 제대로 걸러낼 수 있다.
+        val x = floor(mapX / tileSize).toInt()
+        val y = floor(mapY / tileSize).toInt()
+        if (x !in 0 until layer.width || y !in 0 until layer.height) {
+            clearSelectedTile()
+            return false
+        }
+
+        if (selectedTileX == x && selectedTileY == y) {
+            clearSelectedTile()
+        } else {
+            selectedTileX = x
+            selectedTileY = y
+        }
+        return true
     }
 
     private fun scanMarkerLayer(layer: TiledLayer) {
@@ -235,6 +262,50 @@ object PathFinder {
         end?.let { drawTile(canvas, it.x, it.y, endPaint) }
     }
 
+    private fun drawSelectedTileInfo(canvas: Canvas, layer: TiledLayer) {
+        if (selectedTileX == INVALID_TILE) return
+
+        drawTile(canvas, selectedTileX, selectedTileY, selectedPaint)
+        val node = nodeAt(layer, selectedTileX, selectedTileY)
+        val gid = layer.tileAt(selectedTileX, selectedTileY)
+        val state = when {
+            node == null -> "blocked"
+            node === currentNode -> "current"
+            node.closed -> "closed"
+            node.opened -> "open"
+            else -> "walkable"
+        }
+
+        val left = selectedTileX * tileSize
+        val top = selectedTileY * tileSize
+        infoRect.set(
+            left + tileSize * 0.7f,
+            top - tileSize * 0.1f,
+            left + tileSize * 4.0f,
+            top + tileSize * 2.2f,
+        )
+        canvas.drawRoundRect(infoRect, 8f, 8f, infoBackgroundPaint)
+
+        val textLeft = infoRect.left + 10f
+        var textY = infoRect.top + 24f
+        drawInfoLine(canvas, "tile=($selectedTileX,$selectedTileY) gid=$gid", textLeft, textY)
+        textY += 22f
+        drawInfoLine(canvas, "state=$state", textLeft, textY)
+        textY += 22f
+        drawInfoLine(
+            canvas,
+            "g=${node?.gText() ?: "-"} h=${node?.hText() ?: "-"} f=${node?.fText() ?: "-"}",
+            textLeft,
+            textY,
+        )
+        textY += 22f
+        drawInfoLine(canvas, "parent=${node?.parentText() ?: "-"}", textLeft, textY)
+    }
+
+    private fun drawInfoLine(canvas: Canvas, text: String, x: Float, y: Float) {
+        canvas.drawText(text, x, y, infoTextPaint)
+    }
+
     private fun drawTile(canvas: Canvas, x: Int, y: Int, paint: Paint) {
         tileRect.set(
             x * tileSize,
@@ -253,6 +324,16 @@ object PathFinder {
         var parent: Node? = null
         var opened = false
         var closed = false
+
+        fun gText(): String = if (g == Int.MAX_VALUE) "-" else g.toString()
+        fun hText(): String = if (g == Int.MAX_VALUE) "-" else h.toString()
+        fun fText(): String = if (g == Int.MAX_VALUE) "-" else f.toString()
+        fun parentText(): String = parent?.let { "(${it.x},${it.y})" } ?: "-"
+    }
+
+    private fun clearSelectedTile() {
+        selectedTileX = INVALID_TILE
+        selectedTileY = INVALID_TILE
     }
 
     private val walkablePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -271,6 +352,20 @@ object PathFinder {
         style = Paint.Style.FILL
         color = 0xC0FFFF00.toInt() // semi-transparent yellow
     }
+    private val selectedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 5f
+        color = 0xFFFFFFFF.toInt() // white
+    }
+    private val infoBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xCC000000.toInt() // semi-transparent black
+    }
+    private val infoTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        textSize = 18f
+        color = 0xFFFFFFFF.toInt() // white
+    }
     private val startPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = 0x8000FF00.toInt() // semi-transparent green
@@ -287,4 +382,5 @@ object PathFinder {
         STRAIGHT_COST, STRAIGHT_COST,
         DIAGONAL_COST, STRAIGHT_COST, DIAGONAL_COST,
     )
+    private const val INVALID_TILE = -1
 }
