@@ -6,11 +6,16 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.collides
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.hud.Score
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.effect.Explosion
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Shell
 
-class CollisionChecker(gctx: GameContext, val world: World<MainLayer>): IGameObject {
+class CollisionChecker(
+    gctx: GameContext,
+    val world: World<MainLayer>,
+    private val score: Score,
+): IGameObject {
     override fun update(gctx: GameContext) {
         val shells = world.objectsAt(MainLayer.SHELL)
         val flies = world.objectsAt(MainLayer.ENEMY)
@@ -49,6 +54,7 @@ class CollisionChecker(gctx: GameContext, val world: World<MainLayer>): IGameObj
     private fun hit(fly: Fly, damage: Float) {
         fly.decreaseLife(damage)
         if (fly.isDead()) {
+            score.add(fly.score())
             world.remove(fly, MainLayer.ENEMY)
         }
     }

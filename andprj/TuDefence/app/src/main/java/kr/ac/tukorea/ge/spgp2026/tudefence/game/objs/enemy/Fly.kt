@@ -129,6 +129,13 @@ class Fly private constructor(gctx: GameContext):
         return life <= 0f
     }
 
+    fun score(): Int {
+        // 현재 Fly 는 health 를 10 단위로 정의하고 있으므로,
+        // 죽었을 때 주는 점수도 health 크기와 같은 흐름으로 맞춘다.
+        // 나중에 level/종류별 보상 규칙이 더 세분화되면 여기만 바꾸면 된다.
+        return maxLife.toInt()
+    }
+
     override fun draw(canvas: Canvas) {
         // withRotation 은 아래 save/rotate/restore 패턴을 보기 좋게 감싼 AndroidX KTX helper 이다.
         // canvas.save()

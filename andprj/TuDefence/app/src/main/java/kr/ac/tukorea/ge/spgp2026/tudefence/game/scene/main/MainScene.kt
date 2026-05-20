@@ -14,6 +14,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CannonMenu
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.CollisionChecker
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.Selection
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller.WaveGen
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.hud.Score
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
 import kotlin.math.hypot
@@ -37,6 +38,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         tileHeight = TILE_HEIGHT,
     )
     private val markerLayer = tiledMap.tileLayer(MARKER_LAYER_NAME)
+    private val score = Score(gctx)
     private val selection = Selection(gctx, Cannon.SIZE, Cannon.SIZE)
     private val cannonMenu = CannonMenu(gctx)
     private var cameraScale = MIN_CAMERA_SCALE
@@ -60,11 +62,12 @@ class MainScene(gctx: GameContext): Scene(gctx) {
             handleMenuSelection(resId)
         }
         world.add(background, MainLayer.BG)
+        world.add(score, MainLayer.UI)
         world.add(selection, MainLayer.SELECTOR)
         world.add(cannonMenu, MainLayer.UI)
         world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
 
-        world.add(CollisionChecker(gctx, world), MainLayer.CONTROLLER)
+        world.add(CollisionChecker(gctx, world, score), MainLayer.CONTROLLER)
         addTestCannons(gctx)
     }
 
