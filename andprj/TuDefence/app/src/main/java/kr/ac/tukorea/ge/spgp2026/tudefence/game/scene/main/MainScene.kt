@@ -19,7 +19,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
 import kotlin.math.hypot
 
-class MainScene(gctx: GameContext): Scene(gctx) {
+class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
     override val clipsRect: Boolean = true
 
     private val tiledMap = TiledMapLoader.load(gctx.view.context.assets, MAP_ASSET_PATH)
@@ -59,9 +59,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
         // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
-        cannonMenu.onMenuListener = CannonMenu.OnMenuListener { resId ->
-            handleMenuSelection(resId)
-        }
+        cannonMenu.onMenuListener = this
         world.add(background, MainLayer.BG)
         world.add(score, MainLayer.UI)
         world.add(selection, MainLayer.SELECTOR)
@@ -234,7 +232,7 @@ class MainScene(gctx: GameContext): Scene(gctx) {
         return true
     }
 
-    private fun handleMenuSelection(resId: Int) {
+    override fun onMenuSelected(resId: Int) {
         val selectedCannon = selection.selectedCannon
         when (resId) {
             R.mipmap.f_01_01 -> installCannon(level = 1)
@@ -246,6 +244,22 @@ class MainScene(gctx: GameContext): Scene(gctx) {
                 selection.hide()
                 cannonMenu.hide()
             }
+        }
+    }
+
+    override fun isMenuItemProhibited(resId: Int): Boolean {
+        val selectedCannon = selection.selectedCannon
+        return when (resId) {
+            R.mipmap.f_01_01 -> score.value < Cannon.installationCost(1)
+            R.mipmap.f_01_02 -> score.value < Cannon.installationCost(2)
+            R.mipmap.f_01_03 -> score.value < Cannon.installationCost(3)
+            R.mipmap.upgrade -> {
+                selectedCannon == null ||
+                    Cannon.upgradeCost(selectedCannon.level) == Int.MAX_VALUE ||
+                    score.value < Cannon.upgradeCost(selectedCannon.level)
+            }
+            R.mipmap.uninstall -> false
+            else -> false
         }
     }
 

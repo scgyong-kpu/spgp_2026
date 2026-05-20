@@ -109,7 +109,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] 화면 오른쪽 끝에서 메뉴가 잘리지 않도록 방향 조정
 - [ ] 메뉴 rect 계산을 draw / touch hit-test 가 함께 쓰도록 함수로 분리
 - [ ] resource id 로그는 debug build 에서만 resource entry name 으로 출력
-- [ ] 설치 불가 / 업그레이드 불가 메뉴에 금지 표시 overlay
+- [x] 설치 불가 / 업그레이드 불가 메뉴에 금지 표시 overlay
 - [ ] 메뉴 표시 alpha animation 적용
 
 ### Touch Policy Summary
@@ -121,6 +121,8 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - 메뉴가 보이는 동안 메뉴 밖을 누르면 메뉴만 닫고, 같은 위치 기준으로 selection 을 다시 보여 준다.
 - 첫 `move` 가 빠르면 drag 로 처리하고, 늦거나 drag 불가면 selection 을 갱신한다.
 - multi-touch 가 시작되면 selection/menu 모두 사라진다.
+- 설치 불가 / 업그레이드 불가 항목에는 `not_available.png` 오버레이를 덮어서 현재 상태를 보여 준다.
+- 금지 여부 판단은 `MainScene`의 `isMenuItemProhibited()`가 담당하고, `CannonMenu`는 그 결과를 그리기와 터치 차단에만 쓴다.
 
 | Situation | Selection | Menu | Note |
 |---|---|---|---|

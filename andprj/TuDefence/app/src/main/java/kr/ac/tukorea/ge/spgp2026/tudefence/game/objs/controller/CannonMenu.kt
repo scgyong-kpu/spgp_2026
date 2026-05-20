@@ -19,8 +19,9 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.R
 // 설치할 때는 3개짜리 배열, 선택 상태에서는 2개짜리 배열을 넣어
 // draw() 가 같은 루프로 메뉴를 그리게 한다.
 class CannonMenu(gctx: GameContext) : IGameObject {
-    fun interface OnMenuListener {
-        fun onMenu(resId: Int)
+    interface OnMenuListener {
+        fun onMenuSelected(resId: Int)
+        fun isMenuItemProhibited(resId: Int): Boolean
     }
 
     private val gctx = gctx
@@ -101,10 +102,10 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         val itemTop = bgTop + bgPadding.top
         val itemBottom = itemTop + itemSize
         var itemLeft = contentLeft() + menuLeadingSpace
-        for (menuItem in menuItems) {
+        for ((index, menuItem) in menuItems.withIndex()) {
             val itemRight = itemLeft + itemSize
-            if (x >= itemLeft && x <= itemRight && y >= itemTop && y <= itemBottom) {
-                onMenuListener?.onMenu(menuItem)
+            if (!isProhibited(menuItem) && x >= itemLeft && x <= itemRight && y >= itemTop && y <= itemBottom) {
+                onMenuListener?.onMenuSelected(menuItem)
                 return true
             }
             itemLeft += itemSize
@@ -125,12 +126,21 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         drawLevelText(canvas, contentLeft(), itemTop)
         var x = itemLeft
         for (menuItem in menuItems) {
+            val itemRect = RectF(x, itemTop, x + itemSize, itemTop + itemSize)
             canvas.drawBitmap(
                 gctx.res.getBitmap(menuItem),
                 null,
-                RectF(x, itemTop, x + itemSize, itemTop + itemSize),
+                itemRect,
                 itemPaint,
             )
+            if (isProhibited(menuItem)) {
+                canvas.drawBitmap(
+                    gctx.res.getBitmap(R.mipmap.not_available),
+                    null,
+                    itemRect,
+                    itemPaint,
+                )
+            }
             x += itemSize
         }
     }
@@ -187,6 +197,10 @@ class CannonMenu(gctx: GameContext) : IGameObject {
 
     private fun contentLeft(): Float {
         return bgLeft + if (flipBackgroundX) bgPadding.right else bgPadding.left
+    }
+
+    private fun isProhibited(resId: Int): Boolean {
+        return onMenuListener?.isMenuItemProhibited(resId) ?: false
     }
 
     private fun canFitRight(anchorX: Float, contentWidth: Float): Boolean {
