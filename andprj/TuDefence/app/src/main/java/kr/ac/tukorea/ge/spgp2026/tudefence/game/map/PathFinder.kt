@@ -13,7 +13,7 @@ object PathFinder {
     private const val PATH_TILE = 30
     private const val START_TILE = 31
     private const val END_TILE = 46
-    private const val STEP_INTERVAL = 0.5f
+    private const val STEP_INTERVAL = 0.3f
     private const val STRAIGHT_COST = 10
     private const val DIAGONAL_COST = 14
 
