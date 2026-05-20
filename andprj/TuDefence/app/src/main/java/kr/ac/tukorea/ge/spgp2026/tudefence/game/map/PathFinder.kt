@@ -10,6 +10,7 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
+import kotlin.random.Random
 
 object PathFinder {
     private const val TAG = "PathFinder"
@@ -154,7 +155,7 @@ object PathFinder {
             searchFinished = true
             buildRawPath(current)
             buildSimplifiedPath()
-            buildCenteredWaypoints(layer)
+            buildRandomizedWaypoints(layer)
             buildFlyPath()
             Log.d(
                 TAG,
@@ -245,20 +246,20 @@ object PathFinder {
         }
     }
 
-    private fun buildCenteredWaypoints(layer: TiledLayer) {
+    private fun buildRandomizedWaypoints(layer: TiledLayer) {
         waypoints.clear()
         if (simplifiedPath.isEmpty()) return
 
         // tile 좌표 (x, y) 자체는 tile 의 좌상단이다.
-        // 첫 단계에서는 각 tile 의 중앙점이 waypoint 가 되도록 +0.5 offset 을 더한다.
-        // 이후 단계에서 이 0.5 를 +0.0~+1.0 random offset 으로 바꾸면 Fly 마다 조금씩 다른 경로가 된다.
+        // 각 waypoint 는 tile 안쪽에서만 움직이도록 +0.2~+0.8 범위의 offset 을 더한다.
+        // 0.0~1.0 전체를 쓰면 tile 경계에 너무 붙어 벽에 닿는 것처럼 보일 수 있다.
         var i = 0
         while (i < simplifiedPath.size) {
             val node = simplifiedPath[i]
             waypoints.add(
                 Waypoint(
-                    node.x + 0.5f,
-                    node.y + 0.5f,
+                    node.x + randomOffset(),
+                    node.y + randomOffset(),
                 )
             )
             i++
@@ -268,6 +269,10 @@ object PathFinder {
         val lastY = waypoints.last().y
         waypoints.add(0, Waypoint(-0.5f, firstY))
         waypoints.add(Waypoint(layer.width + 0.5f, lastY))
+    }
+
+    private fun randomOffset(): Float {
+        return MIN_WAYPOINT_OFFSET + Random.nextFloat() * (MAX_WAYPOINT_OFFSET - MIN_WAYPOINT_OFFSET)
     }
 
     private fun buildFlyPath() {
@@ -663,5 +668,7 @@ object PathFinder {
     private const val STRAIGHT_ARROW_LENGTH = 18f
     private const val DIAGONAL_ARROW_LENGTH = 25f
     private const val WAYPOINT_RADIUS = 8f
+    private const val MIN_WAYPOINT_OFFSET = 0.2f
+    private const val MAX_WAYPOINT_OFFSET = 0.8f
     private const val INVALID_TILE = -1
 }
