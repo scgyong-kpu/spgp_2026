@@ -102,7 +102,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 메뉴 rect 계산을 draw / touch hit-test 가 함께 쓰도록 함수로 분리
 - [ ] resource id 로그는 debug build 에서만 resource entry name 으로 출력
 - [x] 설치 불가 / 업그레이드 불가 메뉴에 금지 표시 overlay
-- [ ] 메뉴 표시 alpha animation 적용
+- [x] 메뉴 표시 alpha animation 적용
 
 ### Touch Policy Summary
 

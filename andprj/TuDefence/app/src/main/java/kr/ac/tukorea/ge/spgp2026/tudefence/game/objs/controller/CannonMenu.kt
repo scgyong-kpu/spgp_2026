@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.controller
 
+import android.animation.ValueAnimator
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
@@ -42,7 +43,7 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     // alpha 를 고정하면 배경과 아이템이 같은 투명도로 보여서
     // 메뉴 전체가 "위에 얹힌 UI"처럼 자연스럽게 보인다.
     private val itemPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        alpha = MENU_ALPHA
+        alpha = 0
     }
     // 관리 메뉴에서는 왼쪽에 현재 레벨을 숫자로 표시한다.
     // 이 글자용 Paint 도 매번 새로 만들지 않고 한 번만 재사용한다.
@@ -50,6 +51,7 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         color = 0xFF202020.toInt()
         textAlign = Paint.Align.CENTER
         typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        alpha = 0
     }
     private val screenWidth = gctx.metrics.width
     private val screenHeight = gctx.metrics.height
@@ -64,6 +66,8 @@ class CannonMenu(gctx: GameContext) : IGameObject {
     private var bgLeft = 0f
     private var bgTop = 0f
     private var flipBackgroundX = false
+    private var alphaAnimator: ValueAnimator? = null
+    private var currentAlpha = 0
     var onMenuListener: OnMenuListener? = null
     val isVisible: Boolean
         get() = visible
@@ -75,6 +79,7 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         menuLeadingSpace = 0f
         applyLayout(selectionRect, INSTALL_CONTENT_WIDTH, INSTALL_CONTENT_HEIGHT)
         visible = true
+        startAlphaAnimation()
     }
 
     fun showManageMenuAt(selectionRect: RectF, level: Int) {
@@ -84,11 +89,13 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         menuLeadingSpace = MANAGE_LEVEL_WIDTH
         applyLayout(selectionRect, MANAGE_CONTENT_WIDTH, MANAGE_CONTENT_HEIGHT)
         visible = true
+        startAlphaAnimation()
     }
 
     fun hide() {
         visible = false
         menuItems = BLANK_MENU_ITEMS
+        alphaAnimator?.cancel()
     }
 
     fun contains(x: Float, y: Float): Boolean {
@@ -203,6 +210,26 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         return onMenuListener?.isMenuItemProhibited(resId) ?: false
     }
 
+    private fun startAlphaAnimation() {
+        alphaAnimator?.cancel()
+        currentAlpha = 0
+        setMenuAlpha(currentAlpha)
+        alphaAnimator = ValueAnimator.ofInt(0, MENU_ALPHA).apply {
+            duration = MENU_ALPHA_ANIM_DURATION_MSEC.toLong()
+            addUpdateListener { animator ->
+                currentAlpha = animator.animatedValue as Int
+                setMenuAlpha(currentAlpha)
+            }
+            start()
+        }
+    }
+
+    private fun setMenuAlpha(alpha: Int) {
+        menuBgDrawable.alpha = alpha
+        itemPaint.alpha = alpha
+        levelPaint.alpha = alpha
+    }
+
     private fun canFitRight(anchorX: Float, contentWidth: Float): Boolean {
         val fullWidth = contentWidth + bgPadding.left + bgPadding.right
         return anchorX + fullWidth <= screenWidth
@@ -257,5 +284,6 @@ class CannonMenu(gctx: GameContext) : IGameObject {
         private const val MANAGE_CONTENT_WIDTH = MANAGE_LEVEL_WIDTH + MANAGE_ITEM_SIZE * 2f
         private const val MANAGE_CONTENT_HEIGHT = 100f
         private const val MENU_ALPHA = 0xA0
+        private const val MENU_ALPHA_ANIM_DURATION_MSEC = 300
     }
 }
