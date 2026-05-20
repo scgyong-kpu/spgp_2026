@@ -19,7 +19,8 @@ class WaveGen(
     private var flySpeedRatio = 1.0f
 
     override fun update(gctx: GameContext) {
-        waveTime += gctx.frameTime
+        val slowedFrameTime = gctx.frameTime / TIME_SCALE
+        waveTime += slowedFrameTime
         if (bossPhase) {
             if (waveTime > WAVE_INTERVAL || world.objectsAt(MainLayer.ENEMY).isEmpty()) {
                 waveTime = 0f
@@ -30,7 +31,7 @@ class WaveGen(
             return
         }
 
-        time += gctx.frameTime
+        time += slowedFrameTime
         if (time > interval) {
             spawn()
             time -= interval
@@ -70,5 +71,6 @@ class WaveGen(
         private const val INTERVAL_MIN = 0.1f
         private const val INTERVAL_DECAY = 0.995f
         private const val WAVE_INTERVAL = 30.0f
+        private const val TIME_SCALE = 10.0f
     }
 }
