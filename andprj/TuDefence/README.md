@@ -64,8 +64,8 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] TMJ 전체 schema 를 만들지 않고 현재 필요한 필드만 `data class` 로 선언
 - [x] app module 에 `TiledBackground` 추가
 - [x] `TiledBackground` 로 배경 표시
+- [ ] `TiledMap` 을 a2dg 로 옮기기
 - [ ] 이번 게임 전용 `DesertMapBg` 로 상속 분리
-- [ ] touch 한 좌표의 tile index 를 debug log 로 확인
 - [x] multi-touch pinch 로 tile 확대/축소
 - [x] drag 로 map scroll
 - [x] scroll 범위를 제한해 map 바깥이 보이지 않도록 처리
@@ -91,23 +91,20 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Map Selection
 
-- [ ] `MapSelector` 구현
-- [ ] MainScene 의 touch 처리 책임을 `MapSelector` 로 이동
 - [x] 터치 위치를 map 좌표로 변환
 - [x] tap / drag / pinch 입력 구분
 - [x] 설치 위치를 tile 중심으로 snap
 - [x] 선택 표시를 tile grid 에 snap
-- [ ] 선택 표시를 화면 밖 좌표로 옮겨 숨기는 방식 적용
 - [x] 설치 가능 위치와 불가능 위치를 서로 다른 이미지로 표시
 - [x] 기존 포탑과 겹치는 위치에는 설치 불가 처리
-- [ ] 기존 포탑을 터치하면 해당 포탑 선택
-- [ ] 선택 메뉴 배경 표시
+- [x] 기존 포탑을 터치하면 해당 포탑 선택
+- [x] 선택 메뉴 배경 표시
 - [x] tap 위치에 1 level `Cannon` 즉시 설치
-- [ ] 설치 위치 선택 시 설치 메뉴 표시
-- [ ] 기존 포탑 선택 시 업그레이드 / 철거 메뉴 표시
-- [ ] vararg 호출로 배열 객체가 매번 생기지 않도록 메뉴 배열 상수화
-- [ ] 화면 오른쪽 끝에서 메뉴가 잘리지 않도록 방향 조정
-- [ ] 메뉴 rect 계산을 draw / touch hit-test 가 함께 쓰도록 함수로 분리
+- [x] 설치 위치 선택 시 설치 메뉴 표시
+- [x] 기존 포탑 선택 시 업그레이드 / 철거 메뉴 표시
+- [x] vararg 호출로 배열 객체가 매번 생기지 않도록 메뉴 배열 상수화
+- [x] 화면 오른쪽 끝에서 메뉴가 잘리지 않도록 방향 조정
+- [x] 메뉴 rect 계산을 draw / touch hit-test 가 함께 쓰도록 함수로 분리
 - [ ] resource id 로그는 debug build 에서만 resource entry name 으로 출력
 - [x] 설치 불가 / 업그레이드 불가 메뉴에 금지 표시 overlay
 - [ ] 메뉴 표시 alpha animation 적용
@@ -150,18 +147,18 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 설치 비용 계산
 - [x] 업그레이드 비용 계산
 - [ ] 판매 가격 계산
-- [ ] 보유 gold 가 부족하면 설치 / 업그레이드 금지
+- [x] 보유 gold 가 부족하면 설치 / 업그레이드 금지
 - [x] 사거리 표시
 - [x] 사거리는 level 에 따라 증가
 - [x] `DashPathEffect` 로 점선 사거리 원 표시
-- [ ] 선택된 포탑만 사거리 표시
+- [x] 선택된 포탑만 사거리 표시
 - [x] 사거리 안의 가장 가까운 적 탐색
 - [x] 거리 제곱 비교로 불필요한 `sqrt` 계산 피하기
 - [x] x/y 축 거리만으로 빠른 범위 초과 판단
 - [x] 포신 회전
 - [ ] barrel 원본 방향을 기준으로 초기 각도 보정
 - [x] 발사 간격 적용
-- [ ] 업그레이드 / 철거 처리
+- [x] 업그레이드 / 철거 처리
 - [ ] 최대 level 이후 동작 정리
 - [ ] 철거 중 Scene remove 로 발생할 수 있는 문제 점검
 
@@ -218,15 +215,14 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 - [x] `WaveGen` 구현
 - [x] 일정 간격으로 enemy 생성
-- [x] 10% 확률로 boss enemy 생성
-- [ ] enemy 생성 시 boss 여부와 speed ratio 전달
-- [ ] 시간이 지날수록 생성 간격 감소
-- [ ] 최소 생성 간격 제한
-- [ ] 일정 시간마다 boss phase 진입
-- [ ] boss phase 에서는 boss enemy 생성
-- [ ] boss phase 종료 조건 처리
-- [ ] boss phase 시작 후 일정 시간이 지나면 종료
-- [ ] 화면상의 enemy 가 모두 사라지면 boss phase 종료
+- [x] enemy 생성 시 boss 여부와 speed ratio 전달
+- [x] 시간이 지날수록 생성 간격 감소
+- [x] 최소 생성 간격 제한
+- [x] 일정 시간마다 boss phase 진입
+- [x] boss phase 에서는 boss enemy 생성
+- [x] boss phase 종료 조건 처리
+- [x] boss phase 시작 후 일정 시간이 지나면 종료
+- [x] 화면상의 enemy 가 모두 사라지면 boss phase 종료
 - [ ] wave 증가에 따른 난이도 조정 여지 남기기
 - [ ] wave debug 를 위한 시간 가속 옵션 검토
 
@@ -238,7 +234,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 포탑 업그레이드 시 score 감소
 - [ ] 포탑 철거 시 score 일부 반환
 - [x] enemy 처치 시 score 증가
-- [ ] enemy 점수는 max life 기반으로 계산
+- [x] enemy 점수는 max life 기반으로 계산
 - [ ] score 변경 animation 적용
 
 ## Pause Scene
