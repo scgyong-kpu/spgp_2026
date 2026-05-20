@@ -21,10 +21,11 @@ import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.scene.pause.PauseScene
 import kotlin.math.hypot
 
-class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
+class MainScene(gctx: GameContext, private val stage: Int): Scene(gctx), CannonMenu.OnMenuListener {
     override val clipsRect: Boolean = true
 
-    private val tiledMap = TiledMapLoader.load(gctx.view.context.assets, MAP_ASSET_PATH)
+    private val mapAssetPath = mapAssetPathFor(stage)
+    private val tiledMap = TiledMapLoader.load(gctx.view.context.assets, mapAssetPath)
     private val mapCamera = MapCamera(
         gctx,
         tiledMap.width * TILE_WIDTH,
@@ -33,7 +34,7 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
     override val world = MainWorld(mapCamera)
     private val background = TiledBackground(
         gctx,
-        MAP_ASSET_PATH,
+        mapAssetPath,
         tiledMap,
         mapCamera,
         tileWidth = TILE_WIDTH,
@@ -60,7 +61,7 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
 
     init {
         // GameActivity 에서 기준 좌표계를 1600x900 으로 잡았고,
-        // desert.tmj 는 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
+        // stage map 은 32x18 tile map 이므로 tile 하나를 50x50 으로 그리면 화면을 정확히 채운다.
         PathFinder.setTiledLayer(markerLayer, TILE_WIDTH)
         cannonMenu.onMenuListener = this
         world.add(background, MainLayer.BG)
@@ -441,7 +442,6 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
     }
 
     companion object {
-        private const val MAP_ASSET_PATH = "map/desert.tmj"
         private const val MARKER_LAYER_NAME = "Marker"
         private const val INSTALLABLE_TILE_GID = 10
         private const val TILE_WIDTH = 50f
@@ -450,5 +450,9 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
         private const val MAX_CAMERA_SCALE = 3f
         private const val TAP_SLOP = 16f
         private const val TAP_TIMEOUT_MS = 250L
+
+        private fun mapAssetPathFor(stage: Int): String {
+            return "map/stage_${stage.coerceIn(1, 3)}.tmj"
+        }
     }
 }

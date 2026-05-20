@@ -71,6 +71,6 @@ class WaveGen(
         private const val INTERVAL_MIN = 0.1f
         private const val INTERVAL_DECAY = 0.995f
         private const val WAVE_INTERVAL = 30.0f
-        private const val TIME_SCALE = 10.0f
+        private const val TIME_SCALE = 3.0f
     }
 }

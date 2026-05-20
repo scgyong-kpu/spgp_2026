@@ -25,7 +25,7 @@ class TiledBackground(
     // gctx 는 asset 접근, 화면 크기(metrics), 나중의 resource 접근을 위해 보관한다.
     private val gctx: GameContext,
 
-    // assets/ 아래의 TMJ 파일 경로이다. 예: "map/desert.tmj"
+    // assets/ 아래의 TMJ 파일 경로이다. 예: "map/stage_1.tmj"
     mapAssetPath: String,
 
     // MainScene 이 먼저 로딩한 TMJ 정보이다.
@@ -43,7 +43,7 @@ class TiledBackground(
     private var tileHeight: Float,
 ) : IGameObject {
     // TMJ 안의 image 경로는 보통 TMJ 파일 위치를 기준으로 상대 경로로 저장된다.
-    // "map/desert.tmj" 에서 directory 를 구해 두면 "map/" + "tmw_desert_spacing.png" 로 image 를 찾을 수 있다.
+    // "map/stage_1.tmj" 에서 directory 를 구해 두면 "map/" + "tmw_desert_spacing.png" 로 image 를 찾을 수 있다.
     private val assetDirectory = directoryOf(mapAssetPath)
 
     // 일단 첫 tile layer 와 첫 tileset 만 사용한다.

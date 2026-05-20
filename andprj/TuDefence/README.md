@@ -54,7 +54,8 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 
 ## Tiled Map
 
-- [x] `assets/map/desert.tmj` 추가
+- [x] `assets/map/stage_1.tmj` ~ `stage_3.tmj` 추가
+- [x] MainActivity 에서 Stage 1~3 선택 후 Intent 로 전달
 - [x] tile image 추가
 - [x] TMJ 파일을 `kotlinx.serialization` 으로 읽기
 - [x] TMJ 전체 schema 를 만들지 않고 현재 필요한 필드만 `data class` 로 선언

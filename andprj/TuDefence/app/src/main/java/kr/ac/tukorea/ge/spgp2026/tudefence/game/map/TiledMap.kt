@@ -17,7 +17,7 @@ data class TiledMap(
     val width: Int,
     val height: Int,
 
-    // tile 하나의 원본 pixel 크기이다. desert.tmj 는 32x32 tile 을 사용한다.
+    // tile 하나의 원본 pixel 크기이다. 현재 stage map 들은 32x32 tile 을 사용한다.
     val tilewidth: Int,
     val tileheight: Int,
 
