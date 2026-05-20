@@ -141,7 +141,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] level 로 발사 간격과 barrel 크기 갱신
 - [x] 설치 비용 계산
 - [x] 업그레이드 비용 계산
-- [ ] 판매 가격 계산
+- [x] 판매 가격 계산
 - [x] 보유 gold 가 부족하면 설치 / 업그레이드 금지
 - [x] 사거리 표시
 - [x] 사거리는 level 에 따라 증가
@@ -222,7 +222,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 초기 자금 설정
 - [x] 포탑 설치 시 score 감소
 - [x] 포탑 업그레이드 시 score 감소
-- [ ] 포탑 철거 시 score 일부 반환
+- [x] 포탑 철거 시 score 일부 반환
 - [x] enemy 처치 시 score 증가
 - [x] enemy 점수는 max life 기반으로 계산
 - [x] score 변경 animation 적용

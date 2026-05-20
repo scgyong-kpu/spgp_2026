@@ -143,6 +143,13 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
         return true
     }
 
+    fun sellPrice(): Int {
+        // 철거 시에는 현재 level 기준 설치 비용의 절반을 돌려준다.
+        // 설치 당시의 비용 규칙과 같은 배열을 재사용하면,
+        // level 이 올라갈수록 판매 금액도 자연스럽게 커진다.
+        return installationCost(level) / 2
+    }
+
     fun uninstall() {
         // Cannon 는 자기 자신이 어느 layer 에 들어있는지 알고 있지 않으므로,
         // GameContext 를 통해 현재 main world 에서 WEAPON layer 로부터 제거한다.

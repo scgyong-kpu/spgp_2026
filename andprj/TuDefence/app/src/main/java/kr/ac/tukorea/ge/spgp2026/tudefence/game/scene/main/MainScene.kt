@@ -228,6 +228,9 @@ class MainScene(gctx: GameContext): Scene(gctx), CannonMenu.OnMenuListener {
             R.mipmap.f_01_03 -> installCannon(level = 3)
             R.mipmap.upgrade -> upgradeCannon(selectedCannon)
             R.mipmap.uninstall -> {
+                if (selectedCannon != null) {
+                    score.add(selectedCannon.sellPrice())
+                }
                 selectedCannon?.uninstall()
                 selection.hide()
                 cannonMenu.hide()
