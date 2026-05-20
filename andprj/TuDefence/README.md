@@ -43,15 +43,11 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
   - [x] `BG`
   - [x] `ENEMY`
   - [x] `CONTROLLER`
+- [x] 이후 단계용 Layer 확장
+  - [x] `MainLayer` 에 정리.
 - [x] `CAMERA_BEGIN` / `CAMERA_END` marker 로 map transform 적용 범위 실험
 - [x] `MainWorld` 에서 camera 적용 layer 를 같은 draw scope 안에서 처리
 - [x] `CameraBegin` / `CameraEnd` marker 객체 제거
-- [ ] 이후 단계용 Layer 확장
-  - [ ] `CANNON`
-  - [x] `SHELL`
-  - [ ] `EXPLOSION`
-  - [ ] `SCORE`
-  - [ ] `SELECTION`
 - [x] Back key 로 `PauseScene` 진입
 - [x] Touch event 를 게임 좌표계로 변환
 - [x] Scene 별 package 분리
@@ -73,7 +69,6 @@ Android 2D game programming 수업에서 진행할 타워 디펜스 예제 프�
 - [x] `MapCamera` 로 map 확대/이동 matrix 분리
 - [x] `MapCamera.visibleMapRect` 기준으로 필요한 tile 만 선택해 그림
 - [x] 설치 가능한 tile 판정 구현
-- [ ] 포탑이 차지하는 2 x 2 tile 영역 검사
 
 ### Map Json 파싱 방법 선정
 
@@ -156,7 +151,6 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 거리 제곱 비교로 불필요한 `sqrt` 계산 피하기
 - [x] x/y 축 거리만으로 빠른 범위 초과 판단
 - [x] 포신 회전
-- [ ] barrel 원본 방향을 기준으로 초기 각도 보정
 - [x] 발사 간격 적용
 - [x] 업그레이드 / 철거 처리
 - [ ] 최대 level 이후 동작 정리
@@ -189,7 +183,6 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 경로 이동 중 흔들림 적용
 - [x] life gauge 표시
 - [x] life gauge 가 실제 life 를 따라가며 애니메이션되도록 표시값 분리
-- [ ] recycle bin 재사용 적용
 
 ## Shell And Collision
 
@@ -202,7 +195,6 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] app 공통 코드에 radius collision helper 추가
 - [x] shell 과 enemy 충돌 검사
 - [x] enemy life 감소
-- [ ] enemy 사망 시 score 증가
 - [x] 높은 level shell 에 splash damage 적용
 - [x] splash radius 를 power 에 비례하여 계산
 - [x] splash damage 는 거리 제곱 비율에 따라 감소
@@ -223,8 +215,6 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] boss phase 종료 조건 처리
 - [x] boss phase 시작 후 일정 시간이 지나면 종료
 - [x] 화면상의 enemy 가 모두 사라지면 boss phase 종료
-- [ ] wave 증가에 따른 난이도 조정 여지 남기기
-- [ ] wave debug 를 위한 시간 가속 옵션 검토
 
 ## Score
 
@@ -235,7 +225,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [ ] 포탑 철거 시 score 일부 반환
 - [x] enemy 처치 시 score 증가
 - [x] enemy 점수는 max life 기반으로 계산
-- [ ] score 변경 animation 적용
+- [x] score 변경 animation 적용
 
 ## Pause Scene
 
@@ -244,13 +234,10 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 투명 overlay scene 적용
 - [x] `DrawableSprite` 로 speech box 표시
 - [x] 1초 전후로 바뀌는 pause 안내 메시지 표시
-- [ ] 반투명 배경 객체 추가
-- [ ] Resume 버튼 추가
-- [ ] Exit 버튼 추가
+- [x] 반투명 배경 객체 추가
 - [x] Back key 동작 정리
 - [x] 빠른 Back key 두 번 입력 시 전체 종료 검토
-- [ ] Scene stack 종료 흐름 정리
-- [ ] Scene pause 시 Animator 등 외부 작업 pause/resume 구조 검토
+- [x] Scene stack 종료 흐름 정리
 
 ## Polish
 
