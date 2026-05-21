@@ -9,6 +9,7 @@ import android.util.Log
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
+import kotlin.math.sqrt
 import kotlin.random.Random
 
 object PathFinder {
@@ -28,6 +29,7 @@ object PathFinder {
     private val tileRect = RectF()
     private val infoRect = RectF()
     private val costBarRect = RectF()
+    private val previewPath = Path()
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
     private val rawPath = ArrayList<Node>()
@@ -67,6 +69,7 @@ object PathFinder {
         drawSearchTiles(canvas)
         drawRawPath(canvas)
         drawSimplifiedPath(canvas)
+        drawPreviewPath(canvas)
         drawWaypoints(canvas)
         drawStartEndTiles(canvas)
         drawSelectedTileInfo(canvas, layer)
@@ -109,6 +112,7 @@ object PathFinder {
         rawPath.clear()
         simplifiedPath.clear()
         waypoints.clear()
+        previewPath.reset()
         currentNode = null
         elapsedTime = 0f
         searchFinished = false
@@ -154,6 +158,7 @@ object PathFinder {
             buildRawPath(current)
             buildSimplifiedPath()
             buildRandomizedWaypoints(layer)
+            buildPathFromWaypoints(previewPath)
             Log.d(
                 TAG,
                 "A* finished: g=${current.g}, rawPath=${rawPath.size}, " +
@@ -185,6 +190,7 @@ object PathFinder {
         // 재활용된 Fly 가 init() 될 때마다 새 offset 으로 Path 를 다시 채운다.
         buildRandomizedWaypoints(layer)
         buildPathFromWaypoints(toPath)
+        previewPath.set(toPath)
         return true
     }
 
@@ -290,13 +296,40 @@ object PathFinder {
         path.reset()
         val first = waypoints.first()
         path.moveTo(first.x * tileSize, first.y * tileSize)
+        if (waypoints.size == 1) return
 
         var i = 1
         while (i < waypoints.size) {
-            val point = waypoints[i]
-            path.lineTo(point.x * tileSize, point.y * tileSize)
+            val from = waypoints[i - 1]
+            val to = waypoints[i]
+            val fromTangent = tangentAt(i - 1)
+            val toTangent = tangentAt(i)
+            val controlDistance = tileSize * CUBIC_CONTROL_DISTANCE_IN_TILES
+
+            // 각 waypoint 를 정확히 지나가면서도 부드럽게 이어지게 하려면,
+            // waypoint 에서의 접선 방향을 이전 점과 다음 점을 잇는 방향으로 잡으면 된다.
+            // 그러면 이전 control point - waypoint - 다음 control point 가 한 직선에 놓여
+            // 인접한 cubic curve 들이 같은 접선 방향으로 만난다.
+            path.cubicTo(
+                from.x * tileSize + fromTangent.x * controlDistance,
+                from.y * tileSize + fromTangent.y * controlDistance,
+                to.x * tileSize - toTangent.x * controlDistance,
+                to.y * tileSize - toTangent.y * controlDistance,
+                to.x * tileSize,
+                to.y * tileSize,
+            )
             i++
         }
+    }
+
+    private fun tangentAt(index: Int): UnitVector {
+        val previous = if (index == 0) waypoints[index] else waypoints[index - 1]
+        val next = if (index == waypoints.lastIndex) waypoints[index] else waypoints[index + 1]
+        val dx = next.x - previous.x
+        val dy = next.y - previous.y
+        val length = sqrt(dx * dx + dy * dy)
+        if (length == 0f) return UnitVector(0f, 0f)
+        return UnitVector(dx / length, dy / length)
     }
 
     private fun isWalkable(gid: Int): Boolean {
@@ -410,6 +443,11 @@ object PathFinder {
             canvas.drawCircle(x, y, WAYPOINT_RADIUS, waypointPointPaint)
             i++
         }
+    }
+
+    private fun drawPreviewPath(canvas: Canvas) {
+        if (previewPath.isEmpty) return
+        canvas.drawPath(previewPath, previewPathPaint)
     }
 
     private fun drawSelectedTileInfo(canvas: Canvas, layer: TiledLayer) {
@@ -577,6 +615,8 @@ object PathFinder {
 
     private class Waypoint(val x: Float, val y: Float)
 
+    private class UnitVector(val x: Float, val y: Float)
+
     private fun clearSelectedTile() {
         selectedTileX = INVALID_TILE
         selectedTileY = INVALID_TILE
@@ -620,6 +660,11 @@ object PathFinder {
     private val waypointPointPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = 0xFF40FF40.toInt() // bright green
+    }
+    private val previewPathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 5f
+        color = 0xFFFFA000.toInt() // orange
     }
     private val selectedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -673,6 +718,7 @@ object PathFinder {
     private const val STRAIGHT_ARROW_LENGTH = 18f
     private const val DIAGONAL_ARROW_LENGTH = 25f
     private const val WAYPOINT_RADIUS = 8f
+    private const val CUBIC_CONTROL_DISTANCE_IN_TILES = 1.0f
     private const val MIN_WAYPOINT_OFFSET = 0.2f
     private const val MAX_WAYPOINT_OFFSET = 0.8f
     private const val INVALID_TILE = -1

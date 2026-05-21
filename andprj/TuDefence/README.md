@@ -96,7 +96,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] centered waypoint 를 표시
 - [x] randomized waypoint 를 표시
 - [x] `Fly` 가 init 시점마다 각자의 randomized path 를 받아 이동
-- [ ] cubic path 를 생성해 표시
+- [x] cubic path 를 생성해 표시
 
 ## Map Selection
 
