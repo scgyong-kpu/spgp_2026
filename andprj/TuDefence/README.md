@@ -87,6 +87,24 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 
 ## Path Finding
 
+### 목적
+
+`Fly` 가 화면 왼쪽에서 오른쪽으로 단순 직선 이동하는 대신, Tiled map 에 표시해 둔 길을 따라 이동하도록 한다. 길의 모양은 code 에 직접 박아 넣지 않고, `.tmj` 파일의 Marker layer 에서 읽어 온다. 이렇게 하면 stage 별로 다른 길을 만들 때 Kotlin code 를 고치지 않고 map data 만 수정하면 된다.
+
+Path finding 의 최종 결과는 Android `Path` 이다. `Fly` 는 자신이 가진 `PathMeasure` 로 이 `Path` 위의 현재 위치와 접선 방향을 얻고, 그 접선 방향에 맞춰 회전하면서 이동한다. 따라서 `PathFinder` 의 책임은 "map 의 marker tile 정보를 읽어 Fly 가 따라갈 수 있는 Path 를 만들어 주는 것"이다.
+
+### Marker Layer 규칙
+
+Marker layer 는 Tiled map 안에 따로 둔 tile layer 이다. 화면에 그리는 배경용 layer 가 아니라, 적 이동 경로 계산을 위한 data layer 로 사용한다.
+
+- `30`: 이동 가능한 경로 tile
+- `31`: 시작 tile
+- `46`: 도착 tile
+
+tile 좌표는 Tiled 와 Android bitmap 처리 방식에 맞춰 왼쪽 위를 `(0, 0)` 으로 본다. 오른쪽으로 갈수록 `x` 가 증가하고, 아래로 갈수록 `y` 가 증가한다. Marker layer 의 `data` 는 1차원 배열이므로 `(x, y)` 의 index 는 `y * width + x` 로 계산한다.
+
+### 진행 단계
+
 - [x] Marker layer 에서 start / end / walkable tile 스캔
 - [x] 같은 방향 path 를 축약해 표시
 - [x] `Fly` 가 init 시점마다 각자의 randomized path 를 받아 이동
@@ -99,6 +117,93 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
   - [x] raw path 를 tile 영역으로 표시하던 기능 제거
   - [x] centered / randomized waypoint 표시 제거
   - [x] `PathFinder` 의 preview path 표시 제거
+
+### 1단계: Marker Layer 스캔
+
+처음에는 Marker layer 에서 세 가지 정보를 찾았다. `START_TILE` 은 시작점, `END_TILE` 은 도착점, `PATH_TILE` 은 지나갈 수 있는 칸이다. 시작점과 도착점은 `layer.data.indexOf()` 로 찾는다. `data` 는 왼쪽 위부터 오른쪽으로 저장되므로 index 에서 `x = index % width`, `y = index / width` 를 얻을 수 있다.
+
+초기 학습 단계에서는 walkable / start / end tile 을 색으로 칠해서 Marker layer 가 제대로 읽혔는지 화면에서 확인했다. 최종 구현에서는 이 표시는 제거했고, 스캔 결과만 path 계산에 사용한다.
+
+### 2단계: A* 로 Tile 경로 찾기
+
+길 찾기는 A* 알고리즘을 사용한다. 각 tile 은 `Node` 로 표현하고, `g`, `h`, `f` 값을 가진다.
+
+- `g`: 시작점에서 현재 node 까지 온 실제 비용
+- `h`: 현재 node 에서 도착점까지의 예상 비용
+- `f`: `g + h`, A* 가 다음 후보를 고를 때 비교하는 값
+
+이동은 8방향을 허용한다. 상하좌우 이동 비용은 `10`, 대각 이동 비용은 `14` 로 둔다. 대각선의 실제 길이는 `sqrt(2)` 이지만 정수 비용을 쓰기 위해 흔히 `10` 과 `14` 로 근사한다.
+
+처음에는 A* 를 `update()` 마다 한 단계씩 진행하도록 만들었다. open node, closed node, current node 를 색으로 표시하고, tile 을 터치하면 `g/h/f` 와 parent 를 숫자로 볼 수 있게 했다. 이 단계는 알고리즘 이해를 위한 것이었고, path 생성이 완성된 뒤에는 모두 제거했다.
+
+최종 구현에서는 `PathFinder.setTiledLayer()` 가 호출될 때 A* 를 한 번에 끝까지 수행한다. 게임 중 매 frame 마다 A* 를 돌 필요가 없고, stage 가 바뀌지 않는 동안 경로도 바뀌지 않기 때문이다.
+
+### 3단계: Raw Path 에서 Simplified Path 로 축약
+
+A* 의 parent 를 따라가면 도착점에서 시작점으로 거슬러 올라가는 raw path 를 얻을 수 있다. 하지만 모든 tile 을 그대로 Path 로 만들면 불필요하게 점이 많다. 예를 들어 `(1,1) -> (2,1) -> (3,1)` 처럼 같은 방향으로 계속 가는 중간 점은 실제 경로 모양을 바꾸지 않는다.
+
+그래서 방향이 바뀌는 점만 남긴다. 이전 segment 의 방향과 다음 segment 의 방향을 비교해서, 방향이 달라지는 node 만 simplified path 에 넣는다. 시작점과 도착점은 항상 남긴다.
+
+초기 구현에서는 raw path 와 simplified path 를 각각 리스트로 저장하고 화면에 다른 색으로 표시했다. 최종 구현에서는 raw path 를 별도로 보관하지 않고, parent chain 을 따라가며 simplified path 에 필요한 점만 추린다. 결과는 `simplifiedXs`, `simplifiedYs` 라는 `IntArray` 에 저장한다. 이 값은 아직 tile index 좌표이므로 정수 배열이면 충분하다.
+
+### 4단계: Stage 밖 시작/끝 점 추가
+
+적이 화면 안에서 갑자기 나타나거나 도착점에서 갑자기 사라지지 않도록, 실제 이동 path 에는 stage 밖 점을 하나씩 더한다.
+
+시작점 앞에는 `(-0.5, firstY)` 를 넣고, 끝점 뒤에는 `(layer.width + 0.5, lastY)` 를 넣는다. 여기서 `firstY`, `lastY` 는 random offset 이 적용된 첫 waypoint 와 마지막 waypoint 의 `y` 값이다. 이렇게 하면 `Fly` 가 화면 왼쪽 밖에서 들어와 오른쪽 밖으로 나가는 흐름이 된다.
+
+### 5단계: Randomized Waypoint 생성
+
+모든 `Fly` 가 완전히 같은 선을 따라가면 화면이 너무 기계적으로 보인다. 그래서 simplified path 의 각 tile 좌표에 random offset 을 더해 `Fly` 마다 조금씩 다른 waypoint 를 만든다.
+
+처음에는 tile 안에서 `0.0~1.0` offset 을 주는 방식을 고려했지만, 경계에 너무 붙으면 벽을 스치는 것처럼 보일 수 있다. 최종 구현은 `0.2~0.8` 범위를 사용한다. 즉 tile 의 가장자리까지 가지 않고, 안쪽 영역에서만 waypoint 를 고른다.
+
+이 randomized waypoint 는 `Fly.init()` 시점마다 새로 만든다. 재활용된 `Fly` 도 다시 등장할 때 새 path 를 받으므로, recycle bin 을 쓰면서도 이동 경로는 매번 달라질 수 있다.
+
+### 6단계: Cubic Path 생성
+
+waypoint 를 `lineTo()` 로만 연결하면 경로가 꺾이는 부분에서 방향이 갑자기 바뀐다. 그래서 최종 이동 경로는 `Path.cubicTo()` 로 만든다.
+
+각 waypoint 에서의 접선 방향은 이전 waypoint 와 다음 waypoint 를 잇는 방향으로 계산한다. 이렇게 하면 한 waypoint 에 들어오는 cubic curve 의 control point, waypoint, 나가는 cubic curve 의 control point 가 한 직선 위에 놓인다. 결과적으로 인접한 curve 들이 같은 접선 방향으로 만나므로 움직임이 부드럽다.
+
+control point 까지의 거리는 segment 길이에 따라 조정한다. 처음에는 고정 `1 tile` 을 사용했지만, 짧은 segment 에서는 control point 가 너무 멀어져 곡선이 과하게 튈 수 있다. 최종 규칙은 `min(segment length / 4, 1 tile)` 이다.
+
+### 7단계: Fly 와 연결
+
+`PathFinder` 는 전역 path 하나를 `Fly` 에 직접 밀어 넣지 않는다. 대신 `PathFinder.createRandomizedPath(toPath)` 로, 호출자가 넘긴 `Path` 객체를 채운다.
+
+`Fly` 는 각자 자신의 `Path` 와 `PathMeasure` 를 멤버로 가진다. `init()` 에서 `PathFinder.createRandomizedPath(path)` 를 호출해 새 path 를 받고, `PathMeasure.setPath(path, false)` 로 측정 준비를 한다. 이후 `update()` 에서는 `distance += speed * frameTime` 을 하고, `PathMeasure.getPosTan()` 으로 현재 위치와 접선 방향을 얻는다.
+
+이 구조의 장점은 `Fly` 마다 다른 path 를 가질 수 있다는 점이다. 또한 `Path` 객체는 `Fly` 가 한 번 만들고 계속 재사용하므로, 재활용 시점에 path data 만 다시 채운다.
+
+### 8단계: 메모리 최적화
+
+PathFinder 완성 과정에서는 이해를 돕기 위해 많은 임시 상태를 사용했다. 예를 들어 raw path list, preview path, waypoint object list, search visualization 용 paint 와 rect 등이 있었다. 최종 구현에서는 이들을 제거했다.
+
+최종 `PathFinder` 는 runtime path 생성 중 작은 객체가 계속 생기지 않도록 primitive array 를 사용한다.
+
+- `simplifiedXs`, `simplifiedYs`: 축약된 tile 좌표를 담는 `IntArray`
+- `waypointXs`, `waypointYs`: random offset 이 적용된 최종 waypoint 를 담는 `FloatArray`
+- `fromTangent`, `toTangent`: cubic control point 계산에 쓰는 재사용 `FloatArray(2)`
+
+초기에는 `Waypoint` 와 `UnitVector` 같은 작은 class 를 만들었지만, `Fly` 가 재활용될 때마다 새 객체가 생길 수 있었다. 최종 구현에서는 이들을 제거하고 배열 index 로 접근한다. `buildRandomizedWaypoints()` 는 배열 값을 덮어 쓰고, `buildPathFromWaypoints()` 는 그 배열을 읽어서 기존 `Path` 를 다시 채운다.
+
+A* 탐색에 필요한 `Node` 배열은 stage path 계산이 끝난 뒤 더 이상 필요하지 않다. 그래서 `releaseSearchMemory()` 에서 `nodes = emptyArray()` 로 비우고 `openNodes.clear()` 를 호출한다. 최종적으로 남는 것은 stage 동안 재사용되는 simplified 좌표 배열과 waypoint buffer 뿐이다.
+
+### 최종 구조
+
+최종 흐름은 다음과 같다.
+
+1. `MainScene` 이 Tiled map 의 Marker layer 를 찾아 `PathFinder.setTiledLayer(markerLayer, TILE_WIDTH)` 를 호출한다.
+2. `PathFinder` 는 Marker layer 를 스캔하고 A* 를 한 번에 수행한다.
+3. A* parent chain 에서 방향이 바뀌는 tile 만 골라 simplified path 를 만든다.
+4. 탐색용 `Node` 배열과 open list 를 비운다.
+5. `Fly.init()` 이 호출될 때 `PathFinder.createRandomizedPath(path)` 를 호출한다.
+6. `PathFinder` 는 simplified path 에 random offset 을 적용해 waypoint buffer 를 채운다.
+7. waypoint buffer 로 cubic `Path` 를 만든다.
+8. `Fly` 는 자신의 `PathMeasure` 로 위치와 방향을 계산하며 이동한다.
+
+이제 `PathFinder` 는 화면 표시나 touch debug 에 관여하지 않는다. 화면에 남은 것은 실제 게임 오브젝트인 `Fly` 의 이동뿐이다.
 
 ## Map Selection
 
