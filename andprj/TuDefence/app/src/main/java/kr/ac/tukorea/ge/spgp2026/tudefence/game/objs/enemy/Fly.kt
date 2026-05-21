@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PathMeasure
 import android.graphics.Rect
@@ -13,7 +12,6 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
-import kr.ac.tukorea.ge.spgp2026.tudefence.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
@@ -157,10 +155,6 @@ class Fly private constructor(gctx: GameContext):
     }
 
     override fun draw(canvas: Canvas) {
-        if (BuildConfig.DEBUG) {
-            canvas.drawPath(path, pathPaint)
-        }
-
         // withRotation 은 아래 save/rotate/restore 패턴을 보기 좋게 감싼 AndroidX KTX helper 이다.
         // canvas.save()
         // canvas.rotate(angle, x, y)
@@ -251,10 +245,5 @@ class Fly private constructor(gctx: GameContext):
             fgColor = "#C9786400".toColorInt(),
             bgColor = "#B5FFD7D5".toColorInt(),
         )
-        private val pathPaint = Paint().apply {
-            style = Paint.Style.STROKE
-            strokeWidth = 5f
-            color = "#80FF00FF".toColorInt()
-        }
     }
 }
