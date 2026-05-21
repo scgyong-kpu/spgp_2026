@@ -12,6 +12,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.Balance
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
@@ -26,11 +27,11 @@ class Fly private constructor(gctx: GameContext):
     enum class Type(
         val health: Float,
     ) {
-        BOSS(150f),
-        RED(50f),
-        BLUE(30f),
-        CYAN(20f),
-        DRAGON(10f),
+        BOSS(Balance.Fly.bossHealth),
+        RED(Balance.Fly.redHealth),
+        BLUE(Balance.Fly.blueHealth),
+        CYAN(Balance.Fly.cyanHealth),
+        DRAGON(Balance.Fly.dragonHealth),
 
         ;
 
@@ -38,12 +39,12 @@ class Fly private constructor(gctx: GameContext):
             fun random(): Type {
                 val value = Random.nextInt(100)
 
-                // 0~9: RED 10%, 10~29: BLUE 20%, 30~59: CYAN 30%, 60~99: DRAGON 40%.
+                // BOSS 를 제외한 적의 등장 비율은 Balance.Fly 의 구간 값으로 조정한다.
                 // BOSS 는 일반 wave 에서 랜덤 생성하지 않고, 나중에 boss wave 전용 규칙으로 다룬다.
                 return when {
-                    value < 10 -> RED
-                    value < 30 -> BLUE
-                    value < 60 -> CYAN
+                    value < Balance.Fly.redSpawnRate -> RED
+                    value < Balance.Fly.redSpawnRate + Balance.Fly.blueSpawnRate -> BLUE
+                    value < Balance.Fly.redSpawnRate + Balance.Fly.blueSpawnRate + Balance.Fly.cyanSpawnRate -> CYAN
                     else -> DRAGON
                 }
             }
@@ -51,7 +52,7 @@ class Fly private constructor(gctx: GameContext):
     }
 
     init {
-        setSize(MIN_SIZE, MIN_SIZE)
+        setSize(Balance.Fly.minSize, Balance.Fly.minSize)
     }
 
     override val radius: Float
@@ -64,7 +65,7 @@ class Fly private constructor(gctx: GameContext):
     var maxLife = 0f
         private set
     private var displayLife = 0f
-    private var speed = MIN_SPEED
+    private var speed = Balance.Fly.minSpeed
     private var angle = 0f
     private var pathOffset = 0f
     private val path = Path()
@@ -79,8 +80,10 @@ class Fly private constructor(gctx: GameContext):
         life = type.health
         maxLife = life
         displayLife = life
-        speed = (Random.nextFloat() * (MAX_SPEED - MIN_SPEED) + MIN_SPEED) * speedRatio
-        val size = (Random.nextFloat() * (MAX_SIZE - MIN_SIZE) + MIN_SIZE) * sizeRatio
+        speed = (Random.nextFloat() * (Balance.Fly.maxSpeed - Balance.Fly.minSpeed) +
+            Balance.Fly.minSpeed) * speedRatio
+        val size = (Random.nextFloat() * (Balance.Fly.maxSize - Balance.Fly.minSize) +
+            Balance.Fly.minSize) * sizeRatio
         setSize(size, size)
         distance = 0f
         val maxOffset = width / 5f
@@ -195,7 +198,7 @@ class Fly private constructor(gctx: GameContext):
             return obtain(
                 gctx,
                 type = if (bossPhase) Type.BOSS else Type.random(),
-                sizeRatio = if (bossPhase) BOSS_SIZE_SCALE else 1.0f,
+                sizeRatio = if (bossPhase) Balance.Fly.bossSizeScale else 1.0f,
                 speedRatio = flySpeedRatio,
             )
         }
@@ -232,11 +235,6 @@ class Fly private constructor(gctx: GameContext):
             "C 1408,792 1536,896 1672,896\n"
         )!!
 
-        private const val MIN_SIZE = 75f
-        private const val MAX_SIZE = 125f
-        private const val BOSS_SIZE_SCALE = 1.5f
-        private const val MIN_SPEED = 25f
-        private const val MAX_SPEED = 60f
         private const val LIFE_GAUGE_THICKNESS = 0.2f
         private const val LIFE_GAUGE_WIDTH_RATIO = 2f / 3f
         private const val LIFE_GAUGE_ANIMATION_STEP_COUNT = 50f

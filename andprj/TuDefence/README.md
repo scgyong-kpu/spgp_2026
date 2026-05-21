@@ -255,6 +255,7 @@ A* 탐색에 필요한 `Node` 배열은 stage path 계산이 끝난 뒤 더 이�
 
 ## Cannon
 
+- [x] `Balance` 에 포탑 / 포탄 / 적 / 웨이브 / 초기 골드 수치 모으기
 - [x] `Cannon` 구현
 - [x] 포탑 body 와 barrel 이미지를 따로 그림
 - [x] level 별 포탑 이미지 적용

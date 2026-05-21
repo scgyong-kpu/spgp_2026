@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.Balance
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.PathFinder
@@ -69,7 +70,7 @@ class MainScene(gctx: GameContext, private val stage: Int): Scene(gctx), CannonM
         world.add(selection, MainLayer.SELECTOR)
         world.add(cannonMenu, MainLayer.UI)
         world.add(WaveGen(gctx, world), MainLayer.CONTROLLER)
-        score.setScore(30)
+        score.setScore(Balance.INITIAL_GOLD)
 
         world.add(CollisionChecker(gctx, world, score), MainLayer.CONTROLLER)
     }

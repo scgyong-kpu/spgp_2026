@@ -9,6 +9,7 @@ import androidx.core.graphics.withRotation
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.Balance
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy.Fly
@@ -28,17 +29,18 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
             // 그래서 Kotlin property setter 에서는 backing field 인 field 에 직접 대입한다.
             field = value.coerceIn(MIN_LEVEL, MAX_LEVEL)
             val levelRatio = (field - MIN_LEVEL) / (MAX_LEVEL - MIN_LEVEL).toFloat()
-            barrelSize = MIN_BARREL_SIZE + (MAX_BARREL_SIZE - MIN_BARREL_SIZE) * levelRatio
-            fireInterval = MAX_FIRE_INTERVAL - FIRE_INTERVAL_STEP * (field - MIN_LEVEL)
-            range = BASE_RANGE + RANGE_PER_LEVEL * field
+            barrelSize = Balance.Cannon.minBarrelSize +
+                (Balance.Cannon.maxBarrelSize - Balance.Cannon.minBarrelSize) * levelRatio
+            fireInterval = Balance.Cannon.maxFireInterval - Balance.Cannon.fireIntervalStep * (field - MIN_LEVEL)
+            range = Balance.Cannon.baseRange + Balance.Cannon.rangePerLevel * field
             bitmap = gctx.res.getBitmap(if (field >= UPGRADED_IMAGE_MIN_LEVEL) {
                 R.mipmap.cannon_bg_6_256
             } else {
                 R.mipmap.cannon_bg_1_256
             })
         }
-    private var barrelSize = MIN_BARREL_SIZE
-    private var fireInterval = MAX_FIRE_INTERVAL
+    private var barrelSize = Balance.Cannon.minBarrelSize
+    private var fireInterval = Balance.Cannon.maxFireInterval
     private var range = MIN_RANGE
     private var angle = 0f
     private var fireCooldown = 0f
@@ -147,7 +149,7 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
         // 철거 시에는 현재 level 기준 설치 비용의 절반을 돌려준다.
         // 설치 당시의 비용 규칙과 같은 배열을 재사용하면,
         // level 이 올라갈수록 판매 금액도 자연스럽게 커진다.
-        return installationCost(level) / 2
+        return (installationCost(level) * Balance.Cannon.sellRatio).roundToInt()
     }
 
     fun uninstall() {
@@ -170,30 +172,24 @@ class Cannon private constructor(private val gctx: GameContext): Sprite(gctx, R.
         }
 
         fun installationCost(toLevel: Int): Int {
-            return COSTS[toLevel - 1]
+            return Balance.Cannon.costs[toLevel - 1]
         }
 
         fun upgradeCost(fromLevel: Int): Int {
             if (fromLevel >= MAX_LEVEL) return Int.MAX_VALUE
-            return ((COSTS[fromLevel] - COSTS[fromLevel - 1]) * 1.1f).roundToInt()
+            return (
+                (Balance.Cannon.costs[fromLevel] - Balance.Cannon.costs[fromLevel - 1]) *
+                    Balance.Cannon.upgradeCostRatio
+                ).roundToInt()
         }
 
         private const val MIN_LEVEL = 1
         private const val MAX_LEVEL = 10
         private const val UPGRADED_IMAGE_MIN_LEVEL = 6
-        private val COSTS = intArrayOf(
-            10, 100, 300, 700, 1500, 3000, 7000, 15000, 40000, 100000, 100000000
-        )
         const val SIZE = 100f
         private const val BASE_SIZE = SIZE
-        private const val MIN_BARREL_SIZE = 110f
-        private const val MAX_BARREL_SIZE = 200f
         private const val BARREL_MUZZLE_OFFSET_RATIO = 0.38f
-        private const val MAX_FIRE_INTERVAL = 5.0f
-        private const val FIRE_INTERVAL_STEP = 0.4f
-        private const val BASE_RANGE = 100f
-        private const val RANGE_PER_LEVEL = 100f
-        private const val MIN_RANGE = BASE_RANGE + RANGE_PER_LEVEL * MIN_LEVEL
+        private const val MIN_RANGE = Balance.Cannon.baseRange + Balance.Cannon.rangePerLevel * MIN_LEVEL
         private val rangePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
             strokeWidth = 10f

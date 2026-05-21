@@ -7,6 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.Balance
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
@@ -25,9 +26,9 @@ class Shell private constructor(gctx: GameContext):
     var power = 0f
         private set
     val splashes: Boolean
-        get() = level >= SPLASH_MIN_LEVEL
+        get() = level >= Balance.Shell.splashMinLevel
     val explosionRadius: Float
-        get() = BASE_EXPLOSION_RADIUS + EXPLOSION_RADIUS_POWER_RATIO * power
+        get() = Balance.Shell.baseExplosionRadius + Balance.Shell.explosionRadiusPowerRatio * power
 
     init {
         setSize(SIZE, SIZE)
@@ -40,14 +41,14 @@ class Shell private constructor(gctx: GameContext):
         setCenter(x, y)
         this.angle = angle
         this.level = level.coerceIn(MIN_LEVEL, MAX_LEVEL)
-        power = BASE_POWER * POWER_RATIO.pow(this.level - MIN_LEVEL)
+        power = Balance.Shell.basePower * Balance.Shell.powerRatio.pow(this.level - MIN_LEVEL)
         val rect = shellRects[this.level - 1]
         val size = rect.width().toFloat() * SRC_TO_DST_RATIO
         setSize(size, size)
         srcRect = rect
         val radians = Math.toRadians(angle.toDouble())
-        dx = cos(radians).toFloat() * SPEED
-        dy = sin(radians).toFloat() * SPEED
+        dx = cos(radians).toFloat() * Balance.Shell.speed
+        dy = sin(radians).toFloat() * Balance.Shell.speed
         return this
     }
 
@@ -100,12 +101,6 @@ class Shell private constructor(gctx: GameContext):
         private const val MIN_LEVEL = 1
         private const val MAX_LEVEL = 10
         private const val SIZE = 20f
-        private const val SPEED = 600f
         private const val SRC_TO_DST_RATIO = 0.48f
-        private const val BASE_POWER = 10f
-        private const val POWER_RATIO = 1.2f
-        private const val SPLASH_MIN_LEVEL = 6
-        private const val BASE_EXPLOSION_RADIUS = 60f
-        private const val EXPLOSION_RADIUS_POWER_RATIO = 3f
     }
 }
