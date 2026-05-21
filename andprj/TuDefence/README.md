@@ -91,6 +91,7 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 - [x] 같은 방향 path 를 축약해 표시
 - [x] `Fly` 가 init 시점마다 각자의 randomized path 를 받아 이동
 - [x] cubic path 를 생성해 표시
+- [x] `PathFinder` 의 runtime path 생성 메모리 사용 최소화
 - [x] path 완성 과정에서 사용한 시각화/디버그 표시 제거
   - [x] Marker layer 의 walkable / start / end tile 화면 표시 제거
   - [x] A* 를 update 마다 한 단계씩 진행하던 시각화 제거

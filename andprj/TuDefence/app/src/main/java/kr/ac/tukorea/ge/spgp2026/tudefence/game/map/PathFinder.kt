@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.map
 
 import android.graphics.Path
-import android.graphics.Point
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -16,12 +15,21 @@ object PathFinder {
 
     private var layer: TiledLayer? = null
     private var tileSize = 0f
-    private var start: Point? = null
-    private var end: Point? = null
+    private var startX = INVALID_TILE
+    private var startY = INVALID_TILE
+    private var endX = INVALID_TILE
+    private var endY = INVALID_TILE
     private var nodes: Array<Node?> = emptyArray()
     private val openNodes = ArrayList<Node>()
-    private val simplifiedPath = ArrayList<Node>()
-    private val waypoints = ArrayList<Waypoint>()
+
+    private var simplifiedCount = 0
+    private var simplifiedXs = IntArray(0)
+    private var simplifiedYs = IntArray(0)
+    private var waypointCount = 0
+    private var waypointXs = FloatArray(0)
+    private var waypointYs = FloatArray(0)
+    private val fromTangent = FloatArray(2)
+    private val toTangent = FloatArray(2)
 
     fun setTiledLayer(layer: TiledLayer, tileSize: Float) {
         this.layer = layer
@@ -33,10 +41,11 @@ object PathFinder {
 
     fun createRandomizedPath(toPath: Path): Boolean {
         val layer = layer ?: return false
-        if (simplifiedPath.isEmpty()) return false
+        if (simplifiedCount == 0) return false
 
-        // simplifiedPath 는 marker layer 가 바뀌지 않는 한 모든 Fly 가 공유할 수 있는 결과이다.
-        // waypoint 의 tile 내부 offset 만 init() 때마다 새로 뽑아 Fly 별 path 차이를 만든다.
+        // simplified path 는 stage 가 바뀌지 않는 한 동일하다.
+        // Fly 마다 달라지는 waypoint offset 만 reusable array 에 다시 채워,
+        // Fly 생성/재활용 시점의 작은 객체 생성을 피한다.
         buildRandomizedWaypoints(layer)
         buildPathFromWaypoints(toPath)
         return true
@@ -48,15 +57,17 @@ object PathFinder {
         check(startIndex >= 0) { "Marker layer must contain start tile gid=$START_TILE" }
         check(endIndex >= 0) { "Marker layer must contain end tile gid=$END_TILE" }
 
-        start = Point(startIndex % layer.width, startIndex / layer.width)
-        end = Point(endIndex % layer.width, endIndex / layer.width)
+        startX = startIndex % layer.width
+        startY = startIndex / layer.width
+        endX = endIndex % layer.width
+        endY = endIndex / layer.width
     }
 
     private fun buildNodes(layer: TiledLayer) {
         nodes = arrayOfNulls(layer.width * layer.height)
         openNodes.clear()
-        simplifiedPath.clear()
-        waypoints.clear()
+        simplifiedCount = 0
+        waypointCount = 0
 
         var y = 0
         while (y < layer.height) {
@@ -73,11 +84,9 @@ object PathFinder {
 
     private fun findPath() {
         val layer = layer ?: return
-        val start = start ?: return
-        val end = end ?: return
-        val startNode = nodeAt(layer, start.x, start.y) ?: return
+        val startNode = nodeAt(layer, startX, startY) ?: return
         startNode.g = 0
-        startNode.h = heuristic(start.x, start.y, end.x, end.y)
+        startNode.h = heuristic(startX, startY, endX, endY)
         startNode.opened = true
         openNodes.add(startNode)
 
@@ -85,13 +94,21 @@ object PathFinder {
             val current = popBestOpenNode()
             current.closed = true
 
-            if (current.x == end.x && current.y == end.y) {
+            if (current.x == endX && current.y == endY) {
                 buildSimplifiedPath(current)
+                releaseSearchMemory()
                 return
             }
 
-            visitNeighbors(layer, current, end)
+            visitNeighbors(layer, current)
         }
+
+        releaseSearchMemory()
+    }
+
+    private fun releaseSearchMemory() {
+        nodes = emptyArray()
+        openNodes.clear()
     }
 
     private fun popBestOpenNode(): Node {
@@ -112,26 +129,26 @@ object PathFinder {
         return bestNode
     }
 
-    private fun visitNeighbors(layer: TiledLayer, current: Node, end: Point) {
+    private fun visitNeighbors(layer: TiledLayer, current: Node) {
         var dir = 0
         while (dir < DX.size) {
             val nx = current.x + DX[dir]
             val ny = current.y + DY[dir]
             val neighbor = nodeAt(layer, nx, ny)
             if (neighbor != null && !neighbor.closed) {
-                visitNeighbor(current, neighbor, MOVE_COST[dir], end)
+                visitNeighbor(current, neighbor, MOVE_COST[dir])
             }
             dir++
         }
     }
 
-    private fun visitNeighbor(current: Node, neighbor: Node, moveCost: Int, end: Point) {
+    private fun visitNeighbor(current: Node, neighbor: Node, moveCost: Int) {
         val tentativeG = current.g + moveCost
         if (neighbor.opened && tentativeG >= neighbor.g) return
 
         neighbor.parent = current
         neighbor.g = tentativeG
-        neighbor.h = heuristic(neighbor.x, neighbor.y, end.x, end.y)
+        neighbor.h = heuristic(neighbor.x, neighbor.y, endX, endY)
 
         if (!neighbor.opened) {
             neighbor.opened = true
@@ -140,49 +157,80 @@ object PathFinder {
     }
 
     private fun buildSimplifiedPath(endNode: Node) {
-        simplifiedPath.clear()
+        simplifiedCount = countSimplifiedPath(endNode)
+        ensureSimplifiedCapacity(simplifiedCount)
 
-        // parent chain 은 end -> start 순서이다.
-        // raw path 전체를 따로 보관하지 않고, 방향이 바뀌는 지점만 모았다가 마지막에 뒤집는다.
+        var writeIndex = simplifiedCount - 1
         var node: Node? = endNode
         var previous: Node? = null
         while (node != null) {
             val parent = node.parent
-            if (previous == null) {
-                simplifiedPath.add(node)
-            } else if (parent != null) {
-                val dxToPrevious = previous.x - node.x
-                val dyToPrevious = previous.y - node.y
-                val dxFromParent = node.x - parent.x
-                val dyFromParent = node.y - parent.y
-                if (dxToPrevious != dxFromParent || dyToPrevious != dyFromParent) {
-                    simplifiedPath.add(node)
-                }
-            } else {
-                simplifiedPath.add(node)
+            if (keepsSimplifiedNode(node, previous, parent)) {
+                simplifiedXs[writeIndex] = node.x
+                simplifiedYs[writeIndex] = node.y
+                writeIndex--
             }
-
             previous = node
             node = parent
         }
-        simplifiedPath.reverse()
+    }
+
+    private fun countSimplifiedPath(endNode: Node): Int {
+        var count = 0
+        var node: Node? = endNode
+        var previous: Node? = null
+        while (node != null) {
+            val parent = node.parent
+            if (keepsSimplifiedNode(node, previous, parent)) {
+                count++
+            }
+            previous = node
+            node = parent
+        }
+        return count
+    }
+
+    private fun keepsSimplifiedNode(node: Node, previous: Node?, parent: Node?): Boolean {
+        if (previous == null || parent == null) return true
+
+        val dxToPrevious = previous.x - node.x
+        val dyToPrevious = previous.y - node.y
+        val dxFromParent = node.x - parent.x
+        val dyFromParent = node.y - parent.y
+        return dxToPrevious != dxFromParent || dyToPrevious != dyFromParent
+    }
+
+    private fun ensureSimplifiedCapacity(size: Int) {
+        if (simplifiedXs.size >= size) return
+        simplifiedXs = IntArray(size)
+        simplifiedYs = IntArray(size)
     }
 
     private fun buildRandomizedWaypoints(layer: TiledLayer) {
-        waypoints.clear()
-        if (simplifiedPath.isEmpty()) return
+        waypointCount = simplifiedCount + 2
+        ensureWaypointCapacity(waypointCount)
+        if (simplifiedCount == 0) return
 
         var i = 0
-        while (i < simplifiedPath.size) {
-            val node = simplifiedPath[i]
-            waypoints.add(Waypoint(node.x + randomOffset(), node.y + randomOffset()))
+        while (i < simplifiedCount) {
+            val writeIndex = i + 1
+            waypointXs[writeIndex] = simplifiedXs[i] + randomOffset()
+            waypointYs[writeIndex] = simplifiedYs[i] + randomOffset()
             i++
         }
 
-        val firstY = waypoints.first().y
-        val lastY = waypoints.last().y
-        waypoints.add(0, Waypoint(-0.5f, firstY))
-        waypoints.add(Waypoint(layer.width + 0.5f, lastY))
+        val firstY = waypointYs[1]
+        val lastY = waypointYs[simplifiedCount]
+        waypointXs[0] = -0.5f
+        waypointYs[0] = firstY
+        waypointXs[waypointCount - 1] = layer.width + 0.5f
+        waypointYs[waypointCount - 1] = lastY
+    }
+
+    private fun ensureWaypointCapacity(size: Int) {
+        if (waypointXs.size >= size) return
+        waypointXs = FloatArray(size)
+        waypointYs = FloatArray(size)
     }
 
     private fun randomOffset(): Float {
@@ -190,36 +238,37 @@ object PathFinder {
     }
 
     private fun buildPathFromWaypoints(path: Path) {
-        if (waypoints.isEmpty()) return
+        if (waypointCount == 0) return
 
         path.reset()
-        val first = waypoints.first()
-        path.moveTo(first.x * tileSize, first.y * tileSize)
-        if (waypoints.size == 1) return
+        path.moveTo(waypointXs[0] * tileSize, waypointYs[0] * tileSize)
+        if (waypointCount == 1) return
 
         var i = 1
-        while (i < waypoints.size) {
-            val from = waypoints[i - 1]
-            val to = waypoints[i]
-            val fromTangent = tangentAt(i - 1)
-            val toTangent = tangentAt(i)
-            val controlDistance = controlDistanceBetween(from, to)
+        while (i < waypointCount) {
+            tangentAt(i - 1, fromTangent)
+            tangentAt(i, toTangent)
+            val controlDistance = controlDistanceBetween(i - 1, i)
+            val fromX = waypointXs[i - 1]
+            val fromY = waypointYs[i - 1]
+            val toX = waypointXs[i]
+            val toY = waypointYs[i]
 
             path.cubicTo(
-                from.x * tileSize + fromTangent.x * controlDistance,
-                from.y * tileSize + fromTangent.y * controlDistance,
-                to.x * tileSize - toTangent.x * controlDistance,
-                to.y * tileSize - toTangent.y * controlDistance,
-                to.x * tileSize,
-                to.y * tileSize,
+                fromX * tileSize + fromTangent[0] * controlDistance,
+                fromY * tileSize + fromTangent[1] * controlDistance,
+                toX * tileSize - toTangent[0] * controlDistance,
+                toY * tileSize - toTangent[1] * controlDistance,
+                toX * tileSize,
+                toY * tileSize,
             )
             i++
         }
     }
 
-    private fun controlDistanceBetween(from: Waypoint, to: Waypoint): Float {
-        val dx = to.x - from.x
-        val dy = to.y - from.y
+    private fun controlDistanceBetween(fromIndex: Int, toIndex: Int): Float {
+        val dx = waypointXs[toIndex] - waypointXs[fromIndex]
+        val dy = waypointYs[toIndex] - waypointYs[fromIndex]
         val segmentLengthInTiles = sqrt(dx * dx + dy * dy)
         val controlDistanceInTiles = min(
             segmentLengthInTiles / CUBIC_CONTROL_DISTANCE_DIVISOR,
@@ -228,14 +277,19 @@ object PathFinder {
         return controlDistanceInTiles * tileSize
     }
 
-    private fun tangentAt(index: Int): UnitVector {
-        val previous = if (index == 0) waypoints[index] else waypoints[index - 1]
-        val next = if (index == waypoints.lastIndex) waypoints[index] else waypoints[index + 1]
-        val dx = next.x - previous.x
-        val dy = next.y - previous.y
+    private fun tangentAt(index: Int, out: FloatArray) {
+        val previousIndex = if (index == 0) index else index - 1
+        val nextIndex = if (index == waypointCount - 1) index else index + 1
+        val dx = waypointXs[nextIndex] - waypointXs[previousIndex]
+        val dy = waypointYs[nextIndex] - waypointYs[previousIndex]
         val length = sqrt(dx * dx + dy * dy)
-        if (length == 0f) return UnitVector(0f, 0f)
-        return UnitVector(dx / length, dy / length)
+        if (length == 0f) {
+            out[0] = 0f
+            out[1] = 0f
+            return
+        }
+        out[0] = dx / length
+        out[1] = dy / length
     }
 
     private fun isWalkable(gid: Int): Boolean {
@@ -270,10 +324,6 @@ object PathFinder {
         var closed = false
     }
 
-    private class Waypoint(val x: Float, val y: Float)
-
-    private class UnitVector(val x: Float, val y: Float)
-
     private val DX = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
     private val DY = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
     private val MOVE_COST = intArrayOf(
@@ -281,6 +331,7 @@ object PathFinder {
         STRAIGHT_COST, STRAIGHT_COST,
         DIAGONAL_COST, STRAIGHT_COST, DIAGONAL_COST,
     )
+    private const val INVALID_TILE = -1
     private const val CUBIC_CONTROL_DISTANCE_DIVISOR = 4f
     private const val CUBIC_CONTROL_DISTANCE_MAX_IN_TILES = 1.0f
     private const val MIN_WAYPOINT_OFFSET = 0.2f
