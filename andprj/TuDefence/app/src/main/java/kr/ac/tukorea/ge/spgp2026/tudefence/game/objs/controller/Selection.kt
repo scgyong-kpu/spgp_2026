@@ -6,7 +6,6 @@ import android.graphics.RectF
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.MapCamera
-import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.PathFinder
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.weapon.Cannon
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
 
@@ -55,11 +54,9 @@ class Selection(gctx: GameContext, private val width: Float, private val height:
     }
 
     override fun update(gctx: GameContext) {
-        PathFinder.update(gctx.frameTime)
     }
 
     override fun draw(canvas: Canvas) {
-        PathFinder.draw(canvas)
         if (!visible) return
         selectedCannon?.drawRange(canvas)
         val bitmap = if (selectedCannon != null || canInstall) installableBitmap else nonInstallableBitmap

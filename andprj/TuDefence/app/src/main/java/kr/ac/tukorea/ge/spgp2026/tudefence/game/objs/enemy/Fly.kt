@@ -158,9 +158,6 @@ class Fly private constructor(gctx: GameContext):
 
     override fun draw(canvas: Canvas) {
         if (BuildConfig.DEBUG) {
-            // 이제 path 는 Fly companion object 의 공유 값이 아니라 Fly 개별 인스턴스의 상태이다.
-            // 따라서 path 시각화도 WaveGen 이 한 번 그리는 방식이 아니라,
-            // 각 Fly 가 자신이 실제로 따라가는 path 를 직접 그리는 방식이 더 정확하다.
             canvas.drawPath(path, pathPaint)
         }
 

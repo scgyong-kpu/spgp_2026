@@ -88,15 +88,16 @@ quicktype.io 같은 도구로 JSON 에서 class 를 자동 생성하는 방법�
 ## Path Finding
 
 - [x] Marker layer 에서 start / end / walkable tile 스캔
-- [x] Marker layer 의 walkable / start / end tile 을 화면에 표시
-- [x] A* 를 update 마다 한 단계씩 진행
-- [x] 선택한 tile 의 A* 상태를 숫자로 표시하고 step 일시정지
-- [x] raw path 를 tile 영역으로 표시
 - [x] 같은 방향 path 를 축약해 표시
-- [x] centered waypoint 를 표시
-- [x] randomized waypoint 를 표시
 - [x] `Fly` 가 init 시점마다 각자의 randomized path 를 받아 이동
 - [x] cubic path 를 생성해 표시
+- [x] path 완성 과정에서 사용한 시각화/디버그 표시 제거
+  - [x] Marker layer 의 walkable / start / end tile 화면 표시 제거
+  - [x] A* 를 update 마다 한 단계씩 진행하던 시각화 제거
+  - [x] 선택한 tile 의 A* 상태를 숫자로 표시하던 기능 제거
+  - [x] raw path 를 tile 영역으로 표시하던 기능 제거
+  - [x] centered / randomized waypoint 표시 제거
+  - [x] `PathFinder` 의 preview path 표시 제거
 
 ## Map Selection
 

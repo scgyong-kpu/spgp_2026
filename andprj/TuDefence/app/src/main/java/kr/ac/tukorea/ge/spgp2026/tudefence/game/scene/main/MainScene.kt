@@ -112,13 +112,6 @@ class MainScene(gctx: GameContext, private val stage: Int): Scene(gctx), CannonM
                 saveTouchState(event)
                 pointFromEvent(event, 0, touchPoint0)
                 mapCamera.gameToMap(touchPoint0.x, touchPoint0.y, mapPoint)
-                // PathFinder 학습 단계에서는 tile 상태를 터치로 확인하는 것이 우선이므로,
-                // map 안쪽 터치는 cannon 선택/설치 로직까지 내려보내지 않는다.
-                if (PathFinder.selectTile(mapPoint.x, mapPoint.y)) {
-                    selection.hide()
-                    cannonMenu.hide()
-                    return true
-                }
                 if (cannonMenu.contains(touchPoint0.x, touchPoint0.y)) {
                     menuGestureConsumed = true
                     cannonMenu.onTouch(touchPoint0.x, touchPoint0.y)
