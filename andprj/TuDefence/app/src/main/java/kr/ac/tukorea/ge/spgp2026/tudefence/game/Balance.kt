@@ -1,56 +1,56 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game
 
 object Balance {
-    const val INITIAL_GOLD = 30
+    const val INITIAL_GOLD = 60
 
     object Cannon {
         val costs = intArrayOf(
-            10, 100, 300, 700, 1500, 3000, 7000, 15000, 40000, 100000, 100000000
+            20, 55, 110, 200, 340, 550, 850, 1250, 1800, 2500
         )
-        const val upgradeCostRatio = 1.1f
-        const val sellRatio = 0.5f
+        const val upgradeCostRatio = 0.9f
+        const val sellRatio = 0.6f
 
         const val minBarrelSize = 110f
         const val maxBarrelSize = 200f
-        const val maxFireInterval = 5.0f
-        const val fireIntervalStep = 0.4f
-        const val baseRange = 100f
-        const val rangePerLevel = 100f
+        const val maxFireInterval = 3.0f
+        const val fireIntervalStep = 0.18f
+        const val baseRange = 140f
+        const val rangePerLevel = 45f
     }
 
     object Shell {
-        const val speed = 600f
-        const val basePower = 10f
-        const val powerRatio = 1.2f
+        const val speed = 700f
+        const val basePower = 9f
+        const val powerRatio = 1.18f
         const val splashMinLevel = 6
-        const val baseExplosionRadius = 60f
-        const val explosionRadiusPowerRatio = 3f
+        const val baseExplosionRadius = 45f
+        const val explosionRadiusPowerRatio = 1.8f
     }
 
     object Fly {
-        const val bossHealth = 150f
-        const val redHealth = 50f
-        const val blueHealth = 30f
-        const val cyanHealth = 20f
-        const val dragonHealth = 10f
+        const val bossHealth = 260f
+        const val redHealth = 70f
+        const val blueHealth = 42f
+        const val cyanHealth = 24f
+        const val dragonHealth = 12f
 
-        const val redSpawnRate = 10
-        const val blueSpawnRate = 20
+        const val redSpawnRate = 8
+        const val blueSpawnRate = 17
         const val cyanSpawnRate = 30
 
-        const val minSize = 75f
-        const val maxSize = 125f
-        const val bossSizeScale = 1.5f
-        const val minSpeed = 25f
-        const val maxSpeed = 60f
+        const val minSize = 70f
+        const val maxSize = 115f
+        const val bossSizeScale = 1.4f
+        const val minSpeed = 32f
+        const val maxSpeed = 70f
     }
 
     object Wave {
-        const val intervalInit = 2.0f
-        const val intervalMin = 0.1f
-        const val intervalDecay = 0.995f
-        const val waveInterval = 30.0f
-        const val timeScale = 3.0f
-        const val speedRatioPerWave = 1.0f
+        const val intervalInit = 1.6f
+        const val intervalMin = 0.35f
+        const val intervalDecay = 0.992f
+        const val waveInterval = 35.0f
+        const val timeScale = 1.0f
+        const val speedRatioPerWave = 1.08f
     }
 }
