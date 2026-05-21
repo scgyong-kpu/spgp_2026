@@ -48,18 +48,7 @@ class WaveGen(
     }
 
     override fun draw(canvas: Canvas) {
-//        if (BuildConfig.DEBUG) {
-//            canvas.drawPath(Fly.path, paint)
-//        }
     }
-
-//    private val paint by lazy {
-//        Paint().apply {
-//            style = Paint.Style.STROKE
-//            strokeWidth = 5f
-//            color = Color.MAGENTA
-//        }
-//    }
 
     private fun spawn() {
         val fly = Fly.get(gctx, bossPhase, flySpeedRatio)

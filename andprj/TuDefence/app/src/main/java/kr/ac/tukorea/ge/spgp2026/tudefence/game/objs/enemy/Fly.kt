@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.tudefence.game.objs.enemy
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PathMeasure
 import android.graphics.Rect
@@ -12,9 +13,11 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.SheetSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.util.Gauge
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.tudefence.R
+import kr.ac.tukorea.ge.spgp2026.tudefence.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.common.IRadiusCollidable
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.tudefence.game.layer.mainWorld
+import kr.ac.tukorea.ge.spgp2026.tudefence.game.map.PathFinder
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.random.Random
@@ -66,6 +69,9 @@ class Fly private constructor(gctx: GameContext):
     private var speed = MIN_SPEED
     private var angle = 0f
     private var pathOffset = 0f
+    private val path = Path()
+    private val pathMeasure = PathMeasure()
+    private var pathLength = 0f
     private val position = FloatArray(2)
     private val tangent = FloatArray(2)
 
@@ -81,6 +87,7 @@ class Fly private constructor(gctx: GameContext):
         distance = 0f
         val maxOffset = width / 5f
         pathOffset = (Random.nextFloat() * 2f - 1f) * maxOffset
+        resetPath()
         updatePosition()
         return this
     }
@@ -114,12 +121,24 @@ class Fly private constructor(gctx: GameContext):
     }
 
     private fun updatePosition() {
-        pathMeasure.getPosTan(distance, position, tangent)
+        if (!pathMeasure.getPosTan(distance, position, tangent)) return
         val tangentLength = hypot(tangent[0], tangent[1])
+        if (tangentLength == 0f) return
         val normalX = -tangent[1] / tangentLength
         val normalY = tangent[0] / tangentLength
         setCenter(position[0] + normalX * pathOffset, position[1] + normalY * pathOffset)
         angle = Math.toDegrees(atan2(tangent[1], tangent[0]).toDouble()).toFloat()
+    }
+
+    private fun resetPath() {
+        // Fly 는 recycle bin 에서 되살아날 때 init() 을 다시 거친다.
+        // 이 시점마다 PathFinder 에 새 randomized path 를 요청하면,
+        // 같은 wave 에서 나온 Fly 들도 서로 조금씩 다른 길을 갖게 된다.
+        if (!PathFinder.createRandomizedPath(path)) {
+            path.set(defaultPath)
+        }
+        pathMeasure.setPath(path, false)
+        pathLength = pathMeasure.length
     }
 
     fun decreaseLife(amount: Float) {
@@ -138,6 +157,13 @@ class Fly private constructor(gctx: GameContext):
     }
 
     override fun draw(canvas: Canvas) {
+        if (BuildConfig.DEBUG) {
+            // 이제 path 는 Fly companion object 의 공유 값이 아니라 Fly 개별 인스턴스의 상태이다.
+            // 따라서 path 시각화도 WaveGen 이 한 번 그리는 방식이 아니라,
+            // 각 Fly 가 자신이 실제로 따라가는 path 를 직접 그리는 방식이 더 정확하다.
+            canvas.drawPath(path, pathPaint)
+        }
+
         // withRotation 은 아래 save/rotate/restore 패턴을 보기 좋게 감싼 AndroidX KTX helper 이다.
         // canvas.save()
         // canvas.rotate(angle, x, y)
@@ -199,7 +225,7 @@ class Fly private constructor(gctx: GameContext):
             listOf(Rect(560, 0, 630, 70), Rect(630, 0, 700, 70)),
         )
 
-        var path: Path = PathParser.createPathFromPathData(
+        private val defaultPath: Path = PathParser.createPathFromPathData(
             "M -72,896\n" +
             "C 64,896 192,792 192,656\n" +
             "C 192,520 48,472 48,336\n" +
@@ -215,16 +241,6 @@ class Fly private constructor(gctx: GameContext):
             "C 1408,792 1536,896 1672,896\n"
         )!!
 
-        val pathMeasure = PathMeasure(path, false)
-        var pathLength = pathMeasure.length
-            private set
-
-        fun replacePath(newPath: Path) {
-            path = Path(newPath)
-            pathMeasure.setPath(path, false)
-            pathLength = pathMeasure.length
-        }
-
         private const val MIN_SIZE = 75f
         private const val MAX_SIZE = 125f
         private const val BOSS_SIZE_SCALE = 1.5f
@@ -238,5 +254,10 @@ class Fly private constructor(gctx: GameContext):
             fgColor = "#C9786400".toColorInt(),
             bgColor = "#B5FFD7D5".toColorInt(),
         )
+        private val pathPaint = Paint().apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 5f
+            color = "#80FF00FF".toColorInt()
+        }
     }
 }
