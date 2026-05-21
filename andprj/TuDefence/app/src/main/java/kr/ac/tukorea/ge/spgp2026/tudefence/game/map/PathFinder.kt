@@ -203,7 +203,7 @@ object PathFinder {
             val to = waypoints[i]
             val fromTangent = tangentAt(i - 1)
             val toTangent = tangentAt(i)
-            val controlDistance = tileSize * CUBIC_CONTROL_DISTANCE_IN_TILES
+            val controlDistance = controlDistanceBetween(from, to)
 
             path.cubicTo(
                 from.x * tileSize + fromTangent.x * controlDistance,
@@ -215,6 +215,17 @@ object PathFinder {
             )
             i++
         }
+    }
+
+    private fun controlDistanceBetween(from: Waypoint, to: Waypoint): Float {
+        val dx = to.x - from.x
+        val dy = to.y - from.y
+        val segmentLengthInTiles = sqrt(dx * dx + dy * dy)
+        val controlDistanceInTiles = min(
+            segmentLengthInTiles / CUBIC_CONTROL_DISTANCE_DIVISOR,
+            CUBIC_CONTROL_DISTANCE_MAX_IN_TILES,
+        )
+        return controlDistanceInTiles * tileSize
     }
 
     private fun tangentAt(index: Int): UnitVector {
@@ -270,7 +281,8 @@ object PathFinder {
         STRAIGHT_COST, STRAIGHT_COST,
         DIAGONAL_COST, STRAIGHT_COST, DIAGONAL_COST,
     )
-    private const val CUBIC_CONTROL_DISTANCE_IN_TILES = 1.0f
+    private const val CUBIC_CONTROL_DISTANCE_DIVISOR = 4f
+    private const val CUBIC_CONTROL_DISTANCE_MAX_IN_TILES = 1.0f
     private const val MIN_WAYPOINT_OFFSET = 0.2f
     private const val MAX_WAYPOINT_OFFSET = 0.8f
 }
