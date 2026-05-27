@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.MotionEvent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.postDelayed
@@ -19,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+    private var selectedStage = MIN_STAGE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -28,6 +29,26 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        binding.previousStageButton.setOnClickListener {
+            selectedStage--
+            if (selectedStage < MIN_STAGE) {
+                selectedStage = MAX_STAGE
+            }
+            updateStageText()
+        }
+        binding.nextStageButton.setOnClickListener {
+            selectedStage++
+            if (selectedStage > MAX_STAGE) {
+                selectedStage = MIN_STAGE
+            }
+            updateStageText()
+        }
+        binding.startGameButton.setOnClickListener {
+            startGameActivity()
+        }
+        updateStageText()
+
         if (BuildConfig.DEBUG) {
             Handler(Looper.getMainLooper()).postDelayed(1000) {
                 startGameActivity()
@@ -35,15 +56,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action == MotionEvent.ACTION_DOWN) {
-            startGameActivity()
+    private fun startGameActivity() {
+        val intent = Intent(this, MainGameActivity::class.java).apply {
+            putExtra(MainGameActivity.EXTRA_STAGE, selectedStage)
         }
-        return super.onTouchEvent(event)
+        startActivity(intent)
     }
 
-    private fun startGameActivity() {
-        val intent = Intent(this, MainGameActivity::class.java)
-        startActivity(intent)
+    private fun updateStageText() {
+        binding.stageTextView.text = "Stage $selectedStage"
+    }
+
+    companion object {
+        private const val MIN_STAGE = 1
+        private const val MAX_STAGE = 3
     }
 }
