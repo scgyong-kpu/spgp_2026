@@ -9,7 +9,7 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [x] Android project skeleton 생성
 - [x] 기본 `MainActivity` 생성
 - [x] `README.md` 로 진행 계획 정리
-- [ ] `viewBinding` / `buildConfig` 활성화
+- [x] `viewBinding` / `buildConfig` 활성화
 - [ ] 곡 목록 화면 구성
 - [ ] 곡 선택 후 게임 화면 진입
 - [ ] 음악 시간에 맞춘 note 표시
@@ -18,7 +18,7 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 
 - [x] 앱 패키지와 이름 정리
 - [x] 기본 `MainActivity` 확인
-- [ ] `buildFeatures` 에 `viewBinding` / `buildConfig` 활성화
+- [x] `buildFeatures` 에 `viewBinding` / `buildConfig` 활성화
 - [ ] `MainActivity` 에 view binding 적용
 - [ ] package 를 역할별로 분리
   - [ ] `app`
