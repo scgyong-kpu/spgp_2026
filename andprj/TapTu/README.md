@@ -58,7 +58,7 @@ document.querySelectorAll('.track_section tr').length
 
 0보다 큰 값이 나오면 `chart_grab.js` 를 실행할 수 있다. 만약 `null` 또는 `0` 이 나오면 VIBE 의 DOM 구조가 바뀐 것이므로, 스크립트 안의 selector 를 현재 사이트 구조에 맞게 수정해야 한다.
 
-스크립트가 정상 실행되면 Console 에 `rank`, `title`, `artist`, `album`, `thumbnail` 을 가진 object 배열과 JSON 문자열이 함께 출력된다. 이 중 JSON 문자열을 복사해서 `songs.json` 으로 저장한다. 즉, `songs.json` 은 직접 손으로 작성하는 파일이 아니라 `chart_grab.js` 가 Console 에 출력한 JSON 을 파일로 저장한 것이다.
+스크립트가 정상 실행되면 Console 에 `rank`, `title`, `artist`, `album`, `thumbnail` 을 가진 object 배열과 JSON 문자열이 함께 출력된다. 이 중 JSON 문자열을 복사해서 `songs.json` 으로 저장한다. 즉, `songs.json` 은 직접 손으로 작성하는 파일이 아니라 `chart_grab.js` 가 Console 에 출력한 JSON 을 파일로 저장한 것이다. 웹 페이지에서 복사된 text 에는 non-breaking space 인 `U+00A0` 가 섞일 수 있으므로, `chart_grab.js` 는 이를 일반 공백으로 바꾸고 연속 공백을 하나로 줄인 뒤 JSON 을 만든다.
 
 `thumbnail` 은 이미지 파일 자체가 아니라 URL 이다. 이후 `thumbnail_downloader.py` 가 `songs.json` 을 읽고 각 URL 의 이미지를 내려받아 `cover_001.jpg`, `cover_002.jpg` 같은 파일명으로 저장한다.
 
