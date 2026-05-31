@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.ac.tukorea.ge.spgp2026.taptu.R
-import kr.ac.tukorea.ge.spgp2026.taptu.data.SongLoader
+import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -26,9 +26,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val songs = SongLoader.load(assets)
-        Log.d(javaClass.simpleName, "loaded ${songs.size} songs")
-        songs.take(3).forEach { song ->
+        SongCatalog.load(assets)
+        Log.d(javaClass.simpleName, "loaded ${SongCatalog.songs.size} songs")
+        SongCatalog.songs.take(3).forEach { song ->
             Log.d(javaClass.simpleName, "$song")
         }
     }

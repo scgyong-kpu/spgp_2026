@@ -67,6 +67,7 @@ document.querySelectorAll('.track_section tr').length
 - [x] `songs.json` asset 추가
 - [x] `Song` data class 작성
 - [x] `SongLoader` 작성
+- [x] `SongCatalog` 로 읽어 온 곡 목록 보관
 - [x] JSON 으로부터 rank 만 읽어 보기
 - [x] JSON 으로부터 title 읽기
 - [x] artist / album field 추가
