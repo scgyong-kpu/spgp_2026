@@ -21,7 +21,7 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [x] `buildFeatures` 에 `viewBinding` / `buildConfig` 활성화
 - [ ] `MainActivity` 에 view binding 적용
 - [ ] package 를 역할별로 분리
-  - [ ] `app`
+  - [x] `app`
   - [ ] `data`
   - [ ] `game`
   - [ ] `res`
