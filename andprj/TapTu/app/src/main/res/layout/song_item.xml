@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     RecyclerView 의 row 하나를 위한 layout 이다.
-    이 파일은 아직 activity_main.xml 에 연결되지 않는다.
-    다음 단계에서 Adapter / ViewHolder 가 이 layout 을 inflate 해서 곡 하나를 표시한다.
+    Adapter / ViewHolder 가 이 layout 을 inflate 해서 곡 하나를 표시한다.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"

@@ -81,15 +81,15 @@ document.querySelectorAll('.track_section tr').length
 
 - [x] main layout 에 title / song list / start button 배치
 - [ ] 처음에는 `ListView` 또는 단순 list 로 곡 표시 실험
-- [ ] adapter 가 item count 와 item view 를 제공하는 구조 설명
+- [x] adapter 가 item count 와 item view 를 제공하는 구조 설명
 - [x] item layout 추가
-- [ ] item layout 에 view binding 적용
-- [ ] rank / title / artist / album 표시
+- [x] item layout 에 view binding 적용
+- [x] rank / title / artist / album 표시
 - [ ] thumbnail 표시
 - [ ] 구분선 추가
-- [ ] `RecyclerView` 로 전환
-- [ ] `RecyclerView.Adapter` / `ViewHolder` 구조 정리
-- [ ] view 재활용 동작 확인
+- [x] `RecyclerView` 로 전환
+- [x] `RecyclerView.Adapter` / `ViewHolder` 구조 정리
+- [x] view 재활용 동작 확인
 - [ ] item click 처리
 - [ ] 선택된 곡을 로그로 확인
 - [ ] 선택 상태를 item background 로 표시
