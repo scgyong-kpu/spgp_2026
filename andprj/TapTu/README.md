@@ -82,7 +82,7 @@ document.querySelectorAll('.track_section tr').length
 - [ ] main layout 에 title / song list / start button 배치
 - [ ] 처음에는 `ListView` 또는 단순 list 로 곡 표시 실험
 - [ ] adapter 가 item count 와 item view 를 제공하는 구조 설명
-- [ ] item layout 추가
+- [x] item layout 추가
 - [ ] item layout 에 view binding 적용
 - [ ] rank / title / artist / album 표시
 - [ ] thumbnail 표시
@@ -105,6 +105,36 @@ document.querySelectorAll('.track_section tr').length
 `RecyclerView` 는 재사용 구조를 더 명시적으로 만든 목록 UI 이다. `ViewHolder` 가 필수이고, `LayoutManager` 로 세로 목록, 가로 목록, grid 등을 바꿀 수 있다. thumbnail, title, artist, album 을 함께 보여 주는 TapTu 의 곡 목록처럼 item UI 가 조금 복잡해질 때 더 적합하다.
 
 수업에서는 "목록은 `addView()` 로 직접 쌓는 것이 아니라 adapter 가 data 를 view 로 바꿔 준다"는 개념이 중요하다. 이 개념은 `ListView` 와 `RecyclerView` 모두에 있지만, 현대 Android 에서는 `RecyclerView` 를 더 많이 사용하므로 올해는 `ListView` 를 길게 구현했다가 갈아타기보다 `RecyclerView` 중심으로 진행한다.
+
+### `RecyclerView` 개념과 활용 방법
+
+`RecyclerView` 는 많은 item 을 효율적으로 보여 주기 위한 Android 목록 UI 이다. 이름 그대로 화면 밖으로 사라진 item view 를 버리지 않고 재사용한다. 예를 들어 곡이 100개 있어도 화면에 실제로 보이는 row 는 몇 개뿐이므로, 모든 row view 를 한꺼번에 만들 필요가 없다.
+
+`RecyclerView` 를 사용할 때 핵심 구성요소는 세 가지이다.
+
+- `RecyclerView`: 화면에 배치되는 목록 view 자체이다. layout xml 에 들어가며, 실제로 item 들을 스크롤하며 보여 준다.
+- `Adapter`: data 목록을 `RecyclerView` 가 이해할 수 있는 item view 로 바꿔 주는 객체이다. "몇 개의 item 이 있는가", "새 row view 는 어떻게 만드는가", "특정 위치의 data 를 row 에 어떻게 표시하는가"에 답한다.
+- `ViewHolder`: item view 하나와 그 안의 child view 들을 붙잡고 있는 객체이다. `findViewById()` 를 매번 반복하지 않고, 재사용되는 row view 를 빠르게 갱신하기 위해 사용한다.
+
+Adapter 의 주요 함수는 다음 순서로 이해하면 된다.
+
+- `getItemCount()`: data 가 몇 개인지 알려 준다. TapTu 에서는 `SongCatalog.songs.size` 가 된다.
+- `onCreateViewHolder()`: 새 row view 가 필요할 때 호출된다. 여기서 `song_item.xml` 을 inflate 하고 `SongViewHolder` 를 만든다.
+- `onBindViewHolder()`: 특정 위치의 data 를 기존 row view 에 표시할 때 호출된다. TapTu 에서는 `Song` 의 title, artist, album, thumbnail 을 row 에 넣는다.
+
+즉 `RecyclerView` 는 직접 data 를 알지 않는다. `RecyclerView` 는 Adapter 에게 "몇 개니?", "view 하나 만들어 줘", "이 위치의 data 를 이 view 에 표시해 줘"라고 물어본다. 실제 data 를 어떻게 보여 줄지는 Adapter 와 ViewHolder 가 담당한다.
+
+TapTu 에서는 다음 순서로 적용한다.
+
+1. `activity_main.xml` 에 임시 곡 선택 button 대신 `RecyclerView` 를 배치한다.
+2. 곡 하나를 표시할 `song_item.xml` 을 만든다.
+3. `SongAdapter` 를 만들고 `SongCatalog.songs` 를 data source 로 사용한다.
+4. `SongViewHolder` 에서 view binding 으로 item view 를 잡는다.
+5. `onBindViewHolder()` 에서 `Song` 의 title, artist, album 을 표시한다.
+6. 이후 단계에서 thumbnail bitmap 을 asset 에서 읽어 표시한다.
+7. item click 으로 선택 상태를 바꾸고, 선택된 곡이 있을 때만 Start Game button 을 활성화한다.
+
+이 구조를 쓰면 곡 목록 표시, 선택 상태 표시, thumbnail 표시, item click 처리를 모두 같은 Adapter 안에서 단계적으로 확장할 수 있다.
 
 ## Demo Playback
 
