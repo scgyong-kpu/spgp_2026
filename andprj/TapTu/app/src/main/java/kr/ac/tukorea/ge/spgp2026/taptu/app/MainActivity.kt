@@ -18,8 +18,10 @@ import kr.ac.tukorea.ge.spgp2026.taptu.databinding.SongItemBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var selectedPosition = RecyclerView.NO_POSITION
     private val songAdapter = SongAdapter { song, position ->
         Log.d(javaClass.simpleName, "song clicked: position=$position, $song")
+        selectSong(position)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,16 +45,36 @@ class MainActivity : AppCompatActivity() {
         binding.songRecyclerView.adapter = songAdapter
     }
 
+    private fun selectSong(position: Int) {
+        val previousPosition = selectedPosition
+        selectedPosition = if (selectedPosition == position) {
+            RecyclerView.NO_POSITION
+        } else {
+            position
+        }
+        songAdapter.selectedPosition = selectedPosition
+
+        if (previousPosition != RecyclerView.NO_POSITION) {
+            songAdapter.notifyItemChanged(previousPosition)
+        }
+        if (selectedPosition != RecyclerView.NO_POSITION) {
+            songAdapter.notifyItemChanged(selectedPosition)
+        }
+    }
+
     private class SongAdapter(
         private val onSongClick: (Song, Int) -> Unit,
     ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
+        var selectedPosition: Int = RecyclerView.NO_POSITION
+
         class SongViewHolder(
             private val binding: SongItemBinding,
         ) : RecyclerView.ViewHolder(binding.root) {
-            fun bind(song: Song, onSongClick: (Song, Int) -> Unit) {
+            fun bind(song: Song, selected: Boolean, onSongClick: (Song, Int) -> Unit) {
                 binding.titleTextView.text = song.title
                 binding.artistTextView.text = song.artist
                 binding.albumTextView.text = song.album
+                binding.root.isSelected = selected
                 binding.root.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
@@ -72,7 +94,11 @@ class MainActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
             // 이미 만들어져 있거나 재사용된 row view 에 현재 position 의 Song 을 표시한다.
-            holder.bind(SongCatalog.songs[position], onSongClick)
+            holder.bind(
+                SongCatalog.songs[position],
+                position == selectedPosition,
+                onSongClick
+            )
         }
 
         override fun getItemCount(): Int {
