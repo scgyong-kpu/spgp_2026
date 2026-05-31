@@ -87,8 +87,8 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 
 ## Game Activity
 
-- [ ] `MainGameActivity` 추가
-- [ ] Start Game button 에서 `MainGameActivity` 실행
+- [x] `MainGameActivity` 추가
+- [x] Start Game button 에서 `MainGameActivity` 실행
 - [ ] Activity 간 데이터 전달 방법 비교
   - [ ] 선택 index 를 Intent extra 로 전달
   - [ ] 같은 process 안에서 static/shared selected value 사용

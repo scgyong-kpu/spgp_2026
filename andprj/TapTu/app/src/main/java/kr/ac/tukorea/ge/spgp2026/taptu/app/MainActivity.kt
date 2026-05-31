@@ -1,6 +1,8 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.app
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,5 +23,21 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    fun onBtnSong(view: View) {
+        val songIndex = when (view.id) {
+            R.id.songButton_0 -> 0
+            R.id.songButton_1 -> 1
+            else -> 2
+        }
+
+        startGameActivity(songIndex)
+    }
+
+    private fun startGameActivity(songIndex: Int) {
+        val intent = Intent(this, MainGameActivity::class.java)
+        intent.putExtra(MainGameActivity.EXTRAS_SONG_INDEX, songIndex)
+        startActivity(intent)
     }
 }
