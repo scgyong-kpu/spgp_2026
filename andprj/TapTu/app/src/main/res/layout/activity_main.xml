@@ -1,40 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context=".app.MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"
         android:text="Tap TU!"
-        android:textSize="50sp"
+        android:textSize="50sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/songRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         />
+
     <Button
-        android:id="@+id/songButton_0"
+        android:id="@+id/startButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Song #0"
-        android:onClick="onBtnSong"
-        />
-    <Button
-        android:id="@+id/songButton_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Song #1"
-        android:onClick="onBtnSong"
-        />
-    <Button
-        android:id="@+id/songButton_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Song #2"
-        android:onClick="onBtnSong"
-        />
+        android:enabled="false"
+        android:text="Start Game" />
 
 </LinearLayout>

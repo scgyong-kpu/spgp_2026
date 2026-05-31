@@ -79,7 +79,7 @@ document.querySelectorAll('.track_section tr').length
 
 ## Main Screen UI
 
-- [ ] main layout 에 title / song list / start button 배치
+- [x] main layout 에 title / song list / start button 배치
 - [ ] 처음에는 `ListView` 또는 단순 list 로 곡 표시 실험
 - [ ] adapter 가 item count 와 item view 를 제공하는 구조 설명
 - [x] item layout 추가
