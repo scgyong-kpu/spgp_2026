@@ -34,7 +34,7 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [ ] browser developer console 에서 실행할 chart 수집 script 작성
 - [ ] chart JSON 에서 필요한 field 확인
 - [ ] thumbnail download script 작성
-- [ ] thumbnail 이미지를 asset 으로 가져오기
+- [x] thumbnail 이미지를 asset 으로 가져오기
 - [ ] mp3 파일을 asset 으로 가져오기
 - [ ] note data 자동 생성 script 작성
 - [ ] BPM 기반 note 생성 실험
@@ -64,7 +64,7 @@ document.querySelectorAll('.track_section tr').length
 
 ## Song Data
 
-- [ ] `songs.json` asset 추가
+- [x] `songs.json` asset 추가
 - [ ] `Song` data class 작성
 - [ ] `SongLoader` 작성
 - [ ] JSON 으로부터 rank 만 읽어 보기
