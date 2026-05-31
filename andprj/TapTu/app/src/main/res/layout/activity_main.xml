@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        />
+        tools:listitem="@layout/song_item" />
 
     <Button
         android:id="@+id/startButton"
