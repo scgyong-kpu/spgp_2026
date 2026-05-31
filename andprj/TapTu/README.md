@@ -96,6 +96,16 @@ document.querySelectorAll('.track_section tr').length
 - [ ] 같은 item 을 다시 누르면 선택 해제
 - [ ] 선택된 곡이 있을 때만 Start Game button 활성화
 
+### `ListView` 와 `RecyclerView`
+
+곡 목록은 `ListView` 로도 만들 수 있지만, 올해 프로젝트에서는 `RecyclerView` 를 기본 선택으로 둔다.
+
+`ListView` 는 오래된 목록 UI 이다. adapter 가 item view 를 만들어 주고, `convertView` 를 재사용해서 성능을 챙기는 구조이다. 간단한 세로 목록에는 여전히 사용할 수 있지만, ViewHolder 패턴을 직접 관리해야 하고 item animation, 여러 view type, layout 확장에는 불리하다.
+
+`RecyclerView` 는 재사용 구조를 더 명시적으로 만든 목록 UI 이다. `ViewHolder` 가 필수이고, `LayoutManager` 로 세로 목록, 가로 목록, grid 등을 바꿀 수 있다. thumbnail, title, artist, album 을 함께 보여 주는 TapTu 의 곡 목록처럼 item UI 가 조금 복잡해질 때 더 적합하다.
+
+수업에서는 "목록은 `addView()` 로 직접 쌓는 것이 아니라 adapter 가 data 를 view 로 바꿔 준다"는 개념이 중요하다. 이 개념은 `ListView` 와 `RecyclerView` 모두에 있지만, 현대 Android 에서는 `RecyclerView` 를 더 많이 사용하므로 올해는 `ListView` 를 길게 구현했다가 갈아타기보다 `RecyclerView` 중심으로 진행한다.
+
 ## Demo Playback
 
 - [ ] 곡 선택 시 미리듣기 재생
