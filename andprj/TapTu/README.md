@@ -90,7 +90,7 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [x] `MainGameActivity` 추가
 - [x] Start Game button 에서 `MainGameActivity` 실행
 - [ ] Activity 간 데이터 전달 방법 비교
-  - [ ] 선택 index 를 Intent extra 로 전달
+  - [x] 선택 index 를 Intent extra 로 전달
   - [ ] 같은 process 안에서 static/shared selected value 사용
   - [ ] 객체를 직접 전달할 때의 process / serialization 문제 설명
 - [ ] 올해 프로젝트 구조에 맞는 곡 선택 전달 방식 결정
