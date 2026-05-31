@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TapTu">
         <activity
+            android:name=".app.MainGameActivity"
+            android:exported="false" />
+        <activity
             android:name=".app.MainActivity"
             android:exported="true">
             <intent-filter>
