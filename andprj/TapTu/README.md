@@ -77,6 +77,20 @@ document.querySelectorAll('.track_section tr').length
 - [x] `Song` 이 자신의 thumbnail bitmap 을 로드하도록 책임 이동
 - [ ] default thumbnail 처리
 
+### `@Transient` 와 `runCatching`
+
+`Song` 은 `@Serializable` data class 이므로, 기본적으로 constructor 에 있는 property 들이 JSON 과 연결된다. 그런데 thumbnail bitmap 은 JSON 에서 읽는 값이 아니라 앱 실행 중 asset 파일을 열어서 만든 runtime 객체이다. 이런 값은 JSON parsing 대상이 아니므로 `@Transient` 로 표시해 둔다.
+
+`@Transient` 는 kotlinx.serialization 에게 "이 property 는 직렬화/역직렬화 대상에서 제외한다"고 알려 준다. 그래서 `private var thumbnailBitmap: Bitmap?` 처럼 메모리에만 들고 있을 cache 를 `Song` 안에 둘 수 있다. 단, `@Transient` property 는 JSON 으로부터 값이 들어오지 않으므로 기본값이 있어야 한다.
+
+`runCatching { ... }` 은 block 안에서 예외가 발생할 수 있는 코드를 감싸고, 성공/실패를 `Result` 로 다루게 해 주는 Kotlin 표준 함수이다. 여기서는 asset 파일이 없거나 이미지 decode 에 실패해도 앱이 바로 crash 하지 않도록 하기 위해 사용한다. `getOrNull()` 을 붙이면 성공하면 bitmap 을, 실패하면 `null` 을 얻는다.
+
+즉 현재 thumbnail 로드는 다음 의도를 가진다.
+
+- 정상 파일이 있으면 `BitmapFactory.decodeStream()` 으로 bitmap 을 만들고 cache 한다.
+- 파일이 없거나 열 수 없으면 `null` 을 반환해 다음 단계의 default thumbnail 처리로 넘길 수 있게 한다.
+- 한 번 로드한 bitmap 은 `thumbnailBitmap` 에 저장해 RecyclerView 가 같은 row 를 다시 bind 할 때 반복 decode 하지 않는다.
+
 ## Main Screen UI
 
 - [x] main layout 에 title / song list / start button 배치
