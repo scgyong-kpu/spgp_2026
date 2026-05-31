@@ -73,8 +73,8 @@ document.querySelectorAll('.track_section tr').length
 - [x] artist / album field 추가
 - [x] Kotlin `kotlinx.serialization` parser 도입
 - [x] 필요한 field 만 읽고 나머지는 무시
-- [ ] thumbnail 파일명 규칙 정리
-- [ ] `Song` 이 자신의 thumbnail bitmap 을 로드하도록 책임 이동
+- [x] thumbnail 파일명 규칙 정리
+- [x] `Song` 이 자신의 thumbnail bitmap 을 로드하도록 책임 이동
 - [ ] default thumbnail 처리
 
 ## Main Screen UI
@@ -85,7 +85,7 @@ document.querySelectorAll('.track_section tr').length
 - [x] item layout 추가
 - [x] item layout 에 view binding 적용
 - [x] rank / title / artist / album 표시
-- [ ] thumbnail 표시
+- [x] thumbnail 표시
 - [ ] 구분선 추가
 - [x] `RecyclerView` 로 전환
 - [x] `RecyclerView.Adapter` / `ViewHolder` 구조 정리

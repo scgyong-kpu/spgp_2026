@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             private val binding: SongItemBinding,
         ) : RecyclerView.ViewHolder(binding.root) {
             fun bind(song: Song, selected: Boolean, onSongClick: (Song, Int) -> Unit) {
+                binding.thumbnailImageView.setImageBitmap(song.loadThumbnail(binding.root.context.assets))
                 binding.titleTextView.text = song.title
                 binding.artistTextView.text = song.artist
                 binding.albumTextView.text = song.album
