@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.app
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -43,6 +44,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.songRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.songRecyclerView.adapter = songAdapter
+        binding.startButton.setOnClickListener {
+            val position = selectedPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val intent = Intent(this, MainGameActivity::class.java)
+                intent.putExtra(MainGameActivity.EXTRAS_SONG_INDEX, position)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun selectSong(position: Int) {
@@ -53,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             position
         }
         songAdapter.selectedPosition = selectedPosition
+        binding.startButton.isEnabled = selectedPosition != RecyclerView.NO_POSITION
 
         if (previousPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(previousPosition)

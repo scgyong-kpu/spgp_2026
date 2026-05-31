@@ -94,7 +94,7 @@ document.querySelectorAll('.track_section tr').length
 - [x] 선택된 곡을 로그로 확인
 - [x] 선택 상태를 item background 로 표시
 - [x] 같은 item 을 다시 누르면 선택 해제
-- [ ] 선택된 곡이 있을 때만 Start Game button 활성화
+- [x] 선택된 곡이 있을 때만 Start Game button 활성화
 
 ### `ListView` 와 `RecyclerView`
 
