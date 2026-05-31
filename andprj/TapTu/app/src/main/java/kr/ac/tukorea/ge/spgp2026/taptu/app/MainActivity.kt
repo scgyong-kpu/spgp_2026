@@ -2,12 +2,14 @@ package kr.ac.tukorea.ge.spgp2026.taptu.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.ac.tukorea.ge.spgp2026.taptu.R
+import kr.ac.tukorea.ge.spgp2026.taptu.data.SongLoader
 import kr.ac.tukorea.ge.spgp2026.taptu.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +24,12 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val songs = SongLoader.load(assets)
+        Log.d(javaClass.simpleName, "loaded ${songs.size} songs")
+        songs.take(3).forEach { song ->
+            Log.d(javaClass.simpleName, "$song")
         }
     }
 

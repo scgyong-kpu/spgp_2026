@@ -65,14 +65,13 @@ document.querySelectorAll('.track_section tr').length
 ## Song Data
 
 - [x] `songs.json` asset 추가
-- [ ] `Song` data class 작성
-- [ ] `SongLoader` 작성
-- [ ] JSON 으로부터 rank 만 읽어 보기
-- [ ] JSON 으로부터 title 읽기
-- [ ] artist / album / demo 구간 / bpm field 추가
-- [ ] JSON field 가 늘어날 때 parsing code 가 커지는 문제 확인
-- [ ] reflection 기반 `JsonHelper` 또는 Kotlin 방식의 parser 도입 검토
-- [ ] 필요한 field 만 읽고 나머지는 무시
+- [x] `Song` data class 작성
+- [x] `SongLoader` 작성
+- [x] JSON 으로부터 rank 만 읽어 보기
+- [x] JSON 으로부터 title 읽기
+- [x] artist / album field 추가
+- [x] Kotlin `kotlinx.serialization` parser 도입
+- [x] 필요한 field 만 읽고 나머지는 무시
 - [ ] thumbnail 파일명 규칙 정리
 - [ ] `Song` 이 자신의 thumbnail bitmap 을 로드하도록 책임 이동
 - [ ] default thumbnail 처리
