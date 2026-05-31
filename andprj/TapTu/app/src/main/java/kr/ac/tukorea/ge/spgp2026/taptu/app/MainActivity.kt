@@ -18,7 +18,9 @@ import kr.ac.tukorea.ge.spgp2026.taptu.databinding.SongItemBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val songAdapter = SongAdapter()
+    private val songAdapter = SongAdapter { song, position ->
+        Log.d(javaClass.simpleName, "song clicked: position=$position, $song")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +43,22 @@ class MainActivity : AppCompatActivity() {
         binding.songRecyclerView.adapter = songAdapter
     }
 
-    private class SongAdapter : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
+    private class SongAdapter(
+        private val onSongClick: (Song, Int) -> Unit,
+    ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
         class SongViewHolder(
             private val binding: SongItemBinding,
         ) : RecyclerView.ViewHolder(binding.root) {
-            fun bind(song: Song) {
+            fun bind(song: Song, onSongClick: (Song, Int) -> Unit) {
                 binding.titleTextView.text = song.title
                 binding.artistTextView.text = song.artist
                 binding.albumTextView.text = song.album
+                binding.root.setOnClickListener {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        onSongClick(song, position)
+                    }
+                }
             }
         }
 
@@ -62,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
             // 이미 만들어져 있거나 재사용된 row view 에 현재 position 의 Song 을 표시한다.
-            holder.bind(SongCatalog.songs[position])
+            holder.bind(SongCatalog.songs[position], onSongClick)
         }
 
         override fun getItemCount(): Int {
