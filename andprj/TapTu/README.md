@@ -40,6 +40,28 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [ ] BPM 기반 note 생성 실험
 - [ ] 곡별 BPM 값 확인 및 기록
 
+### `chart_grab.js` 실행 방법
+
+곡 목록은 NAVER VIBE 의 차트 페이지에서 수집한다. 브라우저에서 `https://vibe.naver.com/chart/total` 에 접속한 뒤, chart list 가 화면에 실제로 보이는 상태에서 개발자 도구 Console 에 `chart_grab.js` 내용을 붙여 넣어 실행한다.
+
+이 스크립트는 서버 API 를 직접 호출하는 방식이 아니라, 브라우저에 렌더링된 HTML 요소를 읽는 방식이다. 그래서 VIBE 사이트의 class 이름이나 DOM 구조가 바뀌면 그대로 동작하지 않을 수 있다. 실행 전에 Console 에서 다음을 먼저 확인한다.
+
+```js
+document.querySelector('.track_section')
+```
+
+결과가 `null` 이 아니면, 작년 스크립트가 기대하는 chart section 을 찾은 것이다. 이어서 다음 코드로 row 가 잡히는지도 확인한다.
+
+```js
+document.querySelectorAll('.track_section tr').length
+```
+
+0보다 큰 값이 나오면 `chart_grab.js` 를 실행할 수 있다. 만약 `null` 또는 `0` 이 나오면 VIBE 의 DOM 구조가 바뀐 것이므로, 스크립트 안의 selector 를 현재 사이트 구조에 맞게 수정해야 한다.
+
+스크립트가 정상 실행되면 Console 에 `rank`, `title`, `artist`, `album`, `thumbnail` 을 가진 object 배열과 JSON 문자열이 함께 출력된다. 이 중 JSON 문자열을 복사해서 `songs.json` 으로 저장한다. 즉, `songs.json` 은 직접 손으로 작성하는 파일이 아니라 `chart_grab.js` 가 Console 에 출력한 JSON 을 파일로 저장한 것이다.
+
+`thumbnail` 은 이미지 파일 자체가 아니라 URL 이다. 이후 `thumbnail_downloader.py` 가 `songs.json` 을 읽고 각 URL 의 이미지를 내려받아 `cover_001.jpg`, `cover_002.jpg` 같은 파일명으로 저장한다.
+
 ## Song Data
 
 - [ ] `songs.json` asset 추가
