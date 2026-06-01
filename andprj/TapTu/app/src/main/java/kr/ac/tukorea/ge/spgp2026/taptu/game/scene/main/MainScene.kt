@@ -7,6 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
 
 class MainScene(
     gctx: GameContext,
@@ -21,8 +22,10 @@ class MainScene(
         val centerX = screenWidth / 2
         val centerY = screenHeight / 2
 
-        val thumbnail = song.loadThumbnail(gctx.view.context.assets)
-        val albumCover = Sprite(gctx, bitmap = thumbnail, resId = R.mipmap.default_thumbnail)
+        val context = gctx.view.context
+        val thumbnail = song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
+        val blurredThumbnail = BitmapBlur.blurBitmap(context, thumbnail)
+        val albumCover = Sprite(gctx, bitmap = blurredThumbnail, resId = R.mipmap.default_thumbnail)
         albumCover.setCenterProportionalHeight(
             centerX,
             centerY,

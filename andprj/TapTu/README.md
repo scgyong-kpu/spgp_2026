@@ -274,9 +274,31 @@ dependencies {
 - [x] album cover bitmap 을 `MainScene` 에 전달
 - [x] cover 이미지를 화면 높이에 맞추어 배치
 - [x] 별도 배경 이미지를 overlay 로 추가
-- [ ] blurred cover 배경 실험
-- [ ] blur 구현 방식과 deprecated API 주의점 설명
+- [x] blurred cover 배경 실험
+- [x] blur 구현 방식과 deprecated API 주의점 설명
 - [ ] thumbnail 해상도 개선 필요성 확인
+
+`BitmapBlur.blurBitmap()` 은 API 31 이상에서는 `RenderEffect` 를 먼저 사용한다.
+그보다 낮은 API 에서는 실험용 fallback 으로 `RenderScript` blur 를 사용하지만,
+`RenderScript` 는 deprecated 되었으므로 새 프로젝트의 장기적인 해법으로 보기보다는
+"낮은 API 에서도 같은 화면 효과를 보여주기 위한 임시 경로"로 다룬다.
+
+API 31 이상의 `RenderEffect` 경로는 다음 순서로 동작한다.
+
+1. 원본 album cover 와 같은 크기의 출력용 `Bitmap` 을 새로 만든다.
+2. `RenderNode` 를 만들고 `RenderEffect.createBlurEffect()` 를 적용한다.
+3. `RenderNode.beginRecording()` 으로 얻은 `Canvas` 에 원본 bitmap 을 그린다.
+4. `RenderNode.endRecording()` 으로 기록을 끝낸다.
+5. 출력용 bitmap 에 연결된 `Canvas` 에 `drawRenderNode()` 를 호출해 blur 결과를 그린다.
+
+API 30 이하의 fallback 경로는 `RenderScript` 로 동작한다.
+
+1. 원본 bitmap 을 복사해 수정 가능한 출력 bitmap 을 만든다.
+2. 원본 bitmap 을 `Allocation` 으로 감싼다.
+3. 같은 크기의 출력 `Allocation` 을 만든다.
+4. `ScriptIntrinsicBlur` 에 blur 반경을 설정하고 입력 `Allocation` 을 연결한다.
+5. `forEach()` 로 blur 연산을 수행한 뒤 출력 `Allocation` 을 bitmap 으로 복사한다.
+6. 사용한 `Allocation`, `ScriptIntrinsicBlur`, `RenderScript` 객체를 `destroy()` 해서 정리한다.
 
 ## Note Data
 
