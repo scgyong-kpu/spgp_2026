@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.app
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.databinding.SongItemBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var mediaPlayer: MediaPlayer? = null
     private var selectedPosition = RecyclerView.NO_POSITION
     private val songAdapter = SongAdapter { song, position ->
         Log.d(javaClass.simpleName, "song clicked: position=$position, $song")
@@ -70,7 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
         songAdapter.selectedPosition = selectedPosition
         binding.startButton.isEnabled = selectedPosition != RecyclerView.NO_POSITION
-        updatePreview(SongCatalog.songs.getOrNull(selectedPosition), animated = true)
+        val selectedSong = SongCatalog.songs.getOrNull(selectedPosition)
+        updatePreview(selectedSong, animated = true)
+        playDemo(selectedSong)
 
         if (previousPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(previousPosition)
@@ -78,6 +82,33 @@ class MainActivity : AppCompatActivity() {
         if (selectedPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(selectedPosition)
         }
+    }
+
+    private fun playDemo(song: Song?) {
+        stopDemo()
+        if (song == null) return
+
+        // assets 안의 mp3 는 res/raw 와 달리 resource id 로 열 수 없다.
+        // AssetFileDescriptor 의 fileDescriptor/startOffset/length 를 MediaPlayer 에 넘겨야 한다.
+        val afd = runCatching {
+            assets.openFd(song.mp3AssetPath)
+        }.getOrNull() ?: return
+
+        mediaPlayer = MediaPlayer().apply {
+            afd.use {
+                setDataSource(it.fileDescriptor, it.startOffset, it.length)
+            }
+            setOnCompletionListener {
+                stopDemo()
+            }
+            prepare()
+            start()
+        }
+    }
+
+    private fun stopDemo() {
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     private fun updatePreview(song: Song?, animated: Boolean) {
