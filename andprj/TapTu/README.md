@@ -170,16 +170,44 @@ TapTu 에서는 다음 순서로 적용한다.
 
 - [x] `MainGameActivity` 추가
 - [x] Start Game button 에서 `MainGameActivity` 실행
-- [ ] Activity 간 데이터 전달 방법 비교
+- [x] Activity 간 데이터 전달 방법 비교
   - [x] 선택 index 를 Intent extra 로 전달
-  - [ ] 같은 process 안에서 static/shared selected value 사용
-  - [ ] 객체를 직접 전달할 때의 process / serialization 문제 설명
-- [ ] 올해 프로젝트 구조에 맞는 곡 선택 전달 방식 결정
+  - [x] 같은 process 안에서 static/shared selected value 사용
+  - [x] 객체를 직접 전달할 때의 process / serialization 문제 설명
+- [x] 올해 프로젝트 구조에 맞는 곡 선택 전달 방식 결정
 - [ ] `a2dg` module 추가
 - [ ] `settings.gradle.kts` 에 `:a2dg` 등록
 - [ ] app module 이 `a2dg` module 을 dependency 로 사용
 - [ ] `MainGameActivity` 가 `BaseGameActivity` 기반 게임 화면을 표시
 - [ ] Debug build 에서 grid / FPS / debug info 표시 확인
+
+### Activity 간 곡 선택 전달 방식
+
+`MainActivity` 는 곡 목록을 보여 주고, `MainGameActivity` 는 선택된 곡으로 게임을 시작한다. 두 Activity 사이에는 "어떤 곡을 골랐는가"를 전달해야 한다. 현재 TapTu 는 `Intent` extra 로 선택된 곡의 index 만 전달한다.
+
+```mermaid
+flowchart LR
+    A["MainActivity<br/>SongCatalog.songs 표시"] --> B["사용자가 곡 선택<br/>selectedPosition 저장"]
+    B --> C["Start Game click"]
+    C --> D["Intent extra<br/>songIndex 전달"]
+    D --> E["MainGameActivity"]
+    E --> F["SongCatalog.load(assets)"]
+    F --> G["songs[songIndex] 로 선택 곡 확인"]
+```
+
+이 방식은 `Song` 객체 전체를 넘기는 것이 아니라, 같은 `songs.json` 목록에서 몇 번째 곡인지 알려 주는 방식이다. 그래서 Activity 간 전달 값은 작고 단순하며, 게임 화면은 필요할 때 `SongCatalog` 를 다시 로드해서 같은 index 의 곡을 찾는다.
+
+대안은 여러 가지가 있다.
+
+| 방식 | 예시 | 장점 | 단점 | 현재 판단 |
+| --- | --- | --- | --- | --- |
+| `Intent` extra 로 index 전달 | `putExtra("songIndex", position)` | Android Activity 이동 방식과 잘 맞고 값이 작다. process 재생성 후에도 extra 가 남아 있다. | index 가 목록 순서에 의존하므로 양쪽이 같은 songs.json 을 읽어야 한다. | 현재 채택 |
+| `Intent` extra 로 id 전달 | `putExtra("songId", id)` | 목록 순서가 바뀌어도 안정적이다. 서버/저장 데이터와 연결하기 좋다. | 현재 `Song` 에 고유 id 가 없으므로 아직 쓸 수 없다. | 추후 id 가 생기면 더 좋음 |
+| static/shared selected value 사용 | `SongCatalog.selectedSong = song` | 구현이 짧고 객체를 다시 찾지 않아도 된다. 같은 process 안에서는 편하다. | Android 가 Activity/process 를 재생성하면 값이 사라질 수 있다. Activity 간 계약이 코드 밖으로 숨어서 테스트와 추적이 어렵다. | 수업 설명용 대안 |
+| 객체 전체 전달 | `Parcelable` / `Serializable` 로 `Song` 전달 | 받는 쪽에서 바로 객체를 사용할 수 있다. | 객체가 커지면 전달 비용이 커지고, Bitmap 같은 runtime 객체는 전달 대상이 아니다. Serializable 은 느리고 Android 에서는 Parcelable 준비가 필요하다. | 지금은 과함 |
+| repository/cache 에 저장 후 key 전달 | key 만 extra 로 전달하고 repository 에서 조회 | 데이터가 커져도 Activity extra 는 작게 유지된다. 앱 구조가 커졌을 때 자연스럽다. | repository lifetime 과 cache invalidation 을 설계해야 한다. 지금 단계에는 구조가 무겁다. | 이후 확장 후보 |
+
+따라서 지금 단계에서는 `Intent` extra 로 `songIndex` 를 전달한다. 곡 목록은 이미 `assets/songs.json` 으로 앱 안에 들어 있고, `MainActivity` 와 `MainGameActivity` 가 같은 파일을 읽으므로 index 로 같은 곡을 가리킬 수 있다. 나중에 곡 데이터에 안정적인 `id` 를 추가하면 index 대신 id 를 넘기는 방식으로 바꾸는 것이 더 안전하다.
 
 ## Main Scene
 
