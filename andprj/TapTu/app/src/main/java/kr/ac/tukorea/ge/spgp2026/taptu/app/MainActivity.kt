@@ -3,6 +3,8 @@ package kr.ac.tukorea.ge.spgp2026.taptu.app
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -23,6 +25,8 @@ import kr.ac.tukorea.ge.spgp2026.taptu.databinding.SongItemBinding
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var mediaPlayer: MediaPlayer? = null
+    private val demoStopHandler = Handler(Looper.getMainLooper())
+    private val demoStopRunnable = Runnable { stopDemo() }
     private var selectedPosition = RecyclerView.NO_POSITION
     private val songAdapter = SongAdapter { song, position ->
         Log.d(javaClass.simpleName, "song clicked: position=$position, $song")
@@ -121,11 +125,23 @@ class MainActivity : AppCompatActivity() {
                 stopDemo()
             }
             prepare()
+            if (song.demoStart > 0) {
+                seekTo(song.demoStart)
+            }
             start()
+        }
+        val demoDuration = song.demoEnd - song.demoStart
+        if (demoDuration > 0) {
+            demoStopHandler.postDelayed(demoStopRunnable, demoDuration.toLong())
         }
     }
 
     private fun stopDemo() {
+        // demoStart~demoEnd 구간 재생을 위해 stopDemo() 를 예약해 두었을 수 있다.
+        // 새 곡을 재생할 때 이전 곡의 예약 callback 이 남아 있으면,
+        // 이전 곡의 종료 시간이 되었을 때 새 곡까지 갑자기 멈추는 버그가 생긴다.
+        // 그래서 MediaPlayer 를 release 하기 전에 예약된 stop callback 을 항상 제거한다.
+        demoStopHandler.removeCallbacks(demoStopRunnable)
         mediaPlayer?.release()
         mediaPlayer = null
     }
