@@ -1,4 +1,4 @@
-// run this in https://vibe.naver.com/chart
+// run this in https://vibe.naver.com/chart/total
 const cleanText = (text) => (text || '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
 
 const top100Section = document.querySelector('.track_section');
