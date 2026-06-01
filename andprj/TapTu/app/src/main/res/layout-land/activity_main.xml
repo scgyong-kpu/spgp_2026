@@ -7,12 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".app.MainActivity">
 
-    <!-- Fold 류 기기처럼 화면 비율이 1:1 에 가까울 때도 list 영역이 남도록 한다. -->
+    <!--
+        가로가 더 긴 화면에서는 preview 를 위에 두면 list 영역이 너무 얇아진다.
+        같은 id 의 layout 을 layout-land 에 따로 두면 Kotlin 코드는 그대로 두고,
+        Android resource system 이 화면 방향에 맞는 layout 을 자동으로 선택한다.
+    -->
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/previewMaxBottomGuideline"
+        android:id="@+id/previewMaxEndGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,9 +24,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#FFF7EE"
-        app:layout_constraintBottom_toTopOf="@id/previewMaxBottomGuideline"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/previewMaxEndGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -63,8 +67,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:paddingStart="24dp"
-            android:paddingEnd="12dp"
             android:paddingTop="8dp"
+            android:paddingEnd="12dp"
             android:paddingBottom="22dp"
             android:singleLine="true"
             android:text="Select a song"
@@ -81,8 +85,8 @@
             android:ellipsize="end"
             android:gravity="end"
             android:paddingStart="12dp"
-            android:paddingEnd="24dp"
             android:paddingTop="8dp"
+            android:paddingEnd="24dp"
             android:paddingBottom="22dp"
             android:singleLine="true"
             android:textColor="#8D7665"
@@ -99,8 +103,8 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/previewContainer"
+        app:layout_constraintStart_toEndOf="@id/previewContainer"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/song_item" />
 
     <Button
@@ -111,6 +115,6 @@
         android:text="Start Game"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/previewContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
