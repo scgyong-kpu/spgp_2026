@@ -63,6 +63,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        // MainActivity 가 background 로 가면 preview 용 음악과 선택 상태를 함께 정리한다.
+        // 돌아왔을 때 선택 표시는 남아 있는데 미리듣기는 멈춘 상태가 되면 UI 의미가 애매해진다.
+        stopDemo()
+        clearSelection()
+    }
+
     private fun selectSong(position: Int) {
         val previousPosition = selectedPosition
         selectedPosition = if (selectedPosition == position) {
@@ -82,6 +90,17 @@ class MainActivity : AppCompatActivity() {
         if (selectedPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(selectedPosition)
         }
+    }
+
+    private fun clearSelection() {
+        val previousPosition = selectedPosition
+        if (previousPosition == RecyclerView.NO_POSITION) return
+
+        selectedPosition = RecyclerView.NO_POSITION
+        songAdapter.selectedPosition = RecyclerView.NO_POSITION
+        binding.startButton.isEnabled = false
+        updatePreview(null, animated = false)
+        songAdapter.notifyItemChanged(previousPosition)
     }
 
     private fun playDemo(song: Song?) {
