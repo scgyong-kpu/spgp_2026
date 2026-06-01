@@ -163,7 +163,7 @@ TapTu 에서는 다음 순서로 적용한다.
 - [x] 곡 선택 시 미리듣기 재생
 - [x] 다른 곡을 선택하면 이전 미리듣기 중지
 - [x] 같은 곡을 다시 누르면 선택 해제 및 재생 중지
-- [ ] `Song` 에 `demoStart` / `demoEnd` 추가
+- [x] `Song` 에 `demoStart` / `demoEnd` 추가
 - [ ] 미리듣기는 `demoStart` ~ `demoEnd` 구간만 재생
 - [x] Activity pause 시 미리듣기 중지
 - [x] Activity pause 시 선택 상태 정리

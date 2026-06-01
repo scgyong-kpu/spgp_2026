@@ -16,6 +16,8 @@ data class Song(
     val artist: String,
     val album: String,
     val thumbnail: String,
+    val demoStart: Int = 0,
+    val demoEnd: Int = 0,
 ) {
     val mp3AssetPath: String
         get() = "mp3/r_%03d.mp3".format(rank)
