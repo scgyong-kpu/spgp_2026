@@ -109,6 +109,11 @@ document.querySelectorAll('.track_section tr').length
 - [x] 선택 상태를 item background 로 표시
 - [x] 같은 item 을 다시 누르면 선택 해제
 - [x] 선택된 곡이 있을 때만 Start Game button 활성화
+- [x] 상단 정사각형 preview 영역에 선택된 앨범 cover 표시
+- [x] 선택된 곡 title / artist / album 을 preview 위에 overlay
+- [x] 선택 곡 변경 시 preview fade / scale animation 적용
+- [x] 가로 화면에서는 preview 와 곡 목록을 좌우로 배치
+- [x] Fold 류 화면에서도 preview 가 세로 높이 또는 가로 폭의 절반을 넘지 않도록 제한
 
 ### `ListView` 와 `RecyclerView`
 
