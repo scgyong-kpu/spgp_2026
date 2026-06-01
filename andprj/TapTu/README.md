@@ -100,7 +100,7 @@ document.querySelectorAll('.track_section tr').length
 - [x] item layout 에 view binding 적용
 - [x] rank / title / artist / album 표시
 - [x] thumbnail 표시
-- [ ] 구분선 추가
+- [x] 구분선 추가
 - [x] `RecyclerView` 로 전환
 - [x] `RecyclerView.Adapter` / `ViewHolder` 구조 정리
 - [x] view 재활용 동작 확인

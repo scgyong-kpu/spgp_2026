@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.ge.spgp2026.taptu.R
@@ -44,7 +45,11 @@ class MainActivity : AppCompatActivity() {
         }
         updatePreview(null, animated = false)
 
-        binding.songRecyclerView.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        binding.songRecyclerView.layoutManager = layoutManager
+        binding.songRecyclerView.addItemDecoration(
+            DividerItemDecoration(this, layoutManager.orientation)
+        )
         binding.songRecyclerView.adapter = songAdapter
         binding.startButton.setOnClickListener {
             val position = selectedPosition
