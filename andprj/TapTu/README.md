@@ -269,11 +269,11 @@ dependencies {
 
 ## Background
 
-- [ ] 선택된 곡의 album cover 를 game scene 배경으로 사용
-- [ ] `Sprite` 에 bitmap 을 직접 설정하는 기능 확인 또는 추가
-- [ ] album cover bitmap 을 `MainScene` 에 전달
-- [ ] cover 이미지를 화면 높이에 맞추어 배치
-- [ ] 별도 배경 이미지를 overlay 로 추가
+- [x] 선택된 곡의 album cover 를 game scene 배경으로 사용
+- [x] `Sprite` 에 bitmap 을 직접 설정하는 기능 확인 또는 추가
+- [x] album cover bitmap 을 `MainScene` 에 전달
+- [x] cover 이미지를 화면 높이에 맞추어 배치
+- [x] 별도 배경 이미지를 overlay 로 추가
 - [ ] blurred cover 배경 실험
 - [ ] blur 구현 방식과 deprecated API 주의점 설명
 - [ ] thumbnail 해상도 개선 필요성 확인

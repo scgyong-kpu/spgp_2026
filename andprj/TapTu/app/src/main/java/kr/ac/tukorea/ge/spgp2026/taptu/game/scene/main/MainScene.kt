@@ -16,6 +16,15 @@ class MainScene(
     val song = SongCatalog.songs[songIndex]
 
     override fun onEnter() {
+        val thumbnail = song.loadThumbnail(gctx.view.context.assets)
+        val albumCover = Sprite(gctx, bitmap = thumbnail, resId = R.mipmap.default_thumbnail)
+        albumCover.setCenterProportionalHeight(
+            gctx.metrics.width / 2,
+            gctx.metrics.height / 2,
+            gctx.metrics.height,
+        )
+        world.add(albumCover, MainLayer.BG)
+
         val bg = Sprite(gctx, R.mipmap.bg)
         bg.setCenterProportionalWidth(gctx.metrics.width / 2, gctx.metrics.height / 2, gctx.metrics.width)
         world.add(bg, MainLayer.BG)

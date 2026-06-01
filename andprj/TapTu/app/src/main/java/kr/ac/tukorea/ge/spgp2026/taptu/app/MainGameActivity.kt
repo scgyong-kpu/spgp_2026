@@ -7,7 +7,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.BuildConfig
 import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.main.MainScene
 
 class MainGameActivity : BaseGameActivity() {
-    override val drawsDebugGrid = BuildConfig.DEBUG
+//    override val drawsDebugGrid = BuildConfig.DEBUG
     override val drawsDebugInfo = BuildConfig.DEBUG
     override val drawsFpsGraph = BuildConfig.DEBUG
 
