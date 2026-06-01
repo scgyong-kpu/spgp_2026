@@ -181,8 +181,8 @@ TapTu 에서는 다음 순서로 적용한다.
 - [x] `a2dg` module 추가
 - [x] `settings.gradle.kts` 에 `:a2dg` 등록
 - [x] app module 이 `a2dg` module 을 dependency 로 사용
-- [ ] `MainGameActivity` 가 `BaseGameActivity` 기반 게임 화면을 표시
-- [ ] Debug build 에서 grid / FPS / debug info 표시 확인
+- [x] `MainGameActivity` 가 `BaseGameActivity` 기반 게임 화면을 표시
+- [x] Debug build 에서 grid / FPS / debug info 표시 확인
 
 ### Activity 간 곡 선택 전달 방식
 
@@ -255,8 +255,8 @@ dependencies {
 
 ## Main Scene
 
-- [ ] `MainScene` 생성
-- [ ] 빈 Scene 을 push 하여 game loop 동작 확인
+- [x] `MainScene` 생성
+- [x] 빈 Scene 을 push 하여 game loop 동작 확인
 - [ ] Layer 정의
   - [ ] `BG`
   - [ ] `NOTE`
