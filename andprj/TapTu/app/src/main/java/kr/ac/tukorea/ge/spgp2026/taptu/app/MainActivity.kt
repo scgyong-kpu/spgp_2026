@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         SongCatalog.songs.take(3).forEach { song ->
             Log.d(javaClass.simpleName, "$song")
         }
+        updatePreview(null, animated = false)
 
         binding.songRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.songRecyclerView.adapter = songAdapter
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         }
         songAdapter.selectedPosition = selectedPosition
         binding.startButton.isEnabled = selectedPosition != RecyclerView.NO_POSITION
+        updatePreview(SongCatalog.songs.getOrNull(selectedPosition), animated = true)
 
         if (previousPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(previousPosition)
@@ -70,6 +72,35 @@ class MainActivity : AppCompatActivity() {
         if (selectedPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(selectedPosition)
         }
+    }
+
+    private fun updatePreview(song: Song?, animated: Boolean) {
+        if (song == null) {
+            binding.previewCoverImageView.setImageDrawable(null)
+            binding.previewTitleTextView.text = "Tap TU!"
+            binding.previewArtistTextView.text = "Select a song"
+            binding.previewAlbumTextView.text = ""
+        } else {
+            binding.previewCoverImageView.setImageBitmap(song.loadThumbnail(assets))
+            binding.previewTitleTextView.text = song.title
+            binding.previewArtistTextView.text = song.artist
+            binding.previewAlbumTextView.text = song.album
+        }
+
+        if (!animated) return
+
+        // 선택된 곡이 바뀌었음을 눈으로 느낄 수 있도록,
+        // preview 전체를 잠깐 작고 투명하게 만든 뒤 원래 크기로 되돌린다.
+        binding.previewContainer.animate().cancel()
+        binding.previewContainer.alpha = 0.35f
+        binding.previewContainer.scaleX = 0.96f
+        binding.previewContainer.scaleY = 0.96f
+        binding.previewContainer.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(180L)
+            .start()
     }
 
     private class SongAdapter(
