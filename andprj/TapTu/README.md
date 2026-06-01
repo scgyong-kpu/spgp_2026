@@ -178,9 +178,9 @@ TapTu 에서는 다음 순서로 적용한다.
   - [x] 같은 process 안에서 static/shared selected value 사용
   - [x] 객체를 직접 전달할 때의 process / serialization 문제 설명
 - [x] 올해 프로젝트 구조에 맞는 곡 선택 전달 방식 결정
-- [ ] `a2dg` module 추가
-- [ ] `settings.gradle.kts` 에 `:a2dg` 등록
-- [ ] app module 이 `a2dg` module 을 dependency 로 사용
+- [x] `a2dg` module 추가
+- [x] `settings.gradle.kts` 에 `:a2dg` 등록
+- [x] app module 이 `a2dg` module 을 dependency 로 사용
 - [ ] `MainGameActivity` 가 `BaseGameActivity` 기반 게임 화면을 표시
 - [ ] Debug build 에서 grid / FPS / debug info 표시 확인
 
@@ -211,6 +211,47 @@ flowchart LR
 | repository/cache 에 저장 후 key 전달 | key 만 extra 로 전달하고 repository 에서 조회 | 데이터가 커져도 Activity extra 는 작게 유지된다. 앱 구조가 커졌을 때 자연스럽다. | repository lifetime 과 cache invalidation 을 설계해야 한다. 지금 단계에는 구조가 무겁다. | 이후 확장 후보 |
 
 따라서 지금 단계에서는 `Intent` extra 로 `songIndex` 를 전달한다. 곡 목록은 이미 `assets/songs.json` 으로 앱 안에 들어 있고, `MainActivity` 와 `MainGameActivity` 가 같은 파일을 읽으므로 index 로 같은 곡을 가리킬 수 있다. 나중에 곡 데이터에 안정적인 `id` 를 추가하면 index 대신 id 를 넘기는 방식으로 바꾸는 것이 더 안전하다.
+
+### `a2dg` module 복사 후 연결 절차
+
+`a2dg` 폴더를 프로젝트에 복사하는 것만으로는 Gradle 이 새 module 을 자동으로 인식하지 않는다. Android Studio 의 Project view 에 폴더가 보이더라도, Gradle 설정에 module 로 등록하고 app module 이 dependency 로 사용하도록 연결해야 한다.
+
+복사 후 해야 할 일은 다음 순서이다.
+
+1. `settings.gradle.kts` 에 module 을 등록한다.
+
+```kotlin
+include(":app")
+include(":a2dg")
+```
+
+2. root `build.gradle.kts` 에 Android library plugin alias 를 등록한다.
+
+```kotlin
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+}
+```
+
+3. `gradle/libs.versions.toml` 에 `android-library` plugin alias 가 있는지 확인한다.
+
+```toml
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+```
+
+4. `app/build.gradle.kts` 에 app module 이 `a2dg` 를 사용한다고 선언한다.
+
+```kotlin
+dependencies {
+    implementation(project(":a2dg"))
+}
+```
+
+5. Gradle sync / compile 로 연결이 되었는지 확인한다.
 
 ## Main Scene
 
