@@ -40,7 +40,7 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [ ] BPM 기반 note 생성 실험
 - [ ] 곡별 BPM 값 확인 및 기록
 
-`assets/mp3/` 에는 곡별 mp3 파일을 둘 수 있지만, mp3 는 크기가 크므로 git 에 포함하지 않는다. `app/src/main/assets/.gitignore` 에서 `mp3/` 를 제외하고, 필요한 파일은 수업 자료 링크에서 받아 로컬 `assets/mp3/r_001.mp3` 형식으로 배치한다.
+`assets/mp3/` 에는 곡별 mp3 파일을 둘 수 있지만, mp3 는 크기가 크므로 git 에 포함하지 않는다. `app/src/main/assets/.gitignore` 에서 `mp3/` 를 제외하고, 필요한 파일은 수업 자료 링크에서 받아 로컬 `assets/mp3/r_001.mp3` 형식으로 배치한다. `Song.mp3AssetPath` 는 `rank` 를 이용해 이 파일명을 만든다.
 
 ### `chart_grab.js` 실행 방법
 
@@ -159,6 +159,7 @@ TapTu 에서는 다음 순서로 적용한다.
 
 ## Demo Playback
 
+- [x] `Song` 이 자신의 mp3 asset path 를 알도록 구현
 - [ ] 곡 선택 시 미리듣기 재생
 - [ ] 다른 곡을 선택하면 이전 미리듣기 중지
 - [ ] 같은 곡을 다시 누르면 선택 해제 및 재생 중지

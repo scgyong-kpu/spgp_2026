@@ -17,6 +17,9 @@ data class Song(
     val album: String,
     val thumbnail: String,
 ) {
+    val mp3AssetPath: String
+        get() = "mp3/r_%03d.mp3".format(rank)
+
     @Transient
     private var thumbnailBitmap: Bitmap? = null
 
