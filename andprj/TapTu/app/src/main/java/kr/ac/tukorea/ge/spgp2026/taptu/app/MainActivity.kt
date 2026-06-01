@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.ge.spgp2026.taptu.R
@@ -43,7 +45,11 @@ class MainActivity : AppCompatActivity() {
         }
         updatePreview(null, animated = false)
 
-        binding.songRecyclerView.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        binding.songRecyclerView.layoutManager = layoutManager
+        binding.songRecyclerView.addItemDecoration(
+            DividerItemDecoration(this, layoutManager.orientation)
+        )
         binding.songRecyclerView.adapter = songAdapter
         binding.startButton.setOnClickListener {
             val position = selectedPosition
@@ -76,12 +82,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updatePreview(song: Song?, animated: Boolean) {
         if (song == null) {
-            binding.previewCoverImageView.setImageDrawable(null)
+            binding.previewCoverImageView.setImageResource(R.mipmap.default_thumbnail)
             binding.previewTitleTextView.text = "Tap TU!"
             binding.previewArtistTextView.text = "Select a song"
             binding.previewAlbumTextView.text = ""
         } else {
-            binding.previewCoverImageView.setImageBitmap(song.loadThumbnail(assets))
+            setThumbnail(binding.previewCoverImageView, song)
             binding.previewTitleTextView.text = song.title
             binding.previewArtistTextView.text = song.artist
             binding.previewAlbumTextView.text = song.album
@@ -103,6 +109,15 @@ class MainActivity : AppCompatActivity() {
             .start()
     }
 
+    private fun setThumbnail(imageView: ImageView, song: Song) {
+        val thumbnail = song.loadThumbnail(assets)
+        if (thumbnail == null) {
+            imageView.setImageResource(R.mipmap.default_thumbnail)
+        } else {
+            imageView.setImageBitmap(thumbnail)
+        }
+    }
+
     private class SongAdapter(
         private val onSongClick: (Song, Int) -> Unit,
     ) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
@@ -112,7 +127,12 @@ class MainActivity : AppCompatActivity() {
             private val binding: SongItemBinding,
         ) : RecyclerView.ViewHolder(binding.root) {
             fun bind(song: Song, selected: Boolean, onSongClick: (Song, Int) -> Unit) {
-                binding.thumbnailImageView.setImageBitmap(song.loadThumbnail(binding.root.context.assets))
+                val thumbnail = song.loadThumbnail(binding.root.context.assets)
+                if (thumbnail == null) {
+                    binding.thumbnailImageView.setImageResource(R.mipmap.default_thumbnail)
+                } else {
+                    binding.thumbnailImageView.setImageBitmap(thumbnail)
+                }
                 binding.titleTextView.text = song.title
                 binding.artistTextView.text = song.artist
                 binding.albumTextView.text = song.album
