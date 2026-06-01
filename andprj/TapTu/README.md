@@ -112,6 +112,7 @@ document.querySelectorAll('.track_section tr').length
 - [x] 상단 정사각형 preview 영역에 선택된 앨범 cover 표시
 - [x] 선택된 곡 title / artist / album 을 preview 위에 overlay
 - [x] 선택 곡 변경 시 preview fade / scale animation 적용
+- [x] 가로 화면에서는 preview 와 곡 목록을 좌우로 배치
 
 ### `ListView` 와 `RecyclerView`
 
