@@ -75,7 +75,7 @@ document.querySelectorAll('.track_section tr').length
 - [x] 필요한 field 만 읽고 나머지는 무시
 - [x] thumbnail 파일명 규칙 정리
 - [x] `Song` 이 자신의 thumbnail bitmap 을 로드하도록 책임 이동
-- [ ] default thumbnail 처리
+- [x] default thumbnail 처리
 
 ### `@Transient` 와 `runCatching`
 
