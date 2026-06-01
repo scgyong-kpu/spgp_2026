@@ -12,6 +12,13 @@
         같은 id 의 layout 을 layout-land 에 따로 두면 Kotlin 코드는 그대로 두고,
         Android resource system 이 화면 방향에 맞는 layout 을 자동으로 선택한다.
     -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/previewMaxEndGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/previewContainer"
         android:layout_width="0dp"
@@ -19,6 +26,7 @@
         android:background="#FFF7EE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@id/previewMaxEndGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 

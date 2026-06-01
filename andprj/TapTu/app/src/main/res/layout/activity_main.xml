@@ -7,11 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".app.MainActivity">
 
+    <!-- Fold 류 기기처럼 화면 비율이 1:1 에 가까울 때도 list 영역이 남도록 한다. -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/previewMaxBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/previewContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#FFF7EE"
+        app:layout_constraintBottom_toTopOf="@id/previewMaxBottomGuideline"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
