@@ -40,6 +40,8 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [ ] BPM 기반 note 생성 실험
 - [ ] 곡별 BPM 값 확인 및 기록
 
+`assets/mp3/` 에는 곡별 mp3 파일을 둘 수 있지만, mp3 는 크기가 크므로 git 에 포함하지 않는다. `app/src/main/assets/.gitignore` 에서 `mp3/` 를 제외하고, 필요한 파일은 수업 자료 링크에서 받아 로컬 `assets/mp3/r_001.mp3` 형식으로 배치한다.
+
 ### `chart_grab.js` 실행 방법
 
 곡 목록은 NAVER VIBE 의 차트 페이지에서 수집한다. 브라우저에서 `https://vibe.naver.com/chart/total` 에 접속한 뒤, chart list 가 화면에 실제로 보이는 상태에서 개발자 도구 Console 에 `chart_grab.js` 내용을 붙여 넣어 실행한다.
@@ -305,7 +307,7 @@ flowchart LR
 
 - [ ] resource 이름 정리
 - [ ] asset 파일 크기와 git 포함 여부 점검
-- [ ] mp3 등 큰 파일 관리 방식 정리
+- [x] mp3 등 큰 파일 관리 방식 정리
 - [ ] 로그 정리
 - [ ] 문자열 생성 비용이 있는 log 는 debug build 에서만 수행
 - [ ] Activity / Scene lifecycle 정리
