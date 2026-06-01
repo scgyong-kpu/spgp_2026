@@ -36,10 +36,23 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 // 회전이나 일부 영역만 그리기 같은 더 복잡한 경우는 하위 클래스에서 draw() 를 override 하면 된다.
 open class Sprite(
     gctx: GameContext,
-    resId: Int,
+    resId: Int = 0,
+    bitmap: Bitmap? = null,
 ) : IGameObject {
     // 나중에 AnimSprite 같은 클래스에서 프레임마다 다른 bitmap 으로 바꿀 수도 있으므로 var 로 둔다.
-    protected var bitmap: Bitmap = gctx.res.getBitmap(resId)
+    // 외부에서 런타임에 준비된 Bitmap 을 바로 넣어야 하는 경우도 있으므로 public 으로 둔다.
+    // bitmap 만 바꾸면 화면에 그릴 width / height 는 그대로 유지된다.
+    // 크기까지 바꾸고 싶다면 setSize(), setCenterProportionalWidth(),
+    // setCenterProportionalHeight() 같은 helper 를 이어서 호출한다.
+    // public fun setBitmap(bitmap: Bitmap) 을 따로 두면 Kotlin 프로퍼티 setter 의 JVM 이름도
+    // setBitmap(Bitmap) 이라서 같은 signature 충돌이 난다.
+    var bitmap: Bitmap = when {
+        // bitmap 이 직접 전달되면 resId 보다 우선한다.
+        // 둘 다 없으면 Sprite 로 그릴 이미지가 없으므로 즉시 예외를 발생시켜 잘못된 호출을 빨리 드러낸다.
+        bitmap != null -> bitmap
+        resId != 0 -> gctx.res.getBitmap(resId)
+        else -> throw IllegalArgumentException("Sprite requires either resId or bitmap")
+    }
 
     // null 이면 bitmap 전체를 그린다.
     // SheetSprite 나 AnimSprite 는 이 값을 적절히 바꿔 일부 영역만 그릴 수 있다.

@@ -17,7 +17,8 @@
 ## Objects
 
 - [ ] `Sprite`
-  - [ ] bitmap 을 바꿀 수 있는 public API 추가
+  - [x] resource id 또는 `Bitmap` 으로 초기화할 수 있도록 생성자 정리
+  - [x] bitmap 을 public `var` 로 두어 런타임 교체 가능하게 정리
   - [x] `setCenter()`, `setSize()` helper 에서 `dstRect` 를 바로 sync 하도록 정리
   - [x] `setCenterProportionalWidth()` helper 로 bitmap 비율을 유지한 채 중심과 가로폭을 함께 맞출 수 있게 정리
   - [x] `setCenterProportionalHeight()` helper 로 bitmap 비율을 유지한 채 중심과 세로폭을 함께 맞출 수 있게 정리
