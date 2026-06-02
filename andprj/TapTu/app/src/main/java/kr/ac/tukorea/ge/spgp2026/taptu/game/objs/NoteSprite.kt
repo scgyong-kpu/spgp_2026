@@ -43,8 +43,8 @@ class NoteSprite(
         // 이번 단계에서 가장 중요한 실험 상수이다.
         // note.time 과 musicTime 은 second 단위 Float 이고,
         // 두 값의 차이에 TIME_TO_Y 와 speed 를 곱한 만큼 GOAL_Y 위쪽에 배치한다.
-        // 즉 TIME_TO_Y = 50f 라면 기본 배속에서 "음악 시간 1초 차이"가 화면에서는 "50 game unit 차이"로 보인다.
-        const val TIME_TO_Y = 50f
+        // 즉 TIME_TO_Y = 200f 라면 기본 배속에서 "음악 시간 1초 차이"가 화면에서는 "200 game unit 차이"로 보인다.
+        const val TIME_TO_Y = 200f
         var speed = 1.0f
 
         fun screenfulTime(): Float {
