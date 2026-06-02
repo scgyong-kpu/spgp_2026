@@ -4,6 +4,8 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.Note
+import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 
 // NoteSprite 는 Note data 하나를 화면에 보이는 Sprite 하나로 바꾼다.
 // note 가 가진 time 과 현재 음악 시간의 차이를 y 좌표로 변환해,
@@ -21,6 +23,9 @@ class NoteSprite(
 
     override fun update(gctx: GameContext) {
         updatePosition(x)
+        if (y > gctx.metrics.height + HEIGHT) {
+            gctx.mainWorld().remove(this, MainLayer.NOTE)
+        }
     }
 
     private fun updatePosition(x: Float) {
@@ -42,8 +47,8 @@ class NoteSprite(
         const val TIME_TO_Y = 50f
         var speed = 1.0f
 
-        fun screenfulTime(gctx: GameContext): Float {
-            return gctx.metrics.height / unitsPerSecond()
+        fun screenfulTime(): Float {
+            return (GOAL_Y + HEIGHT) / unitsPerSecond()
         }
 
         private fun xFromPret(pret: Int): Float {

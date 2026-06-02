@@ -18,7 +18,7 @@ class NoteGenerator(
     private val musicTimeProvider: () -> Float,
 ) : IGameObject {
     override fun update(gctx: GameContext) {
-        val visibleUntil = musicTimeProvider() + NoteSprite.screenfulTime(gctx)
+        val visibleUntil = musicTimeProvider() + NoteSprite.screenfulTime()
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
             Log.d(javaClass.simpleName, "Note: $note")

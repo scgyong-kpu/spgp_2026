@@ -345,7 +345,7 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [x] note speed 정의
 - [x] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
 - [x] 필요한 시점이 되면 note 를 생성
-- [ ] 화면 아래로 벗어난 note 제거
+- [x] 화면 아래로 벗어난 note 제거
 - [ ] note 객체 recycle bin 적용
 - [ ] recycle 된 note 상태 초기화
 
