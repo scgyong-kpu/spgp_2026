@@ -9,7 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
-import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
 import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
 
 class MainScene(
@@ -19,6 +19,8 @@ class MainScene(
     override val world = World<MainLayer>(MainLayer.entries.toTypedArray())
     val song = SongCatalog.songs[songIndex]
     private var mediaPlayer: MediaPlayer? = null
+    val musicTime: Float
+        get() = (mediaPlayer?.currentPosition ?: 0) / 1000f
 
     override fun onEnter() {
         val screenWidth = gctx.metrics.width
@@ -27,7 +29,7 @@ class MainScene(
         val centerY = screenHeight / 2
 
         val context = gctx.view.context
-        val notes = song.loadNotes(context.assets)
+        song.loadNotes(context.assets)
 
         val thumbnail = song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
         val blurredThumbnail = BitmapBlur.blurBitmap(context, thumbnail)
@@ -43,9 +45,7 @@ class MainScene(
         bg.setCenterProportionalWidth(centerX, centerY, screenWidth)
         world.add(bg, MainLayer.BG)
 
-        for (note in notes) {
-            world.add(NoteSprite(gctx, note), MainLayer.NOTE)
-        }
+        world.add(NoteGenerator(song, world) { musicTime }, MainLayer.GENERATOR)
 
         playMusic()
     }

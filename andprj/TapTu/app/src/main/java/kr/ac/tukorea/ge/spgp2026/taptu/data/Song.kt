@@ -30,6 +30,9 @@ data class Song(
     private var notes: List<Note>? = null
 
     @Transient
+    private var noteIndex = 0
+
+    @Transient
     var noteLength: Float = 0f
         private set
 
@@ -74,8 +77,20 @@ data class Song(
 
         noteLength = length
         notes = loadedNotes
+        noteIndex = 0
         Log.d(javaClass.simpleName, "loaded ${loadedNotes.size} notes from $filename, length=$noteLength")
         return loadedNotes
+    }
+
+    fun popNoteBefore(musicTime: Float): Note? {
+        val loadedNotes = notes ?: return null
+        if (noteIndex >= loadedNotes.size) return null
+
+        val note = loadedNotes[noteIndex]
+        if (note.time > musicTime) return null
+
+        noteIndex++
+        return note
     }
 
     override fun toString(): String {

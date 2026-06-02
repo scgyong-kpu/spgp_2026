@@ -259,6 +259,7 @@ dependencies {
 - [x] 빈 Scene 을 push 하여 game loop 동작 확인
 - [ ] Layer 정의
   - [x] `BG`
+  - [x] `GENERATOR`
   - [x] `NOTE`
   - [ ] `UI`
 - [x] 선택된 `Song` 을 `MainScene` 으로 전달
@@ -321,8 +322,8 @@ API 30 이하의 fallback 경로는 `RenderScript` 로 동작한다.
 - [x] 잘못된 line 은 무시
 - [x] 곡별 note file 이름 규칙 정리
 - [x] `Song.loadNotes()` 구현
-- [ ] `Song` 이 note 생성 진행 index 를 기억
-- [ ] 특정 시간 이전 note 를 하나씩 꺼내는 함수 구현
+- [x] `Song` 이 note 생성 진행 index 를 기억
+- [x] 특정 시간 이전 note 를 하나씩 꺼내는 함수 구현
 
 note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 파일명은 곡의 `rank` 를 사용해 `notes/n_%03d.txt` 형식으로 만든다.
@@ -337,12 +338,12 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [x] note file 의 note 들을 화면에 배치
 - [x] note 의 `pret` 값으로 x 좌표 결정
 - [x] note 의 시간 값으로 y 좌표 결정 실험
-- [ ] `MainScene.musicTime` 으로 현재 음악 시간 관리
+- [x] `MainScene.musicTime` 으로 현재 음악 시간 관리
 - [ ] note 의 y 좌표를 `note.time - musicTime` 으로 계산
 - [x] goal line y 좌표 정의
-- [ ] note speed 정의
-- [ ] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
-- [ ] 필요한 시점이 되면 note 를 생성
+- [x] note speed 정의
+- [x] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
+- [x] 필요한 시점이 되면 note 를 생성
 - [ ] 화면 아래로 벗어난 note 제거
 - [ ] note 객체 recycle bin 적용
 - [ ] recycle 된 note 상태 초기화

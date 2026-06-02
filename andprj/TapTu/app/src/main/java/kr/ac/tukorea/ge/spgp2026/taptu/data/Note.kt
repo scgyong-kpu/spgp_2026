@@ -7,6 +7,9 @@ data class Note(
     val pret: Int,
     val time: Float,
 ) {
+    override fun toString(): String {
+        return "%d/%.2f".format(pret, time)
+    }
     companion object {
         // note data line 은 "N 2 9441" 처럼 적는다.
         // 첫 번째 숫자는 pret, 두 번째 숫자는 millisecond 단위 시간이다.
