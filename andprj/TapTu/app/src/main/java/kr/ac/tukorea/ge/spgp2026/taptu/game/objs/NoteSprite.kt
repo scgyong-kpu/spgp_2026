@@ -6,17 +6,26 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.Note
 
 // NoteSprite 는 Note data 하나를 화면에 보이는 Sprite 하나로 바꾼다.
-// 아직 음악 시간에 맞춰 움직이지 않고, note 가 가진 pret / time 값을 좌표로 변환해 배치만 한다.
-// 이 단계를 먼저 두면 "데이터 파일을 읽었다"에서 바로 "화면 좌표로 보인다"까지 확인할 수 있다.
+// note 가 가진 time 과 현재 음악 시간의 차이를 y 좌표로 변환해,
+// 음악이 진행될수록 goal line 을 향해 아래로 내려오게 한다.
 class NoteSprite(
     gctx: GameContext,
-    note: Note,
+    private val note: Note,
+    private val musicTimeProvider: () -> Float,
 ) : Sprite(gctx, R.mipmap.note_1) {
     init {
         val x = xFromPret(note.pret)
-        val y = yFromTime(note.time)
-        setCenter(x, y)
         setSize(WIDTH, HEIGHT)
+        updatePosition(x)
+    }
+
+    override fun update(gctx: GameContext) {
+        updatePosition(x)
+    }
+
+    private fun updatePosition(x: Float) {
+        val y = yFromTime(note.time, musicTimeProvider())
+        setCenter(x, y)
     }
 
     companion object {
@@ -27,9 +36,9 @@ class NoteSprite(
         const val GOAL_Y = 1400f
 
         // 이번 단계에서 가장 중요한 실험 상수이다.
-        // note.time 은 second 단위 Float 이고, 이 값에 TIME_TO_Y 와 speed 를 곱한 만큼 GOAL_Y 위쪽에 배치한다.
+        // note.time 과 musicTime 은 second 단위 Float 이고,
+        // 두 값의 차이에 TIME_TO_Y 와 speed 를 곱한 만큼 GOAL_Y 위쪽에 배치한다.
         // 즉 TIME_TO_Y = 50f 라면 기본 배속에서 "음악 시간 1초 차이"가 화면에서는 "50 game unit 차이"로 보인다.
-        // time 이 커질수록 note 는 더 나중에 도착해야 하므로, 초기 y 좌표는 더 위쪽(작은 y)이 되어야 한다.
         const val TIME_TO_Y = 50f
         var speed = 1.0f
 
@@ -44,8 +53,8 @@ class NoteSprite(
             return LEFT + pret * X_SPACE
         }
 
-        private fun yFromTime(time: Float): Float {
-            return GOAL_Y - time * unitsPerSecond()
+        private fun yFromTime(noteTime: Float, musicTime: Float): Float {
+            return GOAL_Y - (noteTime - musicTime) * unitsPerSecond()
         }
 
         private fun unitsPerSecond(): Float {

@@ -22,7 +22,7 @@ class NoteGenerator(
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
             Log.d(javaClass.simpleName, "Note: $note")
-            world.add(NoteSprite(gctx, note), MainLayer.NOTE)
+            world.add(NoteSprite(gctx, note, musicTimeProvider), MainLayer.NOTE)
         }
     }
 
