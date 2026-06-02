@@ -261,11 +261,20 @@ dependencies {
   - [ ] `BG`
   - [ ] `NOTE`
   - [ ] `UI`
-- [ ] 선택된 `Song` 을 `MainScene` 으로 전달
-- [ ] `MainScene.onEnter()` 에서 음악 재생
-- [ ] `MainScene.onExit()` 에서 음악 정지
-- [ ] Scene pause / resume 에서 음악 pause / resume 처리
+- [x] 선택된 `Song` 을 `MainScene` 으로 전달
+- [x] `MainScene.onEnter()` 에서 음악 재생
+- [x] `MainScene.onExit()` 에서 음악 정지
+- [x] Scene pause / resume 에서 음악 pause / resume 처리
 - [ ] Scene 과 Activity pause 의 차이 설명
+
+게임 음악은 `MainScene` 의 생명주기에 맞춰 제어한다.
+`onEnter()` 에서는 선택된 `Song.mp3AssetPath` 를 `MediaPlayer` 에 연결하고 재생을 시작한다.
+assets 안의 mp3 는 `res/raw` 리소스 id 로 여는 파일이 아니므로,
+`AssetFileDescriptor` 의 `fileDescriptor`, `startOffset`, `length` 를 `setDataSource()` 에 넘긴다.
+
+`onPause()` 에서는 위에 다른 Scene 이 올라오거나 앱이 잠시 멈출 때 음악을 `pause()` 한다.
+`onResume()` 에서는 다시 top Scene 이 되었을 때 이어서 `start()` 한다.
+`onExit()` 에서는 Scene 이 stack 에서 빠지는 시점이므로 `release()` 를 호출해 native player 자원을 정리한다.
 
 ## Background
 
