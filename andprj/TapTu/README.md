@@ -339,7 +339,7 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [x] note 의 시간 값으로 y 좌표 결정 실험
 - [ ] `MainScene.musicTime` 으로 현재 음악 시간 관리
 - [ ] note 의 y 좌표를 `note.time - musicTime` 으로 계산
-- [ ] goal line y 좌표 정의
+- [x] goal line y 좌표 정의
 - [ ] note speed 정의
 - [ ] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
 - [ ] 필요한 시점이 되면 note 를 생성

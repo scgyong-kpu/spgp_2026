@@ -24,10 +24,12 @@ class NoteSprite(
         private const val LEFT = 450f - 2 * X_SPACE
         private const val WIDTH = 120f
         private const val HEIGHT = 55f
+        const val GOAL_Y = 1400f
 
         // 이번 단계에서 가장 중요한 실험 상수이다.
-        // note.time 은 second 단위 Float 이고, 이 값에 TIME_TO_Y 를 곱해 y 좌표로 바꾼다.
+        // note.time 은 second 단위 Float 이고, 이 값에 TIME_TO_Y 를 곱한 만큼 GOAL_Y 위쪽에 배치한다.
         // 즉 TIME_TO_Y = 50f 라면 "음악 시간 1초 차이"가 화면에서는 "50 game unit 차이"로 보인다.
+        // time 이 커질수록 note 는 더 나중에 도착해야 하므로, 초기 y 좌표는 더 위쪽(작은 y)이 되어야 한다.
         const val TIME_TO_Y = 50f
 
         private fun xFromPret(pret: Int): Float {
@@ -38,7 +40,7 @@ class NoteSprite(
         }
 
         private fun yFromTime(time: Float): Float {
-            return time * TIME_TO_Y
+            return GOAL_Y - time * TIME_TO_Y
         }
     }
 }
