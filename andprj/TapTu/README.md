@@ -350,7 +350,8 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [x] recycle 된 note 상태 초기화
 
 `NoteSprite` 는 `NoteSprite.get()` 에서 recycle bin 을 먼저 확인하고, 없을 때만 새로 만든다.
-재사용된 객체는 `init(note, musicTimeProvider)` 로 현재 note 정보를 다시 채우며, `onRecycle()` 에서는 이전 note/provider 참조를 비워 다음 재사용과 섞이지 않게 한다.
+재사용된 객체는 `init(note)` 로 현재 note 정보만 다시 채우며, `onRecycle()` 에서는 이전 note 참조를 비워 다음 재사용과 섞이지 않게 한다.
+음악 시간 provider 는 같은 `NoteGenerator` 안에서 공유되므로 생성 시 한 번만 저장한다.
 
 ## Note Animation
 

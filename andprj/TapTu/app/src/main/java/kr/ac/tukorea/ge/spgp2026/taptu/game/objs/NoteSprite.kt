@@ -13,19 +13,19 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 // 음악이 진행될수록 goal line 을 향해 아래로 내려오게 한다.
 class NoteSprite private constructor(
     gctx: GameContext,
+    private val musicTimeProvider: () -> Float,
 ) : Sprite(gctx, R.mipmap.note_1), IRecyclable {
-    private var note: Note? = null
-    private var musicTimeProvider: (() -> Float)? = null
+    private lateinit var note: Note
 
     init {
         setSize(WIDTH, HEIGHT)
     }
 
     // recycle bin 에서 다시 꺼낸 객체도 같은 init() 경로를 탄다.
-    // 생성자는 bitmap 과 고정 크기만 준비하고, note 별로 달라지는 값은 여기서 다시 채운다.
-    fun init(note: Note, musicTimeProvider: () -> Float): NoteSprite {
+    // 생성자는 bitmap/고정 크기/음악 시간 provider 를 준비하고,
+    // note 별로 달라지는 값만 여기서 다시 채운다.
+    fun init(note: Note): NoteSprite {
         this.note = note
-        this.musicTimeProvider = musicTimeProvider
         updatePosition()
         return this
     }
@@ -39,14 +39,16 @@ class NoteSprite private constructor(
 
     override fun onRecycle() {
         // NoteSprite 는 recycle bin 에 들어간 뒤 다른 Note 로 다시 init() 될 수 있다.
-        // 이전 note 나 provider 를 남겨 두면, 실수로 재초기화 전에 update 될 때 이전 곡/시간을 참조할 수 있다.
-        note = null
-        musicTimeProvider = null
+        // note 는 lateinit 이므로 null 로 비울 수는 없지만,
+        // 다음에 recycle bin 에서 꺼낼 때 init(note) 로 반드시 새 Note 를 덮어쓴다.
+        // 생성자는 private 이고 get() 이 매번 init(note) 를 호출하므로,
+        // update/draw hot path 에서 isInitialized 같은 방어 분기를 둘 필요는 없다.
+        //
+        // musicTimeProvider 는 같은 MainScene/NoteGenerator 안에서 공유되는 시간 참조이므로
+        // 객체 생성 시 한 번만 저장하고, recycle 될 때마다 다시 넣지 않는다.
     }
 
     private fun updatePosition() {
-        val note = note ?: return
-        val musicTimeProvider = musicTimeProvider ?: return
         val x = xFromPret(note.pret)
         val y = yFromTime(note.time, musicTimeProvider())
         setCenter(x, y)
@@ -68,8 +70,8 @@ class NoteSprite private constructor(
 
         fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): NoteSprite {
             val world = gctx.mainWorld()
-            val noteSprite = world.obtain(NoteSprite::class.java) ?: NoteSprite(gctx)
-            return noteSprite.init(note, musicTimeProvider)
+            val noteSprite = world.obtain(NoteSprite::class.java) ?: NoteSprite(gctx, musicTimeProvider)
+            return noteSprite.init(note)
         }
 
         fun screenfulTime(): Float {
