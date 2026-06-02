@@ -346,8 +346,11 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [x] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
 - [x] 필요한 시점이 되면 note 를 생성
 - [x] 화면 아래로 벗어난 note 제거
-- [ ] note 객체 recycle bin 적용
-- [ ] recycle 된 note 상태 초기화
+- [x] note 객체 recycle bin 적용
+- [x] recycle 된 note 상태 초기화
+
+`NoteSprite` 는 `NoteSprite.get()` 에서 recycle bin 을 먼저 확인하고, 없을 때만 새로 만든다.
+재사용된 객체는 `init(note, musicTimeProvider)` 로 현재 note 정보를 다시 채우며, `onRecycle()` 에서는 이전 note/provider 참조를 비워 다음 재사용과 섞이지 않게 한다.
 
 ## Note Animation
 

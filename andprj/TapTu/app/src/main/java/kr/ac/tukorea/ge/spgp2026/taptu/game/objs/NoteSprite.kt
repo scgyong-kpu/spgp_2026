@@ -1,6 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.Note
@@ -10,25 +11,43 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 // NoteSprite 는 Note data 하나를 화면에 보이는 Sprite 하나로 바꾼다.
 // note 가 가진 time 과 현재 음악 시간의 차이를 y 좌표로 변환해,
 // 음악이 진행될수록 goal line 을 향해 아래로 내려오게 한다.
-class NoteSprite(
+class NoteSprite private constructor(
     gctx: GameContext,
-    private val note: Note,
-    private val musicTimeProvider: () -> Float,
-) : Sprite(gctx, R.mipmap.note_1) {
+) : Sprite(gctx, R.mipmap.note_1), IRecyclable {
+    private var note: Note? = null
+    private var musicTimeProvider: (() -> Float)? = null
+
     init {
-        val x = xFromPret(note.pret)
         setSize(WIDTH, HEIGHT)
-        updatePosition(x)
+    }
+
+    // recycle bin 에서 다시 꺼낸 객체도 같은 init() 경로를 탄다.
+    // 생성자는 bitmap 과 고정 크기만 준비하고, note 별로 달라지는 값은 여기서 다시 채운다.
+    fun init(note: Note, musicTimeProvider: () -> Float): NoteSprite {
+        this.note = note
+        this.musicTimeProvider = musicTimeProvider
+        updatePosition()
+        return this
     }
 
     override fun update(gctx: GameContext) {
-        updatePosition(x)
+        updatePosition()
         if (y > gctx.metrics.height + HEIGHT) {
             gctx.mainWorld().remove(this, MainLayer.NOTE)
         }
     }
 
-    private fun updatePosition(x: Float) {
+    override fun onRecycle() {
+        // NoteSprite 는 recycle bin 에 들어간 뒤 다른 Note 로 다시 init() 될 수 있다.
+        // 이전 note 나 provider 를 남겨 두면, 실수로 재초기화 전에 update 될 때 이전 곡/시간을 참조할 수 있다.
+        note = null
+        musicTimeProvider = null
+    }
+
+    private fun updatePosition() {
+        val note = note ?: return
+        val musicTimeProvider = musicTimeProvider ?: return
+        val x = xFromPret(note.pret)
         val y = yFromTime(note.time, musicTimeProvider())
         setCenter(x, y)
     }
@@ -46,6 +65,12 @@ class NoteSprite(
         // 즉 TIME_TO_Y = 200f 라면 기본 배속에서 "음악 시간 1초 차이"가 화면에서는 "200 game unit 차이"로 보인다.
         const val TIME_TO_Y = 200f
         var speed = 1.0f
+
+        fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): NoteSprite {
+            val world = gctx.mainWorld()
+            val noteSprite = world.obtain(NoteSprite::class.java) ?: NoteSprite(gctx)
+            return noteSprite.init(note, musicTimeProvider)
+        }
 
         fun screenfulTime(): Float {
             return (GOAL_Y + HEIGHT) / unitsPerSecond()
