@@ -30,6 +30,7 @@ class MainScene(
 
         val context = gctx.view.context
         song.loadNotes(context.assets)
+        song.rewind()
 
         val thumbnail = song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
         val blurredThumbnail = BitmapBlur.blurBitmap(context, thumbnail)
@@ -45,7 +46,7 @@ class MainScene(
         bg.setCenterProportionalWidth(centerX, centerY, screenWidth)
         world.add(bg, MainLayer.BG)
 
-        world.add(NoteGenerator(song, world) { musicTime }, MainLayer.GENERATOR)
+        world.add(NoteGenerator(song, world) { musicTime }, MainLayer.CONTROLLER)
 
         playMusic()
     }

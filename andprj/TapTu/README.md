@@ -259,7 +259,7 @@ dependencies {
 - [x] 빈 Scene 을 push 하여 game loop 동작 확인
 - [ ] Layer 정의
   - [x] `BG`
-  - [x] `GENERATOR`
+  - [x] `CONTROLLER`
   - [x] `NOTE`
   - [ ] `UI`
 - [x] 선택된 `Song` 을 `MainScene` 으로 전달
@@ -330,6 +330,7 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 각 note line 은 `N pret millis` 형식이며, `pret` 는 입력 위치/라인, `millis` 는 음악 시작 후 millisecond 단위 시간이다.
 `Note.parse()` 는 이 형식에 맞는 줄만 `Note` 로 바꾸고, `T Drowning` 같은 제목 줄이나 잘못된 줄은 `null` 을 반환해 무시한다.
 읽는 순간 millisecond 는 second 단위 `Float` 으로 변환해 이후 game loop 계산에서 바로 쓰기 쉽게 한다.
+`SongCatalog` 는 같은 `Song` 인스턴스를 계속 보관하므로, 게임을 새로 시작할 때 `Song.rewind()` 로 note 생성 index 를 처음으로 되돌린다.
 
 ## Note Object
 

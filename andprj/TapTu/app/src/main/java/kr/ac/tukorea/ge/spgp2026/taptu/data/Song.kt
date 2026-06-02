@@ -82,6 +82,13 @@ data class Song(
         return loadedNotes
     }
 
+    fun rewind() {
+        // SongCatalog 는 곡 목록을 한 번 로드한 뒤 같은 Song 인스턴스를 계속 보관한다.
+        // 그래서 게임에 들어갔다 나와 다시 같은 곡을 시작하면, 이전 실행에서 진행된 noteIndex 가 남아 있을 수 있다.
+        // 새 게임을 시작할 때는 rewind() 로 note 생성 위치를 처음으로 되돌린다.
+        noteIndex = 0
+    }
+
     fun popNoteBefore(musicTime: Float): Note? {
         val loadedNotes = notes ?: return null
         if (noteIndex >= loadedNotes.size) return null
