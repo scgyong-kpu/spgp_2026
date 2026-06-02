@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
 import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
 
 class MainScene(
@@ -26,7 +27,7 @@ class MainScene(
         val centerY = screenHeight / 2
 
         val context = gctx.view.context
-        song.loadNotes(context.assets)
+        val notes = song.loadNotes(context.assets)
 
         val thumbnail = song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
         val blurredThumbnail = BitmapBlur.blurBitmap(context, thumbnail)
@@ -41,6 +42,10 @@ class MainScene(
         val bg = Sprite(gctx, R.mipmap.bg)
         bg.setCenterProportionalWidth(centerX, centerY, screenWidth)
         world.add(bg, MainLayer.BG)
+
+        for (note in notes) {
+            world.add(NoteSprite(gctx, note), MainLayer.NOTE)
+        }
 
         playMusic()
     }

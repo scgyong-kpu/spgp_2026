@@ -258,8 +258,8 @@ dependencies {
 - [x] `MainScene` 생성
 - [x] 빈 Scene 을 push 하여 game loop 동작 확인
 - [ ] Layer 정의
-  - [ ] `BG`
-  - [ ] `NOTE`
+  - [x] `BG`
+  - [x] `NOTE`
   - [ ] `UI`
 - [x] 선택된 `Song` 을 `MainScene` 으로 전달
 - [x] `MainScene.onEnter()` 에서 음악 재생
@@ -332,11 +332,11 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 
 ## Note Object
 
-- [ ] `NoteSprite` 구현
-- [ ] note image resource 추가
-- [ ] 임시 note 2개를 화면에 배치
-- [ ] note 의 `pret` 값으로 x 좌표 결정
-- [ ] note 의 시간 값으로 y 좌표 결정 실험
+- [x] `NoteSprite` 구현
+- [x] note image resource 추가
+- [x] note file 의 note 들을 화면에 배치
+- [x] note 의 `pret` 값으로 x 좌표 결정
+- [x] note 의 시간 값으로 y 좌표 결정 실험
 - [ ] `MainScene.musicTime` 으로 현재 음악 시간 관리
 - [ ] note 의 y 좌표를 `note.time - musicTime` 으로 계산
 - [ ] goal line y 좌표 정의
