@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.spgp2026.taptu.data
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -25,6 +26,13 @@ data class Song(
     @Transient
     private var thumbnailBitmap: Bitmap? = null
 
+    @Transient
+    private var notes: List<Note>? = null
+
+    @Transient
+    var noteLength: Float = 0f
+        private set
+
     fun loadThumbnail(assets: AssetManager): Bitmap? {
         thumbnailBitmap?.let { return it }
 
@@ -38,6 +46,36 @@ data class Song(
             }
         }.getOrNull()
         return thumbnailBitmap
+    }
+
+    fun loadNotes(assets: AssetManager): List<Note> {
+        notes?.let { return it }
+
+        // note 파일도 mp3/thumbnail 처럼 rank 에 맞춘 asset 파일명 규칙을 사용한다.
+        // 예를 들어 rank 가 8 이면 assets/notes/n_008.txt 를 읽는다.
+        val filename = "notes/n_%03d.txt".format(rank)
+        val loadedNotes = mutableListOf<Note>()
+        var length = 0f
+
+        runCatching {
+            assets.open(filename).bufferedReader().useLines { lines ->
+                for (line in lines) {
+                    // T Drowning 같은 제목 줄이나 아직 지원하지 않는 줄은 parse 결과가 null 이므로 무시한다.
+                    val note = Note.parse(line) ?: continue
+                    loadedNotes.add(note)
+                    if (length < note.time) {
+                        length = note.time
+                    }
+                }
+            }
+        }.onFailure {
+            Log.w(javaClass.simpleName, "Cannot load note file: $filename", it)
+        }
+
+        noteLength = length
+        notes = loadedNotes
+        Log.d(javaClass.simpleName, "loaded ${loadedNotes.size} notes from $filename, length=$noteLength")
+        return loadedNotes
     }
 
     override fun toString(): String {

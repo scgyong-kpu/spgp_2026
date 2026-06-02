@@ -26,6 +26,8 @@ class MainScene(
         val centerY = screenHeight / 2
 
         val context = gctx.view.context
+        song.loadNotes(context.assets)
+
         val thumbnail = song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
         val blurredThumbnail = BitmapBlur.blurBitmap(context, thumbnail)
         val albumCover = Sprite(gctx, bitmap = blurredThumbnail, resId = R.mipmap.default_thumbnail)

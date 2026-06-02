@@ -311,18 +311,24 @@ API 30 이하의 fallback 경로는 `RenderScript` 로 동작한다.
 
 ## Note Data
 
-- [ ] note asset 파일 추가
-- [ ] `Note` data class 작성
-- [ ] note file 로부터 note 목록 읽기
-- [ ] note line format 정의
-- [ ] 단순 split parsing 과 regex parsing 비교
-- [ ] `pret` / `time` 값 읽기
-- [ ] load 시점부터 millisecond 를 second `Float` 으로 변환
-- [ ] 잘못된 line 은 무시
-- [ ] 곡별 note file 이름 규칙 정리
-- [ ] `Song.loadNotes()` 구현
+- [x] note asset 파일 추가
+- [x] `Note` data class 작성
+- [x] note file 로부터 note 목록 읽기
+- [x] note line format 정의
+- [x] 단순 split parsing 과 regex parsing 비교
+- [x] `pret` / `time` 값 읽기
+- [x] load 시점부터 millisecond 를 second `Float` 으로 변환
+- [x] 잘못된 line 은 무시
+- [x] 곡별 note file 이름 규칙 정리
+- [x] `Song.loadNotes()` 구현
 - [ ] `Song` 이 note 생성 진행 index 를 기억
 - [ ] 특정 시간 이전 note 를 하나씩 꺼내는 함수 구현
+
+note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
+파일명은 곡의 `rank` 를 사용해 `notes/n_%03d.txt` 형식으로 만든다.
+각 note line 은 `N pret millis` 형식이며, `pret` 는 입력 위치/라인, `millis` 는 음악 시작 후 millisecond 단위 시간이다.
+`Note.parse()` 는 이 형식에 맞는 줄만 `Note` 로 바꾸고, `T Drowning` 같은 제목 줄이나 잘못된 줄은 `null` 을 반환해 무시한다.
+읽는 순간 millisecond 는 second 단위 `Float` 으로 변환해 이후 game loop 계산에서 바로 쓰기 쉽게 한다.
 
 ## Note Object
 
