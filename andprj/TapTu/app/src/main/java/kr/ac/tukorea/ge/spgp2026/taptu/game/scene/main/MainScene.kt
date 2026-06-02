@@ -10,6 +10,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
+import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.pause.PauseScene
 import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
 
 class MainScene(
@@ -66,6 +67,10 @@ class MainScene(
         releaseMusic()
     }
 
+    override fun onBackPressed(): Boolean {
+        gctx.sceneStack.push(PauseScene(gctx))
+        return true
+    }
     private fun playMusic() {
         releaseMusic()
 
