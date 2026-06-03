@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TapTu"
 include(":app")
+include(":a2dg")
  

@@ -1,0 +1,10 @@
+mp3/
+# 17 mp3 files = 151MB
+# 다음 폴더에서 파일을 다운로드하여 mp3/ 폴더에 둔다
+# https://drive.google.com/drive/folders/1V44oAqTrHN6jteKgX1tcQK1c_fMzSlye?usp=sharing
+# 일부 파일이 (의도적으로) 빠져 있다
+
+# 다음과 같이 파일을 둔다
+# assets/mp3/r_001.mp3
+# assets/mp3/r_002.mp3
+# assets/mp3/r_003.mp3
