@@ -40,6 +40,8 @@ Android 2D game programming 수업에서 진행할 리듬 게임 예제 프로�
 - [ ] BPM 기반 note 생성 실험
 - [ ] 곡별 BPM 값 확인 및 기록
 
+`assets/mp3/` 에는 곡별 mp3 파일을 둘 수 있지만, mp3 는 크기가 크므로 git 에 포함하지 않는다. `app/src/main/assets/.gitignore` 에서 `mp3/` 를 제외하고, 필요한 파일은 수업 자료 링크에서 받아 로컬 `assets/mp3/r_001.mp3` 형식으로 배치한다. `Song.mp3AssetPath` 는 `rank` 를 이용해 이 파일명을 만든다.
+
 ### `chart_grab.js` 실행 방법
 
 곡 목록은 NAVER VIBE 의 차트 페이지에서 수집한다. 브라우저에서 `https://vibe.naver.com/chart/total` 에 접속한 뒤, chart list 가 화면에 실제로 보이는 상태에서 개발자 도구 Console 에 `chart_grab.js` 내용을 붙여 넣어 실행한다.
@@ -157,13 +159,14 @@ TapTu 에서는 다음 순서로 적용한다.
 
 ## Demo Playback
 
-- [ ] 곡 선택 시 미리듣기 재생
-- [ ] 다른 곡을 선택하면 이전 미리듣기 중지
-- [ ] 같은 곡을 다시 누르면 선택 해제 및 재생 중지
-- [ ] `Song` 에 `demoStart` / `demoEnd` 추가
-- [ ] 미리듣기는 `demoStart` ~ `demoEnd` 구간만 재생
-- [ ] Activity pause 시 미리듣기 중지
-- [ ] Activity resume 시 선택 상태 정리
+- [x] `Song` 이 자신의 mp3 asset path 를 알도록 구현
+- [x] 곡 선택 시 미리듣기 재생
+- [x] 다른 곡을 선택하면 이전 미리듣기 중지
+- [x] 같은 곡을 다시 누르면 선택 해제 및 재생 중지
+- [x] `Song` 에 `demoStart` / `demoEnd` 추가
+- [x] 미리듣기는 `demoStart` ~ `demoEnd` 구간만 재생
+- [x] Activity pause 시 미리듣기 중지
+- [x] Activity pause 시 선택 상태 정리
 - [ ] `play()` 와 `playDemo()` 의 공통 `MediaPlayer` 준비 code 정리
 
 ## Game Activity
@@ -175,11 +178,11 @@ TapTu 에서는 다음 순서로 적용한다.
   - [x] 같은 process 안에서 static/shared selected value 사용
   - [x] 객체를 직접 전달할 때의 process / serialization 문제 설명
 - [x] 올해 프로젝트 구조에 맞는 곡 선택 전달 방식 결정
-- [ ] `a2dg` module 추가
-- [ ] `settings.gradle.kts` 에 `:a2dg` 등록
-- [ ] app module 이 `a2dg` module 을 dependency 로 사용
-- [ ] `MainGameActivity` 가 `BaseGameActivity` 기반 게임 화면을 표시
-- [ ] Debug build 에서 grid / FPS / debug info 표시 확인
+- [x] `a2dg` module 추가
+- [x] `settings.gradle.kts` 에 `:a2dg` 등록
+- [x] app module 이 `a2dg` module 을 dependency 로 사용
+- [x] `MainGameActivity` 가 `BaseGameActivity` 기반 게임 화면을 표시
+- [x] Debug build 에서 grid / FPS / debug info 표시 확인
 
 ### Activity 간 곡 선택 전달 방식
 
@@ -209,62 +212,146 @@ flowchart LR
 
 따라서 지금 단계에서는 `Intent` extra 로 `songIndex` 를 전달한다. 곡 목록은 이미 `assets/songs.json` 으로 앱 안에 들어 있고, `MainActivity` 와 `MainGameActivity` 가 같은 파일을 읽으므로 index 로 같은 곡을 가리킬 수 있다. 나중에 곡 데이터에 안정적인 `id` 를 추가하면 index 대신 id 를 넘기는 방식으로 바꾸는 것이 더 안전하다.
 
+### `a2dg` module 복사 후 연결 절차
+
+`a2dg` 폴더를 프로젝트에 복사하는 것만으로는 Gradle 이 새 module 을 자동으로 인식하지 않는다. Android Studio 의 Project view 에 폴더가 보이더라도, Gradle 설정에 module 로 등록하고 app module 이 dependency 로 사용하도록 연결해야 한다.
+
+복사 후 해야 할 일은 다음 순서이다.
+
+1. `settings.gradle.kts` 에 module 을 등록한다.
+
+```kotlin
+include(":app")
+include(":a2dg")
+```
+
+2. root `build.gradle.kts` 에 Android library plugin alias 를 등록한다.
+
+```kotlin
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+}
+```
+
+3. `gradle/libs.versions.toml` 에 `android-library` plugin alias 가 있는지 확인한다.
+
+```toml
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+```
+
+4. `app/build.gradle.kts` 에 app module 이 `a2dg` 를 사용한다고 선언한다.
+
+```kotlin
+dependencies {
+    implementation(project(":a2dg"))
+}
+```
+
+5. Gradle sync / compile 로 연결이 되었는지 확인한다.
+
 ## Main Scene
 
-- [ ] `MainScene` 생성
-- [ ] 빈 Scene 을 push 하여 game loop 동작 확인
+- [x] `MainScene` 생성
+- [x] 빈 Scene 을 push 하여 game loop 동작 확인
 - [ ] Layer 정의
-  - [ ] `BG`
-  - [ ] `NOTE`
+  - [x] `BG`
+  - [x] `CONTROLLER`
+  - [x] `NOTE`
   - [ ] `UI`
-- [ ] 선택된 `Song` 을 `MainScene` 으로 전달
-- [ ] `MainScene.onEnter()` 에서 음악 재생
-- [ ] `MainScene.onExit()` 에서 음악 정지
-- [ ] Scene pause / resume 에서 음악 pause / resume 처리
+- [x] 선택된 `Song` 을 `MainScene` 으로 전달
+- [x] `MainScene.onEnter()` 에서 음악 재생
+- [x] `MainScene.onExit()` 에서 음악 정지
+- [x] Scene pause / resume 에서 음악 pause / resume 처리
 - [ ] Scene 과 Activity pause 의 차이 설명
+
+게임 음악은 `MainScene` 의 생명주기에 맞춰 제어한다.
+`onEnter()` 에서는 선택된 `Song.mp3AssetPath` 를 `MediaPlayer` 에 연결하고 재생을 시작한다.
+assets 안의 mp3 는 `res/raw` 리소스 id 로 여는 파일이 아니므로,
+`AssetFileDescriptor` 의 `fileDescriptor`, `startOffset`, `length` 를 `setDataSource()` 에 넘긴다.
+
+`onPause()` 에서는 위에 다른 Scene 이 올라오거나 앱이 잠시 멈출 때 음악을 `pause()` 한다.
+`onResume()` 에서는 다시 top Scene 이 되었을 때 이어서 `start()` 한다.
+`onExit()` 에서는 Scene 이 stack 에서 빠지는 시점이므로 `release()` 를 호출해 native player 자원을 정리한다.
 
 ## Background
 
-- [ ] 선택된 곡의 album cover 를 game scene 배경으로 사용
-- [ ] `Sprite` 에 bitmap 을 직접 설정하는 기능 확인 또는 추가
-- [ ] album cover bitmap 을 `MainScene` 에 전달
-- [ ] cover 이미지를 화면 높이에 맞추어 배치
-- [ ] 별도 배경 이미지를 overlay 로 추가
-- [ ] blurred cover 배경 실험
-- [ ] blur 구현 방식과 deprecated API 주의점 설명
+- [x] 선택된 곡의 album cover 를 game scene 배경으로 사용
+- [x] `Sprite` 에 bitmap 을 직접 설정하는 기능 확인 또는 추가
+- [x] album cover bitmap 을 `MainScene` 에 전달
+- [x] cover 이미지를 화면 높이에 맞추어 배치
+- [x] 별도 배경 이미지를 overlay 로 추가
+- [x] blurred cover 배경 실험
+- [x] blur 구현 방식과 deprecated API 주의점 설명
 - [ ] thumbnail 해상도 개선 필요성 확인
+
+`BitmapBlur.blurBitmap()` 은 API 31 이상에서는 `RenderEffect` 를 먼저 사용한다.
+그보다 낮은 API 에서는 실험용 fallback 으로 `RenderScript` blur 를 사용하지만,
+`RenderScript` 는 deprecated 되었으므로 새 프로젝트의 장기적인 해법으로 보기보다는
+"낮은 API 에서도 같은 화면 효과를 보여주기 위한 임시 경로"로 다룬다.
+
+API 31 이상의 `RenderEffect` 경로는 다음 순서로 동작한다.
+
+1. 원본 album cover 와 같은 크기의 출력용 `Bitmap` 을 새로 만든다.
+2. `RenderNode` 를 만들고 `RenderEffect.createBlurEffect()` 를 적용한다.
+3. `RenderNode.beginRecording()` 으로 얻은 `Canvas` 에 원본 bitmap 을 그린다.
+4. `RenderNode.endRecording()` 으로 기록을 끝낸다.
+5. 출력용 bitmap 에 연결된 `Canvas` 에 `drawRenderNode()` 를 호출해 blur 결과를 그린다.
+
+API 30 이하의 fallback 경로는 `RenderScript` 로 동작한다.
+
+1. 원본 bitmap 을 복사해 수정 가능한 출력 bitmap 을 만든다.
+2. 원본 bitmap 을 `Allocation` 으로 감싼다.
+3. 같은 크기의 출력 `Allocation` 을 만든다.
+4. `ScriptIntrinsicBlur` 에 blur 반경을 설정하고 입력 `Allocation` 을 연결한다.
+5. `forEach()` 로 blur 연산을 수행한 뒤 출력 `Allocation` 을 bitmap 으로 복사한다.
+6. 사용한 `Allocation`, `ScriptIntrinsicBlur`, `RenderScript` 객체를 `destroy()` 해서 정리한다.
 
 ## Note Data
 
-- [ ] note asset 파일 추가
-- [ ] `Note` data class 작성
-- [ ] note file 로부터 note 목록 읽기
-- [ ] note line format 정의
-- [ ] 단순 split parsing 과 regex parsing 비교
-- [ ] `pret` / `time` 값 읽기
-- [ ] load 시점부터 millisecond 를 second `Float` 으로 변환
-- [ ] 잘못된 line 은 무시
-- [ ] 곡별 note file 이름 규칙 정리
-- [ ] `Song.loadNotes()` 구현
-- [ ] `Song` 이 note 생성 진행 index 를 기억
-- [ ] 특정 시간 이전 note 를 하나씩 꺼내는 함수 구현
+- [x] note asset 파일 추가
+- [x] `Note` data class 작성
+- [x] note file 로부터 note 목록 읽기
+- [x] note line format 정의
+- [x] 단순 split parsing 과 regex parsing 비교
+- [x] `pret` / `time` 값 읽기
+- [x] load 시점부터 millisecond 를 second `Float` 으로 변환
+- [x] 잘못된 line 은 무시
+- [x] 곡별 note file 이름 규칙 정리
+- [x] `Song.loadNotes()` 구현
+- [x] `Song` 이 note 생성 진행 index 를 기억
+- [x] 특정 시간 이전 note 를 하나씩 꺼내는 함수 구현
+
+note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
+파일명은 곡의 `rank` 를 사용해 `notes/n_%03d.txt` 형식으로 만든다.
+각 note line 은 `N pret millis` 형식이며, `pret` 는 입력 위치/라인, `millis` 는 음악 시작 후 millisecond 단위 시간이다.
+`Note.parse()` 는 이 형식에 맞는 줄만 `Note` 로 바꾸고, `T Drowning` 같은 제목 줄이나 잘못된 줄은 `null` 을 반환해 무시한다.
+읽는 순간 millisecond 는 second 단위 `Float` 으로 변환해 이후 game loop 계산에서 바로 쓰기 쉽게 한다.
+`SongCatalog` 는 같은 `Song` 인스턴스를 계속 보관하므로, 게임을 새로 시작할 때 `Song.rewind()` 로 note 생성 index 를 처음으로 되돌린다.
 
 ## Note Object
 
-- [ ] `NoteSprite` 구현
-- [ ] note image resource 추가
-- [ ] 임시 note 2개를 화면에 배치
-- [ ] note 의 `pret` 값으로 x 좌표 결정
-- [ ] note 의 시간 값으로 y 좌표 결정 실험
-- [ ] `MainScene.musicTime` 으로 현재 음악 시간 관리
-- [ ] note 의 y 좌표를 `note.time - musicTime` 으로 계산
-- [ ] goal line y 좌표 정의
-- [ ] note speed 정의
-- [ ] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
-- [ ] 필요한 시점이 되면 note 를 생성
-- [ ] 화면 아래로 벗어난 note 제거
-- [ ] note 객체 recycle bin 적용
-- [ ] recycle 된 note 상태 초기화
+- [x] `NoteSprite` 구현
+- [x] note image resource 추가
+- [x] note file 의 note 들을 화면에 배치
+- [x] note 의 `pret` 값으로 x 좌표 결정
+- [x] note 의 시간 값으로 y 좌표 결정 실험
+- [x] `MainScene.musicTime` 으로 현재 음악 시간 관리
+- [x] note 의 y 좌표를 `note.time - musicTime` 으로 계산
+- [x] goal line y 좌표 정의
+- [x] note speed 정의
+- [x] 화면 높이와 speed 로 note 가 미리 생성되어야 하는 시간 계산
+- [x] 필요한 시점이 되면 note 를 생성
+- [x] 화면 아래로 벗어난 note 제거
+- [x] note 객체 recycle bin 적용
+- [x] recycle 된 note 상태 초기화
+
+`NoteSprite` 는 `NoteSprite.get()` 에서 recycle bin 을 먼저 확인하고, 없을 때만 새로 만든다.
+재사용된 객체는 `init(note)` 로 현재 note 정보만 다시 채우며, `onRecycle()` 에서는 이전 note 참조를 비워 다음 재사용과 섞이지 않게 한다.
+음악 시간 provider 는 같은 `NoteGenerator` 안에서 공유되므로 생성 시 한 번만 저장한다.
 
 ## Note Animation
 
@@ -305,7 +392,7 @@ flowchart LR
 
 - [ ] resource 이름 정리
 - [ ] asset 파일 크기와 git 포함 여부 점검
-- [ ] mp3 등 큰 파일 관리 방식 정리
+- [x] mp3 등 큰 파일 관리 방식 정리
 - [ ] 로그 정리
 - [ ] 문자열 생성 비용이 있는 log 는 debug build 에서만 수행
 - [ ] Activity / Scene lifecycle 정리

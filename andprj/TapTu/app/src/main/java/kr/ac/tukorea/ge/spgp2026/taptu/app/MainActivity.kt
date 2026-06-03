@@ -1,7 +1,10 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.app
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,6 +24,9 @@ import kr.ac.tukorea.ge.spgp2026.taptu.databinding.SongItemBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private var mediaPlayer: MediaPlayer? = null
+    private val demoStopHandler = Handler(Looper.getMainLooper())
+    private val demoStopRunnable = Runnable { stopDemo() }
     private var selectedPosition = RecyclerView.NO_POSITION
     private val songAdapter = SongAdapter { song, position ->
         Log.d(javaClass.simpleName, "song clicked: position=$position, $song")
@@ -61,6 +67,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        // MainActivity 가 background 로 가면 preview 용 음악과 선택 상태를 함께 정리한다.
+        // 돌아왔을 때 선택 표시는 남아 있는데 미리듣기는 멈춘 상태가 되면 UI 의미가 애매해진다.
+        stopDemo()
+        clearSelection()
+    }
+
     private fun selectSong(position: Int) {
         val previousPosition = selectedPosition
         selectedPosition = if (selectedPosition == position) {
@@ -70,7 +84,9 @@ class MainActivity : AppCompatActivity() {
         }
         songAdapter.selectedPosition = selectedPosition
         binding.startButton.isEnabled = selectedPosition != RecyclerView.NO_POSITION
-        updatePreview(SongCatalog.songs.getOrNull(selectedPosition), animated = true)
+        val selectedSong = SongCatalog.songs.getOrNull(selectedPosition)
+        updatePreview(selectedSong, animated = true)
+        playDemo(selectedSong)
 
         if (previousPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(previousPosition)
@@ -78,6 +94,56 @@ class MainActivity : AppCompatActivity() {
         if (selectedPosition != RecyclerView.NO_POSITION) {
             songAdapter.notifyItemChanged(selectedPosition)
         }
+    }
+
+    private fun clearSelection() {
+        val previousPosition = selectedPosition
+        if (previousPosition == RecyclerView.NO_POSITION) return
+
+        selectedPosition = RecyclerView.NO_POSITION
+        songAdapter.selectedPosition = RecyclerView.NO_POSITION
+        binding.startButton.isEnabled = false
+        updatePreview(null, animated = false)
+        songAdapter.notifyItemChanged(previousPosition)
+    }
+
+    private fun playDemo(song: Song?) {
+        stopDemo()
+        if (song == null) return
+
+        // assets 안의 mp3 는 res/raw 와 달리 resource id 로 열 수 없다.
+        // AssetFileDescriptor 의 fileDescriptor/startOffset/length 를 MediaPlayer 에 넘겨야 한다.
+        val afd = runCatching {
+            assets.openFd(song.mp3AssetPath)
+        }.getOrNull() ?: return
+
+        mediaPlayer = MediaPlayer().apply {
+            afd.use {
+                setDataSource(it.fileDescriptor, it.startOffset, it.length)
+            }
+            setOnCompletionListener {
+                stopDemo()
+            }
+            prepare()
+            if (song.demoStart > 0) {
+                seekTo(song.demoStart)
+            }
+            start()
+        }
+        val demoDuration = song.demoEnd - song.demoStart
+        if (demoDuration > 0) {
+            demoStopHandler.postDelayed(demoStopRunnable, demoDuration.toLong())
+        }
+    }
+
+    private fun stopDemo() {
+        // demoStart~demoEnd 구간 재생을 위해 stopDemo() 를 예약해 두었을 수 있다.
+        // 새 곡을 재생할 때 이전 곡의 예약 callback 이 남아 있으면,
+        // 이전 곡의 종료 시간이 되었을 때 새 곡까지 갑자기 멈추는 버그가 생긴다.
+        // 그래서 MediaPlayer 를 release 하기 전에 예약된 stop callback 을 항상 제거한다.
+        demoStopHandler.removeCallbacks(demoStopRunnable)
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     private fun updatePreview(song: Song?, animated: Boolean) {
