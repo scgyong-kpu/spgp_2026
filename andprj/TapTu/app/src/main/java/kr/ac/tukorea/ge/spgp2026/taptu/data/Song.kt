@@ -17,6 +17,7 @@ data class Song(
     val artist: String,
     val album: String,
     val thumbnail: String,
+    val bpm: Int = 0,
     val demoStart: Int = 0,
     val demoEnd: Int = 0,
 ) {

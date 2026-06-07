@@ -5,6 +5,7 @@
     "artist": "아이오아이 (I.O.I)",
     "album": "I.O.I 3rd MINI ALBUM [I.O.I : LOOP]",
     "thumbnail": "https://musicmeta-phinf.pstatic.net/album/037/275/37275263.jpg?type=r120Fll&v=20260512182136",
+    "bpm": 117,
     "demoStart": 56000,
     "demoEnd": 74000
   },
@@ -55,7 +56,8 @@
     "title": "Drowning",
     "artist": "WOODZ",
     "album": "OO-LI",
-    "thumbnail": "https://musicmeta-phinf.pstatic.net/album/009/113/9113175.jpg?type=r120Fll&v=20250318143210"
+    "thumbnail": "https://musicmeta-phinf.pstatic.net/album/009/113/9113175.jpg?type=r120Fll&v=20250318143210",
+    "bpm": 111
   },
   {
     "rank": 9,
