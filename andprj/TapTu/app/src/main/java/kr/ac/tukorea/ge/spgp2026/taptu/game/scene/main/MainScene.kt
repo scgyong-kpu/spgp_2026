@@ -10,6 +10,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.PretBg
 import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.pause.PauseScene
 import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
 
@@ -43,8 +44,7 @@ class MainScene(
         )
         world.add(albumCover, MainLayer.BG)
 
-        val bg = Sprite(gctx, R.mipmap.bg)
-        bg.setCenterProportionalWidth(centerX, centerY, screenWidth)
+        val bg = PretBg(gctx, song) { musicTime }
         world.add(bg, MainLayer.BG)
 
         world.add(NoteGenerator(song, world) { musicTime }, MainLayer.CONTROLLER)
