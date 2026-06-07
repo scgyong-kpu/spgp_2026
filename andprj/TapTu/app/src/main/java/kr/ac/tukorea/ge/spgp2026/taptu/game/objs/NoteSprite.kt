@@ -78,7 +78,7 @@ class NoteSprite private constructor(
             return (GOAL_Y + HEIGHT) / unitsPerSecond()
         }
 
-        private fun xFromPret(pret: Int): Float {
+        fun xFromPret(pret: Int): Float {
             // pret 0~4 는 5개의 lane 을 뜻한다.
             // 기본 가상 폭 900 에서 중앙 x=450 을 기준으로, 양쪽으로 X_SPACE 만큼 벌려
             // 190, 320, 450, 580, 710 위치에 note 를 놓는다.

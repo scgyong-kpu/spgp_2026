@@ -4,6 +4,8 @@ import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.data.Song
+import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 
 class PretBg(gctx: GameContext,
              private val song: Song,
@@ -29,6 +31,8 @@ class PretBg(gctx: GameContext,
             val note = song.noteAt(nextNoteIndex) ?: break
             if (note.time > musicTime) break
 
+            val x = NoteSprite.xFromPret(note.pret)
+            gctx.mainWorld().add(Explosion.get(gctx, x, NoteSprite.GOAL_Y), MainLayer.EXPLOSION)
             Log.d(
                 javaClass.simpleName,
                 "Passed note #$nextNoteIndex: pret=${note.pret}, time=${"%.3f".format(note.time)}, musicTime=${"%.3f".format(musicTime)}"
