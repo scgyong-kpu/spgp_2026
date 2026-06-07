@@ -100,6 +100,18 @@ data class Song(
         return note
     }
 
+    fun noteAt(index: Int): Note? {
+        // NoteGenerator 는 popNoteBefore() 로 noteIndex 를 전진시키며 NoteSprite 를 만든다.
+        // PretBg 처럼 "현재 음악 시간이 어떤 note 를 지나갔는지"만 확인하는 객체가
+        // 같은 noteIndex 를 공유하면 note 생성 흐름이 깨진다.
+        //
+        // 그래서 소비하지 않는 read-only 접근 함수를 따로 둔다.
+        // 각 사용자는 자기 목적에 맞는 index 를 별도로 기억한다.
+        val loadedNotes = notes ?: return null
+        if (index < 0 || index >= loadedNotes.size) return null
+        return loadedNotes[index]
+    }
+
     override fun toString(): String {
         return "[$rank] $title / $artist <$album>"
     }

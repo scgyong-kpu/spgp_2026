@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
 import android.graphics.Canvas
-import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -21,7 +20,7 @@ class NoteGenerator(
         val visibleUntil = musicTimeProvider() + NoteSprite.screenfulTime()
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
-            Log.d(javaClass.simpleName, "Note: $note")
+            //Log.d(javaClass.simpleName, "Note: $note")
             world.add(NoteSprite.get(gctx, note, musicTimeProvider), MainLayer.NOTE)
         }
     }
