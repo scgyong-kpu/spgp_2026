@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
 import android.animation.ValueAnimator
-import android.animation.ValueAnimator.AnimatorUpdateListener
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -61,10 +60,10 @@ class NoteSprite private constructor(
     }
 
     companion object {
-        private const val X_SPACE = 130f
-        private const val LEFT = 450f - 2 * X_SPACE
-        private const val WIDTH = 120f
-        private const val HEIGHT = 55f
+        const val X_SPACE = 130f
+        const val LEFT = 450f - 2 * X_SPACE
+        const val WIDTH = 120f
+        const val HEIGHT = 55f
         const val GOAL_Y = 1400f
 
         // 이번 단계에서 가장 중요한 실험 상수이다.

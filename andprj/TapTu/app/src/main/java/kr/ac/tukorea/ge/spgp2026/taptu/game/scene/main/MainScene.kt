@@ -16,6 +16,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Pret
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.PretBg
 import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.pause.PauseScene
 import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
@@ -57,6 +58,9 @@ class MainScene(
         val bg = PretBg(gctx, song) { musicTime }
         world.add(bg, MainLayer.BG)
 
+        for (index in 0 until 5) {
+            world.add(Pret(gctx, index), MainLayer.PRET)
+        }
         val backBtn: Button = Button(gctx, R.mipmap.go_back, 50f, 50f, 100f, 100f) { pressed ->
             pop()
             false
