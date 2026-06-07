@@ -1,5 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
+import android.animation.ValueAnimator
+import android.animation.ValueAnimator.AnimatorUpdateListener
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -7,7 +9,6 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.Note
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
-import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.main.MainScene
 
 
 // NoteSprite 는 Note data 하나를 화면에 보이는 Sprite 하나로 바꾼다.
@@ -87,8 +88,20 @@ class NoteSprite private constructor(
             return (GOAL_Y + HEIGHT) / unitsPerSecond()
         }
 
+        val animator: ValueAnimator by lazy {
+            ValueAnimator.ofFloat(1f, 2f).apply {
+                duration = 500
+                addUpdateListener { animator ->
+                    speed = animator.animatedValue as Float
+                }
+            }
+        }
         fun toggleSpeed(): Float {
+            val from = speed
             speed = if (speed == SPEED_FAST) SPEED_NORMAL else SPEED_FAST
+            animator.setFloatValues(from, speed)
+            animator.start()
+
             return speed
         }
 
