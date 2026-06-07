@@ -1,5 +1,8 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.scene.main
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.media.MediaPlayer
 import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
@@ -25,6 +28,8 @@ class MainScene(
     override val world = World<MainLayer>(MainLayer.entries.toTypedArray())
     val song = SongCatalog.songs[songIndex]
     private var mediaPlayer: MediaPlayer? = null
+    private var finishFadeAnimator: ValueAnimator? = null
+    private var finishFadeStarted = false
     val musicTime: Float
         get() = (mediaPlayer?.currentPosition ?: 0) / 1000f
 
@@ -69,7 +74,7 @@ class MainScene(
                 song,
                 world,
                 musicTimeProvider = { musicTime },
-                onFinished = { pop() },
+                onFinished = { startFinishFadeOut() },
             ),
             MainLayer.CONTROLLER,
         )
@@ -81,6 +86,34 @@ class MainScene(
         val speed: Float = NoteSprite.toggleSpeed()
         val mipmapId: Int = if (speed == NoteSprite.SPEED_NORMAL) R.mipmap.speed_1x else R.mipmap.speed_2x
         speedBtn.bitmap = gctx.res.getBitmap(mipmapId)
+    }
+
+    private fun startFinishFadeOut() {
+        if (finishFadeStarted) return
+        finishFadeStarted = true
+
+        val halfScreenfulMillis = (NoteSprite.screenfulTime() * 500).toLong()
+        val animator = ValueAnimator.ofFloat(1.0f, 0.0f).apply {
+            // 마지막 note 가 지나간 뒤 screenfulTime() 전체를 기다리되,
+            // 앞 절반은 그대로 재생하고 뒤 절반에서만 volume 을 1.0 -> 0.0 으로 낮춘다.
+            startDelay = halfScreenfulMillis
+            duration = halfScreenfulMillis
+            addUpdateListener { animator ->
+                val volume = animator.animatedValue as Float
+                mediaPlayer?.setVolume(volume, volume)
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    // releaseMusic() 에서 cancel 되는 경우에는 finishFadeAnimator 를 먼저 null 로 만든다.
+                    // 이 check 를 두면 Scene 이 이미 종료되는 중일 때 onAnimationEnd 가 뒤늦게 pop() 을 다시 호출하지 않는다.
+                    if (finishFadeAnimator !== animation) return
+                    finishFadeAnimator = null
+                    pop()
+                }
+            })
+        }
+        finishFadeAnimator = animator
+        animator.start()
     }
 
     override fun touchObjects(): List<IGameObject> {
@@ -133,6 +166,9 @@ class MainScene(
     }
 
     private fun releaseMusic() {
+        val animator = finishFadeAnimator
+        finishFadeAnimator = null
+        animator?.cancel()
         mediaPlayer?.release()
         mediaPlayer = null
     }

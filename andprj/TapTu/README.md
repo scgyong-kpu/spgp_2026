@@ -388,7 +388,11 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [ ] 놓친 note miss 처리
 - [ ] score / combo 표시
 - [x] 곡 종료 조건 처리
+- [x] 곡 종료 전 music fade-out 처리
 - [ ] 결과 화면 또는 결과 로그 표시
+
+`NoteGenerator` 는 `visibleUntil` 이 마지막 note timing 을 지나면 더 이상 새로 보여줄 note 가 없다고 판단한다.
+그 뒤 `MainScene` 은 `screenfulTime()` 의 앞 절반은 그대로 재생하고, 뒤 절반은 `ValueAnimator.startDelay` 와 `duration` 을 이용해 음악 volume 을 fade-out 한 다음 Scene 을 종료한다.
 
 Explosion 은 생성 후 `DURATION` 동안 frame animation 을 재생하면서, 같은 시간 진행률로 alpha 와 scale 도 함께 바꾼다.
 이번 구현에서는 `Canvas.scale()` 로 draw 시점의 matrix 를 바꾸지 않고, `Explosion` 의 `dstRect` 크기 자체를 갱신한다.
