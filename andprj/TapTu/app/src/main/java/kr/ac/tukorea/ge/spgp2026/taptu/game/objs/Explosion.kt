@@ -1,5 +1,7 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
@@ -12,6 +14,9 @@ class Explosion private constructor(gctx: GameContext):
     Sprite(gctx, R.mipmap.explosion), IRecyclable
 {
     private var elapsedTime = 0f
+    private val paint = Paint().apply {
+        alpha = MAX_ALPHA
+    }
 
     init {
         srcRect = Rect()
@@ -22,6 +27,7 @@ class Explosion private constructor(gctx: GameContext):
         elapsedTime = 0f
         setCenter(x, y)
         updateFrame()
+        updateVisualState()
         return this
     }
 
@@ -32,6 +38,11 @@ class Explosion private constructor(gctx: GameContext):
             return
         }
         updateFrame()
+        updateVisualState()
+    }
+
+    override fun draw(canvas: Canvas) {
+        canvas.drawBitmap(bitmap, srcRect, dstRect, paint)
     }
 
     private fun updateFrame() {
@@ -46,6 +57,18 @@ class Explosion private constructor(gctx: GameContext):
         )
     }
 
+    private fun updateVisualState() {
+        // elapsedTime / DURATION 은 생성 직후 0.0, 사라지기 직전 1.0 에 가까운 진행률이다.
+        // 이 진행률을 하나만 계산해 scale 과 alpha 에 함께 사용하면,
+        // 폭발이 커지면서 동시에 살짝 투명해지는 효과를 같은 시간축에 맞출 수 있다.
+        val progress = (elapsedTime / DURATION).coerceIn(0f, 1f)
+        val scale = START_SCALE + (END_SCALE - START_SCALE) * progress
+        val alpha = MAX_ALPHA + ((MIN_ALPHA - MAX_ALPHA) * progress).toInt()
+
+        setSize(SIZE * scale, SIZE * scale)
+        paint.alpha = alpha
+    }
+
     override fun onRecycle() {
     }
 
@@ -58,6 +81,10 @@ class Explosion private constructor(gctx: GameContext):
 
         private const val DURATION = 0.5f
         private const val SIZE = 150f
+        private const val START_SCALE = 1.0f
+        private const val END_SCALE = 2.0f
+        private const val MAX_ALPHA = 255
+        private const val MIN_ALPHA = 128
         private const val FPS = 40f
         private const val FRAME_COUNT = 20
         private const val FRAME_SIZE = 128

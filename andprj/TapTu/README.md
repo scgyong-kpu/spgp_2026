@@ -390,6 +390,14 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [ ] 곡 종료 조건 처리
 - [ ] 결과 화면 또는 결과 로그 표시
 
+Explosion 은 생성 후 `DURATION` 동안 frame animation 을 재생하면서, 같은 시간 진행률로 alpha 와 scale 도 함께 바꾼다.
+이번 구현에서는 `Canvas.scale()` 로 draw 시점의 matrix 를 바꾸지 않고, `Explosion` 의 `dstRect` 크기 자체를 갱신한다.
+이 방식은 explosion 이 충돌 판정 없는 시각 effect 이고, 커지는 것 자체가 객체의 표시 크기라는 점을 코드에 직접 드러내기 좋다.
+
+`Canvas.save()` / `scale()` / `restore()` 를 쓰는 방식도 가능하지만, 그 방식은 논리적인 `width` / `height` 는 그대로 두고 그리는 순간에만 흔들림, 확대, 회전 같은 시각 효과를 덧입히고 싶을 때 더 잘 맞는다.
+예를 들어 캐릭터가 피격 순간만 커져 보이되 실제 위치나 collision box 는 그대로 유지해야 한다면 canvas matrix 를 쓰는 편이 자연스럽다.
+반면 지금 explosion 은 표시 크기가 변하는 것 자체가 효과의 본질이므로 `setSize()` 로 `dstRect` 를 갱신하는 편이 더 단순하고 수업용으로도 읽기 쉽다.
+
 ## Polish
 
 - [ ] resource 이름 정리
