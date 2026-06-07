@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -14,7 +15,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 class NoteSprite private constructor(
     gctx: GameContext,
     private val musicTimeProvider: () -> Float,
-) : Sprite(gctx, R.mipmap.note_1), IRecyclable {
+) : AnimSprite(gctx, R.mipmap.note, FPS, FRAME_COUNT), IRecyclable {
     private lateinit var note: Note
 
     init {
@@ -67,6 +68,8 @@ class NoteSprite private constructor(
         // 즉 TIME_TO_Y = 200f 라면 기본 배속에서 "음악 시간 1초 차이"가 화면에서는 "200 game unit 차이"로 보인다.
         const val TIME_TO_Y = 200f
         var speed = 1.0f
+        const val FPS = 16f
+        const val FRAME_COUNT = 8
 
         fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): NoteSprite {
             val world = gctx.mainWorld()
