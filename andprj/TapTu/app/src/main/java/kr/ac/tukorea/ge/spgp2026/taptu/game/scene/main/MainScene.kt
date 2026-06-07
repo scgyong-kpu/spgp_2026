@@ -2,6 +2,8 @@ package kr.ac.tukorea.ge.spgp2026.taptu.game.scene.main
 
 import android.media.MediaPlayer
 import android.util.Log
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
+import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.Scene
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
@@ -10,9 +12,11 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.PretBg
 import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.pause.PauseScene
 import kr.ac.tukorea.ge.spgp2026.taptu.res.BitmapBlur
+
 
 class MainScene(
     gctx: GameContext,
@@ -24,6 +28,7 @@ class MainScene(
     val musicTime: Float
         get() = (mediaPlayer?.currentPosition ?: 0) / 1000f
 
+    private lateinit var speedBtn: Button
     override fun onEnter() {
         val screenWidth = gctx.metrics.width
         val screenHeight = gctx.metrics.height
@@ -47,9 +52,32 @@ class MainScene(
         val bg = PretBg(gctx, song) { musicTime }
         world.add(bg, MainLayer.BG)
 
+        val backBtn: Button = Button(gctx, R.mipmap.go_back, 50f, 50f, 100f, 100f) { pressed ->
+            pop()
+            false
+        }
+        world.add(backBtn, MainLayer.UI)
+
+        speedBtn = Button(gctx, R.mipmap.speed_1x, gctx.metrics.width - 50f, 50f, 100f, 100f) { pressed ->
+            toggleSpeed()
+            false
+        }
+        world.add(speedBtn, MainLayer.UI)
+
+
         world.add(NoteGenerator(song, world) { musicTime }, MainLayer.CONTROLLER)
 
         playMusic()
+    }
+
+    private fun toggleSpeed() {
+        val speed: Float = NoteSprite.toggleSpeed()
+        val mipmapId: Int = if (speed == NoteSprite.SPEED_NORMAL) R.mipmap.speed_1x else R.mipmap.speed_2x
+        speedBtn.bitmap = gctx.res.getBitmap(mipmapId)
+    }
+
+    override fun touchObjects(): List<IGameObject> {
+        return world.objectsAt(MainLayer.UI)
     }
 
     override fun onPause() {

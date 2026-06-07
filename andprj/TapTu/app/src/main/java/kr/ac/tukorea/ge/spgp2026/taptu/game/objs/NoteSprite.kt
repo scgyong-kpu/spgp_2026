@@ -71,7 +71,9 @@ class NoteSprite private constructor(
         // 두 값의 차이에 TIME_TO_Y 와 speed 를 곱한 만큼 GOAL_Y 위쪽에 배치한다.
         // 즉 TIME_TO_Y = 200f 라면 기본 배속에서 "음악 시간 1초 차이"가 화면에서는 "200 game unit 차이"로 보인다.
         const val TIME_TO_Y = 200f
-        var speed = 1.0f
+        const val SPEED_NORMAL = 1.0f
+        const val SPEED_FAST = 2.0f
+        var speed = SPEED_NORMAL
         const val FPS = 16f
         const val FRAME_COUNT = 8
 
@@ -83,6 +85,11 @@ class NoteSprite private constructor(
 
         fun screenfulTime(): Float {
             return (GOAL_Y + HEIGHT) / unitsPerSecond()
+        }
+
+        fun toggleSpeed(): Float {
+            speed = if (speed == SPEED_FAST) SPEED_NORMAL else SPEED_FAST
+            return speed
         }
 
         fun xFromPret(pret: Int): Float {

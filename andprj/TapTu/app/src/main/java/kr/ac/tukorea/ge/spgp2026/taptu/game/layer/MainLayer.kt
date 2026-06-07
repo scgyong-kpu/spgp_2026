@@ -7,6 +7,7 @@ enum class MainLayer {
     BG,
     EXPLOSION,
     NOTE,
+    UI,
     CONTROLLER,
 }
 
