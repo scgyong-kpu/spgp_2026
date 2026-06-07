@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.media.MediaPlayer
 import android.util.Log
+import android.view.MotionEvent
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Button
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
@@ -126,6 +127,25 @@ class MainScene(
 
     override fun touchObjects(): List<IGameObject> {
         return world.objectsAt(MainLayer.UI)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val handled = super.onTouchEvent(event)
+        if (handled) return true
+
+        if (event.action != MotionEvent.ACTION_DOWN) {
+            return false
+        }
+
+        val pt = gctx.metrics.fromScreen(event.x, event.y)
+        val left = NoteSprite.LEFT - NoteSprite.X_SPACE / 2
+        if (pt.x < left) return false
+        val pret = ((pt.x - left) / NoteSprite.X_SPACE).toInt()
+        if (pret >= 5) return false
+        //onPret(lane)
+        Log.d(javaClass.simpleName, "Pret: $pret")
+
+        return true
     }
 
     override fun onPause() {
