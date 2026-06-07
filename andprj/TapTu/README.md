@@ -378,8 +378,9 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [ ] 판정 line 표시
 - [x] note timing 을 지나가는 순간 debug log 로 확인
 - [x] note timing 통과 시 explosion effect 표시
-- [ ] touch 입력 처리
-- [ ] 입력 위치를 pret lane 으로 변환
+- [x] touch 입력 처리
+- [x] 입력 위치를 pret lane 으로 변환
+- [x] 입력 중 선택된 pret lane 표시
 - [ ] 가장 가까운 note 찾기
 - [ ] note 와 입력 시간 차이 계산
 - [ ] perfect / good / miss 판정 기준 정의

@@ -129,21 +129,32 @@ class MainScene(
         return world.objectsAt(MainLayer.UI)
     }
 
+    var selectedPret = -1
+    fun selectPret(pretIndex: Int) {
+        selectedPret = pretIndex
+        val prets = world.objectsAt(MainLayer.PRET)
+        prets.forEachIndexed { index, obj ->
+            val pret = obj as? Pret ?: return@forEachIndexed
+            pret.shows = index == pretIndex
+        }
+        Log.d(javaClass.simpleName, "Pret: $pretIndex")
+    }
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val handled = super.onTouchEvent(event)
         if (handled) return true
 
-        if (event.action != MotionEvent.ACTION_DOWN) {
-            return false
+        if (event.action != MotionEvent.ACTION_DOWN &&
+            event.action != MotionEvent.ACTION_MOVE
+        ) {
+            selectPret(-1)
+        } else {
+            val pt = gctx.metrics.fromScreen(event.x, event.y)
+            val left = NoteSprite.LEFT - NoteSprite.X_SPACE / 2
+            //if (pt.x < left) return false
+            val lane = if (pt.x < left) -1 else ((pt.x - left) / NoteSprite.X_SPACE).toInt()
+            //if (lane >= 5) return false
+            selectPret(lane)
         }
-
-        val pt = gctx.metrics.fromScreen(event.x, event.y)
-        val left = NoteSprite.LEFT - NoteSprite.X_SPACE / 2
-        if (pt.x < left) return false
-        val pret = ((pt.x - left) / NoteSprite.X_SPACE).toInt()
-        if (pret >= 5) return false
-        //onPret(lane)
-        Log.d(javaClass.simpleName, "Pret: $pret")
 
         return true
     }
