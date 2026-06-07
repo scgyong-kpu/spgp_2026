@@ -1,13 +1,14 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.AnimSprite
-import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IRecyclable
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.Note
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
+import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.main.MainScene
+
 
 // NoteSprite 는 Note data 하나를 화면에 보이는 Sprite 하나로 바꾼다.
 // note 가 가진 time 과 현재 음악 시간의 차이를 y 좌표로 변환해,
@@ -20,6 +21,9 @@ class NoteSprite private constructor(
 
     init {
         setSize(WIDTH, HEIGHT)
+
+        val musicTime = musicTimeProvider()
+        createdOn = System.currentTimeMillis() - (musicTime * 1000).toLong()
     }
 
     // recycle bin 에서 다시 꺼낸 객체도 같은 init() 경로를 탄다.
