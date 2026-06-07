@@ -64,8 +64,15 @@ class MainScene(
         }
         world.add(speedBtn, MainLayer.UI)
 
-
-        world.add(NoteGenerator(song, world) { musicTime }, MainLayer.CONTROLLER)
+        world.add(
+            NoteGenerator(
+                song,
+                world,
+                musicTimeProvider = { musicTime },
+                onFinished = { pop() },
+            ),
+            MainLayer.CONTROLLER,
+        )
 
         playMusic()
     }

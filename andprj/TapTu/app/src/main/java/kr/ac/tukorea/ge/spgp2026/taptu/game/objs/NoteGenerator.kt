@@ -15,9 +15,13 @@ class NoteGenerator(
     private val song: Song,
     private val world: World<MainLayer>,
     private val musicTimeProvider: () -> Float,
+    private val onFinished: () -> Unit,
 ) : IGameObject {
+    private var finished = false
+
     override fun update(gctx: GameContext) {
-        val visibleUntil = musicTimeProvider() + NoteSprite.screenfulTime()
+        val musicTime = musicTimeProvider()
+        val visibleUntil = musicTime + NoteSprite.screenfulTime()
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
             //Log.d(javaClass.simpleName, "Note: $note")
@@ -26,6 +30,14 @@ class NoteGenerator(
                 sprite.fps = 8.0f * song.bpm / 60.0f; // 1박자당 8프레임이 되도록 계산한다
             }
             world.add(sprite, MainLayer.NOTE)
+        }
+
+        if (!finished && musicTime >= song.noteLength + NoteSprite.screenfulTime()) {
+            // noteLength 는 마지막 note 의 timing 이다.
+            // 거기에 screenfulTime() 을 더 기다리면 마지막 note 가 화면 아래로 지나갈 시간까지 확보된다.
+            // Scene 종료 방법은 MainScene 이 정하도록 callback 으로 분리한다.
+            finished = true
+            onFinished()
         }
     }
 

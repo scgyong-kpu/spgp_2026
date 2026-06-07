@@ -387,7 +387,7 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [ ] 맞춘 note 제거
 - [ ] 놓친 note miss 처리
 - [ ] score / combo 표시
-- [ ] 곡 종료 조건 처리
+- [x] 곡 종료 조건 처리
 - [ ] 결과 화면 또는 결과 로그 표시
 
 Explosion 은 생성 후 `DURATION` 동안 frame animation 을 재생하면서, 같은 시간 진행률로 alpha 와 scale 도 함께 바꾼다.
