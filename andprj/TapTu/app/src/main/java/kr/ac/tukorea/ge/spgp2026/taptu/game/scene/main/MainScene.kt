@@ -107,6 +107,10 @@ class MainScene(
                     // releaseMusic() 에서 cancel 되는 경우에는 finishFadeAnimator 를 먼저 null 로 만든다.
                     // 이 check 를 두면 Scene 이 이미 종료되는 중일 때 onAnimationEnd 가 뒤늦게 pop() 을 다시 호출하지 않는다.
                     if (finishFadeAnimator !== animation) return
+                    // PauseScene 같은 다른 Scene 이 위에 올라와 있는 동안 animator callback 이 도착하면,
+                    // pop() 은 MainScene 이 아니라 top 인 PauseScene 을 닫아 버린다.
+                    // 그래서 현재 top 이 MainScene 자신일 때만 곡 종료 pop 을 수행한다.
+                    if (gctx.sceneStack.top !== this@MainScene) return
                     finishFadeAnimator = null
                     pop()
                 }
@@ -122,11 +126,15 @@ class MainScene(
 
     override fun onPause() {
         super.onPause()
+        // PauseScene 이 위에 올라오는 동안에도 ValueAnimator 는 Android framework 쪽에서 계속 진행될 수 있다.
+        // 곡 종료 fade-out 은 MainScene 의 시간 흐름에 속하므로 Scene pause 와 함께 멈춰 둔다.
+        finishFadeAnimator?.pause()
         mediaPlayer?.takeIf { it.isPlaying }?.pause()
     }
 
     override fun onResume() {
         super.onResume()
+        finishFadeAnimator?.resume()
         mediaPlayer?.start()
     }
 
