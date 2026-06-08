@@ -16,6 +16,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Call
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Explosion
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Pret
@@ -160,6 +161,8 @@ class MainScene(
         call.type = callType
 
         if (callType != Call.Type.miss) {
+            val exp = Explosion.get(gctx, ns.x, ns.y, callType)
+            world.add(exp, MainLayer.EXPLOSION)
             world.remove(ns, MainLayer.NOTE)
         }
     }
