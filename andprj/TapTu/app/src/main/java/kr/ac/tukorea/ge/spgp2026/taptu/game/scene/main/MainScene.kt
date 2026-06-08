@@ -158,6 +158,10 @@ class MainScene(
         Log.d(javaClass.simpleName, "Lane: $pretIndex, call=$callType diff=$diff")
 
         call.type = callType
+
+        if (callType != Call.Type.miss) {
+            world.remove(ns, MainLayer.NOTE)
+        }
     }
 
 
