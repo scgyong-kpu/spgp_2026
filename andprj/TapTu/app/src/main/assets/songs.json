@@ -4,6 +4,9 @@
     "title": "갑자기",
     "artist": "아이오아이 (I.O.I)",
     "album": "I.O.I 3rd MINI ALBUM [I.O.I : LOOP]",
+    "bpm": 117,
+    "demoStart": 56000,
+    "demoEnd": 74000,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/99/673/13399673_20260518151131_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -11,6 +14,7 @@
     "title": "REDRED",
     "artist": "CORTIS (코르티스)",
     "album": "GREENGREEN",
+    "bpm": 121,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/38/387/13338387_20260504133459_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -18,6 +22,7 @@
     "title": "LEMONADE",
     "artist": "aespa",
     "album": "LEMONADE - The 2nd Album",
+    "bpm": 128,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/84/085/13384085_20260528181046_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -25,6 +30,7 @@
     "title": "It′s Me",
     "artist": "아일릿(ILLIT)",
     "album": "MAMIHLAPINATAPAI",
+    "bpm": 146,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/62/401/13362401_20260430094059_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -32,6 +38,7 @@
     "title": "소문의 낙원",
     "artist": "AKMU (악뮤)",
     "album": "개화",
+    "bpm": 110,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/12/398/13312398_20260406142544_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -39,6 +46,7 @@
     "title": "캐치 캐치",
     "artist": "YENA (최예나)",
     "album": "LOVE CATCHER",
+    "bpm": 138,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/129/08/035/12908035_20260309142026_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -46,6 +54,7 @@
     "title": "LOVE ATTACK",
     "artist": "RESCENE (리센느)",
     "album": "SCENEDROME",
+    "bpm": 112,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/115/75/849/11575849_20240826152240_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -53,6 +62,7 @@
     "title": "RUDE!",
     "artist": "Hearts2Hearts (하츠투하츠)",
     "album": "RUDE!",
+    "bpm": 130,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/128/69/629/12869629_20260219143819_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -60,6 +70,7 @@
     "title": "기쁨, 슬픔, 아름다운 마음",
     "artist": "AKMU (악뮤)",
     "album": "개화",
+    "bpm": 77,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/12/398/13312398_20260406142544_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -67,6 +78,7 @@
     "title": "사랑하게 될 거야",
     "artist": "한로로",
     "album": "이상비행",
+    "bpm": 93,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/113/12/872/11312872_20230823162414_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -74,6 +86,7 @@
     "title": "Heavy Serenade",
     "artist": "NMIXX",
     "album": "Heavy Serenade",
+    "bpm": 130,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/57/541/13357541_20260511133217_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -81,6 +94,7 @@
     "title": "0+0",
     "artist": "한로로",
     "album": "자몽살구클럽",
+    "bpm": 68,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/119/82/233/11982233_20250801150859_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -88,6 +102,7 @@
     "title": "BOOMPALA",
     "artist": "LE SSERAFIM (르세라핌)",
     "album": "'PUREFLOW' pt.1",
+    "bpm": 106,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/49/271/13349271_20260522105159_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -95,6 +110,7 @@
     "title": "WDA (Whole Different Animal) (Feat. G-DRAGON)",
     "artist": "aespa",
     "album": "LEMONADE - The 2nd Album",
+    "bpm": 103,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/133/84/085/13384085_20260528181046_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -102,6 +118,7 @@
     "title": "Drowning",
     "artist": "WOODZ",
     "album": "OO-LI",
+    "bpm": 111,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/111/83/506/11183506_20230426141236_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -109,6 +126,7 @@
     "title": "404 (New Era)",
     "artist": "KiiiKiii (키키)",
     "album": "Delulu Pack",
+    "bpm": 140,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/128/06/237/12806237_20260126145002_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -116,6 +134,7 @@
     "title": "입춘",
     "artist": "한로로",
     "album": "입춘",
+    "bpm": 80,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/108/90/163/10890163_20220311160155_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -123,6 +142,7 @@
     "title": "BANG BANG",
     "artist": "IVE (아이브)",
     "album": "REVIVE+",
+    "bpm": 152,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/128/45/274/12845274_20260223113048_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -130,6 +150,7 @@
     "title": "Good Goodbye",
     "artist": "화사 (HWASA)",
     "album": "Good Goodbye",
+    "bpm": 100,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/121/60/000/12160000_20251014164646_500.jpg/melon/resize/120/quality/80/optimize"
   },
   {
@@ -137,6 +158,7 @@
     "title": "Popcorn",
     "artist": "도경수(D.O.)",
     "album": "성장 - THE 3RD MINI ALBUM",
+    "bpm": 132,
     "thumbnail": "https://cdnimg.melon.co.kr/cm2/album/images/114/77/689/11477689_20240507151429_500.jpg/melon/resize/120/quality/80/optimize"
   }
 ]
