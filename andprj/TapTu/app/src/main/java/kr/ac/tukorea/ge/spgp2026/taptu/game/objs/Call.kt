@@ -1,21 +1,45 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
+import android.R.animator
+import android.animation.ValueAnimator
+import android.animation.ValueAnimator.AnimatorUpdateListener
 import android.graphics.Rect
+import android.text.BoringLayout.Metrics
+import android.view.animation.DecelerateInterpolator
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
+
 
 class Call(gctx: GameContext): Sprite(gctx, R.mipmap.calls) {
     enum class Type {
         perfect, great, good, bad, miss, none,
     }
 
+    val yFrom = gctx.metrics.height / 3
     var type = Type.none
         set(newType) {
             field = newType
             val index = field.ordinal
             srcRect?.offsetTo(0, index * srcHeight);
+
+            if (newType == Type.none) return
+            val yTo = yFrom - dstRect.height()
+            animator.setFloatValues(yFrom, yTo)
+            animator.start()
         }
+
+    val animator: ValueAnimator by lazy {
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 500
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                val y = animator.animatedValue as Float
+                dstRect.offsetTo(dstRect.left, y)
+            }
+        }
+    }
+
     val srcHeight = bitmap.height / 5
     init {
         srcRect = Rect(0, 0, bitmap.width, srcHeight)
