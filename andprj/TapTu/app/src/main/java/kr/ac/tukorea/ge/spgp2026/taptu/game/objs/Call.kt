@@ -1,11 +1,9 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
-import android.R.animator
 import android.animation.ValueAnimator
-import android.animation.ValueAnimator.AnimatorUpdateListener
 import android.graphics.Rect
-import android.text.BoringLayout.Metrics
 import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.addListener
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
@@ -37,6 +35,9 @@ class Call(gctx: GameContext): Sprite(gctx, R.mipmap.calls) {
                 val y = animator.animatedValue as Float
                 dstRect.offsetTo(dstRect.left, y)
             }
+            addListener(onEnd = {
+                type = Type.none
+            })
         }
     }
 
