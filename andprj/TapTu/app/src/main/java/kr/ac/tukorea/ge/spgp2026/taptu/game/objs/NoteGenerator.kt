@@ -25,7 +25,7 @@ class NoteGenerator(
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
             //Log.d(javaClass.simpleName, "Note: $note")
-            val sprite = FallingNoteSprite.get(gctx, note, musicTimeProvider)
+            val sprite = CircleNoteSprite.get(gctx, note, musicTimeProvider)
             if (song.bpm > 0) {
                 if (sprite is FallingNoteSprite) {
                     sprite.fps = 8.0f * song.bpm / 60.0f; // 1박자당 8프레임이 되도록 계산한다
