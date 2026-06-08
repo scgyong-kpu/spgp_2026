@@ -1,12 +1,29 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
+import android.graphics.Rect
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 
 class Call(gctx: GameContext): Sprite(gctx, R.mipmap.calls) {
     enum class Type {
-        perfect, great, good, bad, miss,
+        perfect, great, good, bad, miss, none,
+    }
+
+    var type = Type.none
+        set(newType) {
+            field = newType
+            val index = field.ordinal
+            srcRect?.offsetTo(0, index * srcHeight);
+        }
+    val srcHeight = bitmap.height / 5
+    init {
+        srcRect = Rect(0, 0, bitmap.width, srcHeight)
+        type = Type.none
+        val w = gctx.metrics.width
+        val h = gctx.metrics.height
+        setCenter(w/2, h/3)
+        setSize(w/3, w/15)
     }
 
     companion object {

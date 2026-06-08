@@ -36,6 +36,7 @@ class MainScene(
     val musicTime: Float
         get() = (mediaPlayer?.currentPosition ?: 0) / 1000f
 
+    val call = Call(gctx)
     private lateinit var speedBtn: Button
     override fun onEnter() {
         val screenWidth = gctx.metrics.width
@@ -64,6 +65,9 @@ class MainScene(
         for (index in 0 until 5) {
             world.add(Pret(gctx, index), MainLayer.PRET)
         }
+
+        world.add(call, MainLayer.CALL)
+
         val backBtn: Button = Button(gctx, R.mipmap.go_back, 50f, 50f, 100f, 100f) { pressed ->
             pop()
             false
@@ -152,6 +156,8 @@ class MainScene(
 
         val callType = Call.typeWithTimeDiff(diff)
         Log.d(javaClass.simpleName, "Lane: $pretIndex, call=$callType diff=$diff")
+
+        call.type = callType
     }
 
 
