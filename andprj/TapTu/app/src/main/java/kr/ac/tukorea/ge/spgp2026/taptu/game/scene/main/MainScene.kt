@@ -15,6 +15,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.data.SongCatalog
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Call
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Pret
@@ -148,7 +149,9 @@ class MainScene(
 
         val ns = findNearestNote(pretIndex) ?: return
         val diff = ns.note.time - musicTime
-        Log.d(javaClass.simpleName, "Lane: $pretIndex, diff=$diff")
+
+        val callType = Call.typeWithTimeDiff(diff)
+        Log.d(javaClass.simpleName, "Lane: $pretIndex, call=$callType diff=$diff")
     }
 
 
