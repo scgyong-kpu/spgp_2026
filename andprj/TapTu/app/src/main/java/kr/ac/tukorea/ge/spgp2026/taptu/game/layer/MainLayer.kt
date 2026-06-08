@@ -5,7 +5,10 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 
 enum class MainLayer {
     BG,
+    PRET,
+    EXPLOSION,
     NOTE,
+    UI,
     CONTROLLER,
 }
 
