@@ -16,8 +16,8 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 class FallingNoteSprite private constructor(
     gctx: GameContext,
     private val musicTimeProvider: () -> Float,
-) : AnimSprite(gctx, R.mipmap.note, FPS, FRAME_COUNT), IRecyclable {
-    lateinit var note: Note
+) : AnimSprite(gctx, R.mipmap.note, FPS, FRAME_COUNT), IRecyclable, INoteSprite {
+    override lateinit var note: Note
 
     init {
         setSize(WIDTH, HEIGHT)
@@ -77,7 +77,7 @@ class FallingNoteSprite private constructor(
         const val FPS = 16f
         const val FRAME_COUNT = 8
 
-        fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): FallingNoteSprite {
+        fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): INoteSprite {
             val world = gctx.mainWorld()
             val noteSprite = world.obtain(FallingNoteSprite::class.java) ?: FallingNoteSprite(gctx, musicTimeProvider)
             return noteSprite.init(note)
