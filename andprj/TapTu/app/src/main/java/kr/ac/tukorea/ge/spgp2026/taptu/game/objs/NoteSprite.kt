@@ -17,7 +17,7 @@ class NoteSprite private constructor(
     gctx: GameContext,
     private val musicTimeProvider: () -> Float,
 ) : AnimSprite(gctx, R.mipmap.note, FPS, FRAME_COUNT), IRecyclable {
-    private lateinit var note: Note
+    lateinit var note: Note
 
     init {
         setSize(WIDTH, HEIGHT)

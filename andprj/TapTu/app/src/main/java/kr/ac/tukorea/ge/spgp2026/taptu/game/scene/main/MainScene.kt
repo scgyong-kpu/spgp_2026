@@ -46,7 +46,8 @@ class MainScene(
         song.loadNotes(context.assets)
         song.rewind()
 
-        val thumbnail = song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
+        val thumbnail =
+            song.loadThumbnail(context.assets) ?: gctx.res.getBitmap(R.mipmap.default_thumbnail)
         val blurredThumbnail = BitmapBlur.blurBitmap(context, thumbnail)
         val albumCover = Sprite(gctx, bitmap = blurredThumbnail, resId = R.mipmap.default_thumbnail)
         albumCover.setCenterProportionalHeight(
@@ -68,10 +69,11 @@ class MainScene(
         }
         world.add(backBtn, MainLayer.UI)
 
-        speedBtn = Button(gctx, R.mipmap.speed_1x, gctx.metrics.width - 50f, 50f, 100f, 100f) { pressed ->
-            toggleSpeed()
-            false
-        }
+        speedBtn =
+            Button(gctx, R.mipmap.speed_1x, gctx.metrics.width - 50f, 50f, 100f, 100f) { pressed ->
+                toggleSpeed()
+                false
+            }
         world.add(speedBtn, MainLayer.UI)
 
         world.add(
@@ -89,7 +91,8 @@ class MainScene(
 
     private fun toggleSpeed() {
         val speed: Float = NoteSprite.toggleSpeed()
-        val mipmapId: Int = if (speed == NoteSprite.SPEED_NORMAL) R.mipmap.speed_1x else R.mipmap.speed_2x
+        val mipmapId: Int =
+            if (speed == NoteSprite.SPEED_NORMAL) R.mipmap.speed_1x else R.mipmap.speed_2x
         speedBtn.bitmap = gctx.res.getBitmap(mipmapId)
     }
 
@@ -137,7 +140,35 @@ class MainScene(
             val pret = obj as? Pret ?: return@forEachIndexed
             pret.shows = index == pretIndex
         }
-        Log.d(javaClass.simpleName, "Pret: $pretIndex")
+//        Log.d(javaClass.simpleName, "Pret: $pretIndex")
+
+        if (pretIndex !in 0..<5) {
+            return
+        }
+
+        val ns = findNearestNote(pretIndex) ?: return
+        val diff = ns.note.time - musicTime
+        Log.d(javaClass.simpleName, "Lane: $pretIndex, diff=$diff")
+    }
+
+
+    private fun findNearestNote(lane: Int): NoteSprite? {
+        var dist = Float.MAX_VALUE;
+        var nearest:NoteSprite? = null;
+        val notes = world.objectsAt(MainLayer.NOTE);
+        val noteSpriteCount = notes.size
+        for (i in 0..<noteSpriteCount) {
+            val ns = notes[i] as NoteSprite ?: continue
+            if (ns.note.pret != lane) continue
+            var diff = ns.note.time - musicTime
+            if (diff < 0) diff = -diff
+            if (dist > diff) {
+                dist = diff
+                nearest = ns
+            }
+            return if (dist < 1.0f) nearest else null;
+        }
+        return null
     }
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val handled = super.onTouchEvent(event)
