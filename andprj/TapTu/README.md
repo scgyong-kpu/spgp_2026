@@ -359,6 +359,7 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [ ] 모든 note 가 같은 frame 을 보여주도록 시작 시간 보정
 - [ ] 곡에 BPM 이 있으면 animation fps 를 BPM 에 맞춤
 - [ ] 1박당 8 frame 기준으로 fps 계산
+- [x] BPM 기준 background beat overlay animation 표시
 - [ ] `a2dg` 의 animation fps 변경 API 필요 여부 확인
 
 ## Game Controls
