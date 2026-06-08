@@ -13,7 +13,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 // NoteSprite 는 Note data 하나를 화면에 보이는 Sprite 하나로 바꾼다.
 // note 가 가진 time 과 현재 음악 시간의 차이를 y 좌표로 변환해,
 // 음악이 진행될수록 goal line 을 향해 아래로 내려오게 한다.
-class NoteSprite private constructor(
+class FallingNoteSprite private constructor(
     gctx: GameContext,
     private val musicTimeProvider: () -> Float,
 ) : AnimSprite(gctx, R.mipmap.note, FPS, FRAME_COUNT), IRecyclable {
@@ -29,7 +29,7 @@ class NoteSprite private constructor(
     // recycle bin 에서 다시 꺼낸 객체도 같은 init() 경로를 탄다.
     // 생성자는 bitmap/고정 크기/음악 시간 provider 를 준비하고,
     // note 별로 달라지는 값만 여기서 다시 채운다.
-    fun init(note: Note): NoteSprite {
+    fun init(note: Note): FallingNoteSprite {
         this.note = note
         updatePosition()
         return this
@@ -77,9 +77,9 @@ class NoteSprite private constructor(
         const val FPS = 16f
         const val FRAME_COUNT = 8
 
-        fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): NoteSprite {
+        fun get(gctx: GameContext, note: Note, musicTimeProvider: () -> Float): FallingNoteSprite {
             val world = gctx.mainWorld()
-            val noteSprite = world.obtain(NoteSprite::class.java) ?: NoteSprite(gctx, musicTimeProvider)
+            val noteSprite = world.obtain(FallingNoteSprite::class.java) ?: FallingNoteSprite(gctx, musicTimeProvider)
             return noteSprite.init(note)
         }
 

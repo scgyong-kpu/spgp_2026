@@ -18,7 +18,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Call
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Explosion
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
-import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteSprite
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.FallingNoteSprite
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Pret
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.PretBg
 import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.pause.PauseScene
@@ -96,9 +96,9 @@ class MainScene(
     }
 
     private fun toggleSpeed() {
-        val speed: Float = NoteSprite.toggleSpeed()
+        val speed: Float = FallingNoteSprite.toggleSpeed()
         val mipmapId: Int =
-            if (speed == NoteSprite.SPEED_NORMAL) R.mipmap.speed_1x else R.mipmap.speed_2x
+            if (speed == FallingNoteSprite.SPEED_NORMAL) R.mipmap.speed_1x else R.mipmap.speed_2x
         speedBtn.bitmap = gctx.res.getBitmap(mipmapId)
     }
 
@@ -106,7 +106,7 @@ class MainScene(
         if (finishFadeStarted) return
         finishFadeStarted = true
 
-        val halfScreenfulMillis = (NoteSprite.screenfulTime() * 500).toLong()
+        val halfScreenfulMillis = (FallingNoteSprite.screenfulTime() * 500).toLong()
         val animator = ValueAnimator.ofFloat(1.0f, 0.0f).apply {
             // 마지막 note 가 지나간 뒤 screenfulTime() 전체를 기다리되,
             // 앞 절반은 그대로 재생하고 뒤 절반에서만 volume 을 1.0 -> 0.0 으로 낮춘다.
@@ -171,13 +171,13 @@ class MainScene(
     }
 
 
-    private fun findNearestNote(lane: Int): NoteSprite? {
+    private fun findNearestNote(lane: Int): FallingNoteSprite? {
         var dist = Float.MAX_VALUE;
-        var nearest:NoteSprite? = null;
+        var nearest:FallingNoteSprite? = null;
         val notes = world.objectsAt(MainLayer.NOTE);
         val noteSpriteCount = notes.size
         for (i in 0..<noteSpriteCount) {
-            val ns = notes[i] as NoteSprite ?: continue
+            val ns = notes[i] as FallingNoteSprite ?: continue
             if (ns.note.pret != lane) continue
             var diff = ns.note.time - musicTime
             if (diff < 0) diff = -diff
@@ -199,9 +199,9 @@ class MainScene(
             selectPret(-1)
         } else {
             val pt = gctx.metrics.fromScreen(event.x, event.y)
-            val left = NoteSprite.LEFT - NoteSprite.X_SPACE / 2
+            val left = FallingNoteSprite.LEFT - FallingNoteSprite.X_SPACE / 2
             //if (pt.x < left) return false
-            val lane = if (pt.x < left) -1 else ((pt.x - left) / NoteSprite.X_SPACE).toInt()
+            val lane = if (pt.x < left) -1 else ((pt.x - left) / FallingNoteSprite.X_SPACE).toInt()
             //if (lane >= 5) return false
             selectPret(lane)
         }
