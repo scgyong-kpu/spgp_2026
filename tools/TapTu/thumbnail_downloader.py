@@ -2,7 +2,7 @@ import base64
 import json
 import urllib.request
 from pathlib import Path
-
+import re
 
 # 이 script 는 tools/TapTu 폴더 밖에서 실행해도 같은 결과가 나와야 한다.
 # 그래서 현재 작업 디렉터리(os.getcwd())가 아니라, 이 파일이 놓인 폴더를 기준으로
@@ -83,6 +83,7 @@ def main():
             print(f"[!] {title} - {artist}: thumbnail 정보 없음")
             continue
 
+        thumb = re.sub(r'(.+\.jpg)(/melon/resize/.+)', r'\1', thumb)
         filename = thumbnail_filename(song, index)
         filepath = THUMBNAIL_DIR / filename
 
