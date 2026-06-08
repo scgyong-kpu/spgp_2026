@@ -140,6 +140,9 @@ class MainScene(
 
     var selectedPret = -1
     fun selectPret(pretIndex: Int) {
+        if (selectedPret == pretIndex) {
+            return
+        }
         selectedPret = pretIndex
         val prets = world.objectsAt(MainLayer.PRET)
         prets.forEachIndexed { index, obj ->
