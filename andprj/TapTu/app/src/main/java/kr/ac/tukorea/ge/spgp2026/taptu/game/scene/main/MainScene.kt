@@ -19,6 +19,7 @@ import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Call
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Explosion
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.NoteGenerator
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.FallingNoteSprite
+import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.INoteSprite
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.Pret
 import kr.ac.tukorea.ge.spgp2026.taptu.game.objs.PretBg
 import kr.ac.tukorea.ge.spgp2026.taptu.game.scene.pause.PauseScene
@@ -171,13 +172,13 @@ class MainScene(
     }
 
 
-    private fun findNearestNote(lane: Int): FallingNoteSprite? {
+    private fun findNearestNote(lane: Int): INoteSprite? {
         var dist = Float.MAX_VALUE;
-        var nearest:FallingNoteSprite? = null;
+        var nearest:INoteSprite? = null;
         val notes = world.objectsAt(MainLayer.NOTE);
         val noteSpriteCount = notes.size
         for (i in 0..<noteSpriteCount) {
-            val ns = notes[i] as FallingNoteSprite ?: continue
+            val ns = notes[i] as INoteSprite ?: continue
             if (ns.note.pret != lane) continue
             var diff = ns.note.time - musicTime
             if (diff < 0) diff = -diff

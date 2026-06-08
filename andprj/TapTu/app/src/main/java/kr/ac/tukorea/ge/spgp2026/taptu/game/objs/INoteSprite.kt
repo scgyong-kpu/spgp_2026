@@ -5,6 +5,8 @@ import kr.ac.tukorea.ge.spgp2026.taptu.data.Note
 
 interface INoteSprite: IGameObject {
     val note: Note
+    val x: Float
+    val y: Float
 
     companion object {
 
