@@ -376,8 +376,11 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 ## Rhythm Gameplay
 
 - [ ] 판정 line 표시
-- [ ] touch 입력 처리
-- [ ] 입력 위치를 pret lane 으로 변환
+- [x] note timing 을 지나가는 순간 debug log 로 확인
+- [x] note timing 통과 시 explosion effect 표시
+- [x] touch 입력 처리
+- [x] 입력 위치를 pret lane 으로 변환
+- [x] 입력 중 선택된 pret lane 표시
 - [ ] 가장 가까운 note 찾기
 - [ ] note 와 입력 시간 차이 계산
 - [ ] perfect / good / miss 판정 기준 정의
@@ -385,8 +388,21 @@ note 파일은 `assets/notes/n_008.txt` 처럼 assets 아래에 둔다.
 - [ ] 맞춘 note 제거
 - [ ] 놓친 note miss 처리
 - [ ] score / combo 표시
-- [ ] 곡 종료 조건 처리
+- [x] 곡 종료 조건 처리
+- [x] 곡 종료 전 music fade-out 처리
 - [ ] 결과 화면 또는 결과 로그 표시
+
+`NoteGenerator` 는 `visibleUntil` 이 마지막 note timing 을 지나면 더 이상 새로 보여줄 note 가 없다고 판단한다.
+그 뒤 `MainScene` 은 `screenfulTime()` 의 앞 절반은 그대로 재생하고, 뒤 절반은 `ValueAnimator.startDelay` 와 `duration` 을 이용해 음악 volume 을 fade-out 한 다음 Scene 을 종료한다.
+PauseScene 이 위에 올라오면 MainScene 의 fade animator 도 함께 pause/resume 되며, animator 종료 callback 은 현재 top 이 MainScene 일 때만 `pop()` 을 수행한다.
+
+Explosion 은 생성 후 `DURATION` 동안 frame animation 을 재생하면서, 같은 시간 진행률로 alpha 와 scale 도 함께 바꾼다.
+이번 구현에서는 `Canvas.scale()` 로 draw 시점의 matrix 를 바꾸지 않고, `Explosion` 의 `dstRect` 크기 자체를 갱신한다.
+이 방식은 explosion 이 충돌 판정 없는 시각 effect 이고, 커지는 것 자체가 객체의 표시 크기라는 점을 코드에 직접 드러내기 좋다.
+
+`Canvas.save()` / `scale()` / `restore()` 를 쓰는 방식도 가능하지만, 그 방식은 논리적인 `width` / `height` 는 그대로 두고 그리는 순간에만 흔들림, 확대, 회전 같은 시각 효과를 덧입히고 싶을 때 더 잘 맞는다.
+예를 들어 캐릭터가 피격 순간만 커져 보이되 실제 위치나 collision box 는 그대로 유지해야 한다면 canvas matrix 를 쓰는 편이 자연스럽다.
+반면 지금 explosion 은 표시 크기가 변하는 것 자체가 효과의 본질이므로 `setSize()` 로 `dstRect` 를 갱신하는 편이 더 단순하고 수업용으로도 읽기 쉽다.
 
 ## Polish
 

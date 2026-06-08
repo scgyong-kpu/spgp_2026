@@ -1,7 +1,6 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
 import android.graphics.Canvas
-import android.util.Log
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.IGameObject
 import kr.ac.tukorea.ge.spgp2026.a2dg.scene.World
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
@@ -16,13 +15,30 @@ class NoteGenerator(
     private val song: Song,
     private val world: World<MainLayer>,
     private val musicTimeProvider: () -> Float,
+    private val onFinished: () -> Unit,
 ) : IGameObject {
+    private var finished = false
+
     override fun update(gctx: GameContext) {
-        val visibleUntil = musicTimeProvider() + NoteSprite.screenfulTime()
+        val musicTime = musicTimeProvider()
+        val visibleUntil = musicTime + NoteSprite.screenfulTime()
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
-            Log.d(javaClass.simpleName, "Note: $note")
-            world.add(NoteSprite.get(gctx, note, musicTimeProvider), MainLayer.NOTE)
+            //Log.d(javaClass.simpleName, "Note: $note")
+            val sprite = NoteSprite.get(gctx, note, musicTimeProvider)
+            if (song.bpm > 0) {
+                sprite.fps = 8.0f * song.bpm / 60.0f; // 1박자당 8프레임이 되도록 계산한다
+            }
+            world.add(sprite, MainLayer.NOTE)
+        }
+
+        if (!finished && musicTime >= song.noteLength) {
+            // 마지막 note 의 시각이 곡의 길이를 지나면
+            // 이제부터 보여줄 note 는 더 이상 없다.
+            //
+            // 실제 대기/음량 fade-out/Scene 종료 방법은 MainScene 이 정하도록 callback 으로 분리한다.
+            finished = true
+            onFinished()
         }
     }
 

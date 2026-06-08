@@ -32,7 +32,7 @@ open class AnimSprite(
         }
     protected var frameWidth = 0
     protected var frameHeight = 0
-    protected val createdOn = System.currentTimeMillis()
+    protected var createdOn = System.currentTimeMillis()
 
     init {
         // AnimSprite 는 strip 이미지에서 현재 프레임 영역을 잘라 그려야 하므로 srcRect 가 꼭 필요하다.
