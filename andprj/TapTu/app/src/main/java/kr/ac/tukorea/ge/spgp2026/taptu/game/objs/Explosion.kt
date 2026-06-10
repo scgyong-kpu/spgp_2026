@@ -10,8 +10,8 @@ import kr.ac.tukorea.ge.spgp2026.taptu.R
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.MainLayer
 import kr.ac.tukorea.ge.spgp2026.taptu.game.layer.mainWorld
 
-class Explosion private constructor(gctx: GameContext):
-    Sprite(gctx, R.mipmap.explosion), IRecyclable
+class Explosion private constructor(val gctx: GameContext):
+    Sprite(gctx, R.mipmap.explosion_1), IRecyclable
 {
     private var elapsedTime = 0f
     private val paint = Paint().apply {
@@ -20,11 +20,23 @@ class Explosion private constructor(gctx: GameContext):
 
     init {
         srcRect = Rect()
-        setSize(SIZE, SIZE)
+        setSize(WIDTH, WIDTH)
     }
 
-    private fun init(x: Float, y: Float): Explosion {
+    val resIds = intArrayOf(
+        R.mipmap.explosion_1,
+        R.mipmap.explosion_2,
+        R.mipmap.explosion_3,
+        R.mipmap.explosion_4,
+        R.mipmap.explosion_5,
+    )
+    private fun init(x: Float, y: Float, callType: Call.Type): Explosion {
         elapsedTime = 0f
+        val index = callType.ordinal
+        if (index < resIds.size) {
+            val resId = resIds[callType.ordinal]
+            bitmap = gctx.res.getBitmap(resId)
+        }
         setCenter(x, y)
         updateFrame()
         updateVisualState()
@@ -50,10 +62,10 @@ class Explosion private constructor(gctx: GameContext):
         // elapsedTime 과 FPS 로 현재 frame index 를 고르고, Sprite 의 srcRect 를 그 frame 으로 맞춘다.
         val frameIndex = ((elapsedTime * FPS).toInt()).coerceIn(0, FRAME_COUNT - 1)
         srcRect?.set(
-            frameIndex * FRAME_SIZE,
+            frameIndex * FRAME_WIDTH,
             0,
-            (frameIndex + 1) * FRAME_SIZE,
-            FRAME_SIZE,
+            (frameIndex + 1) * FRAME_WIDTH,
+            FRAME_HEIGHT,
         )
     }
 
@@ -65,7 +77,7 @@ class Explosion private constructor(gctx: GameContext):
         val scale = START_SCALE + (END_SCALE - START_SCALE) * progress
         val alpha = MAX_ALPHA + ((MIN_ALPHA - MAX_ALPHA) * progress).toInt()
 
-        setSize(SIZE * scale, SIZE * scale)
+        setSize(WIDTH * scale, HEIGHT * scale)
         paint.alpha = alpha
     }
 
@@ -73,20 +85,22 @@ class Explosion private constructor(gctx: GameContext):
     }
 
     companion object {
-        fun get(gctx: GameContext, x: Float, y: Float): Explosion {
+        fun get(gctx: GameContext, x: Float, y: Float, callType: Call.Type): Explosion {
             val world = gctx.mainWorld()
             val explosion = world.obtain(Explosion::class.java) ?: Explosion(gctx)
-            return explosion.init(x, y)
+            return explosion.init(x, y, callType)
         }
 
         private const val DURATION = 0.5f
-        private const val SIZE = 150f
+        private const val WIDTH = 120f
+        private const val HEIGHT = 80f
         private const val START_SCALE = 1.0f
         private const val END_SCALE = 2.0f
         private const val MAX_ALPHA = 255
         private const val MIN_ALPHA = 128
-        private const val FPS = 40f
-        private const val FRAME_COUNT = 20
-        private const val FRAME_SIZE = 128
+        private const val FPS = 10f
+        private const val FRAME_COUNT = 5
+        private const val FRAME_WIDTH = 120
+        private const val FRAME_HEIGHT = 80
     }
 }

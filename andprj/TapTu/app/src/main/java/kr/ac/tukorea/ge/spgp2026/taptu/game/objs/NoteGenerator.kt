@@ -21,13 +21,15 @@ class NoteGenerator(
 
     override fun update(gctx: GameContext) {
         val musicTime = musicTimeProvider()
-        val visibleUntil = musicTime + NoteSprite.screenfulTime()
+        val visibleUntil = musicTime + FallingNoteSprite.screenfulTime()
         while (true) {
             val note = song.popNoteBefore(visibleUntil) ?: break
             //Log.d(javaClass.simpleName, "Note: $note")
-            val sprite = NoteSprite.get(gctx, note, musicTimeProvider)
+            val sprite = FallingNoteSprite.get(gctx, note, musicTimeProvider)
             if (song.bpm > 0) {
-                sprite.fps = 8.0f * song.bpm / 60.0f; // 1박자당 8프레임이 되도록 계산한다
+                if (sprite is FallingNoteSprite) {
+                    sprite.fps = 8.0f * song.bpm / 60.0f; // 1박자당 8프레임이 되도록 계산한다
+                }
             }
             world.add(sprite, MainLayer.NOTE)
         }
