@@ -8,6 +8,7 @@ enum class MainLayer {
     PRET,
     EXPLOSION,
     NOTE,
+    CALL,
     UI,
     CONTROLLER,
 }

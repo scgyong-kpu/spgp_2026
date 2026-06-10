@@ -1,12 +1,54 @@
 package kr.ac.tukorea.ge.spgp2026.taptu.game.objs
 
+import android.animation.ValueAnimator
+import android.graphics.Rect
+import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.addListener
 import kr.ac.tukorea.ge.spgp2026.a2dg.objects.Sprite
 import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 import kr.ac.tukorea.ge.spgp2026.taptu.R
 
+
 class Call(gctx: GameContext): Sprite(gctx, R.mipmap.calls) {
     enum class Type {
-        perfect, great, good, bad, miss,
+        perfect, great, good, bad, miss, none,
+    }
+
+    val yFrom = gctx.metrics.height / 3
+    var type = Type.none
+        set(newType) {
+            field = newType
+            val index = field.ordinal
+            srcRect?.offsetTo(0, index * srcHeight);
+
+            if (newType == Type.none) return
+            val yTo = yFrom - dstRect.height()
+            animator.setFloatValues(yFrom, yTo)
+            animator.start()
+        }
+
+    val animator: ValueAnimator by lazy {
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 500
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                val y = animator.animatedValue as Float
+                dstRect.offsetTo(dstRect.left, y)
+            }
+            addListener(onEnd = {
+                type = Type.none
+            })
+        }
+    }
+
+    val srcHeight = bitmap.height / 5
+    init {
+        srcRect = Rect(0, 0, bitmap.width, srcHeight)
+        type = Type.none
+        val w = gctx.metrics.width
+        val h = gctx.metrics.height
+        setCenter(w/2, h/3)
+        setSize(w/3, w/15)
     }
 
     companion object {

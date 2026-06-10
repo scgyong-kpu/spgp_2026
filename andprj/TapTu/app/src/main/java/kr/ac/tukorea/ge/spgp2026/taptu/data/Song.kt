@@ -56,7 +56,7 @@ data class Song(
         notes?.let { return it }
 
         // note 파일도 mp3/thumbnail 처럼 rank 에 맞춘 asset 파일명 규칙을 사용한다.
-        // 예를 들어 rank 가 8 이면 assets/notes/n_008.txt 를 읽는다.
+        // 예를 들어 rank 가 8 이면 assets/notes/n_015.txt 를 읽는다.
         val filename = "notes/n_%03d.txt".format(rank)
         val loadedNotes = mutableListOf<Note>()
         var length = 0f
